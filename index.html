@@ -196,6 +196,7 @@
     <div class="tip">
       <h2 data-en="This week's tip" data-el="Η συμβουλή της εβδομάδας">This week's tip</h2>
       <p class="big" id="tipText"></p>
+      <p class="muted" id="tipSource" style="font-size:.85rem;margin-top:10px"></p>
       <p class="muted" style="margin-top:12px" data-en="A new tip every week. Get them in your inbox." data-el="Κάθε εβδομάδα μια νέα συμβουλή. Πάρε τις στο email σου.">A new tip every week. Get them in your inbox.</p>
     </div>
   </section>
@@ -244,7 +245,10 @@
 
 <script>
   // Language switch: English is the default. Nothing is stored.
+  let currentLang = "en";
+  let currentTip = null;
   function setLang(lang) {
+    currentLang = lang;
     document.documentElement.lang = lang;
     document.querySelectorAll("[data-en]").forEach(function (el) {
       el.textContent = el.dataset[lang] || el.dataset.en;
@@ -252,7 +256,9 @@
     document.querySelectorAll(".lang button").forEach(function (b) {
       b.classList.toggle("active", b.dataset.lang === lang);
     });
-    document.getElementById("tipText").textContent = tips[weekIndex()][lang];
+    document.getElementById("tipText").textContent = (currentTip && currentTip[lang]) ? currentTip[lang] : tips[weekIndex()][lang];
+    const src = document.getElementById("tipSource");
+    src.textContent = (currentTip && currentTip.source) ? ((lang === "el" ? "Πηγή: " : "Source: ") + currentTip.source) : "";
     if (typeof setLabels === 'function') setLabels();
   }
 
@@ -338,6 +344,10 @@
   pickBtns[0].classList.add("active");
   draw();
 
+  fetch("tips.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (t) { if (t) { currentTip = t; setLang(currentLang); } })
+    .catch(function () {});
   setLang("en");
 </script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
