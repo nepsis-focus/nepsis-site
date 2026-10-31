@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nepsis · Focus, one day at a time</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='5' fill='%23FFB703'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
 <style>
   :root { --ink:#1E1510; --paper:#FFF6E5; --sun:#FFC233; --amber:#FF8A1F; --ember:#E8452C; --muted:#6B5A4E; color-scheme: light; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,7 +14,7 @@
   body { font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.6; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
   .wrap { max-width: 980px; margin: 0 auto; padding: 0 22px; }
   header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 20px 0; }
-  .logo { font-weight: 800; font-size: 1.3rem; letter-spacing: .02em; }
+  .logo { font-family: 'Poppins', system-ui, sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -.01em; }
   .logo span { color: var(--ember); }
   nav { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
   nav a { color: var(--ink); text-decoration: none; font-size: .95rem; opacity: .8; }
@@ -59,6 +61,20 @@
     .goal { grid-template-columns: 1fr; padding: 34px 24px; }
     .tip { padding: 30px 22px; }
   }
+
+  .timer { background: #fff; border-radius: 28px; padding: 36px 28px; box-shadow: 0 8px 24px rgba(30,21,16,.06); border: 1px solid rgba(30,21,16,.08); text-align: center; }
+  .stage-picks { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 26px; }
+  .stage-picks button { border: 2px solid var(--ink); background: transparent; color: var(--ink); padding: 9px 16px; border-radius: 999px; font: inherit; font-weight: 700; font-size: .92rem; cursor: pointer; }
+  .stage-picks button.active { background: var(--ink); color: var(--paper); }
+  .ring { position: relative; width: 240px; height: 240px; margin: 0 auto; }
+  .ring svg { transform: rotate(-90deg); width: 240px; height: 240px; }
+  .ring .track { stroke: rgba(30,21,16,.08); }
+  .ring .progress { stroke: url(#ringGrad); transition: stroke-dashoffset .9s linear; }
+  .ring .time { position: absolute; inset: 0; display: grid; place-items: center; font-size: 2.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .timer-msg { margin-top: 14px; min-height: 1.5em; color: var(--muted); }
+  .controls { display: flex; gap: 12px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+  .controls button { padding: 13px 26px; border-radius: 999px; border: 0; font: inherit; font-weight: 700; cursor: pointer; background: var(--ember); color: #fff; }
+  .controls button.secondary { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
 </style>
 </head>
 <body>
@@ -123,6 +139,38 @@
          data-el="Σε έρευνα του Pew Research Center στις ΗΠΑ (2026), το 70% των ενηλίκων 18 έως 29 ετών λέει ότι περνάει πολύ χρόνο στο κινητό, έναντι 53% του συνόλου. Σε έρευνα της YouGov στη Βρετανία (2026), το 54% των 18 έως 24 λέει ότι τα smartphones επηρεάζουν τη συγκέντρωσή του. Από όσους προσπάθησαν να αλλάξουν τις συνήθειές τους, το 31% είδε καλύτερη συγκέντρωση.">In a 2026 Pew Research survey in the US, 70% of adults aged 18 to 29 say they spend too much time on their smartphone, compared with 53% of all adults. In a 2026 YouGov survey in the UK, 54% of 18 to 24 year olds say smartphones affect their concentration. Among those who tried to change their habits, 31% noticed better focus.</p>
       <p class="muted" style="margin-top:10px" data-en="Gloria Mark, a professor at the University of California, Irvine, found that the average time people spend on one screen before switching dropped from about 2.5 minutes in 2004 to about 47 seconds around 2020."
          data-el="Η Gloria Mark, καθηγήτρια στο University of California, Irvine, βρήκε ότι ο μέσος χρόνος σε μία οθόνη πριν την αλλαγή έπεσε από περίπου 2,5 λεπτά το 2004 σε περίπου 47 δευτερόλεπτα γύρω στο 2020.">Gloria Mark, a professor at the University of California, Irvine, found that the average time people spend on one screen before switching dropped from about 2.5 minutes in 2004 to about 47 seconds around 2020.</p>
+    </div>
+  </section>
+
+  <section id="timer">
+    <span class="eyebrow" data-en="Focus timer" data-el="Χρονόμετρο συγκέντρωσης">Focus timer</span>
+    <h2 data-en="Pick a stage and start" data-el="Διάλεξε στάδιο και ξεκίνα">Pick a stage and start</h2>
+    <div class="timer" style="margin-top:22px">
+      <div class="stage-picks" id="stagePicks">
+        <button type="button" data-min="5" data-en="Start · 5 min" data-el="Εκκίνηση · 5 λεπτά">Start · 5 min</button>
+        <button type="button" data-min="10" data-en="Steady · 10 min" data-el="Σταθερότητα · 10 λεπτά">Steady · 10 min</button>
+        <button type="button" data-min="25" data-en="Depth · 25 min" data-el="Βάθος · 25 λεπτά">Depth · 25 min</button>
+        <button type="button" data-min="45" data-en="Flow · 45 min" data-el="Ροή · 45 λεπτά">Flow · 45 min</button>
+        <button type="button" data-min="60" data-en="Mastery · 60 min" data-el="Κορύφωση · 60 λεπτά">Mastery · 60 min</button>
+      </div>
+      <div class="ring">
+        <svg viewBox="0 0 240 240">
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#FFC233"/>
+              <stop offset="1" stop-color="#E8452C"/>
+            </linearGradient>
+          </defs>
+          <circle class="track" cx="120" cy="120" r="108" fill="none" stroke-width="14"/>
+          <circle class="progress" id="ringProgress" cx="120" cy="120" r="108" fill="none" stroke-width="14" stroke-linecap="round" stroke-dasharray="678.58" stroke-dashoffset="0"/>
+        </svg>
+        <div class="time" id="timeDisplay">05:00</div>
+      </div>
+      <div class="timer-msg" id="timerMsg" data-en="Choose a stage to begin." data-el="Διάλεξε στάδιο για να ξεκινήσεις.">Choose a stage to begin.</div>
+      <div class="controls">
+        <button type="button" id="startBtn" data-en="Start" data-el="Έναρξη">Start</button>
+        <button type="button" id="resetBtn" class="secondary" data-en="Reset" data-el="Επαναφορά">Reset</button>
+      </div>
     </div>
   </section>
 
@@ -205,6 +253,7 @@
       b.classList.toggle("active", b.dataset.lang === lang);
     });
     document.getElementById("tipText").textContent = tips[weekIndex()][lang];
+    if (typeof setLabels === 'function') setLabels();
   }
 
   // Weekly tip, rotating by ISO week number.
@@ -226,8 +275,70 @@
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
   });
 
-  setLang("en");
   requestAnimationFrame(function () { document.getElementById("bar").style.width = "62%"; });
+
+  // ---- Focus timer ----
+  const CIRC = 678.58;
+  let total = 5 * 60, left = 5 * 60, timerId = null, running = false;
+  const ringEl = document.getElementById("ringProgress");
+  const timeEl = document.getElementById("timeDisplay");
+  const msgEl = document.getElementById("timerMsg");
+  const startBtn = document.getElementById("startBtn");
+  const pickBtns = document.querySelectorAll("#stagePicks button");
+
+  function fmt(sec) {
+    const m = Math.floor(sec / 60), s = sec % 60;
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+  function lang() { return document.documentElement.lang === "el" ? "el" : "en"; }
+  function draw() {
+    timeEl.textContent = fmt(left);
+    ringEl.style.strokeDashoffset = String(CIRC * (1 - left / total));
+  }
+  function setLabels() {
+    const L = lang();
+    startBtn.textContent = running ? (L === "el" ? "Παύση" : "Pause") : (L === "el" ? "Έναρξη" : "Start");
+  }
+  function chooseStage(min, btn) {
+    stop();
+    total = left = min * 60;
+    pickBtns.forEach(b => b.classList.toggle("active", b === btn));
+    draw();
+    msgEl.textContent = lang() === "el"
+      ? "Ξεκίνα όταν είσαι έτοιμος. Άφησε το κινητό σε άλλο δωμάτιο."
+      : "Start when you're ready. Leave your phone in another room.";
+  }
+  function tick() {
+    if (left > 0) { left--; draw(); return; }
+    stop();
+    msgEl.textContent = lang() === "el" ? "Ολοκληρώθηκε! Πολύ καλή δουλειά." : "Done! Well done.";
+  }
+  function start() {
+    if (running || left === 0) return;
+    running = true;
+    timerId = setInterval(tick, 1000);
+    setLabels();
+  }
+  function stop() {
+    running = false;
+    clearInterval(timerId);
+    timerId = null;
+    setLabels();
+  }
+  function reset() {
+    stop();
+    left = total;
+    draw();
+    msgEl.textContent = lang() === "el" ? "Διάλεξε στάδιο για να ξεκινήσεις." : "Choose a stage to begin.";
+  }
+
+  pickBtns.forEach(b => b.addEventListener("click", () => chooseStage(Number(b.dataset.min), b)));
+  startBtn.addEventListener("click", () => (running ? stop() : start()));
+  document.getElementById("resetBtn").addEventListener("click", reset);
+  pickBtns[0].classList.add("active");
+  draw();
+
+  setLang("en");
 </script>
 </body>
 </html>
