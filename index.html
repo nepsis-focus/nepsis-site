@@ -166,27 +166,10 @@
     <span class="eyebrow" data-en="Something wrong?" data-el="Κάτι δεν λειτουργεί;">Something wrong?</span>
     <h2 data-en="Tell us what happened" data-el="Πες μας τι συνέβη">Tell us what happened</h2>
     <p class="muted" style="max-width:60ch" data-en="If a button, a timer or a playlist does not work for you, write it here. We read every message." data-el="Αν ένα κουμπί, το χρονόμετρο ή μια playlist δεν λειτουργεί, γράψ' το εδώ. Διαβάζουμε κάθε μήνυμα.">If a button, a timer or a playlist does not work for you, write it here. We read every message.</p>
-    <form name="problem-report" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" class="card" style="margin-top:22px;display:grid;gap:14px">
-      <input type="hidden" name="form-name" value="problem-report">
-      <p hidden><label>Do not fill this in: <input name="bot-field"></label></p>
-      <label style="display:grid;gap:6px;font-weight:700">
-        <span data-en="What did you try to do?" data-el="Τι προσπάθησες να κάνεις;">What did you try to do?</span>
-        <textarea name="what" rows="4" required style="font:inherit;padding:10px;border-radius:12px;border:1.5px solid rgba(30,21,16,.25)"></textarea>
-      </label>
-      <label style="display:grid;gap:6px;font-weight:700">
-        <span data-en="What happened instead?" data-el="Τι συνέβη αντί γι' αυτό;">What happened instead?</span>
-        <textarea name="happened" rows="3" required style="font:inherit;padding:10px;border-radius:12px;border:1.5px solid rgba(30,21,16,.25)"></textarea>
-      </label>
-      <label style="display:grid;gap:6px;font-weight:700">
-        <span data-en="Your device and browser (optional)" data-el="Η συσκευή και ο browser σου (προαιρετικό)">Your device and browser (optional)</span>
-        <input name="device" type="text" placeholder="iPhone, Safari" style="font:inherit;padding:10px;border-radius:12px;border:1.5px solid rgba(30,21,16,.25)">
-      </label>
-      <label style="display:grid;gap:6px;font-weight:700">
-        <span data-en="Your email, only if you want a reply (optional)" data-el="Το email σου, μόνο αν θες απάντηση (προαιρετικό)">Your email, only if you want a reply (optional)</span>
-        <input name="email" type="email" style="font:inherit;padding:10px;border-radius:12px;border:1.5px solid rgba(30,21,16,.25)">
-      </label>
-      <div><button type="submit" class="btn" style="border:0;cursor:pointer;font:inherit" data-en="Send" data-el="Αποστολή">Send</button></div>
-    </form>
+    <div class="card" style="margin-top:22px;text-align:center">
+      <a class="btn" href="mailto:EMAIL_HERE?subject=Nepsis%20-%20something%20is%20wrong" style="display:inline-block" data-en="Write to us" data-el="Γράψε μας">Write to us</a>
+      <p class="muted" style="margin-top:12px;font-size:.9rem" data-en="Your email app will open with a subject line already filled in." data-el="Θα ανοίξει η εφαρμογή email σου με έτοιμο θέμα.">Your email app will open with a subject line already filled in.</p>
+    </div>
   </section>
 
 
@@ -257,6 +240,5 @@
     .catch(function () {});
   setLang("en");
 </script>
-<script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
 </body>
 </html>
