@@ -153,6 +153,35 @@
     </div>
   </section>
 
+  <section id="calc" style="padding-top:20px">
+    <span class="eyebrow" data-en="Your time" data-el="Ο χρόνος σου">Your time</span>
+    <h2 data-en="How much time could you win back?" data-el="Πόσο χρόνο θα μπορούσες να κερδίσεις;">How much time could you win back?</h2>
+    <div class="card" style="margin-top:18px">
+      <label style="display:grid;gap:8px;font-weight:700">
+        <span id="calcLabel"></span>
+        <input id="calcMin" type="range" min="5" max="60" step="5" value="15" style="width:100%">
+      </label>
+      <p id="calcOut" style="font-size:1.4rem;font-weight:800;margin-top:14px"></p>
+      <p class="muted" style="font-size:.85rem;margin-top:6px" data-en="An illustration: the number is calculated from the minutes you choose, not from real users." data-el="Ένα παράδειγμα: ο αριθμός υπολογίζεται από τα λεπτά που διαλέγεις, όχι από πραγματικούς χρήστες.">An illustration: the number is calculated from the minutes you choose, not from real users.</p>
+    </div>
+  </section>
+
+  <section id="compare" style="padding-top:20px">
+    <span class="eyebrow" data-en="A typical evening" data-el="Ένα συνηθισμένο βράδυ">A typical evening</span>
+    <h2 data-en="The same evening, two ways" data-el="Το ίδιο βράδυ, με δύο τρόπους">The same evening, two ways</h2>
+    <div class="grid" style="margin-top:18px">
+      <div class="card">
+        <h3 data-en="Without Nepsis" data-el="Χωρίς Nepsis">Without Nepsis</h3>
+        <p class="muted" data-en="You open the phone to check one thing. Forty minutes later you are still scrolling, and the work has not started." data-el="Ανοίγεις το κινητό για ένα πράγμα. Σαράντα λεπτά μετά, συνεχίζεις να κάνεις scroll και η δουλειά δεν έχει ξεκινήσει.">You open the phone to check one thing. Forty minutes later you are still scrolling, and the work has not started.</p>
+      </div>
+      <div class="card">
+        <h3 data-en="With Nepsis" data-el="Με Nepsis">With Nepsis</h3>
+        <p class="muted" data-en="Five minutes to start, then one 25-minute block on one task, with the phone in another room." data-el="Πέντε λεπτά για να ξεκινήσεις, και μετά ένα μπλοκ 25 λεπτών σε ένα έργο, με το κινητό σε άλλο δωμάτιο.">Five minutes to start, then one 25-minute block on one task, with the phone in another room.</p>
+      </div>
+    </div>
+    <p style="margin-top:22px"><a href="#stages" id="tryDemo" class="btn" data-en="Try one stage, no sign-up" data-el="Δοκίμασε ένα στάδιο, χωρίς εγγραφή">Try one stage, no sign-up</a></p>
+  </section>
+
   <section id="koinos">
     <div class="goal">
       <div>
@@ -532,7 +561,7 @@
     const src = document.getElementById("tipSource");
     src.textContent = (currentTip && currentTip.source) ? ((L === "el" ? "Πηγή: " : "Source: ") + currentTip.source) : "";
   }
-  function onLangChange() { renderTip(); if (typeof onStageLang === 'function') onStageLang(); if (typeof renderGlobe === 'function') renderGlobe(); }
+  function onLangChange() { renderTip(); if (typeof onStageLang === 'function') onStageLang(); if (typeof renderGlobe === 'function') renderGlobe(); if (typeof renderCalc === 'function') renderCalc(); }
   
   fetch("tips.json", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : null; })
@@ -658,6 +687,34 @@
       msg.textContent = currentLang === "el" ? "Ο χάρτης δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "The map did not load. Refresh the page.";
     }
   })();
+</script>
+<script>
+  // Calculator: illustrative only, from the minutes the visitor chooses
+  function renderCalc() {
+    const isEl = currentLang === "el";
+    const input = document.getElementById("calcMin");
+    if (!input) return;
+    const min = Number(input.value);
+    const hours = (min * 30 / 60);
+    document.getElementById("calcLabel").textContent = isEl
+      ? "Λεπτά τη μέρα που μετατρέπεις από το κινητό σε συγκέντρωση: " + min
+      : "Minutes a day you turn from the phone into focus: " + min;
+    document.getElementById("calcOut").textContent = isEl
+      ? "Περίπου " + hours.toString().replace(".", ",") + " ώρες συγκέντρωσης τον μήνα."
+      : "About " + hours + " hours of focus a month.";
+  }
+  document.getElementById("calcMin").addEventListener("input", renderCalc);
+  renderCalc();
+
+  // Demo: opens the 5-minute stage with its real timer, without signing up
+  document.getElementById("tryDemo").addEventListener("click", function (e) {
+    e.preventDefault();
+    location.hash = "#stages";
+    setTimeout(function () {
+      const card = document.querySelector('.stage-card[data-min="5"]');
+      if (card) openStage(5, card);
+    }, 150);
+  });
 </script>
 <script>
   // Show the stages page or the home page, depending on the link used
