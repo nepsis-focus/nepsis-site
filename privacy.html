@@ -1,65 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Privacy Policy · Nepsis</title>
+<title>Nepsis · Πολιτική απορρήτου / Privacy policy</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='5' fill='%23FFB703'/%3E%3C/svg%3E">
 <style>
-  :root { --ink:#1E1510; --paper:#FFF6E5; --ember:#E8452C; --muted:#6B5A4E; }
-  * { box-sizing: border-box; }
-  body { margin:0; font-family:"Segoe UI", system-ui, Roboto, Arial, sans-serif; color:var(--ink); background:var(--paper); line-height:1.7; }
-  .wrap { max-width:760px; margin:0 auto; padding:40px 22px 60px; }
-  a { color:var(--ember); }
-  h1 { font-size:2rem; margin-bottom:6px; }
-  h2 { font-size:1.2rem; margin-top:28px; }
-  p, li { color:var(--ink); }
-  .muted { color:var(--muted); font-size:.95rem; }
+  :root { --ink:#1E1510; --paper:#FFF6E5; --sun:#FFC233; --ember:#E8452C; --muted:#6B5A4E; color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.65; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 22px; }
+  header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 20px 0; }
+  .logo { font-weight: 800; font-size: 1.4rem; color: var(--ink); text-decoration: none; }
+  .logo span { color: var(--ember); }
+  .lang { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 999px; overflow: hidden; }
+  .lang button { background: none; border: 0; padding: 6px 12px; font: inherit; font-weight: 700; font-size: .85rem; cursor: pointer; color: var(--ink); }
+  .lang button.active { background: var(--ink); color: var(--paper); }
+  h1 { font-size: 2rem; margin: 24px 0 8px; }
+  h2 { font-size: 1.15rem; margin: 26px 0 6px; }
+  p, li { margin-bottom: 8px; }
+  ul { padding-left: 22px; }
+  .muted { color: var(--muted); font-size: .95rem; }
+  .note { background: #fff; border-radius: 16px; padding: 16px 18px; border: 1px solid rgba(30,21,16,.08); margin-top: 18px; }
+  footer { padding: 30px 0 50px; color: var(--muted); font-size: .9rem; }
+  footer a { color: var(--ink); }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <p><a href="index.html">← Back to Nepsis</a></p>
-  <h1>Privacy Policy</h1>
-  <p class="muted">Nepsis · Last updated: October 31, 2026</p>
+  <header>
+    <a class="logo" href="index.html">Nep<span>sis</span></a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="el" class="active">ΕΛ</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </header>
 
-  <h2>1. Who we are</h2>
-  <p>Nepsis is a small project that helps people build their focus step by step. For any questions about this policy or your data, contact us at <strong>nepsis.info@gmail.com</strong>.</p>
+  <h1 data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</h1>
+  <p class="muted" data-el="Τελευταία ενημέρωση: Οκτώβριος 2026" data-en="Last updated: October 2026">Τελευταία ενημέρωση: Οκτώβριος 2026</p>
 
-  <h2>2. What data we collect</h2>
-  <p>We collect only the email address you enter when you subscribe to the Nepsis newsletter. We do not ask for your name, photo, location, or any other personal details.</p>
+  <h2 data-el="1. Ποιοι είμαστε" data-en="1. Who we are">1. Ποιοι είμαστε</h2>
+  <p data-el="Το Nepsis είναι δωρεάν σελίδα που βοηθά νέους 18 έως 25 ετών να αυξήσουν σταδιακά τη συγκέντρωσή τους. Για ερωτήσεις σχετικά με τα δεδομένα σου, γράψε μας στο EMAIL_HERE." data-en="Nepsis is a free site that helps people aged 18 to 25 gradually increase their focus. For questions about your data, write to us at EMAIL_HERE.">Το Nepsis είναι δωρεάν σελίδα που βοηθά νέους 18 έως 25 ετών να αυξήσουν σταδιακά τη συγκέντρωσή τους. Για ερωτήσεις σχετικά με τα δεδομένα σου, γράψε μας στο EMAIL_HERE.</p>
 
-  <h2>3. How we use your data</h2>
-  <p>We use your email address to send you the newsletter, including focus tips and updates about new stages, and to confirm that you want to receive it (double opt-in).</p>
-  <p>We do not sell your data, and we do not share it with third parties for advertising.</p>
-
-  <h2>4. Who processes your data</h2>
-  <p>Newsletter emails are sent and stored through <strong>Brevo</strong>, an email service provider, which processes your email address on our behalf under its own privacy terms (brevo.com).</p>
-  <p>Anonymous visit statistics are collected through <strong>Umami</strong>, a privacy-friendly analytics provider. Umami processes this data on our behalf under its own privacy terms (umami.is). Umami does not use cookies and does not collect your email address or other personal details.</p>
-
-  <h2>5. How long we keep your data</h2>
-  <p>We keep your email address for as long as you remain subscribed. If you unsubscribe, we remove it from the list.</p>
-
-  <h2>6. Your rights</h2>
-  <p>You can at any time:</p>
+  <h2 data-el="2. Τι δεδομένα συλλέγουμε" data-en="2. What data we collect">2. Τι δεδομένα συλλέγουμε</h2>
   <ul>
-    <li><strong>Unsubscribe</strong> using the link at the bottom of any email we send you.</li>
-    <li><strong>Ask for access</strong> to the data we hold about you.</li>
-    <li><strong>Ask for deletion</strong> of your email address by contacting us at the address above.</li>
-    <li><strong>Object to or restrict</strong> how we use your data.</li>
+    <li data-el="Email, μόνο αν εγγραφείς στο newsletter. Η εγγραφή γίνεται μέσω της υπηρεσίας Brevo και επιβεβαιώνεται με ένα κλικ." data-en="Email address, only if you subscribe to the newsletter. Sign-up is handled by Brevo and confirmed with one click.">Email, μόνο αν εγγραφείς στο newsletter. Η εγγραφή γίνεται μέσω της υπηρεσίας Brevo και επιβεβαιώνεται με ένα κλικ.</li>
+    <li data-el="Ό,τι γράψεις στη φόρμα «Κάτι δεν λειτουργεί». Το email σου στη φόρμα είναι προαιρετικό και το χρησιμοποιούμε μόνο για να σου απαντήσουμε." data-en="What you write in the “Something wrong?” form. The email field in that form is optional and is used only to reply to you.">Ό,τι γράψεις στη φόρμα «Κάτι δεν λειτουργεί». Το email σου στη φόρμα είναι προαιρετικό και το χρησιμοποιούμε μόνο για να σου απαντήσουμε.</li>
+    <li data-el="Η σελίδα δεν αποθηκεύει τίποτα στη συσκευή σου για τη λειτουργία του χρονομέτρου ή της πρόδου." data-en="Your progress (days and stages completed) is stored only in your device's browser. It is not sent to us or to any other service. If you clear your browser data, it is lost.">Η πρόοδός σου (μέρες και στάδια που ολοκλήρωσες) αποθηκεύεται μόνο στον browser της συσκευής σου. Δεν στέλνεται σε εμάς ή σε άλλη υπηρεσία. Αν καθαρίσεις τα δεδομένα του browser, χάνεται.</li>
   </ul>
-  <p>We will respond to requests within one month.</p>
 
-  <h2>7. Cookies</h2>
-  <p>This website uses <strong>Umami</strong>, a privacy-friendly analytics tool, to understand how many people visit the site and which pages they view. Umami does not use cookies, does not collect personal data, and does not track you across other websites. It records only anonymous, aggregated information such as pages viewed, approximate country, and the referring site. Language preferences are not stored.</p>
+  <h2 data-el="3. Τρίτες υπηρεσίες" data-en="3. Third-party services">3. Τρίτες υπηρεσίες</h2>
+  <p data-el="Η σελίδα χρησιμοποιεί τις εξής υπηρεσίες, που μπορεί να επεξεργάζονται δεδομένα με τον δικό τους τρόπο:" data-en="The site uses the following services, which may process data under their own policies:">Η σελίδα χρησιμοποιεί τις εξής υπηρεσίες, που μπορεί να επεξεργάζονται δεδομένα με τον δικό τους τρόπο:</p>
+  <ul>
+    <li data-el="Brevo, για το newsletter. Η πολιτική τους είναι διαθέσιμη στον ιστότοπό τους." data-en="Brevo, for the newsletter. Their policy is available on their website.">Brevo, για το newsletter. Η πολιτική τους είναι διαθέσιμη στον ιστότοπό τους.</li>
+    <li data-el="Netlify, που φιλοξενεί τη σελίδα και λαμβάνει τα μηνύματα της φόρμας «Κάτι δεν λειτουργεί»." data-en="Netlify, which hosts the site and receives messages from the “Something wrong?” form.">Netlify, που φιλοξενεί τη σελίδα και λαμβάνει τα μηνύματα της φόρμας «Κάτι δεν λειτουργεί».</li>
+    <li data-el="Spotify, όταν εμφανίζεις μια playlist. Το Spotify μπορεί να λάβει δεδομένα από τον browser σου μόλις φορτώσει το ενσωματωμένο player. Αν δεν θες, μην πατάς τις playlists και μην ανοίγεις το σχετικό τμήμα." data-en="Spotify, when you show a playlist. Spotify may receive data from your browser once its embedded player loads. If you prefer not to, do not open the playlists.">Spotify, όταν εμφανίζεις μια playlist. Το Spotify μπορεί να λάβει δεδομένα από τον browser σου μόλις φορτώσει το ενσωματωμένο player. Αν δεν θες, μην πατάς τις playlists και μην ανοίγεις το σχετικό τμήμα.</li>
+  </ul>
 
-  <h2>8. Changes to this policy</h2>
-  <p>If we change this policy, we will update the date at the top of this page.</p>
+  <h2 data-el="4. Για πόσο κρατάμε τα δεδομένα" data-en="4. How long we keep data">4. Για πόσο κρατάμε τα δεδομένα</h2>
+  <p data-el="Το email του newsletter κρατιέται μέχρι να διαγραφείς. Τα μηνύματα της φόρμας «Κάτι δεν λειτουργεί» διαγράφονται μόλις απαντηθούν ή όταν δεν χρειάζονται πια." data-en="Your newsletter email is kept until you unsubscribe. Messages from the “Something wrong?” form are deleted once answered or once no longer needed.">Το email του newsletter κρατιέται μέχρι να διαγραφείς. Τα μηνύματα της φόρμας «Κάτι δεν λειτουργεί» διαγράφονται μόλις απαντηθούν ή όταν δεν χρειάζονται πια.</p>
 
-  <h2>9. Complaints</h2>
-  <p>If you believe your data is not handled properly, contact us first. You also have the right to complain to a data protection authority. In Greece, this is the Hellenic Data Protection Authority (dpa.gr).</p>
+  <h2 data-el="5. Τα δικαιώματά σου" data-en="5. Your rights">5. Τα δικαιώματά σου</h2>
+  <p data-el="Μπορείς να ζητήσεις να δεις, να διορθώσεις ή να διαγράψεις τα δεδομένα σου. Μπορείς να διαγραφείς από το newsletter όποτε θες, από κάθε email που σου στέλνουμε." data-en="You can ask to see, correct or delete your data. You can unsubscribe from the newsletter at any time, from any email we send you.">Μπορείς να ζητήσεις να δεις, να διορθώσεις ή να διαγράψεις τα δεδομένα σου. Μπορείς να διαγραφείς από το newsletter όποτε θες, από κάθε email που σου στέλνουμε.</p>
 
-  <p class="muted" style="margin-top:36px">This policy is a general template and not legal advice. Please review it before relying on it for a larger project.</p>
+  <div class="note">
+    <p data-el="Η σελίδα είναι δωρεάν και δεν ζητά προφίλ, φωτογραφία ή λογαριασμό." data-en="The site is free and does not ask for a profile, a photo or an account.">Η σελίδα είναι δωρεάν και δεν ζητά προφίλ, φωτογραφία ή λογαριασμό.</p>
+  </div>
+
+  <footer>
+    <a href="index.html" data-el="Επιστροφή στην αρχική" data-en="Back to home">Επιστροφή στην αρχική</a>
+  </footer>
 </div>
-<script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
+
+<script>
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.querySelectorAll("[data-" + l + "]").forEach(function (el) { el.textContent = el.dataset[l]; });
+    document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () { setLang(b.dataset.lang); });
+  });
+</script>
 </body>
 </html>
