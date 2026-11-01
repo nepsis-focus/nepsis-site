@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nepsis · Stages</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='5' fill='%23FFB703'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1E1510; --paper:#FFF6E5; --sun:#FFC233; --amber:#FF8A1F; --ember:#E8452C; --muted:#6B5A4E; color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body { font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--ink); background: var(--paper); line-height: 1.6; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 22px; }
+  header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 20px 0; }
+  .logo { font-family: 'Poppins', system-ui, sans-serif; font-weight: 700; font-size: 1.4rem; letter-spacing: -.01em; }
+  .logo span { color: var(--ember); }
+  nav { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
+  nav a { color: var(--ink); text-decoration: none; font-size: .95rem; opacity: .8; }
+  nav a:hover { opacity: 1; color: var(--ember); }
+  .lang { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 999px; overflow: hidden; }
+  .lang button { background: none; border: 0; padding: 6px 12px; font: inherit; font-weight: 700; font-size: .85rem; cursor: pointer; color: var(--ink); }
+  .lang button.active { background: var(--ink); color: var(--paper); }
+  .hero { position: relative; overflow: hidden; background: linear-gradient(135deg, var(--sun) 0%, var(--amber) 55%, var(--ember) 100%); border-radius: 28px; padding: 72px 40px; margin-top: 8px; }
+  .hero::after { content: ""; position: absolute; right: -90px; top: -90px; width: 340px; height: 340px; border-radius: 50%; background: radial-gradient(circle, rgba(255,246,229,.55) 0%, rgba(255,246,229,0) 70%); }
+  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.4rem); font-weight: 900; letter-spacing: -.02em; line-height: 1.02; max-width: 14ch; position: relative; z-index: 1; }
+  .hero p.lead { margin-top: 18px; font-size: clamp(1.05rem, 2.4vw, 1.25rem); max-width: 52ch; position: relative; z-index: 1; }
+  .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; position: relative; z-index: 1; }
+  .btn { display: inline-block; padding: 14px 26px; background: var(--ink); color: var(--paper); border-radius: 999px; text-decoration: none; font-weight: 700; transition: transform .15s ease; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn.alt { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
+  section { padding: 64px 0; }
+  h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -.01em; margin-bottom: 14px; }
+  .eyebrow { display: inline-block; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--ember); margin-bottom: 10px; }
+  .muted { color: var(--muted); }
+  .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 28px; }
+  .card { background: #fff; border-radius: 20px; padding: 26px; border: 1px solid rgba(30,21,16,.08); box-shadow: 0 8px 24px rgba(30,21,16,.05); }
+  .card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+  .num { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: var(--sun); color: var(--ink); margin-bottom: 14px; }
+  .goal { background: var(--ink); color: var(--paper); border-radius: 28px; padding: 48px 40px; display: grid; gap: 30px; grid-template-columns: 1fr 1fr; align-items: center; }
+  .goal h2 { color: var(--paper); }
+  .goal .eyebrow { color: var(--sun); }
+  .goal p { color: #E9DCC8; }
+  .meter { background: rgba(255,246,229,.08); border-radius: 20px; padding: 26px; }
+  .meter .big { font-size: 2.4rem; font-weight: 900; background: linear-gradient(90deg, var(--sun), var(--amber), var(--ember)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .bar { height: 12px; border-radius: 999px; background: rgba(255,246,229,.12); margin-top: 16px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--sun), var(--amber), var(--ember)); border-radius: 999px; }
+  .tip { background: linear-gradient(180deg, #FFE08A 0%, var(--sun) 100%); border-radius: 28px; padding: 40px; }
+  .tip p.big { font-size: clamp(1.2rem, 3vw, 1.6rem); font-weight: 700; margin-top: 10px; }
+  .faq details { border-bottom: 1px solid rgba(30,21,16,.12); padding: 14px 0; }
+  .faq summary { cursor: pointer; font-weight: 700; list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq details p { margin-top: 8px; color: var(--muted); }
+  .cta { text-align: center; padding: 56px 28px; border-radius: 28px; background: linear-gradient(180deg, #FFE08A 0%, var(--sun) 100%); }
+  .cta h2 { margin-bottom: 8px; }
+  .cta .btn { background: var(--ember); }
+  footer { text-align: center; padding: 40px 0 56px; font-size: .9rem; color: var(--muted); }
+  @media (max-width: 720px) {
+    .hero { padding: 52px 24px; }
+    .goal { grid-template-columns: 1fr; padding: 34px 24px; }
+    .tip { padding: 30px 22px; }
+  }
+
+  .timer { background: #fff; border-radius: 28px; padding: 36px 28px; box-shadow: 0 8px 24px rgba(30,21,16,.06); border: 1px solid rgba(30,21,16,.08); text-align: center; }
+  .stage-picks { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 26px; }
+  .stage-picks button { border: 2px solid var(--ink); background: transparent; color: var(--ink); padding: 9px 16px; border-radius: 999px; font: inherit; font-weight: 700; font-size: .92rem; cursor: pointer; }
+  .stage-picks button.active { background: var(--ink); color: var(--paper); }
+  .ring { position: relative; width: 240px; height: 240px; margin: 0 auto; }
+  .ring svg { transform: rotate(-90deg); width: 240px; height: 240px; }
+  .ring .track { stroke: rgba(30,21,16,.08); }
+  .ring .progress { stroke: url(#ringGrad); transition: stroke-dashoffset .9s linear; }
+  .ring .time { position: absolute; inset: 0; display: grid; place-items: center; font-size: 2.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .timer-msg { margin-top: 14px; min-height: 1.5em; color: var(--muted); }
+  .controls { display: flex; gap: 12px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+  .controls button { padding: 13px 26px; border-radius: 999px; border: 0; font: inherit; font-weight: 700; cursor: pointer; background: var(--ember); color: #fff; }
+  .controls button.secondary { background: transparent; color: var(--ink); border: 2px solid var(--ink); }
+  .stage-card { cursor: pointer; transition: transform .15s ease; }
+  .stage-card:hover { transform: translateY(-3px); }
+  .stage-card.active { outline: 3px solid var(--ember); }
+  #stagePanel h3 { font-size: 1.1rem; margin-top: 18px; margin-bottom: 4px; }
+  #stagePanel ol { padding-left: 20px; margin-top: 6px; }
+  #stagePanel ol li { margin-bottom: 8px; }
+  #stagePanel .pick button { border: 2px solid var(--ink); background: transparent; color: var(--ink); padding: 9px 16px; border-radius: 999px; font: inherit; font-weight: 700; cursor: pointer; margin: 4px 6px 4px 0; }
+  #stagePanel .pick button.active { background: var(--ink); color: var(--paper); }
+  #stagePanel .close { background: none; border: 0; font: inherit; font-weight: 700; color: var(--ember); cursor: pointer; margin-top: 16px; }
+  .head-right { display: flex; align-items: center; gap: 12px; }
+  .menu-btn { background: none; border: 0; cursor: pointer; display: flex; flex-direction: column; justify-content: center; gap: 5px; width: 44px; height: 44px; padding: 10px; border-radius: 12px; }
+  .menu-btn span { display: block; height: 2.5px; width: 24px; background: var(--ink); border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
+  .menu-btn.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+  .menu-btn.open span:nth-child(2) { opacity: 0; }
+  .menu-btn.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+  nav.menu { display: none; flex-direction: column; width: 100%; background: #fff; border-radius: 18px; padding: 8px 18px; border: 1px solid rgba(30,21,16,.08); box-shadow: 0 8px 24px rgba(30,21,16,.08); }
+  nav.menu.open { display: flex; }
+  nav.menu a { padding: 14px 0; font-size: 1.05rem; opacity: 1; border-bottom: 1px solid rgba(30,21,16,.08); }
+  nav.menu a:last-child { border-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="index.html" style="text-decoration:none;color:inherit">Nep<span>sis</span></a>
+    <div class="head-right">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" class="active">EN</button>
+        <button type="button" data-lang="el">ΕΛ</button>
+      </div>
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+    </div>
+    <nav class="menu" id="menu">
+      <a href="index.html" data-en="Home" data-el="Αρχική">Home</a>
+      <a href="about.html" data-en="What it is" data-el="Τι είναι">What it is</a>
+      <a href="how.html" data-en="How it works" data-el="Πώς δουλεύει">How it works</a>
+      <a href="stages.html" data-en="Stages" data-el="Στάδια">Stages</a>
+      <a href="faq.html" data-en="FAQ" data-el="Ερωτήσεις">FAQ</a>
+    </nav>
+  </header>
+
+  <section id="stages" style="padding-top:40px">
+    <span class="eyebrow" data-en="Stages" data-el="Στάδια">Stages</span>
+    <h2 data-en="From 5 minutes to one hour of focus" data-el="Από 5 λεπτά μέχρι μία ώρα εστιασμένης δουλειάς">From 5 minutes to one hour of focus</h2>
+    <p class="muted" style="max-width:60ch" data-en="Every stage builds on the one before. Move on only when the current one feels natural."
+       data-el="Κάθε στάδιο χτίζεται πάνω στο προηγούμενο. Προχώρα μόνο όταν το τρέχον σου φαίνεται φυσικό.">Every stage builds on the one before. Move on only when the current one feels natural.</p>
+    <div class="grid">
+      <div class="card stage-card" data-min="5"><div class="num">1</div><h3 data-en="Start · 5 min" data-el="Εκκίνηση · 5 λεπτά">Start · 5 min</h3><p class="muted" data-en="A small everyday task, like brushing your teeth. The goal is to finish something for sure." data-el="Μια μικρή καθημερινή δουλειά, όπως να πλύνεις τα δόντια. Στόχος: να τελειώσεις κάτι σίγουρα.">A small everyday task, like brushing your teeth. The goal is to finish something for sure.</p></div>
+      <div class="card stage-card" data-min="10"><div class="num">2</div><h3 data-en="Steady · 10 min" data-el="Σταθερότητα · 10 λεπτά">Steady · 10 min</h3><p class="muted" data-en="Ten minutes to focus and decide what you will do today." data-el="Δέκα λεπτά για να συγκεντρωθείς και να αποφασίσεις τι θα κάνεις σήμερα.">Ten minutes to focus and decide what you will do today.</p></div>
+      <div class="card stage-card" data-min="25"><div class="num">3</div><h3 data-en="Depth · 25 min" data-el="Βάθος · 25 λεπτά">Depth · 25 min</h3><p class="muted" data-en="A bit more work: a small part of what you have to do." data-el="Λίγη περισσότερη δουλειά: ένα μικρό κομμάτι από όσα έχεις να κάνεις.">A bit more work: a small part of what you have to do.</p></div>
+      <div class="card stage-card" data-min="45"><div class="num">4</div><h3 data-en="Flow · 45 min" data-el="Ροή · 45 λεπτά">Flow · 45 min</h3><p class="muted" data-en="A small study session, without interruptions." data-el="Ένα μικρό διάβασμα, χωρίς διακοπές.">A small study session, without interruptions.</p></div>
+      <div class="card stage-card" data-min="60"><div class="num">5</div><h3 data-en="Mastery · 60 min" data-el="Κορύφωση · 60 λεπτά">Mastery · 60 min</h3><p class="muted" data-en="One hour of focus on your work. Close what you don't need." data-el="Μία ώρα συγκέντρωση στη δουλειά σου. Κλείσε ό,τι δεν χρειάζεσαι.">One hour of focus on your work. Close what you don't need.</p></div>
+    </div>
+    <div id="stagePanel" class="card" style="margin-top:22px" hidden></div>
+  </section>
+
+  <footer>
+    <span data-en="Nepsis · Focus, one day at a time" data-el="Nepsis · Η προσοχή σου, μία μέρα τη φορά">Nepsis · Focus, one day at a time</span>
+    <br><a href="privacy.html" style="color:inherit" data-en="Privacy policy" data-el="Πολιτική απορρήτου">Privacy policy</a>
+  </footer>
+
+</div>
+<script>
+  // Shared: language switch and the three-line menu
+  let currentLang = "en";
+  function fmt(sec) {
+    const m = Math.floor(sec / 60), s = sec % 60;
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+  function setLang(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-en]").forEach(function (el) {
+      el.textContent = el.dataset[lang] || el.dataset.en;
+    });
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.classList.toggle("active", b.dataset.lang === lang);
+    });
+    if (typeof onLangChange === "function") onLangChange(lang);
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () { setLang(b.dataset.lang); });
+  });
+  const menuBtn = document.getElementById("menuBtn");
+  const menu = document.getElementById("menu");
+  function setMenu(open) {
+    menu.classList.toggle("open", open);
+    menuBtn.classList.toggle("open", open);
+    menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  menuBtn.addEventListener("click", function () { setMenu(!menu.classList.contains("open")); });
+  menu.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
+</script>
+<script>
+  // ---- Stage panel (opens below the cards) ----
+  const STAGE_DATA = {"5": {"n": 1, "order": "Start", "el_name": "Εκκίνηση", "purpose": ["A small everyday task, like brushing your teeth. The goal is to finish something for sure.", "Μια μικρή καθημερινή δουλειά, όπως να πλύνεις τα δόντια. Στόχος: να τελειώσεις κάτι σίγουρα."], "why": ["At five minutes the only goal is to finish. Each small win shows your mind that starting is possible, and that makes the next session easier.", "Στα πέντε λεπτά ο μόνος στόχος είναι να τελειώσεις. Κάθε μικρή νίκη δείχνει στο μυαλό σου ότι το ξεκίνημα είναι εφικτό, και αυτό κάνει την επόμενη περίοδο πιο εύκολη."], "steps": [["Pick one small task you already do every day.", "Διάλεξε μία μικρή εργασία που κάνεις ήδη κάθε μέρα."], ["Put your phone in another room.", "Άφησε το κινητό σε άλλο δωμάτιο."], ["Start the timer and do only that task.", "Ξεκίνα το χρονόμετρο και κάνε μόνο αυτή τη δουλειά."], ["When it ends, write one word about how it went.", "Όταν τελειώσει, γράψε μία λέξη για το πώς πήγε."]], "keep": ["Keep the task small. If it takes an hour, it belongs in a later stage.", "Κράτα τη δουλειά μικρή. Αν θέλει μία ώρα, ανήκει σε επόμενο στάδιο."], "ready": ["You finish your chosen task five days in a row without skipping it.", "Τελειώνεις τη δουλειά που διάλεξες πέντε μέρες στη σειρά χωρίς να την παραλείψεις."], "tip": ["Turn off all notifications except calls from people you know.", "Κλείσε όλες τις ειδοποιήσεις, εκτός από κλήσεις από ανθρώπους που ξέρεις."], "done": ["Done! Well done.", "Ολοκληρώθηκε! Πολύ καλή δουλειά."]}, "10": {"n": 2, "order": "Steady", "el_name": "Σταθερότητα", "purpose": ["Ten minutes to focus and decide what you will do today.", "Δέκα λεπτά για να συγκεντρωθείς και να αποφασίσεις τι θα κάνεις σήμερα."], "why": ["Most distraction starts when you don't know what to do next. Ten minutes of planning answers that question before it comes up.", "Οι περισσότερες αποσπάσεις ξεκινούν όταν δεν ξέρεις τι να κάνεις μετά. Δέκα λεπτά σχεδιασμού απαντούν σε αυτή την ερώτηση πριν προλάβει να εμφανιστεί."], "steps": [["Write down the three things that matter most today.", "Γράψε τα τρία πράγματα που έχουν περισσότερη σημασία σήμερα."], ["Choose the first one and write the time you will start it.", "Διάλεξε το πρώτο και γράψε την ώρα που θα το ξεκινήσεις."], ["Put the phone in another room before the timer ends.", "Άφησε το κινητό σε άλλο δωμάτιο πριν τελειώσει το χρονόμετρο."], ["Leave the other two for later. Do not start them now.", "Άφησε τα άλλα δύο για αργότερα. Μην τα ξεκινήσεις τώρα."]], "keep": ["This stage is only for planning. If you start working on the tasks, the ten minutes are already over.", "Αυτό το στάδιο είναι μόνο για σχεδιασμό. Αν αρχίσεις τις εργασίες, τα δέκα λεπτά έχουν ήδη τελειώσει."], "ready": ["You can name your first task of the day without looking at your notes.", "Μπορείς να πεις την πρώτη εργασία της ημέρας χωρίς να κοιτάς τις σημειώσεις σου."], "tip": ["When a distracting thought appears, write it down and go back to your task.", "Όταν εμφανιστεί μια αποσπαστική σκέψη, γράψ' την και γύρνα στη δουλειά."], "done": ["Done! Now start your first task.", "Ολοκληρώθηκε! Τώρα ξεκίνα την πρώτη εργασία."]}, "25": {"n": 3, "order": "Depth", "el_name": "Βάθος", "purpose": ["A bit more work: a small part of what you have to do.", "Λίγη περισσότερη δουλειά: ένα μικρό κομμάτι από όσα έχεις να κάνεις."], "why": ["Twenty-five minutes is long enough to make real progress and short enough to keep your attention. The short break afterwards gives your mind a rest before the next block.", "Τα είκοσι πέντε λεπτά φτάνουν για πραγματική πρόοδο και είναι αρκετά σύντομα ώστε να κρατήσεις την προσοχή σου. Το σύντομο διάλειμμα μετά δίνει ανάπαυση στο μυαλό πριν την επόμενη περίοδο."], "steps": [["Choose one part of a bigger task.", "Διάλεξε ένα κομμάτι από μια μεγαλύτερη εργασία."], ["Start the timer and work only on that part.", "Ξεκίνα το χρονόμετρο και δούλεψε μόνο σε αυτό το κομμάτι."], ["When it ends, stand up and step away from the screen for five minutes.", "Όταν τελειώσει, σήκω και απομακρύνσου από την οθόνη για πέντε λεπτά."], ["Come back and decide if you want one more block.", "Γύρνα και αποφάσισε αν θες ακόμα μία περίοδο."]], "keep": ["Use the break to move or drink water, not to check messages. Messages will still be there in five minutes.", "Χρησιμοποίησε το διάλειμμα για να κινηθείς ή να πιεις νερό, όχι για να ελέγξεις μηνύματα. Τα μηνύματα θα είναι εκεί και σε πέντε λεπτά."], "ready": ["You can work the full 25 minutes, and the break feels like a real rest, not a scroll.", "Μπορείς να δουλέψεις και τα 25 λεπτά, και το διάλειμμα είναι πραγματική ανάπαυση, όχι ώρα για scroll."], "tip": ["Put your phone in another room for the first 25 minutes of work.", "Άφησε το κινητό σε άλλο δωμάτιο τα πρώτα 25 λεπτά της δουλειάς."], "done": ["Done! Take your short break.", "Ολοκληρώθηκε! Κάνε το σύντομο διάλειμμα."]}, "45": {"n": 4, "order": "Flow", "el_name": "Ροή", "purpose": ["A small study session, without interruptions.", "Ένα μικρό διάβασμα, χωρίς διακοπές."], "why": ["Reading and studying need longer stretches, because the mind needs time to settle into the material. Forty-five minutes is enough to work through one topic.", "Το διάβασμα θέλει μεγαλύτερα διαστήματα, γιατί το μυαλό χρειάζεται χρόνο για να μπει στο υλικό. Τα σαράντα πέντε λεπτά φτάνουν για να δουλέψεις ένα θέμα."], "steps": [["Choose one topic for this session.", "Διάλεξε ένα θέμα για αυτή τη συνεδρία."], ["Open only the material for that topic.", "Άνοιξε μόνο το υλικό για αυτό το θέμα."], ["Take notes by hand, in your own words.", "Κράτα σημειώσεις με το χέρι, με δικά σου λόγια."], ["At the end, write the one thing you learned. Then take a 30-minute break.", "Στο τέλος, γράψε το ένα πράγμα που έμαθες. Μετά κάνε διάλειμμα 30 λεπτών."]], "keep": ["Do not switch subjects in the middle of the session. If something new comes up, write it down for next time.", "Μην αλλάζεις μάθημα στη μέση της συνεδρίας. Αν προκύψει κάτι καινούργιο, γράψε το για την επόμενη φορά."], "ready": ["You can study one topic from start to finish without opening other tabs.", "Μπορείς να διαβάσεις ένα θέμα από την αρχή μέχρι το τέλος χωρίς να ανοίγεις άλλες καρτέλες."], "tip": ["Work with one window at a time. Close what you don't need.", "Δούλεψε με ένα παράθυρο κάθε φορά. Κλείσε ό,τι δεν χρειάζεσαι."], "done": ["Done! Now take a 30-minute break.", "Ολοκληρώθηκε! Τώρα κάνε ένα διάλειμμα 30 λεπτών."]}, "60": {"n": 5, "order": "Mastery", "el_name": "Κορύφωση", "purpose": ["One hour of focus on your work. Close what you don't need.", "Μία ώρα συγκέντρωση στη δουλειά σου. Κλείσε ό,τι δεν χρειάζεσαι."], "why": ["This is the longest stage. The aim is not to be perfect, but to stay with one task for a full hour. Over time, focus starts to feel like a habit rather than an effort.", "Είναι το μεγαλύτερο στάδιο. Ο στόχος δεν είναι η τελειότητα, αλλά να μείνεις σε ένα έργο μία ολόκληρη ώρα. Με τον καιρό, η συγκέντρωση αρχίζει να μοιάζει με συνήθεια και όχι με προσπάθεια."], "steps": [["Choose the one task that matters most right now.", "Διάλεξε το έργο που έχει τη μεγαλύτερη σημασία αυτή τη στιγμή."], ["Close everything else: tabs, chats, and the phone's notifications.", "Κλείσε όλα τα υπόλοιπα: καρτέλες, συνομιλίες και ειδοποιήσεις του κινητού."], ["If your mind wanders, write the thought on paper and return to the task.", "Αν το μυαλό σου πάει αλλού, γράψε τη σκέψη σε χαρτί και γύρνα στο έργο."], ["At the end, note what you finished and what comes next.", "Στο τέλος, σημείωσε τι ολοκλήρωσες και τι έρχεται μετά."]], "keep": ["Do not plan the next task in the middle of this one. Write it down and keep going.", "Μην σχεδιάζεις την επόμενη εργασία στη μέση αυτής. Γράψ' την και συνέχισε."], "ready": ["You start the work without deciding to, and an hour passes before you check the time.", "Ξεκινάς τη δουλειά χωρίς να το αποφασίσεις, και μία ώρα περνάει πριν κοιτάξεις την ώρα."], "tip": ["Take a short break away from screens before starting a new session.", "Κάνε ένα σύντομο διάλειμμα μακριά από οθόνες πριν ξεκινήσεις νέα περίοδο."], "done": ["Done! Well done.", "Ολοκληρώθηκε! Πολύ καλή δουλειά."]}};
+  const PANEL_PL = [["Quick songs", "Γρήγορα τραγούδια", "2nAoTMLXOfhOwq8BziSopv"], ["For studying", "Για διάβασμα", "0bf0PLg5I856ySoVv7HCIR"], ["For relaxing", "Για χαλάρωση", "7wHb7vPGyj1BKBhAnZS73T"]];
+  let panelMin = null, panelLeft = 0, panelTimer = null, panelRunning = false;
+
+  function esc(t) { return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function L(pair) { return currentLang === "el" ? pair[1] : pair[0]; }
+  function bi(pair, tag, cls) {
+    const c = cls ? ' class="' + cls + '"' : "";
+    return '<' + tag + c + ' data-en="' + esc(pair[0]) + '" data-el="' + esc(pair[1]) + '">' + esc(L(pair)) + '</' + tag + '>';
+  }
+  function pBtnLabel() {
+    const btn = document.getElementById("pToggle");
+    if (!btn) return;
+    btn.textContent = panelRunning ? (currentLang === "el" ? "Παύση" : "Pause") : (currentLang === "el" ? "Έναρξη" : "Start");
+  }
+  function pDraw() { document.getElementById("pTime").textContent = fmt(panelLeft); }
+  function pStop() { panelRunning = false; clearInterval(panelTimer); panelTimer = null; pBtnLabel(); }
+  function pStart() {
+    if (panelRunning || panelLeft === 0) return;
+    panelRunning = true;
+    panelTimer = setInterval(pTick, 1000);
+    pBtnLabel();
+  }
+  function pTick() {
+    if (panelLeft > 0) { panelLeft--; pDraw(); return; }
+    const d = STAGE_DATA[panelMin];
+    pStop();
+    document.getElementById("pMsg").textContent = L(d.done);
+  }
+  function pShowMusic(i) {
+    const id = PANEL_PL[i][2];
+    document.getElementById("pFrame").innerHTML =
+      '<iframe title="Spotify playlist" style="border-radius:16px" src="https://open.spotify.com/embed/playlist/' + id +
+      '?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' +
+      '<p style="margin-top:10px"><a href="https://open.spotify.com/playlist/' + id + '" target="_blank" rel="noopener" style="color:var(--ember);font-weight:700">' +
+      (currentLang === "el" ? "Άνοιγμα στο Spotify" : "Open in Spotify") + '</a></p>';
+    document.querySelectorAll("#stagePanel .pick button").forEach(function (b, j) { b.classList.toggle("active", j === i); });
+  }
+  function closePanel() {
+    pStop();
+    panelMin = null;
+    document.getElementById("stagePanel").hidden = true;
+    document.querySelectorAll(".stage-card").forEach(function (c) { c.classList.remove("active"); });
+  }
+  function openStage(min, card) {
+    if (panelMin === min) { closePanel(); return; }
+    const d = STAGE_DATA[min];
+    pStop();
+    panelMin = min;
+    panelLeft = min * 60;
+    const panel = document.getElementById("stagePanel");
+    const steps = d.steps.map(function (st) { return '<li>' + bi(st, "span") + '</li>'; }).join("");
+    const picks = PANEL_PL.map(function (p, i) {
+      return '<button type="button" data-pidx="' + i + '"' + (i === 0 ? ' class="active"' : '') +
+        ' data-en="' + esc(p[0]) + '" data-el="' + esc(p[1]) + '">' + esc(L(p)) + '</button>';
+    }).join("");
+    panel.innerHTML =
+      '<span class="eyebrow" data-en="Stage ' + d.n + ' of 5" data-el="Στάδιο ' + d.n + ' από 5">' + (currentLang === "el" ? "Στάδιο " : "Stage ") + d.n + (currentLang === "el" ? " από 5" : " of 5") + '</span>' +
+      '<h2 data-en="' + esc(d.order + " · " + min + " min") + '" data-el="' + esc(d.el_name + " · " + min + " λεπτά") + '">' + esc(currentLang === "el" ? d.el_name + " · " + min + " λεπτά" : d.order + " · " + min + " min") + '</h2>' +
+      bi(d.purpose, "p", "muted") +
+      '<h3 data-en="Why this stage" data-el="Γιατί αυτό το στάδιο">' + (currentLang === "el" ? "Γιατί αυτό το στάδιο" : "Why this stage") + '</h3>' + bi(d.why, "p", "muted") +
+      '<h3 data-en="How to do it" data-el="Πώς το κάνεις">' + (currentLang === "el" ? "Πώς το κάνεις" : "How to do it") + '</h3><ol>' + steps + '</ol>' +
+      '<h3 data-en="Keep in mind" data-el="Να θυμάσαι">' + (currentLang === "el" ? "Να θυμάσαι" : "Keep in mind") + '</h3>' + bi(d.keep, "p", "muted") +
+      '<h3 data-en="You are ready for the next stage when" data-el="Είσαι έτοιμος για το επόμενο στάδιο όταν">' + (currentLang === "el" ? "Είσαι έτοιμος για το επόμενο στάδιο όταν" : "You are ready for the next stage when") + '</h3>' + bi(d.ready, "p", "muted") +
+      '<h3 data-en="Tip for this stage" data-el="Συμβουλή για αυτό το στάδιο">' + (currentLang === "el" ? "Συμβουλή για αυτό το στάδιο" : "Tip for this stage") + '</h3>' +
+      '<div class="tip" style="padding:20px;margin-top:6px">' + bi(d.tip, "p") + '</div>' +
+      '<h3 data-en="Timer" data-el="Χρονόμετρο">' + (currentLang === "el" ? "Χρονόμετρο" : "Timer") + '</h3>' +
+      '<div class="timer" style="box-shadow:none"><div class="time" id="pTime"></div>' +
+      '<div class="controls"><button type="button" id="pToggle"></button>' +
+      '<button type="button" id="pReset" class="secondary" data-en="Reset" data-el="Επαναφορά">' + (currentLang === "el" ? "Επαναφορά" : "Reset") + '</button></div>' +
+      '<div class="msg" id="pMsg"></div></div>' +
+      '<h3 data-en="Music for this session" data-el="Μουσική για αυτή τη συνεδρία">' + (currentLang === "el" ? "Μουσική για αυτή τη συνεδρία" : "Music for this session") + '</h3>' +
+      '<div class="pick">' + picks + '</div><div id="pFrame" style="margin-top:14px"></div>' +
+      '<button type="button" class="close" id="pClose" data-en="Close" data-el="Κλείσιμο">' + (currentLang === "el" ? "Κλείσιμο" : "Close") + '</button>';
+    panel.hidden = false;
+    document.querySelectorAll(".stage-card").forEach(function (c) { c.classList.toggle("active", c === card); });
+
+    pDraw();
+    pShowMusic(0);
+    document.getElementById("pToggle").addEventListener("click", function () { panelRunning ? pStop() : pStart(); });
+    document.getElementById("pReset").addEventListener("click", function () {
+      pStop(); panelLeft = panelMin * 60; pDraw();
+      document.getElementById("pMsg").textContent = "";
+    });
+    document.getElementById("pClose").addEventListener("click", closePanel);
+    document.querySelectorAll("#stagePanel .pick button").forEach(function (b) {
+      b.addEventListener("click", function () { pShowMusic(Number(b.dataset.pidx)); });
+    });
+    pStart();  // the timer starts as soon as the stage opens
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  document.querySelectorAll(".stage-card").forEach(function (c) {
+    c.addEventListener("click", function () { openStage(Number(c.dataset.min), c); });
+  });
+
+  function onLangChange() {
+    if (panelMin !== null) {
+      const m = panelMin;
+      closePanel();
+      openStage(m, document.querySelector('.stage-card[data-min="' + m + '"]'));
+    }
+  }
+  setLang("en");
+</script>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
+</body>
+</html>
