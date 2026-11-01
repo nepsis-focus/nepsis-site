@@ -118,9 +118,9 @@
 
   <div id="home-view">
 <div class="hero">
+    <span class="eyebrow" data-en="Nepsis" data-el="Nepsis" style="color:var(--ink)">Nepsis</span>
     <h1 data-en="Your focus, one day at a time." data-el="Η προσοχή σου, μία μέρα τη φορά.">Your focus, one day at a time.</h1>
-    <p class="lead" data-en="For people aged 18 to 25 who feel their phone steals their hours at school, at work, or while studying. Nepsis helps you build focus step by step, alongside people facing the same thing. No friends needed, no profile needed."
-       data-el="Για όσους είναι 18 έως 25 και νιώθουν ότι το κινητό κλέβει τις ώρες τους: σχολή, δουλειά, διάβασμα. Το Nepsis σε βοηθά να αυξάνεις σταδιακά τη συγκέντρωσή σου, μαζί με ανθρώπους που περνάνε το ίδιο. Χωρίς φίλους, χωρίς προφίλ.">For people aged 18 to 25 who feel their phone steals their hours at school, at work, or while studying. Nepsis helps you build focus step by step, alongside people facing the same thing. No friends needed, no profile needed.</p>
+    <p class="lead" data-en="Build focus, one step at a time." data-el="Χτίζεις τη συγκέντρωσή σου, βήμα βήμα.">Build focus, one step at a time.</p>
     <div class="btns">
       <a class="btn" href="https://19473cf2.sibforms.com/serve/MUIFAMkEqB9sSChSnDcr0Ftuut57yfIjc5IBYBylavwDyffcmiktOmVfqpSm5xXFTr0Ov3cexf_Kk-igMieqlbLcXEAa03kF1ax4ExUerD2nfQ7q84j5b6Y2Xe_02L1juc-zD8Hpnw0-7ZJuKCeJOiFOXqlkNYe23UNpmwfrep-MPrw6ngkbz7F-r1ZBSYDJtDrgPKXLSIQIGr8quA==" target="_blank" rel="noopener" data-en="Subscribe" data-el="Γράψου">Subscribe</a>
       <a class="btn alt" href="#stages" data-en="See the stages" data-el="Δες τα στάδια">See the stages</a>
@@ -128,6 +128,30 @@
   </div>
 
 
+
+  <section id="globe" style="padding-top:20px">
+    <span class="eyebrow" data-en="From around the world" data-el="Από όλο τον κόσμο">From around the world</span>
+    <h2 data-en="You are here too" data-el="Είσαι κι εσύ εδώ">You are here too</h2>
+    <p class="muted" style="max-width:60ch" data-en="Choose the country you are visiting from. Your dot appears on the globe, and the others appear as more people join." data-el="Διάλεξε τη χώρα από την οποία μπαίνεις. Η τελεία σου εμφανίζεται στην υδρόγειο, και οι άλλες θα εμφανίζονται όσο μπαίνουν κι άλλοι.">Choose the country you are visiting from. Your dot appears on the globe, and the others appear as more people join.</p>
+    <div class="card" style="margin-top:22px;display:flex;flex-direction:column;align-items:center;gap:16px;padding:28px 20px">
+      <svg id="globeSvg" viewBox="0 0 320 320" width="100%" style="max-width:480px;height:auto;cursor:grab;touch-action:none">
+        <defs>
+          <radialGradient id="oceanGrad" cx="40%" cy="35%" r="75%">
+            <stop offset="0" stop-color="#FFE9B0"/>
+            <stop offset="1" stop-color="#F2B24A"/>
+          </radialGradient>
+        </defs>
+        <g id="globeLayer"></g>
+        <circle id="userHalo" cx="-50" cy="-50" r="14" fill="rgba(232,69,44,.25)"/>
+        <circle id="userDot" cx="-50" cy="-50" r="6" fill="#E8452C" stroke="#1E1510" stroke-width="2"/>
+      </svg>
+      <p id="globeMsg" class="muted" style="text-align:center;min-height:1.5em"></p>
+      <label style="display:grid;gap:6px;width:100%;max-width:360px;font-weight:700">
+        <span data-en="Your country" data-el="Η χώρα σου">Your country</span>
+        <select id="countrySel" style="font:inherit;padding:10px;border-radius:12px;border:1.5px solid rgba(30,21,16,.25);background:#fff"></select>
+      </label>
+    </div>
+  </section>
 
   <section id="koinos">
     <div class="goal">
@@ -508,7 +532,7 @@
     const src = document.getElementById("tipSource");
     src.textContent = (currentTip && currentTip.source) ? ((L === "el" ? "Πηγή: " : "Source: ") + currentTip.source) : "";
   }
-  function onLangChange() { renderTip(); if (typeof onStageLang === 'function') onStageLang(); }
+  function onLangChange() { renderTip(); if (typeof onStageLang === 'function') onStageLang(); if (typeof renderGlobe === 'function') renderGlobe(); }
   
   fetch("tips.json", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : null; })
@@ -516,6 +540,124 @@
     .catch(function () {});
   setLang("en");
 
+</script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+  // Globe with the real world map (countries and borders). Turn it by dragging.
+  // The visitor's country is stored on this device only.
+  const GLOBE_KEY = "nepsis-country";
+  const COUNTRIES = [
+    { id: "GR", el: "Ελλάδα", en: "Greece", lat: 39, lon: 22 },
+    { id: "CY", el: "Κύπρος", en: "Cyprus", lat: 35, lon: 33 },
+    { id: "DE", el: "Γερμανία", en: "Germany", lat: 51, lon: 10 },
+    { id: "FR", el: "Γαλλία", en: "France", lat: 46, lon: 2 },
+    { id: "GB", el: "Ηνωμένο Βασίλειο", en: "United Kingdom", lat: 54, lon: -2 },
+    { id: "IT", el: "Ιταλία", en: "Italy", lat: 42, lon: 12 },
+    { id: "ES", el: "Ισπανία", en: "Spain", lat: 40, lon: -4 },
+    { id: "TR", el: "Τουρκία", en: "Turkey", lat: 39, lon: 35 },
+    { id: "EG", el: "Αίγυπτος", en: "Egypt", lat: 26, lon: 30 },
+    { id: "US", el: "ΗΠΑ", en: "United States", lat: 39, lon: -98 },
+    { id: "CA", el: "Καναδάς", en: "Canada", lat: 56, lon: -106 },
+    { id: "BR", el: "Βραζιλία", en: "Brazil", lat: -10, lon: -55 },
+    { id: "IN", el: "Ινδία", en: "India", lat: 21, lon: 78 },
+    { id: "JP", el: "Ιαπωνία", en: "Japan", lat: 36, lon: 138 },
+    { id: "AU", el: "Αυστραλία", en: "Australia", lat: -25, lon: 133 }
+  ];
+  let proj = null, path = null, world = null, rot = [-20, -25, 0];
+
+  function selectedCountry() {
+    const id = localStorage.getItem(GLOBE_KEY);
+    return COUNTRIES.filter(function (c) { return c.id === id; })[0] || null;
+  }
+  function renderSelect() {
+    const sel = document.getElementById("countrySel");
+    if (!sel) return;
+    const isEl = currentLang === "el";
+    const current = sel.value || (selectedCountry() ? selectedCountry().id : "");
+    sel.innerHTML = '<option value="">' + (isEl ? "Διάλεξε χώρα" : "Choose a country") + '</option>' +
+      COUNTRIES.map(function (c) { return '<option value="' + c.id + '">' + (isEl ? c.el + " (" + c.en + ")" : c.en + " (" + c.el + ")") + '</option>'; }).join("");
+    sel.value = current;
+  }
+  function placeDot() {
+    const c = selectedCountry();
+    const dot = d3.select("#userDot"), halo = d3.select("#userHalo");
+    const msg = document.getElementById("globeMsg");
+    const isEl = currentLang === "el";
+    if (!c) {
+      dot.attr("cx", -50).attr("cy", -50); halo.attr("cx", -50).attr("cy", -50);
+      msg.textContent = isEl ? "Διάλεξε τη χώρα σου για να εμφανιστεί η τελεία σου." : "Choose your country to place your dot.";
+      return;
+    }
+    const visible = d3.geoDistance([c.lon, c.lat], [-rot[0], -rot[1]]) < Math.PI / 2;
+    if (visible) {
+      const p = proj([c.lon, c.lat]);
+      dot.attr("cx", p[0]).attr("cy", p[1]); halo.attr("cx", p[0]).attr("cy", p[1]);
+      msg.textContent = isEl ? "Συγχαρητήρια! Μπαίνεις από " + c.el + "." : "Congratulations! You are visiting from " + c.en + ".";
+    } else {
+      dot.attr("cx", -50).attr("cy", -50); halo.attr("cx", -50).attr("cy", -50);
+      msg.textContent = isEl ? "Η " + c.el + " είναι στην άλλη πλευρά. Γύρνα την υδρόγειο για να τη δεις." : c.en + " is on the other side. Turn the globe to see it.";
+    }
+  }
+  function redraw() {
+    if (!proj) return;
+    d3.select("#globeLayer").selectAll("path").attr("d", function (d) { return path(d); });
+    placeDot();
+  }
+  function buildGlobe() {
+    const layer = d3.select("#globeLayer");
+    layer.selectAll("*").remove();
+    proj = d3.geoOrthographic().scale(150).translate([160, 160]).clipAngle(90).rotate(rot);
+    path = d3.geoPath(proj);
+    layer.append("path").datum({ type: "Sphere" })
+      .attr("fill", "url(#oceanGrad)").attr("stroke", "rgba(30,21,16,.35)").attr("stroke-width", 1.5);
+    layer.append("path").datum(d3.geoGraticule10())
+      .attr("fill", "none").attr("stroke", "rgba(30,21,16,.12)").attr("stroke-width", 0.6);
+    layer.selectAll("path.land").data(world.features).enter().append("path")
+      .attr("fill", "#FFF6E5").attr("fill-opacity", 0.92)
+      .attr("stroke", "rgba(30,21,16,.45)").attr("stroke-width", 0.5);
+    d3.select("#globeSvg").call(d3.drag().on("drag", function (event) {
+      rot = [rot[0] + event.dx * 0.4, Math.max(-75, Math.min(75, rot[1] - event.dy * 0.4)), 0];
+      proj.rotate(rot);
+      redraw();
+    }));
+    redraw();
+  }
+  function spinTo(c) {
+    const start = rot.slice(), target = [-c.lon, -c.lat, 0];
+    d3.transition().duration(900).tween("spin", function () {
+      const i = d3.interpolate(start, target);
+      return function (t) { rot = i(t); proj.rotate(rot); redraw(); };
+    });
+  }
+  function renderGlobe() { renderSelect(); placeDot(); }
+
+  document.getElementById("countrySel").addEventListener("change", function (e) {
+    const c = COUNTRIES.filter(function (x) { return x.id === e.target.value; })[0];
+    if (c) { localStorage.setItem(GLOBE_KEY, c.id); if (proj) spinTo(c); }
+    else localStorage.removeItem(GLOBE_KEY);
+    renderGlobe();
+  });
+
+  (async function initGlobe() {
+    const msg = document.getElementById("globeMsg");
+    renderSelect();
+    if (!window.d3 || !window.topojson) {
+      msg.textContent = currentLang === "el" ? "Η υδρόγειος δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "The globe did not load. Refresh the page.";
+      return;
+    }
+    try {
+      const res = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json");
+      const topo = await res.json();
+      world = topojson.feature(topo, topo.objects.countries);
+      buildGlobe();
+      const c = selectedCountry();
+      if (c) { rot = [-c.lon, -c.lat, 0]; proj.rotate(rot); redraw(); }
+      renderGlobe();
+    } catch (err) {
+      msg.textContent = currentLang === "el" ? "Ο χάρτης δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "The map did not load. Refresh the page.";
+    }
+  })();
 </script>
 <script>
   // Show the stages page or the home page, depending on the link used
@@ -530,5 +672,6 @@
   window.addEventListener("hashchange", showView);
   showView();
 </script>
+<script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
 </body>
 </html>
