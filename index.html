@@ -131,15 +131,10 @@
       <div>
         <span class="eyebrow" data-en="Shared goal" data-el="Ο κοινός στόχος">Shared goal</span>
         <h2 data-en="You are not alone" data-el="Δεν είσαι μόνος σου">You are not alone</h2>
-        <p data-en="Every day, everyone shares a small focused-work goal. You see how many people are taking part, with no profile, no photo, and no need to reveal who you are."
-           data-el="Κάθε μέρα, όλοι μαζί μοιράζονται έναν μικρό στόχο εστιασμένης δουλειάς. Βλέπεις πόσοι άνθρωποι συμμετέχουν, χωρίς προφίλ, χωρίς φωτογραφίες και χωρίς να αποκαλύψεις την ταυτότητά σου.">Every day, everyone shares a small focused-work goal. You see how many people are taking part, with no profile, no photo, and no need to reveal who you are.</p>
+        <p data-en="Every day, many people work on the same small focused-work goal. No profile, no photo, and no need to reveal who you are."
+           data-el="Κάθε μέρα, πολλοί άνθρωποι δουλεύουν τον ίδιο μικρό στόχο εστιασμένης δουλειάς. Χωρίς προφίλ, χωρίς φωτογραφίες και χωρίς να αποκαλύψεις την ταυτότητά σου.">Every day, many people work on the same small focused-work goal. No profile, no photo, and no need to reveal who you are.</p>
       </div>
-      <div class="meter">
-        <div style="color:#E9DCC8" data-en="Today, together" data-el="Σήμερα, όλοι μαζί">Today, together</div>
-        <div class="big" data-en="Every minute counts" data-el="Κάθε λεπτό μετράει">Every minute counts</div>
-        <div class="bar"><i id="bar"></i></div>
-        <p style="margin-top:12px;color:#E9DCC8;font-size:.95rem" data-en="Your small progress adds up with everyone else's. (Sample bar, not live data.)" data-el="Η μικρή σου πρόοδος αθροίζεται με των άλλων. (Δείγμα, όχι πραγματικά δεδομένα.)">Your small progress adds up with everyone else's. (Sample bar, not live data.)</p>
-      </div>
+
     </div>
   </section>
 
@@ -167,7 +162,7 @@
     <h2 data-en="Tell us what happened" data-el="Πες μας τι συνέβη">Tell us what happened</h2>
     <p class="muted" style="max-width:60ch" data-en="If a button, a timer or a playlist does not work for you, write it here. We read every message." data-el="Αν ένα κουμπί, το χρονόμετρο ή μια playlist δεν λειτουργεί, γράψ' το εδώ. Διαβάζουμε κάθε μήνυμα.">If a button, a timer or a playlist does not work for you, write it here. We read every message.</p>
     <div class="card" style="margin-top:22px;text-align:center">
-      <a class="btn" href="mailto:EMAIL_HERE?subject=Nepsis%20-%20something%20is%20wrong" style="display:inline-block" data-en="Write to us" data-el="Γράψε μας">Write to us</a>
+      <a class="btn" href="mailto:nepsis.corp@gmail.com?subject=Nepsis%20-%20something%20is%20wrong" style="display:inline-block" data-en="Write to us" data-el="Γράψε μας">Write to us</a>
       <p class="muted" style="margin-top:12px;font-size:.9rem" data-en="Your email app will open with a subject line already filled in." data-el="Θα ανοίξει η εφαρμογή email σου με έτοιμο θέμα.">Your email app will open with a subject line already filled in.</p>
     </div>
   </section>
@@ -233,7 +228,7 @@
     src.textContent = (currentTip && currentTip.source) ? ((L === "el" ? "Πηγή: " : "Source: ") + currentTip.source) : "";
   }
   function onLangChange() { renderTip(); }
-  requestAnimationFrame(function () { document.getElementById("bar").style.width = "62%"; });
+  
   fetch("tips.json", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (t) { if (t) { currentTip = t; renderTip(); } })
