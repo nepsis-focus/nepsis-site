@@ -121,6 +121,7 @@
     <h2 data-en="From 5 minutes to one hour of focus" data-el="Από 5 λεπτά μέχρι μία ώρα εστιασμένης δουλειάς">From 5 minutes to one hour of focus</h2>
     <p class="muted" style="max-width:60ch" data-en="Every stage builds on the one before. Move on only when the current one feels natural."
        data-el="Κάθε στάδιο χτίζεται πάνω στο προηγούμενο. Προχώρα μόνο όταν το τρέχον σου φαίνεται φυσικό.">Every stage builds on the one before. Move on only when the current one feels natural.</p>
+    <div class="card" id="progress" style="margin-top:18px"></div>
     <div class="grid">
       <div class="card stage-card" data-min="5"><div class="num">1</div><h3 data-en="Start · 5 min" data-el="Εκκίνηση · 5 λεπτά">Start · 5 min</h3><p class="muted" data-en="A small everyday task, like brushing your teeth. The goal is to finish something for sure." data-el="Μια μικρή καθημερινή δουλειά, όπως να πλύνεις τα δόντια. Στόχος: να τελειώσεις κάτι σίγουρα.">A small everyday task, like brushing your teeth. The goal is to finish something for sure.</p></div>
       <div class="card stage-card" data-min="10"><div class="num">2</div><h3 data-en="Steady · 10 min" data-el="Σταθερότητα · 10 λεπτά">Steady · 10 min</h3><p class="muted" data-en="Ten minutes to focus and decide what you will do today." data-el="Δέκα λεπτά για να συγκεντρωθείς και να αποφασίσεις τι θα κάνεις σήμερα.">Ten minutes to focus and decide what you will do today.</p></div>
@@ -197,6 +198,7 @@
     if (panelLeft > 0) { panelLeft--; pDraw(); return; }
     const d = STAGE_DATA[panelMin];
     pStop();
+    markStage(panelMin);
     document.getElementById("pMsg").textContent = L(d.done);
   }
   function pShowMusic(i) {
@@ -243,6 +245,7 @@
       '<div class="msg" id="pMsg"></div></div>' +
       '<h3 data-en="Music for this session" data-el="Μουσική για αυτή τη συνεδρία">' + (currentLang === "el" ? "Μουσική για αυτή τη συνεδρία" : "Music for this session") + '</h3>' +
       '<div class="pick">' + picks + '</div><div id="pFrame" style="margin-top:14px"></div>' +
+      '<button type="button" class="close" id="pDone" style="color:var(--ink);font-weight:700" data-en="I did it today" data-el="Το έκανα σήμερα">' + (currentLang === "el" ? "Το έκανα σήμερα" : "I did it today") + '</button>' +
       '<button type="button" class="close" id="pClose" data-en="Close" data-el="Κλείσιμο">' + (currentLang === "el" ? "Κλείσιμο" : "Close") + '</button>';
     panel.hidden = false;
     document.querySelectorAll(".stage-card").forEach(function (c) { c.classList.toggle("active", c === card); });
@@ -255,6 +258,10 @@
       document.getElementById("pMsg").textContent = "";
     });
     document.getElementById("pClose").addEventListener("click", closePanel);
+    document.getElementById("pDone").addEventListener("click", function () {
+      markStage(panelMin);
+      document.getElementById("pMsg").textContent = currentLang === "el" ? "Καταγράφηκε για σήμερα." : "Saved for today.";
+    });
     document.querySelectorAll("#stagePanel .pick button").forEach(function (b) {
       b.addEventListener("click", function () { pShowMusic(Number(b.dataset.pidx)); });
     });
@@ -266,15 +273,79 @@
     c.addEventListener("click", function () { openStage(Number(c.dataset.min), c); });
   });
 
+
+  // ---- Progress on this device (no account) ----
+  const PROGRESS_KEY = "nepsis-progress";
+  const STAGE_MINS = [5, 10, 25, 45, 60];
+  function fmtKey(d) {
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function loadProgress() {
+    try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || { days: {} }; }
+    catch (e) { return { days: {} }; }
+  }
+  function saveProgress(p) {
+    try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(p)); } catch (e) {}
+  }
+  function markStage(min) {
+    const p = loadProgress();
+    const k = fmtKey(new Date());
+    p.days[k] = p.days[k] || [];
+    if (!p.days[k].includes(min)) p.days[k].push(min);
+    saveProgress(p);
+    renderProgress();
+  }
+  // Streak: consecutive days with the 5-minute stage done. If today is not done yet, the streak still counts up to yesterday.
+  function currentStreak(p) {
+    const d = new Date();
+    const has = function (k) { return p.days[k] && p.days[k].includes(5); };
+    if (!has(fmtKey(d))) d.setDate(d.getDate() - 1);
+    let n = 0;
+    while (has(fmtKey(d))) { n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  function totalDays(p) {
+    return Object.keys(p.days).filter(function (k) { return p.days[k].includes(5); }).length;
+  }
+  function renderProgress() {
+    const el = document.getElementById("progress");
+    if (!el) return;
+    const p = loadProgress();
+    const k = fmtKey(new Date());
+    const today = p.days[k] || [];
+    const el_ = currentLang === "el";
+    const streak = currentStreak(p);
+    const total = totalDays(p);
+    const badges = STAGE_MINS.map(function (m, i) {
+      const done = today.includes(m);
+      return '<span style="display:inline-block;padding:6px 12px;border-radius:999px;font-weight:700;font-size:.9rem;margin:4px 6px 4px 0;background:' +
+        (done ? 'var(--ink);color:var(--paper)' : 'transparent;border:2px solid var(--ink)') + '">' + (done ? "✓ " : "") + (i + 1) + ' · ' + m + (el_ ? " λ." : " min") + '</span>';
+    }).join("");
+    const todayLine = today.includes(5)
+      ? (el_ ? "Σήμερα έκανες το στάδιο των 5 λεπτών. Μπράβο!" : "You did the 5-minute stage today. Well done!")
+      : (el_ ? "Ξεκίνα σήμερα με τα 5 λεπτά." : "Start today with 5 minutes.");
+    const streakLine = streak > 0
+      ? (el_ ? "Σερί: " + streak + (streak === 1 ? " μέρα" : " μέρες") : "Streak: " + streak + (streak === 1 ? " day" : " days"))
+      : (el_ ? "Σερί: 0 μέρες. Κάθε μέρα που ξεκινάς μετράει." : "Streak: 0 days. Every day you start counts.");
+    const totalLine = el_ ? "Συνολικά: " + total + (total === 1 ? " μέρα" : " μέρες") + " με το στάδιο των 5 λεπτών." : "Total: " + total + (total === 1 ? " day" : " days") + " with the 5-minute stage.";
+    el.innerHTML =
+      '<h3 style="font-size:1.1rem;margin-bottom:6px">' + (el_ ? "Η πρόοδός σου" : "Your progress") + '</h3>' +
+      '<p style="font-size:1.2rem;font-weight:800">' + streakLine + '</p>' +
+      '<p class="muted" style="margin-top:4px">' + totalLine + '</p>' +
+      '<p style="margin-top:10px">' + todayLine + '</p>' +
+      '<div style="margin-top:8px">' + badges + '</div>' +
+      '<p class="muted" style="font-size:.85rem;margin-top:8px">' + (el_ ? "Αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Saved only on this device.") + '</p>';
+  }
   function onLangChange() {
+    renderProgress();
     if (panelMin !== null) {
       const m = panelMin;
       closePanel();
       openStage(m, document.querySelector('.stage-card[data-min="' + m + '"]'));
     }
   }
-  setLang("en");
+  renderProgress();
+    setLang("en");
 </script>
-<script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
 </body>
 </html>
