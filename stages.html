@@ -199,6 +199,7 @@
     const d = STAGE_DATA[panelMin];
     pStop();
     markStage(panelMin);
+    showAfter(panelMin);
     document.getElementById("pMsg").textContent = L(d.done);
   }
   function pShowMusic(i) {
@@ -243,6 +244,7 @@
       '<div class="controls"><button type="button" id="pToggle"></button>' +
       '<button type="button" id="pReset" class="secondary" data-en="Reset" data-el="Επαναφορά">' + (currentLang === "el" ? "Επαναφορά" : "Reset") + '</button></div>' +
       '<div class="msg" id="pMsg"></div></div>' +
+      '<div id="pAfter" style="margin-top:14px"></div>' +
       '<h3 data-en="Music for this session" data-el="Μουσική για αυτή τη συνεδρία">' + (currentLang === "el" ? "Μουσική για αυτή τη συνεδρία" : "Music for this session") + '</h3>' +
       '<div class="pick">' + picks + '</div><div id="pFrame" style="margin-top:14px"></div>' +
       '<button type="button" class="close" id="pDone" style="color:var(--ink);font-weight:700" data-en="I did it today" data-el="Το έκανα σήμερα">' + (currentLang === "el" ? "Το έκανα σήμερα" : "I did it today") + '</button>' +
@@ -260,6 +262,7 @@
     document.getElementById("pClose").addEventListener("click", closePanel);
     document.getElementById("pDone").addEventListener("click", function () {
       markStage(panelMin);
+      showAfter(panelMin);
       document.getElementById("pMsg").textContent = currentLang === "el" ? "Καταγράφηκε για σήμερα." : "Saved for today.";
     });
     document.querySelectorAll("#stagePanel .pick button").forEach(function (b) {
@@ -273,6 +276,78 @@
     c.addEventListener("click", function () { openStage(Number(c.dataset.min), c); });
   });
 
+
+  // ---- Fact after each stage, and a one-word note on what distracted you ----
+  const FACTS = {
+    5:  { en: "Gloria Mark (UC Irvine) found that the average time people spend on one screen before switching fell from about 2.5 minutes in 2004 to about 47 seconds around 2020.",
+          el: "Η Gloria Mark (UC Irvine) βρήκε ότι ο μέσος χρόνος σε μία οθόνη πριν την αλλαγή έπεσε από περίπου 2,5 λεπτά το 2004 σε περίπου 47 δευτερόλεπτα γύρω στο 2020.",
+          src: "Gloria Mark, University of California, Irvine" },
+    10: { en: "In an older Florida State University study, people who received notifications made more errors on a demanding attention task, even without touching their phone.",
+          el: "Σε παλιότερη έρευνα του Florida State University, όσοι έπαιρναν ειδοποιήσεις έκαναν περισσότερα λάθη σε δύσκολο έργο προσοχής, ακόμα και χωρίς να αγγίξουν το κινητό.",
+          src: "Florida State University (older study)" },
+    25: { en: "A 2026 study in Computers in Human Behavior (180 students) estimated that one notification can slow information processing by about 7 seconds. This is an average from one experiment, not a universal rule.",
+          el: "Μελέτη του 2026 στο Computers in Human Behavior (180 φοιτητές) εκτίμησε ότι μία ειδοποίηση μπορεί να επιβραδύνει την επεξεργασία πληροφοριών για περίπου 7 δευτερόλεπτα. Είναι μέση τιμή ενός πειράματος, όχι καθολικός κανόνας.",
+          src: "Fournier et al., Computers in Human Behavior, 2026" },
+    45: { en: "A University of British Columbia study with 221 students over two weeks found more inattention and lower productivity when all notifications were on. The researchers say more tests are needed.",
+          el: "Μελέτη του University of British Columbia με 221 φοιτητές, σε δύο εβδομάδες, βρήκε περισσότερη απροσεξία και λιγότερη παραγωγικότητα όταν οι ειδοποιήσεις ήταν όλες ανοιχτές. Οι ερευνητές λένε ότι χρειάζονται περισσότερες δοκιμές.",
+          src: "University of British Columbia" },
+    60: { en: "The same University of British Columbia study as the 45-minute stage: when notifications were on, students reported more inattention and less productivity.",
+          el: "Η ίδια μελέτη του University of British Columbia με το στάδιο των 45 λεπτών: όταν οι ειδοποιήσεις ήταν ανοιχτές, οι φοιτητές ανέφεραν περισσότερη απροσεξία και λιγότερη παραγωγικότητα.",
+          src: "University of British Columbia" }
+  };
+  const DISTRACTIONS = [
+    ["notification", "Ειδοποίηση", "Notification"],
+    ["phone", "Κινητό", "Phone"],
+    ["thought", "Σκέψη", "Thought"],
+    ["tired", "Κούραση", "Tiredness"],
+    ["none", "Τίποτα", "Nothing"]
+  ];
+  function showAfter(min) {
+    const box = document.getElementById("pAfter");
+    if (!box) return;
+    const f = FACTS[min];
+    const isEl = currentLang === "el";
+    box.innerHTML =
+      '<div class="tip" style="padding:20px"><p style="font-size:1rem;font-weight:700">' + (isEl ? "Γνώση" : "Did you know") + '</p>' +
+      '<p style="font-weight:400;margin-top:6px">' + esc(isEl ? f.el : f.en) + '</p>' +
+      '<p class="muted" style="font-size:.85rem;margin-top:6px">' + (isEl ? "Πηγή: " : "Source: ") + esc(f.src) + '</p></div>' +
+      '<p style="font-weight:700;margin-top:16px">' + (isEl ? "Τι σε απέσπασε;" : "What distracted you?") + '</p>' +
+      '<div class="pick" id="pWords">' + DISTRACTIONS.map(function (d) {
+        return '<button type="button" data-word="' + d[0] + '">' + (isEl ? d[1] : d[2]) + '</button>';
+      }).join("") + '</div>' +
+      '<p class="muted" id="pWordMsg" style="font-size:.9rem;margin-top:6px"></p>';
+    box.querySelectorAll("#pWords button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        saveDistraction(b.dataset.word);
+        document.getElementById("pWordMsg").textContent = isEl ? "Αποθηκεύτηκε για σήμερα." : "Saved for today.";
+      });
+    });
+  }
+  function saveDistraction(word) {
+    const p = loadProgress();
+    const k = fmtKey(new Date());
+    p.distractions = p.distractions || {};
+    p.distractions[k] = p.distractions[k] || [];
+    p.distractions[k].push(word);
+    saveProgress(p);
+    renderProgress();
+  }
+  function distractionLine(p, isEl) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 6);
+    const from = fmtKey(cutoff);
+    const counts = {};
+    Object.keys(p.distractions || {}).forEach(function (k) {
+      if (k >= from) p.distractions[k].forEach(function (w) { counts[w] = (counts[w] || 0) + 1; });
+    });
+    const words = Object.keys(counts).filter(function (w) { return w !== "none"; });
+    if (!words.length) {
+      return isEl ? "Αυτή την εβδομάδα δεν έχεις σημειώσει ακόμα τι σε αποσπά." : "You have not noted what distracts you this week yet.";
+    }
+    words.sort(function (a, b) { return counts[b] - counts[a]; });
+    const top = DISTRACTIONS.filter(function (d) { return d[0] === words[0]; })[0];
+    return (isEl ? "Η συχνότερη αποσπαστική σου σκέψη αυτή την εβδομάδα: " + top[1] : "Your most frequent distraction this week: " + top[2]) + ".";
+  }
 
   // ---- Progress on this device (no account) ----
   const PROGRESS_KEY = "nepsis-progress";
@@ -334,6 +409,7 @@
       '<p class="muted" style="margin-top:4px">' + totalLine + '</p>' +
       '<p style="margin-top:10px">' + todayLine + '</p>' +
       '<div style="margin-top:8px">' + badges + '</div>' +
+      '<p style="margin-top:10px">' + distractionLine(p, el_) + '</p>' +
       '<p class="muted" style="font-size:.85rem;margin-top:8px">' + (el_ ? "Αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Saved only on this device.") + '</p>';
   }
   function onLangChange() {
