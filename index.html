@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='5' fill='%23F08A24'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;600;800&family=Literata:ital,wght@1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@1,500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #FFF8EE; --fg: #3A2418; --card: #FFFDF8; --muted: #7A5F50;
@@ -17,17 +17,20 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body { font-family: "Commissioner", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--fg); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  body { font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--fg); line-height: 1.55; -webkit-font-smoothing: antialiased; }
   section { scroll-margin-top: 80px; }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 22px; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
   .eyebrow { display: inline-block; font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); margin-bottom: 10px; }
-  h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.1; letter-spacing: -.01em; }
+  h2 { font-size: clamp(2rem, 4.4vw, 3rem); font-weight: 900; line-height: 1.1; letter-spacing: -.01em; }
   .muted { color: var(--muted); }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 999px; font: inherit; font-weight: 800; text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: transform .15s ease; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 15px 30px; border-radius: 999px; font: inherit; font-weight: 800; text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: transform .15s ease; }
   .btn:hover { transform: translateY(-2px); }
   .btn-primary { background: var(--grad); color: #fff; box-shadow: 0 18px 40px -18px rgba(216,57,43,.55); }
   .btn-ghost { background: #fff; color: var(--fg); border-color: var(--border); }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 26px; box-shadow: 0 10px 30px -18px rgba(120,60,30,.3); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 30px;
+    box-shadow: 0 1px 2px rgba(120,60,30,.08), 0 16px 30px -12px rgba(120,60,30,.28), 0 44px 70px -34px rgba(120,60,30,.4);
+    transition: transform .25s ease, box-shadow .25s ease; }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 2px 4px rgba(120,60,30,.08), 0 24px 40px -14px rgba(120,60,30,.32), 0 60px 90px -40px rgba(120,60,30,.45); }
 
   /* header */
   header.top { position: sticky; top: 0; z-index: 20; background: rgba(255,248,238,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
@@ -58,7 +61,7 @@
   .hero .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
 
   /* sections */
-  .block { padding: 76px 0; }
+  .block { padding: 96px 0; }
   .block .head { max-width: 680px; margin-bottom: 30px; }
   .block .head p { margin-top: 12px; color: var(--muted); font-size: 1.05rem; }
 
@@ -144,6 +147,25 @@
   .chips button { border: 2px solid var(--fg); background: transparent; color: var(--fg); padding: 7px 12px; border-radius: 999px; font: inherit; font-weight: 800; font-size: .85rem; cursor: pointer; }
   .chips button:hover { background: var(--fg); color: #FFF8EE; }
   .after .saved { color: var(--ember); font-weight: 800; margin-top: 6px; font-size: .85rem; }
+  .cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; text-transform: capitalize; }
+  .cal-head .nav { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border); background: #fff; font-size: 1.1rem; cursor: pointer; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .dow { font-size: .7rem; font-weight: 800; color: var(--muted); text-align: center; }
+  .day { aspect-ratio: 1; border-radius: 14px; display: grid; place-items: center; font-size: .8rem; font-weight: 800; background: #F6EBDD; color: var(--muted); }
+  .day.lvl1 { background: #FBE3B4; color: var(--fg); }
+  .day.lvl2 { background: #F7C978; color: var(--fg); }
+  .day.lvl3 { background: #F0702A; color: #fff; }
+  .day.lvl4 { background: #D8392B; color: #fff; }
+  .day.today { outline: 2px solid var(--fg); }
+  .qbox { margin-top: 16px; }
+  .qtext { font-weight: 800; }
+  .chips button.sel { background: var(--fg); color: #FFF8EE; }
+  .sub-modal { position: fixed; inset: 0; display: grid; place-items: center; padding: 18px; z-index: 40; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .sub-modal.open { opacity: 1; pointer-events: auto; }
+  .sub-card { position: relative; background: var(--card); border-radius: 28px; padding: 28px; width: min(520px, 100%); max-height: 92vh; overflow: auto; box-shadow: 0 40px 80px -30px rgba(120,60,30,.55); transform: translateY(14px); transition: transform .25s ease; }
+  .sub-modal.open .sub-card { transform: translateY(0); }
+  .sub-card .close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--orange); background: none; color: var(--orange); font-size: 1.1rem; cursor: pointer; }
+  .sub-frame { width: 100%; height: 420px; border: 0; margin-top: 16px; border-radius: 16px; background: transparent; }
 </style>
 </head>
 <body>
@@ -180,7 +202,7 @@
       <h1 data-el="Η συγκέντρωσή σου, <em>μία μέρα τη φορά.</em>" data-en="Your focus, <em>one day at a time.</em>">Η συγκέντρωσή σου, <em>μία μέρα τη φορά.</em></h1>
       <p class="lead" data-el="Χτίσε συγκέντρωση, ένα βήμα τη φορά." data-en="Build focus, one step at a time.">Χτίσε συγκέντρωση, ένα βήμα τη φορά.</p>
       <div class="btns">
-        <a class="btn btn-primary" href="https://19473cf2.sibforms.com/serve/MUIFAMkEqB9sSChSnDcr0Ftuut57yfIjc5IBYBylavwDyffcmiktOmVfqpSm5xXFTr0Ov3cexf_Kk-igMieqlbLcXEAa03kF1ax4ExUerD2nfQ7q84j5b6Y2Xe_02L1juc-zD8Hpnw0-7ZJuKCeJOiFOXqlkNYe23UNpmwfrep-MPrw6ngkbz7F-r1ZBSYDJtDrgPKXLSIQIGr8quA==" target="_blank" rel="noopener" data-el="Εγγραφή" data-en="Subscribe">Εγγραφή</a>
+        <a class="btn btn-primary" href="#subscribe" id="subBtn" data-el="Εγγραφή" data-en="Subscribe">Εγγραφή</a>
         <a class="btn btn-ghost" href="#stages" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
       </div>
     </div>
@@ -288,6 +310,7 @@
         <p data-el="Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη." data-en="Start with 5 minutes and move up when you feel ready.">Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη.</p>
       </div>
       <div class="card progress-card" id="progress" style="margin-bottom:22px"></div>
+      <div class="card progress-card" id="calendar" style="margin-bottom:26px"></div>
       <svg width="0" height="0" style="position:absolute" aria-hidden="true">
         <defs>
           <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
@@ -296,6 +319,7 @@
           </linearGradient>
         </defs>
       </svg>
+      <div class="card" id="quiz" style="margin-bottom:26px;padding:26px"></div>
       <div class="stages" id="stageGrid"></div>
       <p class="stage-note" data-el="Το χρονόμετρο ξεκινά όταν πατήσεις Έναρξη. Η πρόοδος δεν αποθηκεύεται σε λογαριασμό." data-en="The timer starts when you press Start. Progress is not saved to an account.">Το χρονόμετρο ξεκινά όταν πατήσεις Έναρξη. Η πρόοδος δεν αποθηκεύεται σε λογαριασμό.</p>
     </div>
@@ -325,6 +349,18 @@
 
 </main>
 
+
+<div class="scrim" id="subScrim"></div>
+<div class="sub-modal" id="subModal" role="dialog" aria-modal="true" aria-labelledby="subTitle">
+  <div class="sub-card">
+    <button type="button" class="close" id="subClose" aria-label="Close">✕</button>
+    <span class="eyebrow" data-el="Εγγραφή" data-en="Subscribe">Εγγραφή</span>
+    <h2 id="subTitle" data-el="Έλα μαζί μας" data-en="Join us">Έλα μαζί μας</h2>
+    <p class="muted" style="margin-top:8px" data-el="Μία συμβουλή συγκέντρωσης κάθε εβδομάδα, στο email σου." data-en="One focus tip each week, in your inbox.">Μία συμβουλή συγκέντρωσης κάθε εβδομάδα, στο email σου.</p>
+    <iframe class="sub-frame" src="https://19473cf2.sibforms.com/serve/MUIFAMkEqB9sSChSnDcr0Ftuut57yfIjc5IBYBylavwDyffcmiktOmVfqpSm5xXFTr0Ov3cexf_Kk-igMieqlbLcXEAa03kF1ax4ExUerD2nfQ7q84j5b6Y2Xe_02L1juc-zD8Hpnw0-7ZJuKCeJOiFOXqlkNYe23UNpmwfrep-MPrw6ngkbz7F-r1ZBSYDJtDrgPKXLSIQIGr8quA==" title="Subscribe" loading="lazy"></iframe>
+  </div>
+</div>
+
 <footer>
   <div class="wrap foot">
     <span class="logo" style="font-size:1rem"><span class="dot"></span>Nepsis</span>
@@ -348,7 +384,7 @@
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress();
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz();
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -636,6 +672,7 @@
       '<div class="badges">' + badges + '</div>' +
       '<div class="sub" style="margin-top:12px">' + distractionLine(p) + '</div>' +
       '<div class="sub" style="font-size:.85rem">' + (isEl ? "Αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Saved only on this device.") + '</div>';
+    renderCalendar();
   }
   function showAfter(state) {
     const box = state.el.querySelector("[data-after]");
@@ -662,6 +699,91 @@
     });
   }
 
+
+  // ---------- calendar (uses the same progress data) ----------
+  let calMonth = new Date(); calMonth.setDate(1);
+  function renderCalendar() {
+    const el = $("calendar");
+    if (!el) return;
+    const isEl = currentLang === "el";
+    const p = loadProgress();
+    const y = calMonth.getFullYear(), m = calMonth.getMonth();
+    const offset = (new Date(y, m, 1).getDay() + 6) % 7;      // week starts on Monday
+    const days = new Date(y, m + 1, 0).getDate();
+    const names = isEl ? ["Δευ", "Τρι", "Τετ", "Πεμ", "Παρ", "Σαβ", "Κυρ"] : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const title = new Date(y, m, 1).toLocaleDateString(isEl ? "el-GR" : "en-GB", { month: "long", year: "numeric" });
+    const today = fmtKey(new Date());
+    let cells = names.map(function (n) { return '<div class="dow">' + n + '</div>'; }).join("");
+    for (let i = 0; i < offset; i++) cells += '<div></div>';
+    for (let d = 1; d <= days; d++) {
+      const k = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+      const list = p.days[k] || [];
+      const maxMin = list.length ? Math.max.apply(null, list) : 0;
+      const lvl = maxMin >= 60 ? 4 : maxMin >= 45 ? 3 : maxMin >= 25 ? 2 : maxMin >= 5 ? 1 : 0;
+      cells += '<div class="day lvl' + lvl + (k === today ? ' today' : '') + '" title="' + k + '">' + d + '</div>';
+    }
+    el.innerHTML =
+      '<div class="cal-head"><button type="button" class="nav" data-prev>‹</button><strong>' + title + '</strong><button type="button" class="nav" data-next>›</button></div>' +
+      '<div class="cal-grid">' + cells + '</div>' +
+      '<div class="sub" style="margin-top:10px">' + (isEl
+        ? "Κάθε μέρα που ολοκλήρωσες στάδιο έχει χρώμα. Πιο σκούρο σημαίνει μεγαλύτερο στάδιο."
+        : "Each day you completed a stage is coloured. Darker means a longer stage.") + '</div>';
+    el.querySelector("[data-prev]").addEventListener("click", function () { calMonth = new Date(y, m - 1, 1); renderCalendar(); });
+    el.querySelector("[data-next]").addEventListener("click", function () { calMonth = new Date(y, m + 1, 1); renderCalendar(); });
+  }
+
+  // ---------- quiz: suggests a starting stage ----------
+  const QUIZ = [
+    { q: ["Πόσο συχνά ελέγχεις το κινητό σου;", "How often do you check your phone?"],
+      o: [["Συνέχεια", "All the time", 0], ["Κάποιες φορές", "Sometimes", 1], ["Σπάνια", "Rarely", 2]] },
+    { q: ["Πόσο διαρκεί η προσοχή σου σε μία εργασία;", "How long does your focus last on one task?"],
+      o: [["Λιγότερο από 5 λεπτά", "Less than 5 minutes", 0], ["5 έως 15 λεπτά", "5 to 15 minutes", 1], ["Πάνω από 15 λεπτά", "More than 15 minutes", 2]] },
+    { q: ["Έχεις κάνει ποτέ μία ώρα χωρίς διακοπή;", "Have you ever done one hour without interruption?"],
+      o: [["Όχι ακόμα", "Not yet", 0], ["Μερικές φορές", "Sometimes", 1], ["Ναι, συχνά", "Yes, often", 2]] }
+  ];
+  let quizAns = [];
+  function buildQuiz() {
+    const el = $("quiz");
+    if (!el) return;
+    const L = currentLang === "el" ? 0 : 1;
+    let html = '<span class="eyebrow">' + (L === 0 ? "Κουίζ" : "Quiz") + '</span>' +
+      '<h2>' + (L === 0 ? "Ποιο στάδιο να ξεκινήσεις;" : "Which stage should you start with?") + '</h2>';
+    QUIZ.forEach(function (item, qi) {
+      html += '<div class="qbox"><div class="qtext">' + (qi + 1) + '. ' + item.q[L] + '</div><div class="chips">' +
+        item.o.map(function (o, oi) {
+          return '<button type="button" data-q="' + qi + '" data-o="' + oi + '"' + (quizAns[qi] === oi ? ' class="sel"' : '') + '>' + o[L] + '</button>';
+        }).join("") + '</div></div>';
+    });
+    if (quizAns.length === QUIZ.length && quizAns.every(function (v) { return v !== undefined; })) {
+      const score = quizAns.reduce(function (a, oi, qi) { return a + QUIZ[qi].o[oi][2]; }, 0);
+      const min = score <= 1 ? 5 : score === 2 ? 10 : score === 3 ? 25 : score === 4 ? 45 : 60;
+      html += '<div class="fact" style="margin-top:16px"><strong>' +
+        (L === 0 ? "Σου προτείνω το στάδιο των " + min + " λεπτών." : "I suggest the " + min + "-minute stage.") + '</strong> ' +
+        '<button type="button" class="btn btn-primary" data-goto="' + min + '" style="margin-left:8px;padding:10px 16px">' +
+        (L === 0 ? "Πήγαινε στο στάδιο" : "Go to stage") + '</button></div>';
+    }
+    el.innerHTML = html;
+    el.querySelectorAll("[data-o]").forEach(function (b) {
+      b.addEventListener("click", function () { quizAns[Number(b.dataset.q)] = Number(b.dataset.o); buildQuiz(); });
+    });
+    const go = el.querySelector("[data-goto]");
+    if (go) go.addEventListener("click", function () {
+      const idx = [5, 10, 25, 45, 60].indexOf(Number(go.dataset.goto));
+      const card = document.querySelectorAll("#stageGrid .stage")[idx];
+      if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }
+
+
+  // ---------- subscribe panel (opens inside the site) ----------
+  function setSub(open) {
+    $("subModal").classList.toggle("open", open);
+    $("subScrim").classList.toggle("open", open);
+  }
+  $("subBtn").addEventListener("click", function (e) { e.preventDefault(); setSub(true); });
+  $("subClose").addEventListener("click", function () { setSub(false); });
+  $("subScrim").addEventListener("click", function () { setSub(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setSub(false); });
   // ---------- start ----------
   renderSelect(); renderCalc(); renderStageLabels();
   setLang("el");
