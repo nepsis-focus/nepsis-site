@@ -26,8 +26,8 @@
   footer a { color: var(--ink); }
 
   /* NEPSIS MOTION SYSTEM — visible, warm, and consistent across pages */
+  @view-transition { navigation: auto; }
   @media (prefers-reduced-motion: no-preference) {
-    @view-transition { navigation: auto; }
     ::view-transition-old(root) {
       animation: nepsis-page-out .22s cubic-bezier(.4,0,.2,1) both;
     }
