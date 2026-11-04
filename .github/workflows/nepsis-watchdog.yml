@@ -1,0 +1,82 @@
+name: Nepsis 24/7 Watchdog
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: nepsis-watchdog
+  cancel-in-progress: true
+
+jobs:
+  browser-health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Test the live website
+        id: health
+        continue-on-error: true
+        env:
+          SITE_URL: https://nepsis-focus.github.io/nepsis-site/
+        run: node scripts/site-watchdog.mjs
+
+      - name: Open or update a GitHub issue if checks fail
+        if: steps.health.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "🚨 Nepsis watchdog: live-site check failed";
+            const body = [
+              "The scheduled browser health check detected a problem.",
+              "",
+              "Check the **Nepsis 24/7 Watchdog** workflow run for the detailed report:",
+              process.env.GITHUB_SERVER_URL + "/" + process.env.GITHUB_REPOSITORY + "/actions/runs/" + process.env.GITHUB_RUN_ID,
+              "",
+              "This issue is automatically maintained by the watchdog. Close it after the problem is fixed."
+            ].join("\n");
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100
+            });
+            const existing = issues.find(issue => issue.title === title);
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body
+              });
+            }
+
+      - name: Fail the workflow when the site is unhealthy
+        if: steps.health.outcome == 'failure'
+        run: exit 1
