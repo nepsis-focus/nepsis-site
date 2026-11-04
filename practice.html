@@ -417,6 +417,62 @@
     .stage-folder-tab, .stage .start { transition: none !important; }
   }
 
+
+  /* NEPSIS FINISH PASS — clearer depth, light and tactile feedback */
+  .motion-spotlight .nepsis-light {
+    background: radial-gradient(340px circle at var(--nepsis-x) var(--nepsis-y),
+      rgba(217,112,58,.28), rgba(247,209,90,.11) 40%, transparent 74%);
+  }
+  .motion-spotlight:hover {
+    border-color: rgba(190,89,46,.72);
+    box-shadow: 0 1px 0 rgba(255,255,255,.92) inset,
+      0 24px 44px -25px rgba(120,64,36,.52),
+      0 0 0 1px rgba(190,89,46,.18);
+  }
+  .cta {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease, border-color .4s ease;
+  }
+  .cta::before {
+    content: "";
+    position: absolute;
+    width: 280px; height: 280px;
+    right: -105px; top: -165px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(247,209,90,.24), rgba(240,112,42,.08) 48%, transparent 72%);
+    pointer-events: none; z-index: -1;
+    transition: transform .65s cubic-bezier(.16,1,.3,1);
+  }
+  .cta:hover { transform: translateY(-4px); border-color: rgba(190,89,46,.48); box-shadow: 0 22px 46px -30px rgba(120,64,36,.5); }
+  .cta:hover::before { transform: scale(1.35) translate(-12px,10px); }
+  .btn:not(:disabled) { transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, filter .3s ease; }
+  .btn-primary:hover { filter: saturate(1.12) brightness(1.04); box-shadow: 0 20px 42px -17px rgba(216,57,43,.68); }
+  .page-heading h1::after, .wrap > h1::after { animation: nepsis-heading-line .85s .28s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes nepsis-heading-line { from { transform: scaleX(.08); opacity: .35; } to { transform: scaleX(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .cta, .cta::before, .btn:not(:disabled), .page-heading h1::after, .wrap > h1::after { animation: none !important; transition: none !important; }
+    .cta:hover { transform: none; }
+  }
+
+  /* Folder motion: the tab visibly opens, then the stage settles into focus */
+  .stage { overflow: visible; transition: border-color .38s ease, box-shadow .38s ease, background .38s ease; }
+  .stage-folder-tab {
+    width: 112px; height: 25px;
+    transform: perspective(420px) rotateX(0deg) translateY(0);
+    box-shadow: 0 7px 15px -8px rgba(115,57,28,.72);
+  }
+  .stage:hover .stage-folder-tab, .stage:focus-within .stage-folder-tab {
+    transform: perspective(420px) rotateX(-58deg) translateY(-7px) scaleX(1.04);
+    box-shadow: 0 14px 18px -10px rgba(115,57,28,.82);
+  }
+  .stage:hover { border-color: rgba(190,89,46,.48); }
+  .stage .ring { transition: transform .5s cubic-bezier(.16,1,.3,1); }
+  .stage:hover .ring, .stage:focus-within .ring { transform: translateZ(10px) translateY(-3px) scale(1.045); }
+  .stage .start { box-shadow: 0 8px 18px -12px rgba(184,52,30,.65); }
+  @media (prefers-reduced-motion: reduce) { .stage .ring { transition: none !important; } }
+
 </style>
 </head>
 <body class="practice-page">
@@ -1867,6 +1923,40 @@
         scrollTrigger: { trigger: ".stages", start: "top 82%", once: true }
       });
     }
+  }
+})();
+</script>
+
+
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var extras = document.querySelectorAll(".cta, .daily-challenge, .knowledge-note, .faq-list details");
+  extras.forEach(function (el) {
+    if (el.dataset.nepsisSpotlight === "true") return;
+    el.dataset.nepsisSpotlight = "true";
+    el.classList.add("motion-spotlight");
+    var light = document.createElement("span");
+    light.className = "nepsis-light";
+    light.setAttribute("aria-hidden", "true");
+    el.insertBefore(light, el.firstChild);
+    if (finePointer) {
+      el.addEventListener("pointermove", function (event) {
+        var rect = el.getBoundingClientRect();
+        el.style.setProperty("--nepsis-x", (event.clientX - rect.left) + "px");
+        el.style.setProperty("--nepsis-y", (event.clientY - rect.top) + "px");
+      });
+    }
+  });
+  if (!reduce && window.gsap && window.ScrollTrigger) {
+    gsap.utils.toArray(".daily-challenge, .knowledge-note").forEach(function (el) {
+      gsap.from(el, {
+        y: 34, opacity: 0, scale: .985, duration: .82, ease: "power3.out",
+        clearProps: "transform,opacity",
+        scrollTrigger: { trigger: el, start: "top 86%", once: true }
+      });
+    });
   }
 })();
 </script>
