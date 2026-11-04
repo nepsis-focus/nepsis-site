@@ -647,7 +647,7 @@
     const loader = new THREE.TextureLoader();
     loader.setCrossOrigin("anonymous");
     loader.load(
-      "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg",
+      "https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_atmos_2048.jpg",
       function (texture) {
         if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
         earthMaterial.map = texture;
@@ -659,12 +659,12 @@
         if (msg && !selectedCountry()) msg.textContent = currentLang === "el" ? "Δεν φορτώθηκε η εικόνα της Γης. Έλεγξε τη σύνδεσή σου." : "Earth texture could not load. Check your connection.";
       }
     );
-    loader.load("https://threejs.org/examples/textures/planets/earth_normal_2048.jpg", function (texture) {
+    loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_normal_2048.jpg", function (texture) {
       earthMaterial.normalMap = texture;
       earthMaterial.normalScale = new THREE.Vector2(0.42, 0.42);
       earthMaterial.needsUpdate = true;
     });
-    loader.load("https://threejs.org/examples/textures/planets/earth_clouds_1024.png", function (texture) {
+    loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_clouds_1024.png", function (texture) {
       if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
       cloudMaterial.map = texture;
       cloudMaterial.needsUpdate = true;
