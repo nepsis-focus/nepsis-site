@@ -134,6 +134,9 @@ jobs:
           npm install --no-save playwright
           npx playwright install --with-deps chromium
 
+      - name: Validate AI agent JavaScript syntax
+        run: node --check scripts/nepsis-ai-agent.mjs
+
       - name: Ask the Nepsis AI agent to diagnose and propose a safe fix
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
