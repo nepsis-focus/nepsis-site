@@ -42,6 +42,18 @@ async function commentOnIssue(message) {
   await githubRequest("/issues/" + issueNumber + "/comments", "POST", { body: message });
 }
 
+
+async function recentAgentAnalysisExists() {
+  if (!issueNumber) return false;
+  const comments = await githubRequest("/issues/" + issueNumber + "/comments?per_page=100", "GET");
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  return comments.some(comment =>
+    typeof comment.body === "string" &&
+    comment.body.includes("<!-- nepsis-ai-agent-analysis -->") &&
+    Date.parse(comment.created_at) > cutoff
+  );
+}
+
 function filesForFailures(failures) {
   const selected = [];
   for (const failure of failures) {
@@ -187,6 +199,10 @@ async function main() {
   requireEnv(repository, "GITHUB_REPOSITORY");
 
   const report = JSON.parse(await readFile(reportPath, "utf8"));
+  if (await recentAgentAnalysisExists()) {
+    console.log("A Nepsis AI diagnosis already exists for this incident within the last 24 hours; skipping another API call to avoid repeated costs.");
+    return;
+  }
   const failures = Array.isArray(report.failures) ? report.failures : [];
   const selectedFiles = filesForFailures(failures);
   const sourceFiles = {};
@@ -200,7 +216,7 @@ async function main() {
   const patch = verifyPatch(result.patches);
   if (!patch) {
     await commentOnIssue(
-      "## Nepsis AI diagnosis\n\n" + result.diagnosis +
+      "${marker}\n## Nepsis AI diagnosis\n\n" + result.diagnosis +
       "\n\n**Result:** No code change was proposed. The agent found no high-confidence, safe correction supported by the report. This can happen for temporary hosting/network failures.\n\nWorkflow run: " +
       process.env.GITHUB_SERVER_URL + "/" + repository + "/actions/runs/" + runId
     );
@@ -250,7 +266,7 @@ async function main() {
   });
 
   await commentOnIssue(
-    "## Nepsis AI proposed a fix\n\n" + result.summary +
+    "${marker}\n## Nepsis AI proposed a fix\n\n" + result.summary +
     "\n\nA pull request is ready for review: " + pullRequest.html_url +
     "\n\nThe proposed changes passed the local browser watchdog. The PR has not been merged or deployed."
   );
@@ -262,7 +278,7 @@ main().catch(async error => {
   try {
     if (githubToken && repository && issueNumber) {
       await githubRequest("/issues/" + issueNumber + "/comments", "POST", {
-        body: "## Nepsis AI agent could not complete the diagnosis\n\n" + error.message +
+        body: "${marker}\n## Nepsis AI agent could not complete the diagnosis\n\n" + error.message +
           "\n\nNo code changes were merged or deployed. Review the agent workflow logs for details."
       });
     }
