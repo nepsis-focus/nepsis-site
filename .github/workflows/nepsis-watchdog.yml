@@ -7,10 +7,6 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
-  issues: write
-
 concurrency:
   group: nepsis-watchdog
   cancel-in-progress: true
@@ -19,6 +15,12 @@ jobs:
   browser-health-check:
     runs-on: ubuntu-latest
     timeout-minutes: 8
+    permissions:
+      contents: read
+      issues: write
+    outputs:
+      health_outcome: ${{ steps.health.outcome }}
+      issue_number: ${{ steps.report_issue.outputs.issue_number }}
     steps:
       - name: Check out site
         uses: actions/checkout@v4
@@ -40,7 +42,13 @@ jobs:
           SITE_URL: https://nepsis-focus.github.io/nepsis-site/
         run: node scripts/site-watchdog.mjs
 
+      - name: Create fallback report if the browser check could not finish
+        if: always() && hashFiles('nepsis-watchdog-report.json') == ''
+        run: |
+          node -e "require('fs').writeFileSync('nepsis-watchdog-report.json', JSON.stringify({ checkedAt: new Date().toISOString(), base: 'https://nepsis-focus.github.io/nepsis-site/', pages: [], failures: ['The browser health check did not produce a report. Review the workflow logs.'] }, null, 2))"
+
       - name: Open or update a GitHub issue if checks fail
+        id: report_issue
         if: steps.health.outcome == 'failure'
         uses: actions/github-script@v7
         with:
@@ -61,22 +69,78 @@ jobs:
               per_page: 100
             });
             const existing = issues.find(issue => issue.title === title);
+            let issueNumber;
             if (existing) {
+              issueNumber = existing.number;
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: existing.number,
+                issue_number: issueNumber,
                 body
               });
             } else {
-              await github.rest.issues.create({
+              const { data: created } = await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title,
                 body
               });
+              issueNumber = created.number;
             }
+            core.setOutput("issue_number", String(issueNumber));
+
+      - name: Upload health report for the AI agent
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nepsis-health-report
+          path: nepsis-watchdog-report.json
+          retention-days: 7
+          if-no-files-found: error
 
       - name: Fail the workflow when the site is unhealthy
         if: steps.health.outcome == 'failure'
         run: exit 1
+
+  ai-agent:
+    name: AI diagnosis and safe fix proposal
+    needs: browser-health-check
+    if: always() && needs.browser-health-check.outputs.health_outcome == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Check out the exact revision that failed
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Download watchdog report
+        uses: actions/download-artifact@v4
+        with:
+          name: nepsis-health-report
+          path: .nepsis-agent-input
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Ask the Nepsis AI agent to diagnose and propose a safe fix
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_ISSUE_NUMBER: ${{ needs.browser-health-check.outputs.issue_number }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          OPENAI_MODEL: gpt-5.4-mini
+        run: node scripts/nepsis-ai-agent.mjs
