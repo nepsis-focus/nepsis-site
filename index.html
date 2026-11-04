@@ -52,26 +52,79 @@
   .scrim { position: fixed; inset: 0; background: rgba(40,20,10,.35); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 25; }
   .scrim.open { opacity: 1; pointer-events: auto; }
 
-  /* hero */
-  .hero { text-align: center; padding: 72px 0 40px; background: radial-gradient(60% 60% at 50% 35%, rgba(247,209,90,.55) 0%, rgba(240,112,42,.18) 45%, transparent 75%); }
-  .badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--border); font-size: .72rem; font-weight: 800; letter-spacing: .14em; color: var(--fg); }
-  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); font-weight: 800; line-height: 1.02; letter-spacing: -.02em; margin: 22px auto 0; max-width: 16ch; }
+  /* immersive globe hero */
+  .hero {
+    position: relative; isolation: isolate; display: flex; align-items: center;
+    min-height: clamp(680px, calc(100svh - 64px), 980px);
+    padding: 46px 0 76px; text-align: left; overflow: hidden;
+    background:
+      radial-gradient(54% 88% at 78% 48%, rgba(87,153,193,.16) 0%, transparent 72%),
+      radial-gradient(45% 70% at 8% 65%, rgba(247,209,90,.28) 0%, transparent 72%),
+      var(--bg);
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(90deg, var(--bg) 0%, rgba(255,248,238,.96) 27%, rgba(255,248,238,.78) 41%, rgba(255,248,238,0) 69%);
+  }
+  .hero .wrap { position: relative; z-index: 3; width: 100%; pointer-events: none; }
+  .hero-copy { position: relative; z-index: 3; max-width: 535px; pointer-events: auto; }
+  .hero h1 { font-size: clamp(2.7rem, 5vw, 4.65rem); font-weight: 800; line-height: 1.02; letter-spacing: -.02em; margin: 22px 0 0; max-width: 12ch; }
   .hero h1 em { font-family: "Literata", Georgia, serif; font-style: italic; font-weight: 500; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero p.lead { margin: 18px auto 0; max-width: 46ch; font-size: 1.1rem; color: var(--muted); }
-  .hero .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .hero p.lead { margin: 18px 0 0; max-width: 39ch; font-size: 1.1rem; color: var(--muted); }
+  .hero .btns { display: flex; gap: 12px; justify-content: flex-start; flex-wrap: wrap; margin-top: 30px; }
+  .hero-earth {
+    position: absolute; z-index: 0; top: 50%; right: -2.5vw;
+    width: min(92vh, 78vw, 1020px); height: min(92vh, 78vw, 1020px);
+    transform: translateY(-50%); pointer-events: none;
+    filter: drop-shadow(0 28px 48px rgba(35,74,104,.20));
+  }
+  #globeCanvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; pointer-events: auto; outline: none; }
+  #globeCanvas:active { cursor: grabbing; }
+  .globe-drag-hint {
+    position: absolute; left: 31%; bottom: 7%; z-index: 2; color: var(--muted);
+    font-size: .88rem; font-weight: 800; white-space: nowrap; pointer-events: none;
+    background: rgba(255,253,248,.78); border: 1px solid rgba(238,220,200,.8);
+    border-radius: 999px; padding: 8px 14px; backdrop-filter: blur(8px);
+  }
+  .hero-country {
+    position: absolute; z-index: 4; right: clamp(18px, 4vw, 64px); bottom: 22px;
+    width: min(300px, calc(100vw - 36px)); padding: 17px 19px;
+    background: rgba(255,253,248,.94); border: 1px solid var(--border);
+    border-radius: 20px; box-shadow: 0 12px 34px rgba(120,60,30,.14);
+    backdrop-filter: blur(12px);
+  }
+  .hero-country .eyebrow { margin-bottom: 4px; }
+  .hero-country h2 { font-size: 1.16rem; line-height: 1.2; }
+  .hero-country label { display: grid; gap: 7px; font-weight: 800; margin-top: 11px; font-size: .9rem; }
+  .hero-country select { width: 100%; font: inherit; padding: 11px 13px; border-radius: 12px; border: 1.5px solid var(--border); background: #fff; color: var(--fg); }
+  .hero-country .msg { min-height: 1.4em; margin-top: 8px; color: var(--ember); font-weight: 800; font-size: .82rem; }
+  @media (max-width: 820px) {
+    .hero { min-height: max(760px, calc(100svh - 64px)); align-items: flex-start; padding: 34px 0 190px; }
+    .hero::after { background: linear-gradient(180deg, rgba(255,248,238,.05) 0%, rgba(255,248,238,.18) 36%, rgba(255,248,238,.94) 57%, var(--bg) 82%); }
+    .hero .wrap { margin-top: auto; }
+    .hero-earth { width: min(112vw, 76vh); height: min(112vw, 76vh); top: -4vw; right: -20vw; transform: none; opacity: .96; }
+    .hero-copy { max-width: 100%; padding-top: min(48vh, 420px); }
+    .hero h1 { font-size: clamp(2.45rem, 8.7vw, 3.65rem); max-width: 14ch; }
+    .hero p.lead { max-width: 37ch; }
+    .hero-country { position: relative; right: auto; bottom: auto; width: min(100%, 360px); margin: 22px 0 0; }
+    .globe-drag-hint { left: 12%; bottom: 12%; font-size: .78rem; }
+  }
+  @media (max-width: 480px) {
+    .hero { min-height: 820px; padding-bottom: 32px; }
+    .hero-earth { width: 118vw; height: 118vw; right: -29vw; top: -2vw; }
+    .hero-copy { padding-top: min(51vh, 430px); }
+    .hero h1 { font-size: clamp(2.25rem, 10vw, 3rem); }
+    .hero .btns { gap: 9px; margin-top: 22px; }
+    .hero .btn { padding: 12px 20px; }
+    .globe-drag-hint { display: none; }
+  }
 
   /* sections */
   .block { padding: 96px 0; }
   .block .head { max-width: 680px; margin-bottom: 30px; }
   .block .head p { margin-top: 12px; color: var(--muted); font-size: 1.05rem; }
 
-  /* globe */
-  .globe-wrap { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: center; }
-  @media (min-width: 820px) { .globe-wrap { grid-template-columns: 1.1fr 1fr; } }
-  #globeSvg { width: 100%; max-width: 480px; height: auto; cursor: grab; touch-action: none; display: block; margin: 0 auto; }
-  .country-box label { display: grid; gap: 8px; font-weight: 800; margin-top: 18px; }
-  .country-box select { font: inherit; padding: 13px 14px; border-radius: 14px; border: 1.5px solid var(--border); background: #fff; color: var(--fg); }
-  .country-box .msg { min-height: 1.6em; margin-top: 12px; color: var(--ember); font-weight: 800; }
+  /* 3D globe styles are part of the immersive hero above */
 
   /* calculator */
   .calc { display: grid; gap: 22px; }
@@ -242,46 +295,31 @@
 <main id="top">
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" id="globe">
+    <div class="hero-earth" id="globeStage">
+      <canvas id="globeCanvas" role="img" aria-label="Interactive 3D Earth. Drag to rotate." tabindex="0"></canvas>
+      <div class="globe-drag-hint" data-el="Σύρε για να περιστρέψεις τη Γη" data-en="Drag to rotate the Earth">Σύρε για να περιστρέψεις τη Γη</div>
+    </div>
     <div class="wrap">
-      <span class="badge"><span class="dot" style="width:8px;height:8px"></span>NEPSIS</span>
-      <h1 data-el="Η συγκέντρωσή σου, <em>μία μέρα τη φορά.</em>" data-en="Your focus, <em>one day at a time.</em>">Η συγκέντρωσή σου, <em>μία μέρα τη φορά.</em></h1>
-      <p class="lead" data-el="Χτίσε συγκέντρωση, ένα βήμα τη φορά." data-en="Build focus, one step at a time.">Χτίσε συγκέντρωση, ένα βήμα τη φορά.</p>
-      <div class="btns">
-        <a class="btn btn-primary" href="#subscribe" id="subBtn" data-el="Εγγραφή" data-en="Subscribe">Εγγραφή</a>
-        <a class="btn btn-ghost" href="#stages" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
+      <div class="hero-copy">
+        <span class="badge"><span class="dot" style="width:8px;height:8px"></span>NEPSIS</span>
+        <h1 data-el="Η συγκέντρωσή σου, <em>μία μέρα τη φορά.</em>" data-en="Your focus, <em>one day at a time.</em>">Η συγκέντρωσή σου, <em>μία μέρα τη φορά.</em></h1>
+        <p class="lead" data-el="Χτίσε συγκέντρωση, ένα βήμα τη φορά." data-en="Build focus, one step at a time.">Χτίσε συγκέντρωση, ένα βήμα τη φορά.</p>
+        <div class="btns">
+          <a class="btn btn-primary" href="#subscribe" id="subBtn" data-el="Εγγραφή" data-en="Subscribe">Εγγραφή</a>
+          <a class="btn btn-ghost" href="#stages" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
+        </div>
+
       </div>
     </div>
-  </section>
-
-  <!-- GLOBE -->
-  <section class="block" style="padding-top:20px" id="globe">
-    <div class="wrap">
-      <div class="globe-wrap">
-        <div>
-          <svg id="globeSvg" viewBox="0 0 320 320" aria-label="Globe">
-            <defs>
-              <radialGradient id="oceanGrad" cx="40%" cy="35%" r="75%">
-                <stop offset="0" stop-color="#FFF1CF"/>
-                <stop offset="1" stop-color="#F7C978"/>
-              </radialGradient>
-            </defs>
-            <g id="globeLayer"></g>
-            <circle id="userHalo" cx="-50" cy="-50" r="14" fill="rgba(216,57,43,.25)"/>
-            <circle id="userDot" cx="-50" cy="-50" r="6" fill="#D8392B" stroke="#3A2418" stroke-width="2"/>
-          </svg>
-        </div>
-        <div class="country-box">
-          <span class="eyebrow" data-el="Από πού μας επισκέπτεσαι;" data-en="Where are you visiting from?">Από πού μας επισκέπτεσαι;</span>
-          <h2 data-el="Διάλεξε τη χώρα σου" data-en="Choose your country">Διάλεξε τη χώρα σου</h2>
-          <p class="muted" style="margin-top:12px" data-el="Γύρνα την υδρόγειο με το δάχτυλο ή το ποντίκι." data-en="Turn the globe with your finger or mouse.">Γύρνα την υδρόγειο με το δάχτυλο ή το ποντίκι.</p>
-          <label>
-            <span data-el="Χώρα" data-en="Country">Χώρα</span>
-            <select id="countrySel"></select>
-          </label>
-          <p class="msg" id="globeMsg"></p>
-        </div>
-      </div>
+    <div class="country-box hero-country">
+      <span class="eyebrow" data-el="Από πού μας επισκέπτεσαι;" data-en="Where are you visiting from?">Από πού μας επισκέπτεσαι;</span>
+      <h2 data-el="Διάλεξε τη χώρα σου" data-en="Choose your country">Διάλεξε τη χώρα σου</h2>
+      <label>
+        <span data-el="Χώρα" data-en="Country">Χώρα</span>
+        <select id="countrySel"></select>
+      </label>
+      <p class="msg" id="globeMsg" aria-live="polite"></p>
     </div>
   </section>
 
@@ -443,12 +481,11 @@
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.9/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
   let currentLang = "el";
   const $ = (id) => document.getElementById(id);
@@ -493,7 +530,7 @@
   }
   $("calcMin").addEventListener("input", renderCalc);
 
-  // ---------- globe (real map) ----------
+  // ---------- interactive 3D Earth ----------
   const COUNTRIES = [
     { id: "GR", el: "Ελλάδα", en: "Greece", lat: 39, lon: 22 },
     { id: "CY", el: "Κύπρος", en: "Cyprus", lat: 35, lon: 33 },
@@ -512,7 +549,7 @@
     { id: "AU", el: "Αυστραλία", en: "Australia", lat: -25, lon: 133 }
   ];
   const GLOBE_KEY = "nepsis-country";
-  let proj = null, path = null, world = null, rot = [-20, -25, 0];
+  let globeApp = null;
 
   function selectedCountry() {
     const id = localStorage.getItem(GLOBE_KEY);
@@ -520,6 +557,7 @@
   }
   function renderSelect() {
     const sel = $("countrySel");
+    if (!sel) return;
     const current = sel.value || (selectedCountry() ? selectedCountry().id : "");
     sel.innerHTML = '<option value="">' + (currentLang === "el" ? "Επίλεξε χώρα..." : "Choose a country...") + '</option>' +
       COUNTRIES.map(function (c) { return '<option value="' + c.id + '">' + (currentLang === "el" ? c.el : c.en) + '</option>'; }).join("");
@@ -528,68 +566,236 @@
   function renderGlobeMsg() {
     const c = selectedCountry();
     const msg = $("globeMsg");
+    if (!msg) return;
     if (!c) { msg.textContent = ""; return; }
-    if (!proj) { msg.textContent = ""; return; }
-    const visible = d3.geoDistance([c.lon, c.lat], [-rot[0], -rot[1]]) < Math.PI / 2;
-    if (visible) msg.textContent = currentLang === "el" ? "Συγχαρητήρια! Μπαίνεις από " + c.el + "." : "Congratulations! You are visiting from " + c.en + ".";
-    else msg.textContent = currentLang === "el" ? "Γύρνα την υδρόγειο για να δεις τη " + c.el + "." : "Turn the globe to see " + c.en + ".";
+    msg.textContent = currentLang === "el"
+      ? "Επέλεξες: " + c.el + "."
+      : "Selected: " + c.en + ".";
   }
-  function placeDot() {
-    const c = selectedCountry();
-    const dot = d3.select("#userDot"), halo = d3.select("#userHalo");
-    const visible = c && d3.geoDistance([c.lon, c.lat], [-rot[0], -rot[1]]) < Math.PI / 2;
-    if (visible) {
-      const p = proj([c.lon, c.lat]);
-      dot.attr("cx", p[0]).attr("cy", p[1]); halo.attr("cx", p[0]).attr("cy", p[1]);
-    } else {
-      dot.attr("cx", -50).attr("cy", -50); halo.attr("cx", -50).attr("cy", -50);
+  function initGlobe() {
+    const canvas = $("globeCanvas");
+    const stage = $("globeStage");
+    if (!canvas || !stage || !window.THREE) {
+      const msg = $("globeMsg");
+      if (msg) msg.textContent = currentLang === "el" ? "Η υδρόγειος δεν είναι διαθέσιμη σε αυτόν τον browser." : "The globe is unavailable in this browser.";
+      return;
     }
-  }
-  function redraw() {
-    if (!proj) return;
-    d3.select("#globeLayer").selectAll("path").attr("d", function (d) { return path(d); });
-    placeDot(); renderGlobeMsg();
-  }
-  function buildGlobe() {
-    const layer = d3.select("#globeLayer");
-    layer.selectAll("*").remove();
-    proj = d3.geoOrthographic().scale(150).translate([160, 160]).clipAngle(90).rotate(rot);
-    path = d3.geoPath(proj);
-    layer.append("path").datum({ type: "Sphere" }).attr("fill", "url(#oceanGrad)").attr("stroke", "rgba(58,36,24,.35)").attr("stroke-width", 1.5);
-    layer.append("path").datum(d3.geoGraticule10()).attr("fill", "none").attr("stroke", "rgba(58,36,24,.12)").attr("stroke-width", .6);
-    layer.selectAll("path.land").data(world.features).enter().append("path")
-      .attr("fill", "#FBE3B4").attr("fill-opacity", .95).attr("stroke", "rgba(58,36,24,.45)").attr("stroke-width", .5);
-    d3.select("#globeSvg").call(d3.drag().on("drag", function (event) {
-      rot = [rot[0] + event.dx * 0.4, Math.max(-75, Math.min(75, rot[1] - event.dy * 0.4)), 0];
-      proj.rotate(rot); redraw();
-    }));
-    redraw();
-  }
-  function spinTo(c) {
-    const start = rot.slice(), target = [-c.lon, -c.lat, 0];
-    d3.transition().duration(900).tween("spin", function () {
-      const i = d3.interpolate(start, target);
-      return function (t) { rot = i(t); proj.rotate(rot); redraw(); };
-    });
-  }
-  $("countrySel").addEventListener("change", function (e) {
-    const c = COUNTRIES.filter(function (x) { return x.id === e.target.value; })[0];
-    if (c) { localStorage.setItem(GLOBE_KEY, c.id); if (proj) spinTo(c); }
-    else { localStorage.removeItem(GLOBE_KEY); renderGlobeMsg(); placeDot(); }
-  });
-  (async function initGlobe() {
-    renderSelect();
-    if (!window.d3 || !window.topojson) return;
+
+    let renderer;
     try {
-      const res = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json");
-      const topo = await res.json();
-      world = topojson.feature(topo, topo.objects.countries);
-      buildGlobe();
-      const c = selectedCountry();
-      if (c) { rot = [-c.lon, -c.lat, 0]; proj.rotate(rot); redraw(); }
-    } catch (err) { /* map not available: the list still works */ }
-  })();
-  function renderGlobeMsgSafe() { renderGlobeMsg(); }
+      renderer = new THREE.WebGLRenderer({
+        canvas: canvas, alpha: true, antialias: true, powerPreference: "high-performance"
+      });
+    } catch (error) {
+      const msg = $("globeMsg");
+      if (msg) msg.textContent = currentLang === "el" ? "Ο browser δεν υποστηρίζει 3D υδρόγειο." : "This browser does not support the 3D globe.";
+      return;
+    }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100);
+    camera.position.set(0, 0, 5.6);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.setClearColor(0x000000, 0);
+
+    scene.add(new THREE.AmbientLight(0xb8cbe0, 0.82));
+    const sunlight = new THREE.DirectionalLight(0xffffff, 1.42);
+    sunlight.position.set(-3.8, 2.2, 4.8);
+    scene.add(sunlight);
+    const fillLight = new THREE.DirectionalLight(0x8bb9e2, 0.42);
+    fillLight.position.set(4, -1.5, -3);
+    scene.add(fillLight);
+
+    const earthGroup = new THREE.Group();
+    scene.add(earthGroup);
+    const radius = 2;
+    const sphereGeometry = new THREE.SphereGeometry(radius, 96, 96);
+    const earthMaterial = new THREE.MeshPhongMaterial({
+      color: 0xffffff, specular: new THREE.Color(0x34495c), shininess: 10
+    });
+    const earth = new THREE.Mesh(sphereGeometry, earthMaterial);
+    earthGroup.add(earth);
+
+    const cloudMaterial = new THREE.MeshPhongMaterial({
+      color: 0xffffff, transparent: true, opacity: 0.38, depthWrite: false
+    });
+    const clouds = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.009, 96, 96), cloudMaterial);
+    earthGroup.add(clouds);
+
+    const atmosphere = new THREE.Mesh(
+      new THREE.SphereGeometry(radius * 1.045, 96, 96),
+      new THREE.MeshBasicMaterial({
+        color: 0x62aee8, side: THREE.BackSide, transparent: true, opacity: 0.115, depthWrite: false
+      })
+    );
+    earthGroup.add(atmosphere);
+
+    const marker = new THREE.Group();
+    const markerHalo = new THREE.Mesh(
+      new THREE.SphereGeometry(0.075, 20, 20),
+      new THREE.MeshBasicMaterial({ color: 0xf0702a, transparent: true, opacity: 0.28 })
+    );
+    const markerCore = new THREE.Mesh(
+      new THREE.SphereGeometry(0.032, 20, 20),
+      new THREE.MeshBasicMaterial({ color: 0xf0702a })
+    );
+    marker.add(markerHalo, markerCore);
+    marker.visible = false;
+    earthGroup.add(marker);
+
+    const loader = new THREE.TextureLoader();
+    loader.setCrossOrigin("anonymous");
+    loader.load(
+      "https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_atmos_2048.jpg",
+      function (texture) {
+        if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
+        earthMaterial.map = texture;
+        earthMaterial.needsUpdate = true;
+      },
+      undefined,
+      function () {
+        const msg = $("globeMsg");
+        if (msg && !selectedCountry()) msg.textContent = currentLang === "el" ? "Δεν φορτώθηκε η εικόνα της Γης. Έλεγξε τη σύνδεσή σου." : "Earth texture could not load. Check your connection.";
+      }
+    );
+    loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_normal_2048.jpg", function (texture) {
+      earthMaterial.normalMap = texture;
+      earthMaterial.normalScale = new THREE.Vector2(0.42, 0.42);
+      earthMaterial.needsUpdate = true;
+    });
+    loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_clouds_1024.png", function (texture) {
+      if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
+      cloudMaterial.map = texture;
+      cloudMaterial.needsUpdate = true;
+    });
+
+    let dragging = false;
+    let lastX = 0;
+    let lastY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
+    let focusAnimation = null;
+    const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    earthGroup.rotation.set(0.08, -112 * Math.PI / 180, 0);
+
+    function latLonPosition(lat, lon, r) {
+      const phi = (90 - lat) * Math.PI / 180;
+      const theta = (lon + 180) * Math.PI / 180;
+      return new THREE.Vector3(
+        -r * Math.sin(phi) * Math.cos(theta),
+        r * Math.cos(phi),
+        r * Math.sin(phi) * Math.sin(theta)
+      );
+    }
+    function focusCountry(country) {
+      const point = latLonPosition(country.lat, country.lon, radius * 1.018);
+      marker.position.copy(point);
+      marker.visible = true;
+      const targetX = country.lat * Math.PI / 180;
+      const targetY = -(country.lon + 90) * Math.PI / 180;
+      const startX = earthGroup.rotation.x;
+      const startY = earthGroup.rotation.y;
+      const deltaY = Math.atan2(Math.sin(targetY - startY), Math.cos(targetY - startY));
+      const startedAt = performance.now();
+      const duration = 950;
+      focusAnimation = function (now) {
+        const t = Math.min(1, (now - startedAt) / duration);
+        const ease = 1 - Math.pow(1 - t, 3);
+        earthGroup.rotation.x = startX + (targetX - startX) * ease;
+        earthGroup.rotation.y = startY + deltaY * ease;
+        if (t >= 1) focusAnimation = null;
+      };
+    }
+    function clearCountry() { marker.visible = false; }
+
+    function onPointerDown(event) {
+      dragging = true;
+      focusAnimation = null;
+      velocityX = 0; velocityY = 0;
+      lastX = event.clientX; lastY = event.clientY;
+      canvas.style.cursor = "grabbing";
+      if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+    }
+    function onPointerMove(event) {
+      if (!dragging) return;
+      const dx = event.clientX - lastX;
+      const dy = event.clientY - lastY;
+      lastX = event.clientX; lastY = event.clientY;
+      velocityX = dx * 0.0048;
+      velocityY = dy * 0.0048;
+      earthGroup.rotation.y += velocityX;
+      earthGroup.rotation.x = Math.max(-1.35, Math.min(1.35, earthGroup.rotation.x + velocityY));
+    }
+    function onPointerUp() {
+      dragging = false;
+      canvas.style.cursor = "grab";
+    }
+    canvas.addEventListener("pointerdown", onPointerDown);
+    canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointercancel", onPointerUp);
+    canvas.addEventListener("lostpointercapture", onPointerUp);
+
+    function resize() {
+      const rect = stage.getBoundingClientRect();
+      const width = Math.max(1, Math.round(rect.width));
+      const height = Math.max(1, Math.round(rect.height));
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    }
+    if (window.ResizeObserver) {
+      const observer = new ResizeObserver(resize);
+      observer.observe(stage);
+    } else {
+      window.addEventListener("resize", resize);
+    }
+    resize();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (focusAnimation) focusAnimation(performance.now());
+      if (!dragging) {
+        if (Math.abs(velocityX) > 0.00004 || Math.abs(velocityY) > 0.00004) {
+          earthGroup.rotation.y += velocityX;
+          earthGroup.rotation.x = Math.max(-1.35, Math.min(1.35, earthGroup.rotation.x + velocityY));
+          velocityX *= 0.94; velocityY *= 0.94;
+        } else if (!reducedMotion && !focusAnimation) {
+          earthGroup.rotation.y += 0.00022;
+        }
+      }
+      clouds.rotation.y += 0.00012;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    globeApp = {
+      focusCountry: focusCountry,
+      clearCountry: clearCountry
+    };
+    window.nepsisGlobe = globeApp;
+
+    const savedCountry = selectedCountry();
+    if (savedCountry) focusCountry(savedCountry);
+  }
+
+  $("countrySel").addEventListener("change", function (event) {
+    const country = COUNTRIES.filter(function (item) { return item.id === event.target.value; })[0];
+    if (country) {
+      localStorage.setItem(GLOBE_KEY, country.id);
+      if (globeApp) globeApp.focusCountry(country);
+    } else {
+      localStorage.removeItem(GLOBE_KEY);
+      if (globeApp) globeApp.clearCountry();
+    }
+    renderGlobeMsg();
+  });
+
+  renderSelect();
+  renderGlobeMsg();
+  initGlobe();
 
   // ---------- server-verified focus timers ----------
   const STAGES = [
