@@ -278,7 +278,7 @@ main().catch(async error => {
   try {
     if (githubToken && repository && issueNumber) {
       await githubRequest("/issues/" + issueNumber + "/comments", "POST", {
-        body: "<!-- nepsis-ai-agent-analysis -->\n## Nepsis AI agent could not complete the diagnosis\n\n" + error.message +
+        body: "## Nepsis AI agent could not complete the diagnosis\n\n" + error.message +
           "\n\nNo code changes were merged or deployed. Review the agent workflow logs for details."
       });
     }
