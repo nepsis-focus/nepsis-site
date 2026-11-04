@@ -31,6 +31,32 @@
     box-shadow: 0 1px 2px rgba(120,60,30,.08), 0 16px 30px -12px rgba(120,60,30,.28), 0 44px 70px -34px rgba(120,60,30,.4);
     transition: transform .25s ease, box-shadow .25s ease; }
   .card:hover { transform: translateY(-5px); box-shadow: 0 2px 4px rgba(120,60,30,.08), 0 24px 40px -14px rgba(120,60,30,.32), 0 60px 90px -40px rgba(120,60,30,.45); }
+  /* Nepsis interaction layer: warm spotlight, subtle glow and tactile press */
+  .card, .home-link { --spot-x: 50%; --spot-y: 50%; --spot-alpha: 0; isolation: isolate; overflow: hidden; }
+  .card::after, .home-link::after {
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    opacity: var(--spot-alpha);
+    background: radial-gradient(300px circle at var(--spot-x) var(--spot-y), rgba(217,112,58,.15), transparent 70%);
+    transition: opacity .22s ease;
+  }
+  .card { position: relative; transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease; }
+  .card:hover { border-color: rgba(185,85,42,.48); }
+  .stage { cursor: default; }
+  .stage:active { transform: translateY(-1px) scale(.995); }
+  .home-link { position: relative; perspective: 900px; }
+  .home-folder-lid {
+    position: absolute; z-index: 4; top: 0; left: 0; right: 0; height: 48%;
+    border: 1px solid rgba(185,85,42,.22); border-bottom: 1px solid rgba(185,85,42,.32);
+    border-radius: 17px 17px 9px 9px;
+    background: linear-gradient(145deg, rgba(255,247,233,.98), rgba(239,213,184,.96));
+    box-shadow: 0 8px 18px rgba(120,70,40,.12);
+    transform: perspective(700px) rotateX(0deg); transform-origin: 50% 0%;
+    opacity: 0; pointer-events: none; backface-visibility: hidden;
+  }
+  .home-link.is-opening { pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .home-link, .card::after, .home-link::after { transition: none !important; }
+  }
 
   /* header */
   header.top { position: sticky; top: 0; z-index: 20; background: rgba(255,248,238,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
@@ -1609,6 +1635,37 @@
       });
     });
   }
+
+  // Warm pointer spotlight for practice cards and Folder-inspired navigation reveal.
+  (function initPracticeInteractions() {
+    document.querySelectorAll(".card, .home-link").forEach(function (el) {
+      el.addEventListener("pointermove", function (event) {
+        const rect = el.getBoundingClientRect();
+        el.style.setProperty("--spot-x", (event.clientX - rect.left) + "px");
+        el.style.setProperty("--spot-y", (event.clientY - rect.top) + "px");
+        el.style.setProperty("--spot-alpha", "1");
+      });
+      el.addEventListener("pointerleave", function () {
+        el.style.setProperty("--spot-alpha", "0");
+      });
+    });
+    document.querySelectorAll(".home-link").forEach(function (link) {
+      const lid = document.createElement("span");
+      lid.className = "home-folder-lid";
+      lid.setAttribute("aria-hidden", "true");
+      link.appendChild(lid);
+      link.addEventListener("click", function (event) {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!window.gsap || link.classList.contains("is-opening")) return;
+        event.preventDefault();
+        link.classList.add("is-opening");
+        gsap.timeline({ onComplete: function () { window.location.href = link.href; } })
+          .set(lid, { autoAlpha: 1, rotateX: 0, transformOrigin: "50% 0%" })
+          .to(lid, { rotateX: -68, duration: .42, ease: "power3.inOut" });
+      });
+    });
+  })();
 
   // ---------- medals, day bars, music and 3D tilt ----------
   function medalsHtml(p, streak, total) {
