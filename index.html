@@ -746,6 +746,7 @@
       '<div class="medals">' + medalsHtml(p, streak, total) + '</div>' +
       '<button type="button" class="btn btn-primary" id="shareBtn" style="margin-top:14px">' + (isEl ? "Μοιράσου το σερί μου" : "Share my streak") + '</button>' +
       '<div class="sub" style="margin-top:12px">' + distractionLine(p) + '</div>' +
+      (sbUser ? '<div class="sub" id="syncMsg" style="font-size:.85rem">' + syncMsg + '</div>' : '') +
       '<div class="sub" style="font-size:.85rem">' + (isEl ? "Αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Saved only on this device.") + '</div>';
     const shareEl = el.querySelector('#shareBtn');
     if (shareEl) shareEl.addEventListener('click', shareStreak);
@@ -883,9 +884,25 @@
     });
     return out;
   }
-  function sbPush(p) {
+  // The device always keeps the progress. When signed in, we also save it to the account and say what happened.
+  let syncMsg = "", syncRetries = 0, syncTimer = null;
+  function setSync(msg) { syncMsg = msg; const el = document.getElementById("syncMsg"); if (el) el.textContent = msg; }
+  async function sbPush(p) {
     if (!sb || !sbUser) return;
-    sb.from("progress").upsert({ user_id: sbUser.id, data: p, updated_at: new Date().toISOString() });
+    setSync(currentLang === "el" ? "Αποθήκευση στον λογαριασμό…" : "Saving to your account…");
+    try {
+      const res = await sb.from("progress").upsert({ user_id: sbUser.id, data: p, updated_at: new Date().toISOString() });
+      if (res.error) throw res.error;
+      syncRetries = 0;
+      setSync(currentLang === "el" ? "Αποθηκεύτηκε στον λογαριασμό σου." : "Saved to your account.");
+    } catch (err) {
+      setSync(currentLang === "el" ? "Δεν αποθηκεύτηκε στον λογαριασμό. Η πρόοδος μένει στη συσκευή." : "Not saved to your account. Progress stays on this device.");
+      if (syncRetries < 3) {
+        syncRetries++;
+        clearTimeout(syncTimer);
+        syncTimer = setTimeout(function () { sbPush(loadProgress()); }, 15000);
+      }
+    }
   }
   async function sbPull() {
     if (!sb || !sbUser) return;
