@@ -307,6 +307,7 @@
   }
 
 </style>
+  <link rel="stylesheet" href="site-motion.css">
 </head>
 <body class="practice-page">
 
@@ -325,17 +326,18 @@
 </header>
 
 <nav class="drawer" id="drawer" aria-label="Menu">
-  <button type="button" class="close" id="closeBtn" aria-label="Close">✕</button>
-  <a href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
+  <button type="button" class="close" id="closeBtn" aria-label="Κλείσιμο">✕</button>
+  <a href="index.html" data-el="Αρχική" data-en="Home">Αρχική</a>
+  <a href="practice.html#start" data-el="START · Ξεκίνα" data-en="START · Begin">START · Ξεκίνα</a>
+  <a href="practice.html#stageGrid" data-el="STAY · Μείνε" data-en="STAY · Focus">STAY · Μείνε</a>
+  <a href="practice.html#return" data-el="RETURN · Επέστρεψε" data-en="RETURN · Return">RETURN · Επέστρεψε</a>
+  <a href="practice.html#mind" data-el="MIND · Σκέψεις" data-en="MIND · Thoughts">MIND · Σκέψεις</a>
+  <a href="practice.html#recovery" data-el="RECOVERY · Διάλειμμα" data-en="RECOVERY · Reset">RECOVERY · Διάλειμμα</a>
+  <a href="practice.html#progress" data-el="PROGRESS · Πρόοδος" data-en="PROGRESS · Progress">PROGRESS · Πρόοδος</a>
   <a href="about.html" data-el="Τι είναι το Nepsis" data-en="About Nepsis">Τι είναι το Nepsis</a>
   <a href="how.html" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</a>
-  <a href="practice.html#challenge" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</a>
-  <a href="practice.html#stageGrid" data-el="Στάδια" data-en="Stages">Στάδια</a>
-  <a href="practice.html#quiz" data-el="Κουίζ" data-en="Quiz">Κουίζ</a>
-  <a href="practice.html#progress" data-el="Η πρόοδός μου" data-en="My progress">Η πρόοδός μου</a>
-  <a href="practice.html#achievements" data-el="Επιτεύγματα" data-en="Achievements">Επιτεύγματα</a>
-  <a href="practice.html#knowledge" data-el="Γνώση" data-en="Knowledge">Γνώση</a>
   <a href="faq.html" data-el="Ερωτήσεις" data-en="FAQ">Ερωτήσεις</a>
+  <a href="privacy.html" data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</a>
 </nav>
 <div class="scrim" id="scrim"></div>
 
@@ -1680,6 +1682,7 @@
   setLang("el");
   if (document.body.classList.contains("practice-page")) restoreTimers();
 </script>
+<script src="site-motion.js" defer></script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
 </body>
 </html>
