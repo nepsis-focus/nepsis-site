@@ -309,16 +309,17 @@
           <a class="btn btn-primary" href="#subscribe" id="subBtn" data-el="Εγγραφή" data-en="Subscribe">Εγγραφή</a>
           <a class="btn btn-ghost" href="#stages" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
         </div>
-        <div class="country-box hero-country">
-          <span class="eyebrow" data-el="Από πού μας επισκέπτεσαι;" data-en="Where are you visiting from?">Από πού μας επισκέπτεσαι;</span>
-          <h2 data-el="Διάλεξε τη χώρα σου" data-en="Choose your country">Διάλεξε τη χώρα σου</h2>
-          <label>
-            <span data-el="Χώρα" data-en="Country">Χώρα</span>
-            <select id="countrySel"></select>
-          </label>
-          <p class="msg" id="globeMsg" aria-live="polite"></p>
-        </div>
+
       </div>
+    </div>
+    <div class="country-box hero-country">
+      <span class="eyebrow" data-el="Από πού μας επισκέπτεσαι;" data-en="Where are you visiting from?">Από πού μας επισκέπτεσαι;</span>
+      <h2 data-el="Διάλεξε τη χώρα σου" data-en="Choose your country">Διάλεξε τη χώρα σου</h2>
+      <label>
+        <span data-el="Χώρα" data-en="Country">Χώρα</span>
+        <select id="countrySel"></select>
+      </label>
+      <p class="msg" id="globeMsg" aria-live="polite"></p>
     </div>
   </section>
 
@@ -480,7 +481,6 @@
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
@@ -593,8 +593,8 @@
     }
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(37, 1, 0.1, 100);
-    camera.position.set(0, 0, 5.25);
+    const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100);
+    camera.position.set(0, 0, 5.6);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.setClearColor(0x000000, 0);
