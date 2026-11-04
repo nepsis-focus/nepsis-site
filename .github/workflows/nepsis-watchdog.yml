@@ -72,12 +72,16 @@ jobs:
             let issueNumber;
             if (existing) {
               issueNumber = existing.number;
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                body
-              });
+              const lastActivity = Date.parse(existing.updated_at || existing.created_at || "");
+              const shouldNotifyAgain = !Number.isFinite(lastActivity) || Date.now() - lastActivity >= 24 * 60 * 60 * 1000;
+              if (shouldNotifyAgain) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  body
+                });
+              }
             } else {
               const { data: created } = await github.rest.issues.create({
                 owner: context.repo.owner,
@@ -88,6 +92,44 @@ jobs:
               issueNumber = created.number;
             }
             core.setOutput("issue_number", String(issueNumber));
+
+      - name: Email notification when the site recovers
+        if: steps.health.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "🚨 Nepsis watchdog: live-site check failed";
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100
+            });
+            const existing = issues.find(issue => issue.title === title);
+            if (existing) {
+              const runUrl = process.env.GITHUB_SERVER_URL + "/" + process.env.GITHUB_REPOSITORY + "/actions/runs/" + process.env.GITHUB_RUN_ID;
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: [
+                  "✅ **Nepsis is responding again.**",
+                  "",
+                  "The latest browser health check passed for all monitored pages.",
+                  "",
+                  "Recovery check: " + runUrl,
+                  "",
+                  "The watchdog has closed this alert. A new email will be sent if a new incident is detected."
+                ].join("\n")
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                state: "closed",
+                state_reason: "completed"
+              });
+            }
 
       - name: Upload health report for the AI agent
         if: always()
