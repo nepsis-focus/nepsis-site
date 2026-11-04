@@ -43,7 +43,7 @@ try {
           .filter(href => href.startsWith("/") || href.startsWith(location.origin))
       );
       for (const href of [...new Set(internalLinks)]) {
-        const target = href.startsWith("http") ? href : new URL(href, location.href).href;
+        const target = href.startsWith("http") ? href : new URL(href, url).href;
         try {
           const linkResponse = await context.request.get(target, { timeout: 15000 });
           if (linkResponse.status() >= 400) failures.push(`${route}: broken internal link ${href} (HTTP ${linkResponse.status()})`);
