@@ -139,7 +139,6 @@
   .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
   .badge2 { padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: .85rem; border: 2px solid var(--fg); }
   .badge2.done { background: var(--fg); color: #FFF8EE; }
-  .stage .done { width: 100%; justify-content: center; padding: 10px; font-size: .9rem; }
   .after { font-size: .9rem; }
   .fact { background: linear-gradient(180deg, #FCE9C2, #F7D9A5); border-radius: 18px; padding: 16px 18px; margin-top: 10px; }
   .fact .src { font-size: .8rem; color: var(--muted); margin-top: 6px; }
@@ -616,7 +615,6 @@
       '<div class="time" data-time>' + String(s.min).padStart(2, "0") + ':00</div></div>' +
       '<button type="button" class="btn btn-primary start" data-start></button>' +
       '<div class="msg" data-msg></div>' +
-      '<button type="button" class="btn btn-ghost done" data-done></button>' +
       '<div class="after" data-after></div>';
     grid.appendChild(card);
 
@@ -625,9 +623,6 @@
 
     card.querySelector("[data-start]").addEventListener("click", function () {
       if (state.running) { pause(state); } else { start(state); }
-    });
-    card.querySelector("[data-done]").addEventListener("click", function () {
-      markStage(s.min); showAfter(state);
     });
   });
 
@@ -672,7 +667,6 @@
       card.querySelector("[data-start]").textContent = st.running
         ? (currentLang === "el" ? "❚❚ Παύση" : "❚❚ Pause")
         : (currentLang === "el" ? "▷ Έναρξη" : "▷ Start");
-      card.querySelector("[data-done]").textContent = currentLang === "el" ? "Το έκανα σήμερα" : "I did it today";
       card.querySelector(".top span").textContent = (currentLang === "el" ? "ΣΤΑΔΙΟ " : "STAGE ") + (i + 1);
     });
   }
