@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import { writeFile } from "node:fs/promises";
 
 const base = (process.env.SITE_URL || "https://nepsis-focus.github.io/nepsis-site/").replace(/\/$/, "");
 const routes = ["/", "/practice.html", "/about.html", "/how.html", "/faq.html", "/privacy.html"];
@@ -64,8 +65,11 @@ try {
   await browser.close();
 }
 
+const report = { checkedAt: new Date().toISOString(), base, pages: results, failures };
+await writeFile("nepsis-watchdog-report.json", JSON.stringify(report, null, 2), "utf8");
+
 console.log("NEPSIS LIVE-SITE HEALTH REPORT");
-console.log(JSON.stringify({ checkedAt: new Date().toISOString(), base, pages: results, failures }, null, 2));
+console.log(JSON.stringify(report, null, 2));
 
 if (failures.length) {
   console.error("\nHEALTH CHECK FAILED:");
