@@ -591,7 +591,7 @@
   })();
   function renderGlobeMsgSafe() { renderGlobeMsg(); }
 
-  // ---------- stages with timers ----------
+  // ---------- server-verified focus timers ----------
   const STAGES = [
     { min: 5,  el: "Ξεκίνημα", en: "Start",    d: "Ένα μικρό, εύκολο βήμα για να πάρεις μπρος.", de: "A small, easy step to get you started." },
     { min: 10, el: "Ζέσταμα",  en: "Warm-up",  d: "Μάθε να μένεις σε μία εργασία.", de: "Learn to stay with one task." },
@@ -599,7 +599,8 @@
     { min: 45, el: "Βάθος",    en: "Depth",    d: "Χώρος για δύσκολη, απαιτητική δουλειά.", de: "Room for demanding, focused work." },
     { min: 60, el: "Ροή",      en: "Flow",     d: "Μία ολόκληρη ώρα χωρίς περισπασμούς.", de: "A full hour without distractions." }
   ];
-  const C = 2 * Math.PI * 66;   // ring circumference
+  const C = 2 * Math.PI * 66;
+  const TIMER_STORAGE_PREFIX = "nepsis-timer-session-";
   const grid = $("stageGrid");
   const timers = {};
 
@@ -614,49 +615,253 @@
       '<circle class="prog" cx="75" cy="75" r="66" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg>' +
       '<div class="time" data-time>' + String(s.min).padStart(2, "0") + ':00</div></div>' +
       '<button type="button" class="btn btn-primary start" data-start></button>' +
-      '<div class="msg" data-msg></div>' +
+      '<div class="msg" data-msg aria-live="polite"></div>' +
       '<div class="after" data-after></div>';
     grid.appendChild(card);
 
-    const state = { min: s.min, left: s.min * 60, total: s.min * 60, id: null, running: false, el: card };
+    const state = {
+      min: s.min,
+      left: s.min * 60,
+      total: s.min * 60,
+      id: null,
+      running: false,
+      busy: false,
+      verifying: false,
+      sessionId: null,
+      sessionToken: null,
+      endAt: null,
+      el: card
+    };
     timers[s.min] = state;
 
     card.querySelector("[data-start]").addEventListener("click", function () {
-      if (state.running) { pause(state); } else { start(state); }
+      if (state.busy) return;
+      if (state.running) pause(state);
+      else start(state);
     });
   });
 
-  function fmt(sec) { return String(Math.floor(sec / 60)).padStart(2, "0") + ":" + String(sec % 60).padStart(2, "0"); }
+  function fmt(sec) {
+    return String(Math.floor(sec / 60)).padStart(2, "0") + ":" + String(sec % 60).padStart(2, "0");
+  }
+
   function draw(state) {
     const ring = state.el.querySelector(".prog");
     state.el.querySelector("[data-time]").textContent = fmt(state.left);
     ring.setAttribute("stroke-dashoffset", String(C * (1 - state.left / state.total)));
   }
-  function start(state) {
-    if (state.left === 0) { state.left = state.total; draw(state); }
-    state.running = true;
-    state.endAt = Date.now() + state.left * 1000;
+
+  function timerStorageKey(state) {
+    return TIMER_STORAGE_PREFIX + state.min;
+  }
+
+  function saveTimerCredentials(state) {
+    try {
+      if (state.sessionToken) {
+        localStorage.setItem(timerStorageKey(state), JSON.stringify({
+          session_id: state.sessionId,
+          token: state.sessionToken
+        }));
+      }
+    } catch (e) { /* the live timer still works if storage is unavailable */ }
+  }
+
+  function clearTimerCredentials(state) {
+    try { localStorage.removeItem(timerStorageKey(state)); } catch (e) {}
+    state.sessionId = null;
+    state.sessionToken = null;
+  }
+
+  function timerCredentials(state) {
+    if (state.sessionToken) {
+      return { session_id: state.sessionId, token: state.sessionToken };
+    }
+
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(timerStorageKey(state)) || "null"); } catch (e) {}
+    if (saved && typeof saved.token === "string" && /^[0-9a-f]{64}$/.test(saved.token)) {
+      state.sessionToken = saved.token;
+      state.sessionId = typeof saved.session_id === "string" ? saved.session_id : null;
+    } else {
+      if (!window.crypto || !window.crypto.getRandomValues) {
+        throw new Error("secure_random_unavailable");
+      }
+      const bytes = new Uint8Array(32);
+      window.crypto.getRandomValues(bytes);
+      state.sessionToken = Array.from(bytes).map(function (b) {
+        return b.toString(16).padStart(2, "0");
+      }).join("");
+      state.sessionId = null;
+      saveTimerCredentials(state);
+    }
+    return { session_id: state.sessionId, token: state.sessionToken };
+  }
+
+  async function timerRequest(action, state) {
+    const credentials = timerCredentials(state);
+    const response = await fetch(SB_URL + "/functions/v1/focus-timer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SB_KEY
+      },
+      body: JSON.stringify({
+        action: action,
+        stage_minutes: state.min,
+        session_id: credentials.session_id,
+        token: credentials.token
+      })
+    });
+    let result = null;
+    try { result = await response.json(); } catch (e) {}
+    if (!response.ok || !result || result.ok !== true) {
+      throw new Error(result && result.error ? result.error : "timer_request_failed");
+    }
+    if (typeof result.session_id === "string") {
+      state.sessionId = result.session_id;
+      saveTimerCredentials(state);
+    }
+    return result;
+  }
+
+  function timerErrorText() {
+    return currentLang === "el"
+      ? "Δεν μπορέσαμε να συνδεθούμε με τον έλεγχο του χρονόμετρου. Έλεγξε το ίντερνετ και πάτησε ξανά."
+      : "We could not reach timer verification. Check your internet connection and try again.";
+  }
+
+  function stopTimerLocally(state) {
+    state.running = false;
     clearInterval(state.id);
-    state.id = setInterval(function () { tickState(state); }, 250);
+    state.id = null;
+    state.endAt = null;
+  }
+
+  function finishTimer(state) {
+    stopTimerLocally(state);
+    state.left = 0;
+    state.busy = false;
+    state.verifying = false;
+    clearTimerCredentials(state);
+    draw(state);
+    markStage(state.min);
+    showAfter(state);
+    state.el.querySelector("[data-msg]").textContent = currentLang === "el"
+      ? "Ολοκληρώθηκε! Ο χρόνος επιβεβαιώθηκε."
+      : "Done! The time has been verified.";
     renderStageLabels();
   }
-  function tickState(state) {
-    if (!state.running) return;
-    state.left = Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000));
-    draw(state);
-    if (state.left === 0) {
-      pause(state);
-      markStage(state.min); showAfter(state);
-      state.el.querySelector("[data-msg]").textContent = currentLang === "el" ? "Ολοκληρώθηκε! Πολύ καλή δουλειά." : "Done! Well done.";
+
+  async function start(state) {
+    if (state.busy) return;
+    state.busy = true;
+    state.el.querySelector("[data-msg]").textContent = currentLang === "el"
+      ? "Έλεγχος χρονόμετρου…"
+      : "Checking timer…";
+    renderStageLabels();
+    try {
+      const result = await timerRequest("start", state);
+      if (result.completed) {
+        finishTimer(state);
+        return;
+      }
+      state.left = Math.max(0, Number(result.remaining_seconds) || 0);
+      if (result.active !== true) {
+        stopTimerLocally(state);
+        draw(state);
+        state.el.querySelector("[data-msg]").textContent = timerErrorText();
+        return;
+      }
+      state.running = true;
+      state.endAt = Date.now() + state.left * 1000;
+      clearInterval(state.id);
+      state.id = setInterval(function () { tickState(state); }, 250);
+      draw(state);
+      state.el.querySelector("[data-msg]").textContent = "";
+      if (state.left === 0) {
+        state.busy = false;
+        await verifyTimerCompletion(state);
+        return;
+      }
+    } catch (err) {
+      stopTimerLocally(state);
+      state.el.querySelector("[data-msg]").textContent = timerErrorText();
+      draw(state);
+    } finally {
+      state.busy = false;
+      renderStageLabels();
     }
   }
-  function pause(state) {
-    if (state.running && state.endAt) state.left = Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000));
-    state.running = false;
-    clearInterval(state.id); state.id = null;
-    draw(state);
+
+  async function pause(state) {
+    if (!state.running || state.busy) return;
+    state.busy = true;
     renderStageLabels();
+    let verifyAfterPause = false;
+    try {
+      const result = await timerRequest("pause", state);
+      if (result.completed) {
+        finishTimer(state);
+        return;
+      }
+      state.left = Math.max(0, Number(result.remaining_seconds) || 0);
+      stopTimerLocally(state);
+      draw(state);
+      verifyAfterPause = state.left === 0;
+      state.el.querySelector("[data-msg]").textContent = "";
+    } catch (err) {
+      state.el.querySelector("[data-msg]").textContent = timerErrorText();
+    } finally {
+      state.busy = false;
+      renderStageLabels();
+    }
+    if (verifyAfterPause) await verifyTimerCompletion(state);
   }
+
+  async function verifyTimerCompletion(state) {
+    if (state.busy || state.verifying) return;
+    state.busy = true;
+    state.verifying = true;
+    try {
+      const result = await timerRequest("complete", state);
+      if (result.completed) {
+        finishTimer(state);
+        return;
+      }
+      state.left = Math.max(0, Number(result.remaining_seconds) || 0);
+      state.running = result.active === true && state.left > 0;
+      if (state.running) {
+        state.endAt = Date.now() + state.left * 1000;
+        clearInterval(state.id);
+        state.id = setInterval(function () { tickState(state); }, 250);
+      } else {
+        stopTimerLocally(state);
+      }
+      draw(state);
+      state.el.querySelector("[data-msg]").textContent = state.left > 0
+        ? (currentLang === "el"
+          ? "Ο server επιβεβαίωσε ότι απομένουν " + fmt(state.left) + ". Το χρονόμετρο συνεχίζεται."
+          : "The server confirms " + fmt(state.left) + " remaining. The timer continues.")
+        : timerErrorText();
+    } catch (err) {
+      stopTimerLocally(state);
+      state.left = 0;
+      draw(state);
+      state.el.querySelector("[data-msg]").textContent = timerErrorText();
+    } finally {
+      state.busy = false;
+      state.verifying = false;
+      renderStageLabels();
+    }
+  }
+
+  function tickState(state) {
+    if (!state.running || state.busy) return;
+    state.left = Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000));
+    draw(state);
+    if (state.left === 0) verifyTimerCompletion(state);
+  }
+
   function renderStageLabels() {
     STAGES.forEach(function (s, i) {
       const st = timers[s.min];
@@ -664,13 +869,51 @@
       const card = st.el;
       card.querySelector("[data-stage-name]").textContent = currentLang === "el" ? s.el + " · " + s.min + " λεπτά" : s.en + " · " + s.min + " min";
       card.querySelector("[data-stage-desc]").textContent = currentLang === "el" ? s.d : s.de;
-      card.querySelector("[data-start]").textContent = st.running
-        ? (currentLang === "el" ? "❚❚ Παύση" : "❚❚ Pause")
-        : (currentLang === "el" ? "▷ Έναρξη" : "▷ Start");
+      card.querySelector("[data-start]").disabled = st.busy;
+      card.querySelector("[data-start]").textContent = st.busy
+        ? (currentLang === "el" ? "Έλεγχος…" : "Checking…")
+        : st.running
+          ? (currentLang === "el" ? "❚❚ Παύση" : "❚❚ Pause")
+          : (currentLang === "el" ? "▷ Έναρξη" : "▷ Start");
       card.querySelector(".top span").textContent = (currentLang === "el" ? "ΣΤΑΔΙΟ " : "STAGE ") + (i + 1);
     });
   }
 
+  async function restoreTimers() {
+    await Promise.all(STAGES.map(async function (stage) {
+      const state = timers[stage.min];
+      let saved = null;
+      try { saved = JSON.parse(localStorage.getItem(timerStorageKey(state)) || "null"); } catch (e) {}
+      if (!saved || typeof saved.token !== "string" || !/^[0-9a-f]{64}$/.test(saved.token) ||
+          typeof saved.session_id !== "string") return;
+
+      state.sessionToken = saved.token;
+      state.sessionId = saved.session_id;
+      state.busy = true;
+      renderStageLabels();
+      try {
+        const result = await timerRequest("status", state);
+        if (result.completed) {
+          finishTimer(state);
+          return;
+        }
+        state.left = Math.max(0, Number(result.remaining_seconds) || 0);
+        state.running = result.active === true && state.left > 0;
+        if (state.running) {
+          state.endAt = Date.now() + state.left * 1000;
+          state.id = setInterval(function () { tickState(state); }, 250);
+        } else {
+          stopTimerLocally(state);
+        }
+        draw(state);
+      } catch (err) {
+        state.el.querySelector("[data-msg]").textContent = timerErrorText();
+      } finally {
+        state.busy = false;
+        renderStageLabels();
+      }
+    }));
+  }
 
   // ---------- progress on this device (no account) ----------
   const PROGRESS_KEY = "nepsis-progress";
@@ -1121,6 +1364,7 @@
   // ---------- start ----------
   renderSelect(); renderCalc(); renderStageLabels();
   setLang("el");
+  restoreTimers();
 </script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
 </body>
