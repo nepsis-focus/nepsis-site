@@ -264,9 +264,32 @@
   .progress-card .badge2 { border-radius: 999px; }
   .daybar { background: #EFE2D2; }
   .daybar > i { background: linear-gradient(90deg, #E9B872, #D9703A, #B9452A); }
+
+  /* restrained homepage overview */
+  .home-discovery { padding: 66px 0 88px; }
+  .home-intro { max-width: 680px; margin: 0 auto 30px; text-align: center; }
+  .home-intro h2 { margin-bottom: 12px; }
+  .home-intro p { color: var(--muted); font-size: 1.04rem; }
+  .home-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .home-link { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 166px; padding: 22px; border: 1px solid var(--border); border-radius: 18px; background: var(--card); color: var(--fg); text-decoration: none; transition: border-color .18s ease, transform .18s ease; }
+  .home-link:hover { border-color: var(--orange); transform: translateY(-2px); }
+  .home-link-number { color: var(--ember); font-size: .76rem; font-weight: 900; letter-spacing: .12em; }
+  .home-link strong { font-size: 1.12rem; }
+  .home-link > span:nth-of-type(2) { color: var(--muted); font-size: .92rem; max-width: 26ch; }
+  .home-link-arrow { position: absolute; right: 18px; bottom: 14px; color: var(--orange); font-size: 1.25rem; }
+  .home-footnote { margin: 24px auto 0; text-align: center; color: var(--muted); font-size: .9rem; }
+  .daily-challenge, .knowledge-note { margin: 0 0 26px; padding: 24px; border: 1px solid var(--border); border-radius: 20px; background: var(--card); }
+  .daily-challenge h3, .knowledge-note h3 { font-size: 1.35rem; margin-bottom: 8px; }
+  .daily-challenge p, .knowledge-note p { color: var(--muted); max-width: 70ch; margin-bottom: 16px; }
+  .knowledge-note { margin-top: 26px; }
+  body.home-page #about, body.home-page #how, body.home-page #stages, body.home-page #faq { display: none !important; }
+  .drawer { overflow-y: auto; }
+  @media (max-width: 900px) { .home-links { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .home-discovery { padding: 48px 0 64px; } .home-links { grid-template-columns: 1fr; } .home-link { min-height: 138px; } }
+
 </style>
 </head>
-<body>
+<body class="home-page">
 
 <header class="top">
   <div class="wrap top-in">
@@ -284,11 +307,16 @@
 
 <nav class="drawer" id="drawer" aria-label="Menu">
   <button type="button" class="close" id="closeBtn" aria-label="Close">✕</button>
-  <a href="#top" data-el="Αρχική" data-en="Home">Αρχική</a>
-  <a href="#about" data-el="Τι είναι" data-en="What it is">Τι είναι</a>
-  <a href="#how" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</a>
-  <a href="#stages" data-el="Στάδια" data-en="Stages">Στάδια</a>
-  <a href="#faq" data-el="Ερωτήσεις" data-en="FAQ">Ερωτήσεις</a>
+  <a href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
+  <a href="about.html" data-el="Τι είναι το Nepsis" data-en="About Nepsis">Τι είναι το Nepsis</a>
+  <a href="how.html" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</a>
+  <a href="practice.html#challenge" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</a>
+  <a href="practice.html#stageGrid" data-el="Στάδια" data-en="Stages">Στάδια</a>
+  <a href="practice.html#quiz" data-el="Κουίζ" data-en="Quiz">Κουίζ</a>
+  <a href="practice.html#progress" data-el="Η πρόοδός μου" data-en="My progress">Η πρόοδός μου</a>
+  <a href="practice.html#achievements" data-el="Επιτεύγματα" data-en="Achievements">Επιτεύγματα</a>
+  <a href="practice.html#knowledge" data-el="Γνώση" data-en="Knowledge">Γνώση</a>
+  <a href="faq.html" data-el="Ερωτήσεις" data-en="FAQ">Ερωτήσεις</a>
 </nav>
 <div class="scrim" id="scrim"></div>
 
@@ -307,7 +335,7 @@
         <p class="lead" data-el="Χτίσε συγκέντρωση, ένα βήμα τη φορά." data-en="Build focus, one step at a time.">Χτίσε συγκέντρωση, ένα βήμα τη φορά.</p>
         <div class="btns">
           <a class="btn btn-primary" href="#subscribe" id="subBtn" data-el="Εγγραφή" data-en="Subscribe">Εγγραφή</a>
-          <a class="btn btn-ghost" href="#stages" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
+          <a class="btn btn-ghost" href="practice.html#stageGrid" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
         </div>
 
       </div>
@@ -320,6 +348,56 @@
         <select id="countrySel"></select>
       </label>
       <p class="msg" id="globeMsg" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- SIMPLE HOME OVERVIEW -->
+  <section class="home-discovery" id="discover">
+    <div class="wrap">
+      <div class="home-intro">
+        <span class="eyebrow" data-el="Μικρά βήματα, κάθε μέρα" data-en="Small steps, every day">Μικρά βήματα, κάθε μέρα</span>
+        <h2 data-el="Η συγκέντρωση χτίζεται στην πράξη." data-en="Focus is built through practice.">Η συγκέντρωση χτίζεται στην πράξη.</h2>
+        <p data-el="Το Nepsis σε βοηθά να ξεκινήσεις απλά και να προχωράς με τον δικό σου ρυθμό. Δεν χρειάζεται να τα κάνεις όλα σήμερα." data-en="Nepsis helps you start simply and move at your own pace. You do not have to do everything today.">Το Nepsis σε βοηθά να ξεκινήσεις απλά και να προχωράς με τον δικό σου ρυθμό. Δεν χρειάζεται να τα κάνεις όλα σήμερα.</p>
+      </div>
+      <div class="home-links">
+        <a class="home-link" href="practice.html#challenge">
+          <span class="home-link-number">01</span>
+          <strong data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</strong>
+          <span data-el="Μία μικρή άσκηση για να ξεκινήσεις." data-en="One small exercise to get started.">Μία μικρή άσκηση για να ξεκινήσεις.</span>
+          <span class="home-link-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="home-link" href="practice.html#stageGrid">
+          <span class="home-link-number">02</span>
+          <strong data-el="Στάδια συγκέντρωσης" data-en="Focus stages">Στάδια συγκέντρωσης</strong>
+          <span data-el="Διάλεξε διάρκεια από 5 έως 60 λεπτά." data-en="Choose a duration from 5 to 60 minutes.">Διάλεξε διάρκεια από 5 έως 60 λεπτά.</span>
+          <span class="home-link-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="home-link" href="practice.html#quiz">
+          <span class="home-link-number">03</span>
+          <strong data-el="Βρες από πού να αρχίσεις" data-en="Find where to start">Βρες από πού να αρχίσεις</strong>
+          <span data-el="Κάνε το σύντομο κουίζ." data-en="Take the short quiz.">Κάνε το σύντομο κουίζ.</span>
+          <span class="home-link-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="home-link" href="practice.html#progress">
+          <span class="home-link-number">04</span>
+          <strong data-el="Η πρόοδός σου" data-en="Your progress">Η πρόοδός σου</strong>
+          <span data-el="Δες το σερί, το ημερολόγιο και τα επιτεύγματά σου." data-en="See your streak, calendar and achievements.">Δες το σερί, το ημερολόγιο και τα επιτεύγματά σου.</span>
+          <span class="home-link-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="home-link" href="practice.html#knowledge">
+          <span class="home-link-number">05</span>
+          <strong data-el="Μάθε περισσότερα" data-en="Learn more">Μάθε περισσότερα</strong>
+          <span data-el="Σύντομα επιστημονικά στοιχεία μετά την εξάσκηση." data-en="Short science notes after each session.">Σύντομα επιστημονικά στοιχεία μετά την εξάσκηση.</span>
+          <span class="home-link-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="home-link" href="about.html">
+          <span class="home-link-number">06</span>
+          <strong data-el="Γνώρισε το Nepsis" data-en="Get to know Nepsis">Γνώρισε το Nepsis</strong>
+          <span data-el="Τι είναι και πώς μπορεί να σε βοηθήσει." data-en="What it is and how it can help.">Τι είναι και πώς μπορεί να σε βοηθήσει.</span>
+          <span class="home-link-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+      <p class="home-footnote" data-el="Η πρόοδός σου παραμένει προσωπική. Οι λειτουργίες και οι ασκήσεις είναι διαθέσιμες χωρίς να χρειάζεται να συνδεθείς." data-en="Your progress stays personal. The tools and exercises are available without signing in.">Η πρόοδός σου παραμένει προσωπική. Οι λειτουργίες και οι ασκήσεις είναι διαθέσιμες χωρίς να χρειάζεται να συνδεθείς.</p>
     </div>
   </section>
 
@@ -393,6 +471,12 @@
         <h2 data-el="Πέντε στάδια, με τον δικό σου ρυθμό." data-en="Five stages, at your own pace.">Πέντε στάδια, με τον δικό σου ρυθμό.</h2>
         <p data-el="Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη." data-en="Start with 5 minutes and move up when you feel ready.">Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη.</p>
       </div>
+      <div class="daily-challenge" id="challenge">
+        <span class="eyebrow" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</span>
+        <h3 data-el="Πέντε λεπτά σε μία μόνο εργασία." data-en="Five minutes on one task.">Πέντε λεπτά σε μία μόνο εργασία.</h3>
+        <p data-el="Άφησε για λίγο τις ειδοποιήσεις, διάλεξε κάτι συγκεκριμένο και μείνε μαζί του για πέντε λεπτά. Μικρή αρχή, χωρίς πίεση." data-en="Put notifications aside, choose one specific task and stay with it for five minutes. A small start, without pressure.">Άφησε για λίγο τις ειδοποιήσεις, διάλεξε κάτι συγκεκριμένο και μείνε μαζί του για πέντε λεπτά. Μικρή αρχή, χωρίς πίεση.</p>
+        <a class="btn btn-primary" href="#stageGrid" data-el="Ξεκίνα με 5 λεπτά" data-en="Start with 5 minutes">Ξεκίνα με 5 λεπτά</a>
+      </div>
       <div class="card progress-card" id="progress" style="margin-bottom:22px"></div>
       <div class="card progress-card" id="calendar" style="margin-bottom:26px"></div>
       <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -405,6 +489,11 @@
       </svg>
       <div class="card" id="quiz" style="margin-bottom:26px;padding:26px"></div>
       <div class="stages" id="stageGrid"></div>
+      <div class="knowledge-note" id="knowledge">
+        <span class="eyebrow" data-el="Γνώση" data-en="Knowledge">Γνώση</span>
+        <h3 data-el="Μικρά στοιχεία, με πηγές." data-en="Small insights, with sources.">Μικρά στοιχεία, με πηγές.</h3>
+        <p data-el="Μετά την ολοκλήρωση ενός σταδίου θα εμφανίζεται ένα σύντομο επιστημονικό στοιχείο μαζί με την πηγή του. Έτσι η εξάσκηση συνδέεται με όσα γνωρίζουμε για την προσοχή." data-en="After you complete a stage, a short scientific insight and its source will appear. This connects practice with what research tells us about attention.">Μετά την ολοκλήρωση ενός σταδίου θα εμφανίζεται ένα σύντομο επιστημονικό στοιχείο μαζί με την πηγή του. Έτσι η εξάσκηση συνδέεται με όσα γνωρίζουμε για την προσοχή.</p>
+      </div>
       <div class="card" style="margin-top:26px;text-align:center">
     <span class="eyebrow" data-el="Μουσική" data-en="Music">Μουσική</span>
     <h2 style="font-size:1.6rem" data-el="Μουσική για συγκέντρωση" data-en="Music to focus with">Μουσική για συγκέντρωση</h2>
@@ -1202,7 +1291,7 @@
       '<div style="margin-top:10px">' + todayLine + '</div>' +
       '<div class="badges">' + badges + '</div>' +
       '<div class="dayline">' + dayBars(today) + '</div>' +
-      '<div class="medals">' + medalsHtml(p, streak, total) + '</div>' +
+      '<div id="achievements" style="margin-top:16px"><h3 style="font-size:1.1rem;margin-bottom:10px">' + (isEl ? "Επιτεύγματα" : "Achievements") + '</h3><div class="medals">' + medalsHtml(p, streak, total) + '</div></div>' +
       '<button type="button" class="btn btn-primary" id="shareBtn" style="margin-top:14px">' + (isEl ? "Μοιράσου το σερί μου" : "Share my streak") + '</button>' +
       '<div class="sub" style="margin-top:12px">' + distractionLine(p) + '</div>' +
       (sbUser ? '<div class="sub" id="syncMsg" style="font-size:.85rem">' + syncMsg + '</div>' : '') +
@@ -1552,7 +1641,7 @@
   document.querySelectorAll("#musicPicks button").forEach(function (b) {
     b.addEventListener("click", function () { playMusic(Number(b.dataset.idx)); });
   });
-  playMusic(0);
+  if (document.body.classList.contains("practice-page")) playMusic(0);
 
   // 3D tilt for cards that the pointer is over (only on devices with a mouse or pen)
   let tiltEl = null;
@@ -1570,7 +1659,7 @@
   // ---------- start ----------
   renderSelect(); renderCalc(); renderStageLabels();
   setLang("el");
-  restoreTimers();
+  if (document.body.classList.contains("practice-page")) restoreTimers();
 </script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
 </body>
