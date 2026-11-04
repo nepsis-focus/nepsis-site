@@ -309,6 +309,7 @@
   @media (max-width: 560px) { .home-discovery { padding: 48px 0 64px; } .home-links { grid-template-columns: 1fr; } .home-link { min-height: 138px; } }
 
 </style>
+  <link rel="stylesheet" href="site-motion.css">
 </head>
 <body class="home-page">
 
@@ -327,17 +328,18 @@
 </header>
 
 <nav class="drawer" id="drawer" aria-label="Menu">
-  <button type="button" class="close" id="closeBtn" aria-label="Close">✕</button>
-  <a href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
+  <button type="button" class="close" id="closeBtn" aria-label="Κλείσιμο">✕</button>
+  <a href="index.html" data-el="Αρχική" data-en="Home">Αρχική</a>
+  <a href="practice.html#start" data-el="START · Ξεκίνα" data-en="START · Begin">START · Ξεκίνα</a>
+  <a href="practice.html#stageGrid" data-el="STAY · Μείνε" data-en="STAY · Focus">STAY · Μείνε</a>
+  <a href="practice.html#return" data-el="RETURN · Επέστρεψε" data-en="RETURN · Return">RETURN · Επέστρεψε</a>
+  <a href="practice.html#mind" data-el="MIND · Σκέψεις" data-en="MIND · Thoughts">MIND · Σκέψεις</a>
+  <a href="practice.html#recovery" data-el="RECOVERY · Διάλειμμα" data-en="RECOVERY · Reset">RECOVERY · Διάλειμμα</a>
+  <a href="practice.html#progress" data-el="PROGRESS · Πρόοδος" data-en="PROGRESS · Progress">PROGRESS · Πρόοδος</a>
   <a href="about.html" data-el="Τι είναι το Nepsis" data-en="About Nepsis">Τι είναι το Nepsis</a>
   <a href="how.html" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</a>
-  <a href="practice.html#challenge" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</a>
-  <a href="practice.html#stageGrid" data-el="Στάδια" data-en="Stages">Στάδια</a>
-  <a href="practice.html#quiz" data-el="Κουίζ" data-en="Quiz">Κουίζ</a>
-  <a href="practice.html#progress" data-el="Η πρόοδός μου" data-en="My progress">Η πρόοδός μου</a>
-  <a href="practice.html#achievements" data-el="Επιτεύγματα" data-en="Achievements">Επιτεύγματα</a>
-  <a href="practice.html#knowledge" data-el="Γνώση" data-en="Knowledge">Γνώση</a>
   <a href="faq.html" data-el="Ερωτήσεις" data-en="FAQ">Ερωτήσεις</a>
+  <a href="privacy.html" data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</a>
 </nav>
 <div class="scrim" id="scrim"></div>
 
@@ -381,40 +383,40 @@
         <p data-el="Το Nepsis σε βοηθά να ξεκινήσεις απλά και να προχωράς με τον δικό σου ρυθμό. Δεν χρειάζεται να τα κάνεις όλα σήμερα." data-en="Nepsis helps you start simply and move at your own pace. You do not have to do everything today.">Το Nepsis σε βοηθά να ξεκινήσεις απλά και να προχωράς με τον δικό σου ρυθμό. Δεν χρειάζεται να τα κάνεις όλα σήμερα.</p>
       </div>
       <div class="home-links">
-        <a class="home-link" href="practice.html#challenge">
-          <span class="home-link-number">01</span>
-          <strong data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</strong>
-          <span data-el="Μία μικρή άσκηση για να ξεκινήσεις." data-en="One small exercise to get started.">Μία μικρή άσκηση για να ξεκινήσεις.</span>
+        <a class="home-link" href="practice.html#start">
+          <span class="home-link-number">01 · START</span>
+          <strong data-el="Ξεκίνα από ένα μικρό βήμα" data-en="Start with one small step">Ξεκίνα από ένα μικρό βήμα</strong>
+          <span data-el="Κάνε την εργασία σου πιο εύκολη να αρχίσει." data-en="Make your task easier to begin.">Κάνε την εργασία σου πιο εύκολη να αρχίσει.</span>
           <span class="home-link-arrow" aria-hidden="true">→</span>
         </a>
         <a class="home-link" href="practice.html#stageGrid">
-          <span class="home-link-number">02</span>
-          <strong data-el="Στάδια συγκέντρωσης" data-en="Focus stages">Στάδια συγκέντρωσης</strong>
-          <span data-el="Διάλεξε διάρκεια από 5 έως 60 λεπτά." data-en="Choose a duration from 5 to 60 minutes.">Διάλεξε διάρκεια από 5 έως 60 λεπτά.</span>
+          <span class="home-link-number">02 · STAY</span>
+          <strong data-el="Μείνε σε μία εργασία" data-en="Stay with one task">Μείνε σε μία εργασία</strong>
+          <span data-el="Διάλεξε 5 έως 60 λεπτά, με τον ρυθμό σου." data-en="Choose 5 to 60 minutes, at your own pace.">Διάλεξε 5 έως 60 λεπτά, με τον ρυθμό σου.</span>
           <span class="home-link-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="home-link" href="practice.html#quiz">
-          <span class="home-link-number">03</span>
-          <strong data-el="Βρες από πού να αρχίσεις" data-en="Find where to start">Βρες από πού να αρχίσεις</strong>
-          <span data-el="Κάνε το σύντομο κουίζ." data-en="Take the short quiz.">Κάνε το σύντομο κουίζ.</span>
+        <a class="home-link" href="practice.html#return">
+          <span class="home-link-number">03 · RETURN</span>
+          <strong data-el="Επέστρεψε χωρίς ενοχές" data-en="Return without judgement">Επέστρεψε χωρίς ενοχές</strong>
+          <span data-el="Μικρή επανεκκίνηση όταν κάτι σε αποσπάσει." data-en="A gentle restart when something distracts you.">Μικρή επανεκκίνηση όταν κάτι σε αποσπάσει.</span>
+          <span class="home-link-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="home-link" href="practice.html#mind">
+          <span class="home-link-number">04 · MIND</span>
+          <strong data-el="Δώσε χώρο στις σκέψεις" data-en="Make room for thoughts">Δώσε χώρο στις σκέψεις</strong>
+          <span data-el="Άφησε μια σκέψη στην άκρη για τώρα." data-en="Set a recurring thought aside for now.">Άφησε μια σκέψη στην άκρη για τώρα.</span>
+          <span class="home-link-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="home-link" href="practice.html#recovery">
+          <span class="home-link-number">05 · RECOVERY</span>
+          <strong data-el="Κάνε μια μικρή παύση" data-en="Take a small reset">Κάνε μια μικρή παύση</strong>
+          <span data-el="Ένα σύντομο διάλειμμα για να επιστρέψεις πιο ήρεμα." data-en="A short reset before returning.">Ένα σύντομο διάλειμμα για να επιστρέψεις πιο ήρεμα.</span>
           <span class="home-link-arrow" aria-hidden="true">→</span>
         </a>
         <a class="home-link" href="practice.html#progress">
-          <span class="home-link-number">04</span>
-          <strong data-el="Η πρόοδός σου" data-en="Your progress">Η πρόοδός σου</strong>
-          <span data-el="Δες το σερί, το ημερολόγιο και τα επιτεύγματά σου." data-en="See your streak, calendar and achievements.">Δες το σερί, το ημερολόγιο και τα επιτεύγματά σου.</span>
-          <span class="home-link-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="home-link" href="practice.html#knowledge">
-          <span class="home-link-number">05</span>
-          <strong data-el="Μάθε περισσότερα" data-en="Learn more">Μάθε περισσότερα</strong>
-          <span data-el="Σύντομα επιστημονικά στοιχεία μετά την εξάσκηση." data-en="Short science notes after each session.">Σύντομα επιστημονικά στοιχεία μετά την εξάσκηση.</span>
-          <span class="home-link-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="home-link" href="about.html">
-          <span class="home-link-number">06</span>
-          <strong data-el="Γνώρισε το Nepsis" data-en="Get to know Nepsis">Γνώρισε το Nepsis</strong>
-          <span data-el="Τι είναι και πώς μπορεί να σε βοηθήσει." data-en="What it is and how it can help.">Τι είναι και πώς μπορεί να σε βοηθήσει.</span>
+          <span class="home-link-number">06 · PROGRESS</span>
+          <strong data-el="Δες την πρόοδό σου" data-en="See your progress">Δες την πρόοδό σου</strong>
+          <span data-el="Ημερολόγιο, σερί και μικρές νίκες." data-en="Calendar, streaks and small wins.">Ημερολόγιο, σερί και μικρές νίκες.</span>
           <span class="home-link-arrow" aria-hidden="true">→</span>
         </a>
       </div>
@@ -1703,6 +1705,7 @@
   setLang("el");
   if (document.body.classList.contains("practice-page")) restoreTimers();
 </script>
+<script src="site-motion.js" defer></script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
 </body>
 </html>
