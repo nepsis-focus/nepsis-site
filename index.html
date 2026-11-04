@@ -1641,7 +1641,7 @@
   document.querySelectorAll("#musicPicks button").forEach(function (b) {
     b.addEventListener("click", function () { playMusic(Number(b.dataset.idx)); });
   });
-  playMusic(0);
+  if (document.body.classList.contains("practice-page")) playMusic(0);
 
   // 3D tilt for cards that the pointer is over (only on devices with a mouse or pen)
   let tiltEl = null;
@@ -1659,7 +1659,7 @@
   // ---------- start ----------
   renderSelect(); renderCalc(); renderStageLabels();
   setLang("el");
-  restoreTimers();
+  if (document.body.classList.contains("practice-page")) restoreTimers();
 </script>
 <script defer src="https://cloud.umami.is/script.js" data-website-id="93c6f050-e568-4aba-940d-8fa16c80cdcc"></script>
 </body>
