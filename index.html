@@ -277,6 +277,37 @@
   .home-link strong { font-size: 1.12rem; }
   .home-link > span:nth-of-type(2) { color: var(--muted); font-size: .92rem; max-width: 26ch; }
   .home-link-arrow { position: absolute; right: 18px; bottom: 14px; color: var(--orange); font-size: 1.25rem; }
+  /* Magic Bento-inspired pointer light, tuned to Nepsis' warm palette */
+  .home-link {
+    --spot-x: 50%; --spot-y: 50%; --spot-alpha: 0;
+    isolation: isolate; overflow: hidden; perspective: 900px;
+    box-shadow: 0 1px 0 rgba(255,255,255,.82) inset, 0 14px 28px -24px rgba(120,70,40,.42);
+    transition: border-color .28s ease, box-shadow .28s ease, transform .28s ease;
+  }
+  .home-link::after {
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    opacity: var(--spot-alpha);
+    background: radial-gradient(300px circle at var(--spot-x) var(--spot-y), rgba(217,112,58,.19), transparent 68%);
+    transition: opacity .22s ease;
+  }
+  .home-link:hover {
+    border-color: rgba(185,85,42,.58);
+    box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 20px 36px -22px rgba(120,70,40,.48), 0 0 0 1px rgba(185,85,42,.12);
+  }
+  .home-link > * { z-index: 1; }
+  .home-folder-lid {
+    position: absolute; z-index: 4; top: 0; left: 0; right: 0; height: 48%;
+    border: 1px solid rgba(185,85,42,.22); border-bottom: 1px solid rgba(185,85,42,.32);
+    border-radius: 17px 17px 9px 9px;
+    background: linear-gradient(145deg, rgba(255,247,233,.98), rgba(239,213,184,.96));
+    box-shadow: 0 8px 18px rgba(120,70,40,.12);
+    transform: perspective(700px) rotateX(0deg); transform-origin: 50% 0%;
+    opacity: 0; pointer-events: none; backface-visibility: hidden;
+  }
+  .home-link.is-opening { pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .home-link, .home-link::after { transition: none !important; }
+  }
   .home-footnote { margin: 24px auto 0; text-align: center; color: var(--muted); font-size: .9rem; }
   .daily-challenge, .knowledge-note { margin: 0 0 26px; padding: 24px; border: 1px solid var(--border); border-radius: 20px; background: var(--card); }
   .daily-challenge h3, .knowledge-note h3 { font-size: 1.35rem; margin-bottom: 8px; }
@@ -1589,7 +1620,48 @@
         scrollTrigger: { trigger: el, start: "top 88%", once: true }
       });
     });
+    gsap.from(".home-intro > *, .home-link", {
+      y: 24, opacity: 0, duration: 0.72, stagger: 0.075, ease: "power3.out",
+      clearProps: "transform,opacity",
+      scrollTrigger: { trigger: ".home-discovery", start: "top 78%", once: true }
+    });
   }
+
+  // Magic Bento-style pointer spotlight + Folder-inspired opening transition.
+  (function initHomeCardInteractions() {
+    const links = Array.from(document.querySelectorAll(".home-link"));
+    if (!links.length) return;
+    links.forEach(function (link) {
+      const lid = document.createElement("span");
+      lid.className = "home-folder-lid";
+      lid.setAttribute("aria-hidden", "true");
+      link.appendChild(lid);
+
+      link.addEventListener("pointermove", function (event) {
+        const rect = link.getBoundingClientRect();
+        link.style.setProperty("--spot-x", (event.clientX - rect.left) + "px");
+        link.style.setProperty("--spot-y", (event.clientY - rect.top) + "px");
+        link.style.setProperty("--spot-alpha", "1");
+      });
+      link.addEventListener("pointerleave", function () {
+        link.style.setProperty("--spot-alpha", "0");
+      });
+
+      link.addEventListener("click", function (event) {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!window.gsap || link.classList.contains("is-opening")) return;
+        event.preventDefault();
+        link.classList.add("is-opening");
+        const timeline = gsap.timeline({
+          onComplete: function () { window.location.href = link.href; }
+        });
+        timeline.set(lid, { autoAlpha: 1, rotateX: 0, transformOrigin: "50% 0%" })
+          .to(lid, { rotateX: -68, duration: 0.42, ease: "power3.inOut" })
+          .to(link, { y: -4, scale: 1.012, duration: 0.22, ease: "power2.out" }, 0);
+      });
+    });
+  })();
 
   // ---------- medals, day bars, music and 3D tilt ----------
   function medalsHtml(p, streak, total) {
