@@ -2,73 +2,125 @@ import { chromium } from "playwright";
 import { writeFile } from "node:fs/promises";
 
 const base = (process.env.SITE_URL || "https://nepsis-focus.github.io/nepsis-site/").replace(/\/$/, "");
-const routes = ["/", "/practice.html", "/about.html", "/how.html", "/faq.html", "/privacy.html"];
+const routes = [
+  "/", "/practice.html", "/my-nepsis.html", "/reset.html", "/library.html",
+  "/diary.html", "/about.html", "/how.html", "/faq.html", "/privacy.html"
+];
+const viewports = [
+  { name: "desktop", width: 1440, height: 1000, isMobile: false, hasTouch: false },
+  { name: "mobile", width: 390, height: 844, isMobile: true, hasTouch: true }
+];
 const failures = [];
 const results = [];
 const browser = await chromium.launch({ headless: true });
 
 try {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-
-  for (const route of routes) {
-    const url = base + route;
-    const page = await context.newPage();
-    const pageErrors = [];
-    const consoleErrors = [];
-
-    page.on("pageerror", error => pageErrors.push(error.message));
-    page.on("console", message => {
-      if (message.type() === "error") consoleErrors.push(message.text());
+  for (const viewport of viewports) {
+    const context = await browser.newContext({
+      viewport: { width: viewport.width, height: viewport.height },
+      isMobile: viewport.isMobile,
+      hasTouch: viewport.hasTouch
     });
 
-    let status = null;
-    let title = "";
-    try {
-      const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
-      status = response?.status() ?? null;
-      await page.locator("body").waitFor({ state: "visible", timeout: 10000 });
-      title = await page.title();
+    for (const route of routes) {
+      const url = base + route;
+      const page = await context.newPage();
+      const pageErrors = [];
+      const consoleErrors = [];
 
-      if (!response || status >= 400) failures.push(`${route}: HTTP ${status ?? "no response"}`);
-      if (!(await page.locator("body").innerText()).trim()) failures.push(`${route}: empty page body`);
-      if (!title.trim()) failures.push(`${route}: missing document title`);
+      page.on("pageerror", error => pageErrors.push(error.message));
+      page.on("console", message => {
+        if (message.type() === "error") consoleErrors.push(message.text());
+      });
 
-      for (const message of pageErrors) failures.push(`${route}: JavaScript exception: ${message}`);
-      for (const message of consoleErrors) {
-        if (!/favicon|third.party|third-party/i.test(message)) failures.push(`${route}: console error: ${message}`);
-      }
+      let status = null;
+      let title = "";
+      let internalLinks = [];
+      let documentWidth = null;
 
-      const internalLinks = await page.locator("a[href]").evaluateAll(anchors =>
-        anchors.map(a => a.getAttribute("href"))
-          .filter(href => href && !href.startsWith("#") && !href.startsWith("mailto:") && !href.startsWith("tel:"))
-          .filter(href => href.startsWith("/") || href.startsWith(location.origin))
-      );
-      for (const href of [...new Set(internalLinks)]) {
-        const target = href.startsWith("http") ? href : new URL(href, url).href;
-        try {
-          const linkResponse = await context.request.get(target, { timeout: 15000 });
-          if (linkResponse.status() >= 400) failures.push(`${route}: broken internal link ${href} (HTTP ${linkResponse.status()})`);
-        } catch (error) {
-          failures.push(`${route}: internal link request failed ${href}: ${error.message}`);
+      try {
+        const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
+        status = response?.status() ?? null;
+        await page.locator("body").waitFor({ state: "visible", timeout: 10000 });
+        await page.waitForTimeout(700);
+        title = await page.title();
+
+        if (!response || status >= 400) failures.push(`${viewport.name} ${route}: HTTP ${status ?? "no response"}`);
+        if (!(await page.locator("body").innerText()).trim()) failures.push(`${viewport.name} ${route}: empty page body`);
+        if (!title.trim()) failures.push(`${viewport.name} ${route}: missing document title`);
+
+        const layout = await page.evaluate(() => ({
+          viewportWidth: document.documentElement.clientWidth,
+          documentWidth: document.documentElement.scrollWidth
+        }));
+        documentWidth = layout.documentWidth;
+        if (layout.documentWidth > layout.viewportWidth + 2) {
+          failures.push(`${viewport.name} ${route}: horizontal overflow (${layout.documentWidth}px content in ${layout.viewportWidth}px viewport)`);
         }
-      }
 
-      results.push({ route, status, title, jsErrors: pageErrors.length, consoleErrors: consoleErrors.length, internalLinks: internalLinks.length });
-    } catch (error) {
-      failures.push(`${route}: navigation/check failed: ${error.message}`);
-      results.push({ route, status, title, error: error.message });
-    } finally {
-      await page.close();
+        for (const message of pageErrors) failures.push(`${viewport.name} ${route}: JavaScript exception: ${message}`);
+        for (const message of consoleErrors) {
+          if (!/favicon|third.party|third-party/i.test(message)) {
+            failures.push(`${viewport.name} ${route}: console error: ${message}`);
+          }
+        }
+
+        internalLinks = await page.locator("a[href]").evaluateAll(anchors =>
+          anchors.map(anchor => anchor.href)
+            .filter(href => {
+              try {
+                const target = new URL(href);
+                return target.origin === location.origin &&
+                  target.pathname.startsWith(new URL(location.href).pathname.replace(/[^/]*$/, ""));
+              } catch {
+                return false;
+              }
+            })
+        );
+
+        if (viewport.name === "desktop") {
+          for (const href of [...new Set(internalLinks)]) {
+            try {
+              const linkResponse = await context.request.get(href, { timeout: 15000 });
+              if (linkResponse.status() >= 400) {
+                failures.push(`${route}: broken internal link ${href} (HTTP ${linkResponse.status()})`);
+              }
+            } catch (error) {
+              failures.push(`${route}: internal link request failed ${href}: ${error.message}`);
+            }
+          }
+        }
+
+        results.push({
+          viewport: viewport.name, route, status, title,
+          jsErrors: pageErrors.length, consoleErrors: consoleErrors.length,
+          internalLinks: internalLinks.length, documentWidth
+        });
+      } catch (error) {
+        failures.push(`${viewport.name} ${route}: navigation/check failed: ${error.message}`);
+        results.push({ viewport: viewport.name, route, status, title, error: error.message });
+      } finally {
+        await page.close();
+      }
     }
+
+    await context.close();
   }
 } finally {
   await browser.close();
 }
 
-const report = { checkedAt: new Date().toISOString(), base, pages: results, failures };
+const report = {
+  checkedAt: new Date().toISOString(),
+  base,
+  viewports: viewports.map(({ name, width, height }) => ({ name, width, height })),
+  pagesChecked: results.length,
+  pages: results,
+  failures
+};
 await writeFile("nepsis-watchdog-report.json", JSON.stringify(report, null, 2), "utf8");
 
-console.log("NEPSIS LIVE-SITE HEALTH REPORT");
+console.log("NEPSIS LIVE-SITE RESPONSIVE HEALTH REPORT");
 console.log(JSON.stringify(report, null, 2));
 
 if (failures.length) {
@@ -76,5 +128,5 @@ if (failures.length) {
   for (const failure of failures) console.error("- " + failure);
   process.exitCode = 1;
 } else {
-  console.log("\nAll six pages passed the automated browser health check.");
+  console.log("\nAll ten site pages passed desktop and mobile browser health checks.");
 }
