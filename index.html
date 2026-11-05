@@ -741,7 +741,14 @@
       <input type="email" id="accEmail" autocomplete="email" placeholder="email@example.com">
       <button type="button" class="btn btn-primary go" id="accSend"></button>
     </div>
-    <p class="acc-msg" id="accMsg"></p>
+    <div id="accOtp" hidden>
+      <p class="muted" id="accOtpHint" style="margin-top:12px"></p>
+      <input type="text" id="accCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="6" placeholder="123456" aria-label="Six-digit email code">
+      <button type="button" class="btn btn-primary go" id="accVerify"></button>
+      <button type="button" class="btn btn-ghost go" id="accResend"></button>
+      <button type="button" class="btn btn-ghost go" id="accBack"></button>
+    </div>
+    <p class="acc-msg" id="accMsg" aria-live="polite"></p>
   </div>
 </div>
 <footer>
@@ -1598,6 +1605,7 @@
   const SB_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
   const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY) : null;
   let sbUser = null;
+  let pendingOtpEmail = "";
 
   function mergeProgress(a, b) {
     const out = { days: {}, distractions: {} };
@@ -1653,11 +1661,16 @@
       ? (isEl ? "Η πρόοδός σου αποθηκεύεται στον λογαριασμό σου και φαίνεται σε όλες τις συσκευές." : "Your progress is saved to your account and shows on all your devices.")
       : (isEl ? "Βάλε το email σου. Θα πάρεις σύνδεσμο, χωρίς κωδικό." : "Enter your email. You will get a link, no password needed.");
     $("accLogged").hidden = !sbUser;
-    $("accForm").hidden = !!sbUser;
+    $("accForm").hidden = !!sbUser || !!pendingOtpEmail;
+    $("accOtp").hidden = !!sbUser || !pendingOtpEmail;
     $("accWho").textContent = sbUser ? sbUser.email : "";
     $("accOut").textContent = isEl ? "Αποσύνδεση" : "Sign out";
-    $("accSend").textContent = isEl ? "Στείλε μου σύνδεσμο" : "Send me a link";
+    $("accSend").textContent = isEl ? "Στείλε μου κωδικό" : "Send me a code";
     $("accEmail").placeholder = isEl ? "το email σου" : "your email";
+    $("accOtpHint").textContent = pendingOtpEmail ? (isEl ? "Ο κωδικός στάλθηκε στο " + pendingOtpEmail : "The code was sent to " + pendingOtpEmail) : "";
+    $("accVerify").textContent = isEl ? "Επιβεβαίωση και σύνδεση" : "Verify and sign in";
+    $("accResend").textContent = isEl ? "Αποστολή νέου κωδικού" : "Resend code";
+    $("accBack").textContent = isEl ? "Αλλαγή email" : "Change email";
     $("accMsg").textContent = msg || "";
   }
   function setAcc(open) {
@@ -1671,11 +1684,33 @@
   $("accSend").addEventListener("click", async function () {
     const email = $("accEmail").value.trim();
     if (!sb) { renderAcc(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page."); return; }
-    if (!email) { renderAcc(currentLang === "el" ? "Γράψε ένα email." : "Please enter an email."); return; }
-    const res = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + location.pathname } });
-    renderAcc(res.error
-      ? (currentLang === "el" ? "Κάτι πήγε στραβά. Δοκίμασε ξανά." : "Something went wrong. Try again.")
-      : (currentLang === "el" ? "Στάλθηκε σύνδεσμος στο email σου. Άνοιξέ τον από αυτή τη συσκευή." : "A link was sent to your email. Open it on this device."));
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { renderAcc(currentLang === "el" ? "Γράψε ένα έγκυρο email." : "Enter a valid email address."); return; }
+    const { error } = await sb.auth.signInWithOtp({ email });
+    if (error) { renderAcc(currentLang === "el" ? "Δεν μπορέσαμε να στείλουμε κωδικό. Περίμενε λίγο και δοκίμασε ξανά." : "We couldn't send a code. Wait a moment and try again."); return; }
+    pendingOtpEmail = email;
+    $("accCode").value = "";
+    renderAcc(currentLang === "el" ? "Στείλαμε εξαψήφιο κωδικό στο email σου. Πληκτρολόγησέ τον εδώ, ακόμη κι αν διαβάζεις το email από άλλη συσκευή." : "We sent a six-digit code to your email. Enter it here, even if you read your email on another device.");
+    $("accCode").focus();
+  });
+  $("accVerify").addEventListener("click", async function () {
+    const token = $("accCode").value.replace(/\D/g, "").slice(0, 6);
+    if (!pendingOtpEmail || token.length !== 6) { renderAcc(currentLang === "el" ? "Πληκτρολόγησε τον εξαψήφιο κωδικό." : "Enter the six-digit code."); return; }
+    const { error } = await sb.auth.verifyOtp({ email: pendingOtpEmail, token, type: "email" });
+    if (error) { renderAcc(currentLang === "el" ? "Ο κωδικός δεν είναι σωστός ή έχει λήξει. Δοκίμασε ξανά ή ζήτησε νέο." : "That code is invalid or expired. Try again or request a new one."); return; }
+    pendingOtpEmail = "";
+    renderAcc(currentLang === "el" ? "Η σύνδεση ολοκληρώθηκε." : "You're signed in.");
+  });
+  $("accResend").addEventListener("click", async function () {
+    if (!pendingOtpEmail) return;
+    const { error } = await sb.auth.signInWithOtp({ email: pendingOtpEmail });
+    renderAcc(error
+      ? (currentLang === "el" ? "Δεν μπορέσαμε να στείλουμε νέο κωδικό. Περίμενε λίγο." : "Couldn't send a new code. Please wait a moment.")
+      : (currentLang === "el" ? "Στείλαμε νέο κωδικό στο email σου." : "A new code was sent to your email."));
+  });
+  $("accBack").addEventListener("click", function () {
+    pendingOtpEmail = "";
+    $("accCode").value = "";
+    renderAcc("");
   });
   $("accOut").addEventListener("click", async function () {
     if (sb) await sb.auth.signOut();
