@@ -80,6 +80,17 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
   <div class="week-metrics"><div class="week-metric"><strong id="weekMinutes">0</strong><span data-el="ΛΕΠΤΑ" data-en="MINUTES">ΛΕΠΤΑ</span></div><div class="week-metric"><strong id="weekDays">0</strong><span data-el="ΗΜΕΡΕΣ" data-en="DAYS">ΗΜΕΡΕΣ</span></div><div class="week-metric"><strong id="weekSessions">0</strong><span data-el="ΣΥΝΕΔΡΙΕΣ" data-en="SESSIONS">ΣΥΝΕΔΡΙΕΣ</span></div></div>
   <div class="week-bars" id="weekBars" aria-label="Λεπτά ανά ημέρα"></div><p class="week-compare" id="weekCompare"></p>
  </article>
+ <article class="tool-panel">
+  <div class="section-kicker" data-el="Η μεγάλη εικόνα" data-en="The bigger picture">Η μεγάλη εικόνα</div>
+  <h2 data-el="Ο μήνας μου" data-en="My month">Ο μήνας μου</h2>
+  <p class="tool-intro" id="monthRange">Η πρόοδός σου μέχρι σήμερα.</p>
+  <div class="week-metrics">
+   <div class="week-metric"><strong id="monthMinutes">0</strong><span data-el="ΛΕΠΤΑ" data-en="MINUTES">ΛΕΠΤΑ</span></div>
+   <div class="week-metric"><strong id="monthDays">0</strong><span data-el="ΗΜΕΡΕΣ" data-en="DAYS">ΗΜΕΡΕΣ</span></div>
+   <div class="week-metric"><strong id="monthSessions">0</strong><span data-el="ΣΥΝΕΔΡΙΕΣ" data-en="SESSIONS">ΣΥΝΕΔΡΙΕΣ</span></div>
+  </div>
+  <p class="week-compare" id="monthCompare"></p>
+ </article>
 </section>
 <section class="panel" style="margin-top:18px"><h2 class="section-title" data-el="Ένας χώρος που ανήκει σε σένα" data-en="A space that belongs to you">Ένας χώρος που ανήκει σε σένα</h2><p data-el="Οι στόχοι και το προφίλ σου αποθηκεύονται ιδιωτικά. Το ιστορικό και η εβδομαδιαία αναφορά υπολογίζονται από τις συνεδρίες συγκέντρωσης που έχεις καταγράψει." data-en="Your goals and profile are stored privately. Your history and weekly report are calculated from the focus sessions you have recorded.">Οι στόχοι και το προφίλ σου αποθηκεύονται ιδιωτικά. Το ιστορικό και η εβδομαδιαία αναφορά υπολογίζονται από τις συνεδρίες συγκέντρωσης που έχεις καταγράψει.</p><p class="privacy" id="spaceSyncNote" data-el="Ως επισκέπτης, τα στοιχεία σου αποθηκεύονται σε αυτή τη συσκευή. Με σύνδεση, συγχρονίζονται ιδιωτικά στον λογαριασμό σου." data-en="As a guest, your details stay on this device. When signed in, they sync privately to your account.">Ως επισκέπτης, τα στοιχεία σου αποθηκεύονται σε αυτή τη συσκευή. Με σύνδεση, συγχρονίζονται ιδιωτικά στον λογαριασμό σου.</p></section>
 </main>
@@ -110,6 +121,7 @@ function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2
 function dayMinutes(k){return(progress.days[k]||[]).reduce((n,v)=>n+Math.max(0,Number(v)||0),0)}
 function weekStart(offset){const d=new Date();d.setHours(0,0,0,0);const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day+offset*7);return d}
 function weekData(offset){const start=weekStart(offset),days=[];let minutes=0,sessions=0,active=0;for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=dateKey(d),m=dayMinutes(k),n=(progress.days[k]||[]).length;days.push({date:d,key:k,minutes:m,sessions:n});minutes+=m;sessions+=n;if(n)active++}return{start,days,minutes,sessions,active}}
+function monthData(offset){const now=new Date(),start=new Date(now.getFullYear(),now.getMonth()+offset,1),lastDay=new Date(start.getFullYear(),start.getMonth()+1,0).getDate(),endDay=Math.min(now.getDate(),lastDay),end=new Date(start.getFullYear(),start.getMonth(),endDay);let minutes=0,sessions=0,active=0;for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){const k=dateKey(d),m=dayMinutes(k),n=(progress.days[k]||[]).length;minutes+=m;sessions+=n;if(n)active++}return{start,end,minutes,sessions,active}}
 function renderExtras(){
  const p=userSpace.profile||{display_name:"",bio:""},name=p.display_name|| (lang==="el"?"Μέλος Nepsis":"Nepsis member");
  $("profileName").value=p.display_name||"";$("profileBio").value=p.bio||"";$("profileDisplay").textContent=name;$("profileAvatar").textContent=(name.trim()[0]||"N").toUpperCase();
@@ -124,6 +136,7 @@ function renderExtras(){
  $("weekRange").textContent=w.start.toLocaleDateString(lang==="el"?"el-GR":"en-GB",{day:"numeric",month:"short"})+" – "+w.days[6].date.toLocaleDateString(lang==="el"?"el-GR":"en-GB",{day:"numeric",month:"short"});
  const bars=$("weekBars");bars.innerHTML="";const max=Math.max(1,...w.days.map(d=>d.minutes));w.days.forEach((d,i)=>{const col=document.createElement("div");col.className="week-bar";const bar=document.createElement("i");bar.style.height=(d.minutes?Math.max(8,d.minutes/max*82):3)+"px";bar.title=d.key+" · "+d.minutes+" min";const label=document.createElement("span");label.textContent=d.date.toLocaleDateString(lang==="el"?"el-GR":"en-GB",{weekday:"narrow"});col.append(bar,label);bars.appendChild(col)});
  const diff=w.minutes-prev.minutes,sign=diff>0?"+":"";$("weekCompare").textContent=lang==="el"?"Σε σχέση με την προηγούμενη εβδομάδα: "+sign+diff+" λεπτά · "+(diff>0?"περισσότερος χρόνος":diff<0?"λιγότερος χρόνος":"ίδιος χρόνος")+".":"Compared with last week: "+sign+diff+" minutes.";
+ const m=monthData(0),pm=monthData(-1),monthDiff=m.minutes-pm.minutes,monthSign=monthDiff>0?"+":"";const dateLocale=lang==="el"?"el-GR":"en-GB";$("monthMinutes").textContent=m.minutes;$("monthDays").textContent=m.active;$("monthSessions").textContent=m.sessions;$("monthRange").textContent=m.start.toLocaleDateString(dateLocale,{day:"numeric",month:"short"})+" – "+m.end.toLocaleDateString(dateLocale,{day:"numeric",month:"short"});$("monthCompare").textContent=lang==="el"?"Σε σχέση με τις ίδιες ημέρες του προηγούμενου μήνα: "+monthSign+monthDiff+" λεπτά.":"Compared with the same dates last month: "+monthSign+monthDiff+" minutes.";
  $("spaceSyncNote").textContent=user?(lang==="el"?"Το προφίλ και οι στόχοι σου συγχρονίζονται ιδιωτικά στον λογαριασμό σου.":"Your profile and goals sync privately to your account."):(lang==="el"?"Ως επισκέπτης, τα στοιχεία σου αποθηκεύονται σε αυτή τη συσκευή. Με σύνδεση, συγχρονίζονται ιδιωτικά στον λογαριασμό σου.":"As a guest, your details stay on this device. When signed in, they sync privately to your account.");
 }
 $("saveProfile").addEventListener("click",async()=>{userSpace.profile={...userSpace.profile,display_name:$("profileName").value.trim().slice(0,32),bio:$("profileBio").value.trim().slice(0,180)};await saveUserSpace(true);renderExtras()});
