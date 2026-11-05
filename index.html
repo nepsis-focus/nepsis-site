@@ -1600,7 +1600,7 @@
   $("subScrim").addEventListener("click", function () { setSub(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setSub(false); });
 
-  // ---------- account (Supabase: email link, no password) ----------
+  // ---------- account (Supabase: email OTP, no password) ----------
   const SB_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
   const SB_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
   const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY) : null;
@@ -1659,7 +1659,7 @@
     $("accTitle").textContent = sbUser ? (isEl ? "Είσαι συνδεδεμένος" : "You are signed in") : (isEl ? "Σύνδεση" : "Sign in");
     $("accText").textContent = sbUser
       ? (isEl ? "Η πρόοδός σου αποθηκεύεται στον λογαριασμό σου και φαίνεται σε όλες τις συσκευές." : "Your progress is saved to your account and shows on all your devices.")
-      : (isEl ? "Βάλε το email σου. Θα πάρεις σύνδεσμο, χωρίς κωδικό." : "Enter your email. You will get a link, no password needed.");
+      : (isEl ? "Βάλε το email σου. Θα λάβεις εξαψήφιο κωδικό για να συνδεθείς, ακόμη κι αν ανοίξεις το email από άλλη συσκευή." : "Enter your email. You will receive a six-digit code you can use even when you open email on another device.");
     $("accLogged").hidden = !sbUser;
     $("accForm").hidden = !!sbUser || !!pendingOtpEmail;
     $("accOtp").hidden = !!sbUser || !pendingOtpEmail;
