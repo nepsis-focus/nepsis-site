@@ -119,6 +119,51 @@
     .globe-drag-hint { display: none; }
   }
 
+
+  /* Mobile homepage layout: keep the globe, country selector and hero copy inside the viewport. */
+  @media (max-width: 600px) {
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 0;
+      padding: 18px 0 42px;
+      overflow: hidden;
+    }
+    .hero::after { background: linear-gradient(180deg, rgba(255,248,238,.04), rgba(255,248,238,.16) 65%, var(--bg) 100%); }
+    .hero-earth {
+      position: relative;
+      top: auto;
+      right: auto;
+      width: min(90vw, 390px);
+      height: min(90vw, 390px);
+      max-width: 100%;
+      margin: 0 auto 8px;
+      transform: none;
+      opacity: 1;
+      flex: 0 0 auto;
+    }
+    .hero .wrap { margin-top: 0; padding-left: 22px; padding-right: 22px; }
+    .hero-copy { max-width: 100%; padding-top: 0; }
+    .hero h1 { max-width: 13ch; font-size: clamp(2.15rem, 9.4vw, 2.8rem); }
+    .hero p.lead { max-width: 34ch; font-size: 1rem; }
+    .hero-country {
+      position: relative;
+      inset: auto;
+      width: calc(100% - 44px);
+      max-width: 390px;
+      margin: 24px auto 0;
+      padding: 16px 18px;
+    }
+    .hero-country select { min-width: 0; max-width: 100%; }
+    .globe-drag-hint { display: none; }
+  }
+  @media (max-width: 380px) {
+    .hero-earth { width: 88vw; height: 88vw; }
+    .hero .wrap { padding-left: 18px; padding-right: 18px; }
+    .hero-country { width: calc(100% - 36px); }
+  }
+
   /* sections */
   .block { padding: 96px 0; }
   .block .head { max-width: 680px; margin-bottom: 30px; }
