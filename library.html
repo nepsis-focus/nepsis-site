@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF8EE">
+<title>Nepsis · Βιβλιοθήκη γνώσης</title>
+<meta name="description" content="Μικρές, πρακτικές ιδέες για συγκέντρωση, μάθηση, συνήθειες και ξεκούραση, με αξιόπιστες πηγές.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF8EE;--fg:#3A2418;--muted:#7A5F50;--card:#FFFDF8;--orange:#F0702A;--ember:#D8392B;--sun:#F7D15A;--border:#EEDCC8;--green:#78917A;--grad:linear-gradient(120deg,#F7D15A,#F0702A 55%,#D8392B)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:Nunito,system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}.wrap{width:min(1120px,calc(100% - 36px));margin:auto}
+header{position:sticky;top:0;z-index:20;height:68px;border-bottom:1px solid var(--border);background:#FFF8EEE8;backdrop-filter:blur(12px)}
+.top{height:100%;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:1.25rem;font-weight:900}
+.dot{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE58A,#F7B232 35%,#F0702A 70%,#D8392B);box-shadow:0 0 0 5px #F0702A20}
+.controls{display:flex;gap:9px;align-items:center}.lang button,.back{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 12px;font:inherit;font-size:.82rem;font-weight:900;text-decoration:none;cursor:pointer}.lang button.active{background:var(--orange);color:#fff}
+main{padding:clamp(42px,7vw,78px) 0 88px}
+.hero{max-width:760px;margin:0 auto 34px;text-align:center}.eyebrow{color:var(--green);font-size:.75rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+h1{font-size:clamp(2.5rem,6vw,4.3rem);line-height:1.04;letter-spacing:-.045em;margin:12px 0}h1 em{font-family:Literata,Georgia,serif;font-weight:500;color:var(--orange)}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:60ch;margin:auto}
+.search{display:flex;gap:10px;max-width:640px;margin:24px auto 0}.search input{min-width:0;flex:1;border:1px solid var(--border);border-radius:999px;background:#fff;padding:13px 18px;font:inherit;color:var(--fg);outline:none}.search input:focus{border-color:var(--orange);box-shadow:0 0 0 3px #F0702A22}
+.filters{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px auto 32px}.filter{border:1px solid var(--border);background:#fff;color:var(--muted);border-radius:999px;padding:8px 13px;font:inherit;font-size:.84rem;font-weight:900;cursor:pointer}.filter.active{background:var(--fg);border-color:var(--fg);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:25px;box-shadow:0 1px 0 #fff inset,0 18px 34px -27px #78462866;display:flex;flex-direction:column;min-height:260px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 35px -24px #78462888}
+.card[hidden]{display:none}
+.meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.tag{font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}.read{font-size:.78rem;color:var(--muted)}
+.card h2{font-size:1.35rem;line-height:1.2;margin-bottom:9px}.card p{font-size:.94rem;color:var(--muted)}
+.try{margin-top:16px;padding:13px 15px;border-radius:15px;background:#F7EFE3;color:var(--fg);font-size:.88rem}.try strong{display:block;color:var(--orange);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.source{margin-top:auto;padding-top:18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.source a{font-weight:900;color:var(--orange);text-decoration:none;font-size:.88rem}.source a:hover{text-decoration:underline}.source small{color:var(--muted);font-size:.75rem}
+.empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:20px}
+.note{margin:24px auto 0;max-width:850px;padding:18px 20px;border-left:3px solid var(--green);background:#F2F0E7;border-radius:0 16px 16px 0;color:var(--muted);font-size:.86rem}
+footer{text-align:center;border-top:1px solid var(--border);padding:24px;color:var(--muted);font-size:.85rem}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.card{min-height:0}.search{flex-direction:column}.search input{width:100%}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap top">
+<a class="logo" href="index.html"><span class="dot" aria-hidden="true"></span>Nepsis</a>
+<div class="controls"><div class="lang" role="group" aria-label="Language"><button type="button" data-lang="el" class="active">ΕΛ</button><button type="button" data-lang="en">EN</button></div><a class="back" href="practice.html" data-el="Πίσω στην εξάσκηση" data-en="Back to practice">Πίσω στην εξάσκηση</a></div>
+</div></header>
+<main class="wrap">
+<section class="hero">
+<span class="eyebrow" data-el="ΜΑΘΑΙΝΟΥΜΕ ΜΑΖΙ" data-en="LEARN WITH US">ΜΑΘΑΙΝΟΥΜΕ ΜΑΖΙ</span>
+<h1 data-el="Γνώση που γίνεται <em>πράξη.</em>" data-en="Knowledge into <em>practice.</em>">Γνώση που γίνεται <em>πράξη.</em></h1>
+<p data-el="Μικρές ιδέες για τη συγκέντρωση, τη μάθηση και τις καθημερινές συνήθειες. Κάθε κάρτα συνδέεται με πηγή, ώστε να μπορείς να διαβάσεις περισσότερα και να κρίνεις μόνος σου." data-en="Small ideas about focus, learning and everyday habits. Every card links to a source, so you can read further and make up your own mind.">Μικρές ιδέες για τη συγκέντρωση, τη μάθηση και τις καθημερινές συνήθειες. Κάθε κάρτα συνδέεται με πηγή, ώστε να μπορείς να διαβάσεις περισσότερα και να κρίνεις μόνος σου.</p>
+<div class="search"><input id="search" type="search" placeholder="Αναζήτησε ένα θέμα…" aria-label="Search knowledge" data-placeholder-el="Αναζήτησε ένα θέμα…" data-placeholder-en="Search a topic…"></div>
+</section>
+<nav class="filters" aria-label="Knowledge categories">
+<button class="filter active" type="button" data-filter="all" data-el="Όλα" data-en="All">Όλα</button>
+<button class="filter" type="button" data-filter="focus" data-el="Συγκέντρωση" data-en="Focus">Συγκέντρωση</button>
+<button class="filter" type="button" data-filter="learning" data-el="Μάθηση" data-en="Learning">Μάθηση</button>
+<button class="filter" type="button" data-filter="habits" data-el="Συνήθειες" data-en="Habits">Συνήθειες</button>
+<button class="filter" type="button" data-filter="rest" data-el="Ξεκούραση" data-en="Rest">Ξεκούραση</button>
+<button class="filter" type="button" data-filter="calm" data-el="Ηρεμία" data-en="Calm">Ηρεμία</button>
+</nav>
+<section class="grid" id="cards" aria-live="polite">
+<article class="card" data-category="focus" data-search="multitasking switching attention concentration task switching">
+<div class="meta"><span class="tag" data-el="ΣΥΓΚΕΝΤΡΩΣΗ" data-en="FOCUS">ΣΥΓΚΕΝΤΡΩΣΗ</span><span class="read" data-el="3 λεπτά" data-en="3 min">3 λεπτά</span></div>
+<h2 data-el="Το συνεχές άλλαγμα εργασιών έχει κόστος" data-en="Constant task-switching has a cost">Το συνεχές άλλαγμα εργασιών έχει κόστος</h2>
+<p data-el="Όταν εναλλάσσουμε γρήγορα απαιτητικές εργασίες, χάνουμε χρόνο και νοητική ενέργεια σε κάθε αλλαγή. Δεν χρειάζεται να κάνεις τα πάντα ταυτόχρονα." data-en="Rapidly switching between demanding tasks costs time and mental effort. You do not need to do everything at once.">Όταν εναλλάσσουμε γρήγορα απαιτητικές εργασίες, χάνουμε χρόνο και νοητική ενέργεια σε κάθε αλλαγή. Δεν χρειάζεται να κάνεις τα πάντα ταυτόχρονα.</p>
+<div class="try"><strong data-el="Δοκίμασέ το" data-en="Try this">Δοκίμασέ το</strong><span data-el="Διάλεξε μία εργασία και άφησε στην άκρη τις υπόλοιπες ειδοποιήσεις για ένα μικρό διάστημα." data-en="Choose one task and put other notifications aside for a short period.">Διάλεξε μία εργασία και άφησε στην άκρη τις υπόλοιπες ειδοποιήσεις για ένα μικρό διάστημα.</span></div>
+<div class="source"><a href="https://www.apa.org/topics/research/multitasking" target="_blank" rel="noopener noreferrer" data-el="Διάβασε την πηγή ↗" data-en="Read the source ↗">Διάβασε την πηγή ↗</a><small>American Psychological Association</small></div>
+</article>
+<article class="card" data-category="learning" data-search="retrieval practice spaced learning memory study">
+<div class="meta"><span class="tag" data-el="ΜΑΘΗΣΗ" data-en="LEARNING">ΜΑΘΗΣΗ</span><span class="read" data-el="5 λεπτά" data-en="5 min">5 λεπτά</span></div>
+<h2 data-el="Θυμάσαι καλύτερα όταν προσπαθείς να ανακαλέσεις" data-en="Recall helps strengthen learning">Θυμάσαι καλύτερα όταν προσπαθείς να ανακαλέσεις</h2>
+<p data-el="Η ενεργή ανάκληση —να προσπαθείς να θυμηθείς χωρίς να κοιτάς τις σημειώσεις— και η επανάληψη σε διαφορετικές ημέρες είναι στρατηγικές με ισχυρή ερευνητική υποστήριξη." data-en="Active recall—trying to remember without looking at your notes—and revisiting material on different days are learning strategies with strong research support.">Η ενεργή ανάκληση —να προσπαθείς να θυμηθείς χωρίς να κοιτάς τις σημειώσεις— και η επανάληψη σε διαφορετικές ημέρες είναι στρατηγικές με ισχυρή ερευνητική υποστήριξη.</p>
+<div class="try"><strong data-el="Δοκίμασέ το" data-en="Try this">Δοκίμασέ το</strong><span data-el="Κλείσε το βιβλίο και γράψε τρία πράγματα που θυμάσαι. Έπειτα έλεγξε τι ξέχασες." data-en="Close the book and write down three things you remember. Then check what you missed.">Κλείσε το βιβλίο και γράψε τρία πράγματα που θυμάσαι. Έπειτα έλεγξε τι ξέχασες.</span></div>
+<div class="source"><a href="https://www.nature.com/articles/s44159-022-00089-1" target="_blank" rel="noopener noreferrer" data-el="Διάβασε την πηγή ↗" data-en="Read the source ↗">Διάβασε την πηγή ↗</a><small>Nature Reviews Psychology · 2022</small></div>
+</article>
+<article class="card" data-category="learning" data-search="study strategies spaced practice interleaving recall">
+<div class="meta"><span class="tag" data-el="ΜΑΘΗΣΗ" data-en="LEARNING">ΜΑΘΗΣΗ</span><span class="read" data-el="4 λεπτά" data-en="4 min">4 λεπτά</span></div>
+<h2 data-el="Μικρές επαναλήψεις αντί για διάβασμα της τελευταίας στιγμής" data-en="Short reviews instead of last-minute cramming">Μικρές επαναλήψεις αντί για διάβασμα της τελευταίας στιγμής</h2>
+<p data-el="Η κατανομή της μελέτης σε περισσότερες συνεδρίες βοηθά τη μακροχρόνια διατήρηση. Η απλή επανάγνωση δεν είναι πάντα ο πιο αποτελεσματικός τρόπος εξάσκησης." data-en="Spreading study across multiple sessions supports long-term retention. Simply rereading is not always the most effective way to practise.">Η κατανομή της μελέτης σε περισσότερες συνεδρίες βοηθά τη μακροχρόνια διατήρηση. Η απλή επανάγνωση δεν είναι πάντα ο πιο αποτελεσματικός τρόπος εξάσκησης.</p>
+<div class="try"><strong data-el="Δοκίμασέ το" data-en="Try this">Δοκίμασέ το</strong><span data-el="Επέστρεψε στο ίδιο θέμα αύριο για λίγα λεπτά και κάνε στον εαυτό σου δύο ερωτήσεις." data-en="Return to the same topic tomorrow for a few minutes and ask yourself two questions.">Επέστρεψε στο ίδιο θέμα αύριο για λίγα λεπτά και κάνε στον εαυτό σου δύο ερωτήσεις.</span></div>
+<div class="source"><a href="https://lsc.cornell.edu/how-to-study/studying-for-and-taking-exams/effective-study-strategies/" target="_blank" rel="noopener noreferrer" data-el="Διάβασε την πηγή ↗" data-en="Read the source ↗">Διάβασε την πηγή ↗</a><small>Cornell Learning Strategies Center</small></div>
+</article>
+<article class="card" data-category="habits" data-search="habit formation consistency routine automaticity">
+<div class="meta"><span class="tag" data-el="ΣΥΝΗΘΕΙΕΣ" data-en="HABITS">ΣΥΝΗΘΕΙΕΣ</span><span class="read" data-el="4 λεπτά" data-en="4 min">4 λεπτά</span></div>
+<h2 data-el="Οι συνήθειες χτίζονται με επανάληψη, όχι με μαγικό αριθμό ημερών" data-en="Habits grow through repetition, not a magic number of days">Οι συνήθειες χτίζονται με επανάληψη, όχι με μαγικό αριθμό ημερών</h2>
+<p data-el="Η έρευνα δείχνει ότι η αυτοματοποίηση μιας συνήθειας διαφέρει πολύ από άνθρωπο σε άνθρωπο και από συμπεριφορά σε συμπεριφορά. Μία χαμένη ημέρα δεν ακυρώνει την προσπάθεια." data-en="Research shows that habit automaticity varies widely between people and behaviours. Missing one day does not erase your progress.">Η έρευνα δείχνει ότι η αυτοματοποίηση μιας συνήθειας διαφέρει πολύ από άνθρωπο σε άνθρωπο και από συμπεριφορά σε συμπεριφορά. Μία χαμένη ημέρα δεν ακυρώνει την προσπάθεια.</p>
+<div class="try"><strong data-el="Δοκίμασέ το" data-en="Try this">Δοκίμασέ το</strong><span data-el="Σύνδεσε μια μικρή συνήθεια με κάτι που ήδη κάνεις, όπως «μετά τον πρωινό καφέ, 5 λεπτά συγκέντρωση»." data-en="Attach a small habit to something you already do, such as “after my morning coffee, five minutes of focus.”">Σύνδεσε μια μικρή συνήθεια με κάτι που ήδη κάνεις, όπως «μετά τον πρωινό καφέ, 5 λεπτά συγκέντρωση».</span></div>
+<div class="source"><a href="https://doi.org/10.1002/ejsp.674" target="_blank" rel="noopener noreferrer" data-el="Διάβασε την πηγή ↗" data-en="Read the source ↗">Διάβασε την πηγή ↗</a><small>Lally et al. · European Journal of Social Psychology</small></div>
+</article>
+<article class="card" data-category="rest" data-search="sleep rest concentration adults sleep routine">
+<div class="meta"><span class="tag" data-el="ΞΕΚΟΥΡΑΣΗ" data-en="REST">ΞΕΚΟΥΡΑΣΗ</span><span class="read" data-el="3 λεπτά" data-en="3 min">3 λεπτά</span></div>
+<h2 data-el="Η ξεκούραση είναι μέρος της συγκέντρωσης" data-en="Rest is part of focus">Η ξεκούραση είναι μέρος της συγκέντρωσης</h2>
+<p data-el="Για τους περισσότερους ενήλικες 18–60 ετών, οι ειδικοί προτείνουν τουλάχιστον 7 ώρες ύπνου. Η σταθερότητα στο ωράριο και η ποιότητα του ύπνου έχουν επίσης σημασία." data-en="For most adults aged 18–60, experts recommend at least seven hours of sleep. A regular schedule and sleep quality matter too.">Για τους περισσότερους ενήλικες 18–60 ετών, οι ειδικοί προτείνουν τουλάχιστον 7 ώρες ύπνου. Η σταθερότητα στο ωράριο και η ποιότητα του ύπνου έχουν επίσης σημασία.</p>
+<div class="try"><strong data-el="Δοκίμασέ το" data-en="Try this">Δοκίμασέ το</strong><span data-el="Διάλεξε μια ρεαλιστική ώρα που θα αρχίσεις να χαλαρώνεις πριν τον ύπνο." data-en="Choose a realistic time to begin winding down before bed.">Διάλεξε μια ρεαλιστική ώρα που θα αρχίσεις να χαλαρώνεις πριν τον ύπνο.</span></div>
+<div class="source"><a href="https://health.nih.gov/health-topics-a-z/healthy-sleep" target="_blank" rel="noopener noreferrer" data-el="Διάβασε την πηγή ↗" data-en="Read the source ↗">Διάβασε την πηγή ↗</a><small>National Institutes of Health</small></div>
+</article>
+<article class="card" data-category="calm" data-search="mindfulness meditation awareness breathing calm stress">
+<div class="meta"><span class="tag" data-el="ΗΡΕΜΙΑ" data-en="CALM">ΗΡΕΜΙΑ</span><span class="read" data-el="5 λεπτά" data-en="5 min">5 λεπτά</span></div>
+<h2 data-el="Η προσοχή μπορεί να εξασκηθεί με ήπιο τρόπο" data-en="Attention can be practised gently">Η προσοχή μπορεί να εξασκηθεί με ήπιο τρόπο</h2>
+<p data-el="Η ενσυνειδητότητα περιλαμβάνει την παρατήρηση της παρούσας στιγμής χωρίς κριτική. Τα ερευνητικά αποτελέσματα διαφέρουν ανάλογα με την πρακτική και τον σκοπό." data-en="Mindfulness includes noticing the present moment without judgement. Research findings vary depending on the practice and the intended outcome.">Η ενσυνειδητότητα περιλαμβάνει την παρατήρηση της παρούσας στιγμής χωρίς κριτική. Τα ερευνητικά αποτελέσματα διαφέρουν ανάλογα με την πρακτική και τον σκοπό.</p>
+<div class="try"><strong data-el="Δοκίμασέ το" data-en="Try this">Δοκίμασέ το</strong><span data-el="Για ένα λεπτό, παρατήρησε την αναπνοή σου. Όταν αποσπάσαι, επέστρεψε ήρεμα χωρίς να μαλώνεις τον εαυτό σου." data-en="For one minute, notice your breathing. When distracted, gently return without criticising yourself.">Για ένα λεπτό, παρατήρησε την αναπνοή σου. Όταν αποσπάσαι, επέστρεψε ήρεμα χωρίς να μαλώνεις τον εαυτό σου.</span></div>
+<div class="source"><a href="https://www.nccih.nih.gov/health/meditation-and-mindfulness-effectiveness-and-safety" target="_blank" rel="noopener noreferrer" data-el="Διάβασε την πηγή ↗" data-en="Read the source ↗">Διάβασε την πηγή ↗</a><small>National Center for Complementary and Integrative Health</small></div>
+</article>
+<div class="empty" id="empty" hidden data-el="Δεν βρέθηκε κάτι με αυτούς τους όρους. Δοκίμασε διαφορετική λέξη." data-en="No results found. Try a different search term.">Δεν βρέθηκε κάτι με αυτούς τους όρους. Δοκίμασε διαφορετική λέξη.</div>
+</section>
+<p class="note" data-el="Το περιεχόμενο είναι εκπαιδευτικό και δεν αποτελεί ιατρική ή ψυχολογική συμβουλή. Οι πηγές συνδέονται για να μπορείς να διαβάσεις το πρωτότυπο υλικό. Οι μικρές προτάσεις είναι ιδέες για δοκιμή, όχι κανόνες που πρέπει να ακολουθήσεις." data-en="This content is educational and is not medical or psychological advice. Sources are linked so you can read the original material. The small suggestions are ideas to try, not rules you must follow.">Το περιεχόμενο είναι εκπαιδευτικό και δεν αποτελεί ιατρική ή ψυχολογική συμβουλή. Οι πηγές συνδέονται για να μπορείς να διαβάσεις το πρωτότυπο υλικό. Οι μικρές προτάσεις είναι ιδέες για δοκιμή, όχι κανόνες που πρέπει να ακολουθήσεις.</p>
+</main>
+<footer><div class="wrap" data-el="Μία μικρή ιδέα τη φορά." data-en="One small idea at a time.">Μία μικρή ιδέα τη φορά.</div></footer>
+<script>
+(() => {
+ let lang='el',active='all';
+ const cards=[...document.querySelectorAll('.card')],search=document.getElementById('search'),empty=document.getElementById('empty');
+ function filter(){const q=search.value.trim().toLocaleLowerCase();let visible=0;cards.forEach(card=>{const okCat=active==='all'||card.dataset.category===active;const okText=!q||(card.dataset.search+' '+card.textContent).toLocaleLowerCase().includes(q);card.hidden=!(okCat&&okText);if(!card.hidden)visible++;});empty.hidden=visible!==0;}
+ document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{active=btn.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b===btn));filter();}));
+ search.addEventListener('input',filter);
+ function setLang(next){lang=next;document.documentElement.lang=next;document.querySelectorAll('[data-el][data-en]').forEach(el=>{el.innerHTML=el.dataset[next];});search.placeholder=search.dataset['placeholder'+(next==='el'?'El':'En')];document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===next));filter();}
+ document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+ try{if(localStorage.getItem('nepsis-lang')==='en')setLang('en');}catch(e){}
+ filter();
+})();
+</script>
+</body>
+</html>
