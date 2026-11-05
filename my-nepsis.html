@@ -88,7 +88,7 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
   <p class="tool-intro" id="challengeLevel">Οι στόχοι προσαρμόζονται στο επίπεδό σου.</p>
   <div class="challenge-item">
    <div class="challenge-head"><strong data-el="Σήμερα" data-en="Today">Σήμερα</strong><span class="challenge-value" id="challengeDailyValue">0 / 5 λεπτά</span></div>
-   <p class="challenge-desc" id="challengeDailyDesc">Συγκεντρώσου για λίγα λεπτά σε μία εργασία.</p>
+   <p class="challenge-desc" id="challengeDailyDesc">Ολοκλήρωσε ένα στάδιο συγκέντρωσης.</p>
    <div class="challenge-track"><span id="challengeDailyBar"></span></div><small class="challenge-status" id="challengeDailyStatus"></small>
   </div>
   <div class="challenge-item">
@@ -97,7 +97,7 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
    <div class="challenge-track"><span id="challengeWeeklyBar"></span></div><small class="challenge-status" id="challengeWeeklyStatus"></small>
   </div>
   <div class="challenge-item">
-   <div class="challenge-head"><strong data-el="Αυτόν τον μήνα" data-en="This month">Αυτόν τον μήνα</strong><span class="challenge-value" id="challengeMonthlyValue">0 / 8 στάδια</span></div>
+   <div class="challenge-head"><strong data-el="Αυτόν τον μήνα" data-en="This month">Αυτόν τον μήνα</strong><span class="challenge-value" id="challengeMonthlyValue">0 / 8 ημέρες</span></div>
    <p class="challenge-desc" id="challengeMonthlyDesc">Ολοκλήρωσε στάδια συγκέντρωσης μέσα στον μήνα.</p>
    <div class="challenge-track"><span id="challengeMonthlyBar"></span></div><small class="challenge-status" id="challengeMonthlyStatus"></small>
   </div>
@@ -181,13 +181,13 @@ function renderExtras(){
  const bars=$("weekBars");bars.innerHTML="";const max=Math.max(1,...w.days.map(d=>d.minutes));w.days.forEach((d,i)=>{const col=document.createElement("div");col.className="week-bar";const bar=document.createElement("i");bar.style.height=(d.minutes?Math.max(8,d.minutes/max*82):3)+"px";bar.title=d.key+" · "+d.minutes+" min";const label=document.createElement("span");label.textContent=d.date.toLocaleDateString(lang==="el"?"el-GR":"en-GB",{weekday:"narrow"});col.append(bar,label);bars.appendChild(col)});
  const diff=w.minutes-prev.minutes,sign=diff>0?"+":"";$("weekCompare").textContent=lang==="el"?"Σε σχέση με τις ίδιες ημέρες της προηγούμενης εβδομάδας: "+sign+diff+" λεπτά · "+(diff>0?"περισσότερος χρόνος":diff<0?"λιγότερος χρόνος":"ίδιος χρόνος")+".":"Compared with the same days last week: "+sign+diff+" minutes.";
  const m=monthData(0),pm=monthData(-1),monthDiff=m.minutes-pm.minutes,monthSign=monthDiff>0?"+":"";const dateLocale=lang==="el"?"el-GR":"en-GB";$("monthMinutes").textContent=m.minutes;$("monthDays").textContent=m.active;$("monthSessions").textContent=m.sessions;$("monthRange").textContent=m.start.toLocaleDateString(dateLocale,{day:"numeric",month:"short"})+" – "+m.end.toLocaleDateString(dateLocale,{day:"numeric",month:"short"});$("monthCompare").textContent=lang==="el"?"Σε σχέση με τις ίδιες ημέρες του προηγούμενου μήνα: "+monthSign+monthDiff+" λεπτά.":"Compared with the same dates last month: "+monthSign+monthDiff+" minutes.";
- const dailyTarget=level<=2?5:level<=4?10:25,weeklyTarget=level<=2?3:level<=4?4:5,monthlyTarget=level<=2?8:level<=4?12:20,todayMinutes=dayMinutes(dateKey(new Date()));
+ const dailyTarget=level<=2?5:level<=4?10:25,weeklyTarget=level<=2?3:level<=4?4:5,monthlyTarget=level<=2?8:level<=4?12:16,todayStages=progress.days[dateKey(new Date())]||[],todayBest=Math.max(0,...todayStages.map(Number));
  $("challengeLevel").textContent=lang==="el"?"Οι στόχοι προσαρμόζονται στο επίπεδό σου · Επίπεδο "+level:"Targets adapt to your level · Level "+level;
- $("challengeDailyDesc").textContent=lang==="el"?"Στόχος: "+dailyTarget+" λεπτά συγκέντρωσης σήμερα.":"Target: "+dailyTarget+" minutes of focus today.";
+ $("challengeDailyDesc").textContent=lang==="el"?"Στόχος: ολοκλήρωσε στάδιο "+dailyTarget+" λεπτών ή περισσότερο σήμερα.":"Target: complete a focus stage of "+dailyTarget+" minutes or longer today.";
  $("challengeWeeklyDesc").textContent=lang==="el"?"Στόχος: εξάσκηση σε "+weeklyTarget+" διαφορετικές ημέρες.":"Target: practise on "+weeklyTarget+" different days.";
- $("challengeMonthlyDesc").textContent=lang==="el"?"Στόχος: ολοκλήρωσε "+monthlyTarget+" στάδια αυτόν τον μήνα.":"Target: complete "+monthlyTarget+" focus stages this month.";
+ $("challengeMonthlyDesc").textContent=lang==="el"?"Στόχος: εξασκήσου σε "+monthlyTarget+" διαφορετικές ημέρες αυτόν τον μήνα.":"Target: practise on "+monthlyTarget+" different days this month.";
  const challengeProgress=(prefix,current,target,unit)=>{$(prefix+"Value").textContent=current+" / "+target+" "+unit;$(prefix+"Bar").style.width=Math.min(100,current/target*100)+"%";$(prefix+"Status").textContent=current>=target?(lang==="el"?"Ολοκληρώθηκε!":"Completed!"):(lang==="el"?"Σε εξέλιξη":"In progress");};
- challengeProgress("challengeDaily",todayMinutes,dailyTarget,lang==="el"?"λεπτά":"min");challengeProgress("challengeWeekly",w.active,weeklyTarget,lang==="el"?"ημέρες":"days");challengeProgress("challengeMonthly",m.sessions,monthlyTarget,lang==="el"?"στάδια":"stages");
+ challengeProgress("challengeDaily",todayBest,dailyTarget,lang==="el"?"λεπτά":"min");challengeProgress("challengeWeekly",w.active,weeklyTarget,lang==="el"?"ημέρες":"days");challengeProgress("challengeMonthly",m.active,monthlyTarget,lang==="el"?"ημέρες":"days");
  $("spaceSyncNote").textContent=user?(lang==="el"?"Το προφίλ και οι στόχοι σου συγχρονίζονται ιδιωτικά στον λογαριασμό σου.":"Your profile and goals sync privately to your account."):(lang==="el"?"Ως επισκέπτης, τα στοιχεία σου αποθηκεύονται σε αυτή τη συσκευή. Με σύνδεση, συγχρονίζονται ιδιωτικά στον λογαριασμό σου.":"As a guest, your details stay on this device. When signed in, they sync privately to your account.");
 }
 $("saveProfile").addEventListener("click",async()=>{userSpace.profile={...userSpace.profile,display_name:$("profileName").value.trim().slice(0,32),bio:$("profileBio").value.trim().slice(0,180)};await saveUserSpace(true);renderExtras()});
