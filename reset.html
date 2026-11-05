@@ -33,8 +33,8 @@ h1 em{font-family:Literata,Georgia,serif;font-weight:500;color:var(--green)}
 .orb{width:178px;height:178px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 34% 28%,#FFF6D9 0%,#E9D6B6 45%,#C8B99D 100%);box-shadow:0 18px 42px #8B765133,inset -12px -14px 28px #8B765122;transform:scale(.82);transition:transform 4s ease-in-out,box-shadow 4s ease-in-out;position:relative}
 .orb:before{content:"";position:absolute;inset:12px;border:1px solid #fff9;border-radius:50%}
 .orb:after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:#fff9;top:32px;left:48px;filter:blur(1px)}
-.orb.inhale{transform:scale(1.12);box-shadow:0 24px 60px #78917A35,inset -12px -14px 28px #8B765122}
-.orb.exhale{transform:scale(.82)}
+.orb.inhale{transform:scale(1.12);box-shadow:0 24px 60px #78917A35,inset -12px -14px 28px #8B765122;transition-duration:4s}
+.orb.exhale{transform:scale(.82);transition-duration:6s}
 .phase{font-size:1.25rem;font-weight:900;position:relative;z-index:1}
 .count{font-size:.88rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .timer{font-size:2rem;font-weight:900;font-variant-numeric:tabular-nums;margin:4px 0 14px}
@@ -96,7 +96,7 @@ footer{text-align:center;border-top:1px solid var(--border);padding:24px;color:v
  }
  function stop(){if(interval){clearInterval(interval);interval=null;}}
  function tick(){if(elapsed>=total){stop();paint();return;}elapsed++;paint();if(elapsed>=total)stop();}
- start.addEventListener('click',()=>{if(interval){stop();start.textContent=words[lang].resume;return;}if(elapsed>=total)elapsed=0;start.textContent=words[lang].pause;tick();if(elapsed<total)interval=setInterval(tick,1000);});
+ start.addEventListener('click',()=>{if(interval){stop();start.textContent=words[lang].resume;return;}if(elapsed>=total)elapsed=0;start.textContent=words[lang].pause;interval=setInterval(tick,1000);});
  $('reset').addEventListener('click',()=>{stop();elapsed=0;start.textContent=words[lang].start;paint();});
  function setLang(next){lang=next;document.documentElement.lang=next;document.querySelectorAll('[data-el][data-en]').forEach(el=>{el.innerHTML=el.dataset[next];});document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===next));start.textContent=interval?words[lang].pause:(elapsed?words[lang].resume:words[lang].start);paint();}
  document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
