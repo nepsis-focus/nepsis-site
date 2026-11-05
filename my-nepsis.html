@@ -44,9 +44,9 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
   <p class="tool-intro" data-el="Διάλεξε πώς θέλεις να εμφανίζεσαι στον προσωπικό σου χώρο. Τα στοιχεία αυτά είναι ιδιωτικά." data-en="Choose how you appear in your personal space. These details are private.">Διάλεξε πώς θέλεις να εμφανίζεσαι στον προσωπικό σου χώρο. Τα στοιχεία αυτά είναι ιδιωτικά.</p>
   <div class="profile-top"><div class="avatar" id="profileAvatar">N</div><div><strong id="profileDisplay">Nepsis member</strong><br><span class="level-pill" id="profileLevel">Επίπεδο 1</span></div></div>
   <label class="field-label" for="profileName" data-el="Όνομα χρήστη" data-en="Display name">Όνομα χρήστη</label>
-  <input class="tool-input" id="profileName" maxlength="32" placeholder="Πώς να σε φωνάζουμε;">
+  <input class="tool-input" id="profileName" maxlength="32" data-placeholder-el="Πώς να σε φωνάζουμε;" data-placeholder-en="What should we call you?" placeholder="Πώς να σε φωνάζουμε;">
   <label class="field-label" for="profileBio" data-el="Μικρή περιγραφή" data-en="Short bio">Μικρή περιγραφή</label>
-  <textarea class="tool-textarea" id="profileBio" maxlength="180" placeholder="Τι θέλεις να πετύχεις;"></textarea>
+  <textarea class="tool-textarea" id="profileBio" maxlength="180" data-placeholder-el="Τι θέλεις να πετύχεις;" data-placeholder-en="What would you like to achieve?" placeholder="Τι θέλεις να πετύχεις;"></textarea>
   <button class="tool-button" id="saveProfile" data-el="Αποθήκευση προφίλ" data-en="Save profile">Αποθήκευση προφίλ</button><p class="tool-message" id="profileMessage" aria-live="polite"></p>
  </article>
  <article class="tool-panel">
@@ -87,7 +87,7 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
   <div class="section-kicker" data-el="Μικρά βήματα, μεγάλος σκοπός" data-en="Small steps, meaningful goals">Μικρά βήματα, μεγάλος σκοπός</div>
   <h2 data-el="Οι προσωπικοί μου στόχοι" data-en="My personal goals">Οι προσωπικοί μου στόχοι</h2>
   <p class="tool-intro" data-el="Γράψε έναν στόχο που έχει σημασία για σένα. Μπορείς να τον αλλάξεις ή να τον ολοκληρώσεις όποτε θέλεις." data-en="Write a goal that matters to you. Change it or complete it whenever you like.">Γράψε έναν στόχο που έχει σημασία για σένα. Μπορείς να τον αλλάξεις ή να τον ολοκληρώσεις όποτε θέλεις.</p>
-  <form id="goalForm"><label class="field-label" for="goalInput" data-el="Ο στόχος μου" data-en="My goal">Ο στόχος μου</label><input class="tool-input" id="goalInput" maxlength="100" placeholder="π.χ. Να εξασκούμαι 4 ημέρες την εβδομάδα" required><button class="tool-button" type="submit" data-el="Προσθήκη στόχου +" data-en="Add a goal +">Προσθήκη στόχου +</button></form>
+  <form id="goalForm"><label class="field-label" for="goalInput" data-el="Ο στόχος μου" data-en="My goal">Ο στόχος μου</label><input class="tool-input" id="goalInput" maxlength="100" data-placeholder-el="π.χ. Να εξασκούμαι 4 ημέρες την εβδομάδα" data-placeholder-en="e.g. Practise four days a week" placeholder="π.χ. Να εξασκούμαι 4 ημέρες την εβδομάδα" required><button class="tool-button" type="submit" data-el="Προσθήκη στόχου +" data-en="Add a goal +">Προσθήκη στόχου +</button></form>
   <div class="goal-list" id="goalList" aria-live="polite"></div><p class="tool-message" id="goalMessage" aria-live="polite"></p>
  </article>
  <article class="tool-panel">
