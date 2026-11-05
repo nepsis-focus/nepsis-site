@@ -186,6 +186,44 @@ function readLocalSpace(){try{const v=JSON.parse(localStorage.getItem("nepsis-us
 function saveLocalSpace(){try{localStorage.setItem("nepsis-user-space",JSON.stringify(userSpace))}catch(e){}}
 async function loadUserSpace(){userSpace=readLocalSpace();if(!user||!sb){renderExtras();return}const localSpace=userSpace;const r=await sb.from("user_spaces").select("profile,goals").eq("user_id",user.id).maybeSingle();if(r.error){$("profileMessage").textContent=lang==="el"?"Δεν φορτώθηκαν τα στοιχεία του προφίλ.":"Profile details could not be loaded.";renderExtras();return}if(r.data){const remoteProfile=r.data.profile||{display_name:"",bio:""};const localProfile=localSpace.profile||{display_name:"",bio:""};const missionSource=(localProfile.daily_mission_date||"")>(remoteProfile.daily_mission_date||"")?localProfile:remoteProfile;const remoteGoals=Array.isArray(r.data.goals)?r.data.goals:[];const remoteRoutines=Array.isArray(remoteProfile.routines)?remoteProfile.routines:[];const localRoutines=Array.isArray(localProfile.routines)?localProfile.routines:[];userSpace={profile:{...localProfile,...remoteProfile,display_name:remoteProfile.display_name||localProfile.display_name||"",bio:remoteProfile.bio||localProfile.bio||"",routines:remoteRoutines.concat(localRoutines.filter(x=>!remoteRoutines.some(y=>y.id===x.id))),daily_mission:missionSource.daily_mission||"",daily_mission_date:missionSource.daily_mission_date||"",daily_mission_done:!!missionSource.daily_mission_done},goals:remoteGoals.concat(localSpace.goals.filter(g=>!remoteGoals.some(x=>x.id===g.id)))};await saveUserSpace(false)}else{await saveUserSpace(false)}renderExtras()}
 async function saveUserSpace(showMessage=true){saveLocalSpace();if(user&&sb){const r=await sb.from("user_spaces").upsert({user_id:user.id,profile:userSpace.profile,goals:userSpace.goals,updated_at:new Date().toISOString()});if(r.error){if(showMessage)$("profileMessage").textContent=lang==="el"?"Δεν αποθηκεύτηκε στον λογαριασμό. Τα στοιχεία παραμένουν σε αυτή τη συσκευή.":"Could not sync to your account. Details remain on this device.";return false}}if(showMessage)$("profileMessage").textContent=lang==="el"?"Αποθηκεύτηκε!":"Saved!";return true}
+function readLocalDiary(){try{const v=JSON.parse(localStorage.getItem("nepsis-diary-entries")||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
+function saveLocalDiary(){try{localStorage.setItem("nepsis-diary-entries",JSON.stringify(diaryEntries))}catch(e){}}
+function newDiaryId(){if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();return"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==="x"?r:(r&3|8)).toString(16)})}
+function resetDiaryForm(){editingDiaryId=null;$("diaryDate").value=dateKey(new Date());$("diaryTitle").value="";$("diaryContent").value=""}
+function renderDiaryEntries(){
+ const list=$("diaryList");if(!list)return;list.innerHTML="";
+ if(!diaryEntries.length){const e=document.createElement("p");e.className="empty";e.textContent=lang==="el"?"Δεν υπάρχουν ακόμη καταχωρίσεις. Μπορείς να ξεκινήσεις με λίγες γραμμές.":"No entries yet. You can start with a few lines.";list.appendChild(e)}
+ diaryEntries.slice().sort((a,b)=>(b.entry_date||"").localeCompare(a.entry_date||"")||(b.updated_at||"").localeCompare(a.updated_at||"")).forEach(entry=>{
+  const row=document.createElement("article");row.className="diary-row";const head=document.createElement("div");head.className="diary-row-head";const title=document.createElement("strong");title.textContent=entry.title|| (lang==="el"?"Χωρίς τίτλο":"Untitled");const date=document.createElement("span");date.className="diary-date";const d=new Date((entry.entry_date||dateKey(new Date()))+"T12:00:00");date.textContent=d.toLocaleDateString(lang==="el"?"el-GR":"en-GB",{day:"numeric",month:"short",year:"numeric"});head.append(title,date);row.append(head);if(entry.content){const preview=document.createElement("p");preview.className="diary-preview";preview.textContent=entry.content.length>180?entry.content.slice(0,180)+"…":entry.content;row.append(preview)}
+  const actions=document.createElement("div");actions.className="diary-row-actions";const edit=document.createElement("button");edit.type="button";edit.className="mini-button";edit.textContent=lang==="el"?"Επεξεργασία":"Edit";edit.addEventListener("click",()=>{editingDiaryId=entry.id;$("diaryDate").value=entry.entry_date||dateKey(new Date());$("diaryTitle").value=entry.title||"";$("diaryContent").value=entry.content||"";$("diaryMessage").textContent=lang==="el"?"Επεξεργάζεσαι αυτή την καταχώριση.":"Editing this entry.";document.getElementById("diaryForm").scrollIntoView({behavior:"smooth",block:"center"})});const del=document.createElement("button");del.type="button";del.className="mini-button delete";del.textContent=lang==="el"?"Διαγραφή":"Delete";del.addEventListener("click",()=>deleteDiaryEntry(entry.id));actions.append(edit,del);row.append(actions);list.appendChild(row);
+ });
+ const localCount=readLocalDiary().length;$("diaryImport").hidden=!(user&&sb&&localCount>0);
+}
+async function loadDiaryEntries(){
+ if(!user||!sb){diaryEntries=readLocalDiary();renderDiaryEntries();return}
+ const r=await sb.from("private_diary_entries").select("id,user_id,entry_date,title,content,created_at,updated_at").eq("user_id",user.id).order("entry_date",{ascending:false}).order("updated_at",{ascending:false});
+ if(r.error){diaryEntries=[];$("diaryMessage").textContent=lang==="el"?"Δεν φορτώθηκε το ημερολόγιο. Δοκίμασε ξανά.":"Diary could not be loaded. Please try again.";renderDiaryEntries();return}
+ diaryEntries=r.data||[];renderDiaryEntries();
+}
+async function saveDiaryEntry(e){
+ e.preventDefault();const title=$("diaryTitle").value.trim(),content=$("diaryContent").value.trim(),entryDate=$("diaryDate").value||dateKey(new Date());
+ if(!title&&!content){$("diaryMessage").textContent=lang==="el"?"Γράψε έναν τίτλο ή λίγες σκέψεις.":"Write a title or a few thoughts.";return}
+ const existing=diaryEntries.find(x=>x.id===editingDiaryId),now=new Date().toISOString(),entry={id:editingDiaryId||newDiaryId(),entry_date:entryDate,title:title.slice(0,120),content:content.slice(0,20000),created_at:existing?.created_at||now,updated_at:now};
+ if(user&&sb){const r=await sb.from("private_diary_entries").upsert({...entry,user_id:user.id},{onConflict:"id"});if(r.error){$("diaryMessage").textContent=lang==="el"?"Δεν αποθηκεύτηκε. Δοκίμασε ξανά.":"Could not save. Please try again.";return}await loadDiaryEntries()}
+ else{diaryEntries=existing?diaryEntries.map(x=>x.id===entry.id?entry:x):[entry,...diaryEntries];saveLocalDiary();renderDiaryEntries()}
+ resetDiaryForm();$("diaryMessage").textContent=lang==="el"?"Η καταχώριση αποθηκεύτηκε.":"Entry saved.";
+}
+async function deleteDiaryEntry(id){
+ if(user&&sb){const r=await sb.from("private_diary_entries").delete().eq("id",id).eq("user_id",user.id);if(r.error){$("diaryMessage").textContent=lang==="el"?"Δεν διαγράφηκε. Δοκίμασε ξανά.":"Could not delete. Please try again.";return}await loadDiaryEntries()}
+ else{diaryEntries=diaryEntries.filter(x=>x.id!==id);saveLocalDiary();renderDiaryEntries()}
+ if(editingDiaryId===id)resetDiaryForm();$("diaryMessage").textContent=lang==="el"?"Η καταχώριση διαγράφηκε.":"Entry deleted.";
+}
+async function importGuestDiary(){
+ if(!user||!sb)return;const entries=readLocalDiary();if(!entries.length)return;
+ const payload=entries.map(e=>({...e,user_id:user.id}));const r=await sb.from("private_diary_entries").upsert(payload,{onConflict:"id"});
+ if(r.error){$("diaryMessage").textContent=lang==="el"?"Δεν έγινε η μεταφορά. Οι τοπικές καταχωρίσεις παραμένουν στη συσκευή.":"Import failed. Local entries remain on this device.";return}
+ try{localStorage.removeItem("nepsis-diary-entries")}catch(e){}await loadDiaryEntries();$("diaryMessage").textContent=lang==="el"?"Οι τοπικές καταχωρίσεις μεταφέρθηκαν στον λογαριασμό σου.":"Local entries imported into your account.";
+}
 function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function dayMinutes(k){return(progress.days[k]||[]).reduce((n,v)=>n+Math.max(0,Number(v)||0),0)}
 function weekStart(offset){const d=new Date();d.setHours(0,0,0,0);const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day+offset*7);return d}
