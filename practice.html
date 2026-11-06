@@ -203,7 +203,18 @@
   .progress-card { padding: 22px 24px; }
   .progress-card .streak { font-size: 1.5rem; font-weight: 800; }
   .progress-card .sub { color: var(--muted); margin-top: 4px; font-size: .95rem; }
-  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .progress-overview { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:14px 0; }
+  .progress-stat { padding:16px 18px; border:1px solid var(--border); border-radius:18px; background:rgba(246,238,228,.58); }
+  .progress-stat strong { display:block; font-size:1.65rem; line-height:1.2; margin-top:5px; }
+  .progress-stat span { color:var(--muted); font-size:.84rem; }
+  .progress-section { border-top:1px solid var(--border); margin-top:16px; padding-top:14px; }
+  .progress-section summary { display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; list-style:none; font-weight:800; padding:5px 0; }
+  .progress-section summary::-webkit-details-marker { display:none; }
+  .progress-section summary::after { content:"＋"; color:var(--orange); font-size:1.15rem; }
+  .progress-section[open] summary::after { content:"−"; }
+  .progress-section .section-content { padding-top:10px; }
+  .progress-card .badges { margin-top:8px; }
+  @media (max-width:480px) { .progress-card { padding:18px; } .progress-overview { gap:8px; } .progress-stat { padding:13px; } .progress-stat strong { font-size:1.4rem; } }
   .badge2 { padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: .85rem; border: 2px solid var(--fg); }
   .badge2.done { background: var(--fg); color: #FFF8EE; }
   .after { font-size: .9rem; }
@@ -1504,28 +1515,39 @@
     const p = loadProgress(), today = p.days[fmtKey(new Date())] || [];
     const isEl = currentLang === "el";
     const streak = currentStreak(p), total = totalDays(p);
-    const streakLine = streak > 0
-      ? (isEl ? "Σερί: " + streak + (streak === 1 ? " μέρα" : " μέρες") : "Streak: " + streak + (streak === 1 ? " day" : " days"))
-      : (isEl ? "Σερί: 0 μέρες. Κάθε μέρα που ξεκινάς μετράει." : "Streak: 0 days. Every day you start counts.");
-    const totalLine = isEl ? "Συνολικά: " + total + (total === 1 ? " μέρα" : " μέρες") + " με στάδια." : "Total: " + total + (total === 1 ? " day" : " days") + " with stages.";
+    const streakLabel = isEl ? "Μέρες σερί" : "Day streak";
+    const totalLabel = isEl ? "Ημέρες με προσπάθεια" : "Active days";
     const todayLine = today.length > 0
-      ? (isEl ? "Σήμερα έκανες ήδη ένα στάδιο. Μπράβο!" : "You completed a stage today. Well done!")
-      : (isEl ? "Ξεκίνα σήμερα, με όποιο στάδιο θες." : "Start today, with any stage you like.");
+      ? (isEl ? "Σήμερα ολοκλήρωσες τουλάχιστον ένα στάδιο. Μπράβο!" : "You completed at least one stage today. Well done!")
+      : (isEl ? "Κάθε μικρή προσπάθεια μετράει. Ξεκίνα σήμερα όποτε θέλεις." : "Every small effort counts. Start whenever you are ready.");
     const badges = [5, 10, 25, 45, 60].map(function (m, i) {
       const done = today.includes(m);
       return '<span class="badge2' + (done ? ' done' : '') + '">' + (done ? "✓ " : "") + (i + 1) + " · " + m + (isEl ? " λ." : " min") + '</span>';
     }).join("");
+    const deviceLine = sbUser
+      ? (isEl ? "Η πρόοδός σου αποθηκεύεται στη συσκευή και συγχρονίζεται στον λογαριασμό σου." : "Your progress is saved on this device and synced to your account.")
+      : (isEl ? "Η πρόοδός σου αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Your progress is saved only on this device.");
     el.innerHTML =
-      '<div class="streak">' + streakLine + '</div>' +
-      '<div class="sub">' + totalLine + '</div>' +
-      '<div style="margin-top:10px">' + todayLine + '</div>' +
-      '<div class="badges">' + badges + '</div>' +
-      '<div class="dayline">' + dayBars(today) + '</div>' +
-      '<div id="achievements" style="margin-top:16px"><h3 style="font-size:1.1rem;margin-bottom:10px">' + (isEl ? "Επιτεύγματα" : "Achievements") + '</h3><div class="medals">' + medalsHtml(p, streak, total) + '</div></div>' +
-      '<button type="button" class="btn btn-primary" id="shareBtn" style="margin-top:14px">' + (isEl ? "Μοιράσου το σερί μου" : "Share my streak") + '</button>' +
-      '<div class="sub" style="margin-top:12px">' + distractionLine(p) + '</div>' +
-      (sbUser ? '<div class="sub" id="syncMsg" style="font-size:.85rem">' + syncMsg + '</div>' : '') +
-      '<div class="sub" style="font-size:.85rem">' + (isEl ? "Αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Saved only on this device.") + '</div>';
+      '<div class="streak">' + (isEl ? "Η προσπάθειά σου μέχρι σήμερα" : "Your progress so far") + '</div>' +
+      '<div class="progress-overview">' +
+        '<div class="progress-stat"><span>' + streakLabel + '</span><strong>' + streak + '</strong></div>' +
+        '<div class="progress-stat"><span>' + totalLabel + '</span><strong>' + total + '</strong></div>' +
+      '</div>' +
+      '<div>' + todayLine + '</div>' +
+      '<details class="progress-section">' +
+        '<summary>' + (isEl ? "Η πρόοδός μου στα πέντε στάδια" : "My progress across the five stages") + '</summary>' +
+        '<div class="section-content"><div class="badges">' + badges + '</div><div class="dayline">' + dayBars(today) + '</div></div>' +
+      '</details>' +
+      '<details class="progress-section">' +
+        '<summary>' + (isEl ? "Τα παράσημα και τα επιτεύγματά μου" : "My medals and achievements") + '</summary>' +
+        '<div class="section-content"><div class="medals">' + medalsHtml(p, streak, total) + '</div></div>' +
+      '</details>' +
+      '<div class="progress-section">' +
+        '<button type="button" class="btn btn-primary" id="shareBtn">' + (isEl ? "Μοιράσου το σερί μου" : "Share my streak") + '</button>' +
+        '<div class="sub" style="margin-top:12px">' + distractionLine(p) + '</div>' +
+        (sbUser ? '<div class="sub" id="syncMsg" style="font-size:.85rem">' + syncMsg + '</div>' : '') +
+        '<div class="sub" style="font-size:.85rem">' + deviceLine + '</div>' +
+      '</div>';
     const shareEl = el.querySelector('#shareBtn');
     if (shareEl) shareEl.addEventListener('click', shareStreak);
     renderCalendar();
@@ -1579,7 +1601,8 @@
       cells += '<div class="day lvl' + lvl + (k === today ? ' today' : '') + '" title="' + k + '">' + d + '</div>';
     }
     el.innerHTML =
-      '<div class="cal-head"><button type="button" class="nav" data-prev>‹</button><strong>' + title + '</strong><button type="button" class="nav" data-next>›</button></div>' +
+      '<div style="font-weight:800;font-size:1.15rem;margin-bottom:12px">' + (isEl ? "Το ημερολόγιο συγκέντρωσής μου" : "My focus calendar") + '</div>' +
+      '<div class="cal-head"><button type="button" class="nav" data-prev aria-label="' + (isEl ? "Προηγούμενος μήνας" : "Previous month") + '">‹</button><strong>' + title + '</strong><button type="button" class="nav" data-next aria-label="' + (isEl ? "Επόμενος μήνας" : "Next month") + '">›</button></div>' +
       '<div class="cal-grid">' + cells + '</div>' +
       '<div class="sub" style="margin-top:10px">' + (isEl
         ? "Κάθε μέρα που ολοκλήρωσες στάδιο έχει χρώμα. Πιο σκούρο σημαίνει μεγαλύτερο στάδιο."
