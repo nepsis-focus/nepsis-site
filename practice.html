@@ -195,6 +195,30 @@
   .faq-list details[open] summary::after { content: "⌃"; }
   .faq-list details p { padding: 0 22px 18px; color: var(--muted); }
 
+  /* compact ambient sound controls */
+  .music-row, .ambient-row { display:flex; justify-content:center; flex-wrap:wrap; gap:9px; margin:18px 0; }
+  .music-row button, .ambient-row button {
+    border:1.5px solid var(--border); background:#fff; color:var(--fg);
+    padding:9px 15px; border-radius:999px; font:inherit; font-size:.9rem;
+    font-weight:800; cursor:pointer; transition:background .2s ease,border-color .2s ease,transform .2s ease;
+  }
+  .music-row button:hover, .ambient-row button:hover { transform:translateY(-2px); border-color:var(--orange); }
+  .music-row button.active, .ambient-row button.active { background:#FBE9CF; border-color:var(--orange); color:var(--ember); }
+  #musicFrame { max-width:720px; margin:0 auto; }
+  #musicFrame iframe { max-width:100%; }
+  .ambient-wrap { max-width:720px; margin:24px auto 0; padding:18px 18px 12px; border:1px solid var(--border); border-radius:20px; background:rgba(246,238,228,.42); }
+  .ambient-title { font-weight:900; font-size:1rem; }
+  .ambient-hint { color:var(--muted); font-size:.88rem; margin-top:3px; }
+  .ambient-row { margin:13px 0 8px; }
+  .ambient-row button { display:inline-flex; align-items:center; gap:7px; }
+  .ambient-controls { display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--muted); font-size:.82rem; }
+  .ambient-controls button { border:0; background:transparent; color:var(--ember); font:inherit; font-weight:900; cursor:pointer; padding:6px 10px; }
+  .ambient-controls button:disabled { opacity:.4; cursor:default; }
+  @media (max-width:560px) {
+    .music-row button, .ambient-row button { padding:8px 12px; font-size:.84rem; }
+    .ambient-wrap { padding:15px 12px 10px; }
+  }
+
   /* footer */
   footer { border-top: 1px solid var(--border); padding: 36px 0 48px; margin-top: 40px; }
   .foot { display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: space-between; text-align: center; font-size: .9rem; color: var(--muted); }
@@ -736,6 +760,19 @@
       <button type="button" data-idx="2" data-el="Για χαλάρωση" data-en="For relaxing">Για χαλάρωση</button>
     </div>
     <div id="musicFrame"></div>
+    <div class="ambient-wrap">
+      <p class="ambient-title" data-el="Ήχοι περιβάλλοντος" data-en="Ambient sounds">Ήχοι περιβάλλοντος</p>
+      <p class="ambient-hint" data-el="Διάλεξε έναν ήχο για ένα πιο ήρεμο περιβάλλον συγκέντρωσης." data-en="Choose a sound for a calmer focus environment.">Διάλεξε έναν ήχο για ένα πιο ήρεμο περιβάλλον συγκέντρωσης.</p>
+      <div class="ambient-row" id="ambientPicks">
+        <button type="button" data-sound="rain"><span aria-hidden="true">🌧️</span><span data-el="Βροχή" data-en="Rain">Βροχή</span></button>
+        <button type="button" data-sound="sea"><span aria-hidden="true">🌊</span><span data-el="Θάλασσα" data-en="Ocean">Θάλασσα</span></button>
+        <button type="button" data-sound="nature"><span aria-hidden="true">🍃</span><span data-el="Φύση" data-en="Nature">Φύση</span></button>
+      </div>
+      <div class="ambient-controls">
+        <span id="ambientStatus" aria-live="polite" data-el="Δεν παίζει ήχος" data-en="No sound playing">Δεν παίζει ήχος</span>
+        <button type="button" id="ambientStop" disabled data-el="Διακοπή" data-en="Stop">Διακοπή</button>
+      </div>
+    </div>
   </div>
   <p class="stage-note" data-el="Το χρονόμετρο ξεκινά όταν πατήσεις Έναρξη. Η πρόοδός σου αποθηκεύεται στη συσκευή και, αν συνδεθείς, συγχρονίζεται ιδιωτικά στον λογαριασμό σου." data-en="The timer starts when you press Start. Your progress is saved on this device and, if you sign in, syncs privately to your account.">Το χρονόμετρο ξεκινά όταν πατήσεις Έναρξη. Η πρόοδός σου αποθηκεύεται στη συσκευή και, αν συνδεθείς, συγχρονίζεται ιδιωτικά στον λογαριασμό σου.</p>
     </div>
@@ -1906,9 +1943,80 @@
       (currentLang === "el" ? "Άνοιγμα στο Spotify" : "Open in Spotify") + '</a></p>';
     document.querySelectorAll("#musicPicks button").forEach(function (b, j) { b.classList.toggle("active", j === i); });
   }
+  let ambientContext = null, ambientNodes = [], ambientBuffer = null, ambientPlaying = false;
+  function stopAmbient() {
+    ambientNodes.forEach(function (node) {
+      try { if (node.stop) node.stop(); } catch (e) {}
+      try { node.disconnect(); } catch (e) {}
+    });
+    ambientNodes = [];
+    ambientPlaying = false;
+    document.querySelectorAll("#ambientPicks button").forEach(function (b) { b.classList.remove("active"); });
+    const status = $("ambientStatus"), stop = $("ambientStop");
+    if (status) status.textContent = currentLang === "el" ? "Δεν παίζει ήχος" : "No sound playing";
+    if (stop) stop.disabled = true;
+  }
+  function makeNoiseBuffer(ctx) {
+    if (ambientBuffer) return ambientBuffer;
+    const length = ctx.sampleRate * 4;
+    ambientBuffer = ctx.createBuffer(1, length, ctx.sampleRate);
+    const data = ambientBuffer.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < length; i++) {
+      const white = Math.random() * 2 - 1;
+      last = last * .985 + white * .015;
+      data[i] = last * 3.2;
+    }
+    return ambientBuffer;
+  }
+  function playAmbient(kind, button) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) {
+      $("ambientStatus").textContent = currentLang === "el" ? "Ο browser δεν υποστηρίζει ήχο περιβάλλοντος." : "Ambient audio is not supported by this browser.";
+      return;
+    }
+    stopAmbient();
+    try {
+      ambientContext = ambientContext || new AudioCtx();
+      if (ambientContext.state === "suspended") ambientContext.resume();
+      const ctx = ambientContext, noise = ctx.createBufferSource();
+      noise.buffer = makeNoiseBuffer(ctx); noise.loop = true;
+      const filter = ctx.createBiquadFilter(), gain = ctx.createGain();
+      filter.type = kind === "rain" ? "highpass" : (kind === "sea" ? "lowpass" : "bandpass");
+      filter.frequency.value = kind === "rain" ? 850 : (kind === "sea" ? 520 : 380);
+      filter.Q.value = kind === "nature" ? .45 : .7;
+      gain.gain.value = kind === "rain" ? .24 : (kind === "sea" ? .42 : .2);
+      noise.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      noise.start(); ambientNodes.push(noise, filter, gain);
+      if (kind === "sea") {
+        const lfo = ctx.createOscillator(), lfoGain = ctx.createGain();
+        lfo.frequency.value = .09; lfoGain.gain.value = .16;
+        lfo.connect(lfoGain); lfoGain.connect(gain.gain); lfo.start();
+        ambientNodes.push(lfo, lfoGain);
+      } else if (kind === "nature") {
+        const wind = ctx.createOscillator(), windGain = ctx.createGain();
+        wind.type = "sine"; wind.frequency.value = .12; windGain.gain.value = 90;
+        wind.connect(windGain); windGain.connect(filter.frequency); wind.start();
+        ambientNodes.push(wind, windGain);
+      }
+      ambientPlaying = true;
+      button.classList.add("active");
+      $("ambientStatus").textContent = currentLang === "el"
+        ? (kind === "rain" ? "Παίζει: βροχή" : kind === "sea" ? "Παίζει: θάλασσα" : "Παίζει: ήχοι φύσης")
+        : (kind === "rain" ? "Playing: rain" : kind === "sea" ? "Playing: ocean" : "Playing: nature");
+      $("ambientStop").disabled = false;
+    } catch (error) {
+      stopAmbient();
+      $("ambientStatus").textContent = currentLang === "el" ? "Δεν ήταν δυνατή η αναπαραγωγή." : "Could not start audio.";
+    }
+  }
   document.querySelectorAll("#musicPicks button").forEach(function (b) {
-    b.addEventListener("click", function () { playMusic(Number(b.dataset.idx)); });
+    b.addEventListener("click", function () { stopAmbient(); playMusic(Number(b.dataset.idx)); });
   });
+  document.querySelectorAll("#ambientPicks button").forEach(function (b) {
+    b.addEventListener("click", function () { playAmbient(b.dataset.sound, b); });
+  });
+  $("ambientStop").addEventListener("click", stopAmbient);
   if (document.body.classList.contains("practice-page")) playMusic(0);
 
   // 3D tilt for cards that the pointer is over (only on devices with a mouse or pen)
