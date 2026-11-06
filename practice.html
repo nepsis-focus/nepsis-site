@@ -225,6 +225,9 @@
   .acc-card .close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--orange); background: none; color: var(--orange); font-size: 1.1rem; cursor: pointer; }
   .acc-card input { width: 100%; font: inherit; padding: 13px 14px; border-radius: 14px; border: 1.5px solid var(--border); background: #fff; margin-top: 10px; }
   .acc-card .go { margin-top: 12px; width: 100%; justify-content: center; }
+  .acc-google { width: 100%; justify-content: center; gap: 10px; margin-top: 4px; background: #fff; color: var(--fg); border: 1.5px solid var(--border); box-shadow: 0 1px 2px rgba(58,36,24,.06); }
+  .acc-google:hover { border-color: #B9A28E; }
+  .acc-google svg { width: 20px; height: 20px; flex: 0 0 auto; }
   .acc-msg { margin-top: 12px; font-weight: 800; color: var(--ember); min-height: 1.4em; }
   .acc-scrim { position: fixed; inset: 0; background: rgba(40,20,10,.35); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 44; }
   .acc-scrim.open { opacity: 1; pointer-events: auto; }
@@ -524,7 +527,7 @@
         <h1 data-el="Η συγκέντρωσή σου, <em>μία μέρα τη φορά.</em>" data-en="Your focus, <em>one day at a time.</em>">Η συγκέντρωσή σου, <em>μία μέρα τη φορά.</em></h1>
         <p class="lead" data-el="Χτίσε συγκέντρωση, ένα βήμα τη φορά." data-en="Build focus, one step at a time.">Χτίσε συγκέντρωση, ένα βήμα τη φορά.</p>
         <div class="btns">
-          <a class="btn btn-primary" href="#subscribe" id="subBtn" data-el="Εγγραφή" data-en="Subscribe">Εγγραφή</a>
+          <a class="btn btn-primary" href="#stageGrid" id="subBtn" data-el="Δοκίμασε χωρίς λογαριασμό" data-en="Try it without an account">Δοκίμασε χωρίς λογαριασμό</a>
           <a class="btn btn-ghost" href="practice.html#stageGrid" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
         </div>
 
@@ -746,8 +749,15 @@
       <button type="button" class="btn btn-ghost go" id="accOut"></button>
     </div>
     <div id="accForm">
-      <input type="email" id="accEmail" autocomplete="email" placeholder="email@example.com">
-      <button type="button" class="btn btn-primary go" id="accSend"></button>
+      <button type="button" class="btn acc-google" id="accGoogle">
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <path fill="#FFC107" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11c-.5 2.5-1.9 4.6-4.1 6v5h6.6c3.8-3.5 6.1-8.7 6.1-14.7z"/>
+          <path fill="#FF3D00" d="M24 44c5.4 0 10-1.8 13.4-4.8l-6.6-5c-1.8 1.2-4.1 1.9-6.8 1.9-5.2 0-9.6-3.5-11.2-8.2H6v5.2C9.4 39.6 16.2 44 24 44z"/>
+          <path fill="#4CAF50" d="M12.8 27.9c-.4-1.2-.7-2.5-.7-3.9s.3-2.7.7-3.9v-5.2H6C4.7 17.5 4 20.6 4 24s.7 6.5 2 9.1l6.8-5.2z"/>
+          <path fill="#1976D2" d="M24 12c2.9 0 5.5 1 7.5 3l5.7-5.7C33.8 6.1 29.2 4 24 4 16.2 4 9.4 8.4 6 14.9l6.8 5.2C14.4 15.5 18.8 12 24 12z"/>
+        </svg>
+        <span id="accGoogleLabel">Συνέχεια με Google</span>
+      </button>
     </div>
     <p class="acc-msg" id="accMsg"></p>
   </div>
@@ -1597,7 +1607,7 @@
     $("subModal").classList.toggle("open", open);
     $("subScrim").classList.toggle("open", open);
   }
-  $("subBtn").addEventListener("click", function (e) { e.preventDefault(); setSub(true); });
+  // The practice page primary button now scrolls directly to the stages.
   $("subClose").addEventListener("click", function () { setSub(false); });
   $("subScrim").addEventListener("click", function () { setSub(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setSub(false); });
@@ -1660,13 +1670,12 @@
     $("accTitle").textContent = sbUser ? (isEl ? "Είσαι συνδεδεμένος" : "You are signed in") : (isEl ? "Σύνδεση" : "Sign in");
     $("accText").textContent = sbUser
       ? (isEl ? "Η πρόοδός σου αποθηκεύεται στον λογαριασμό σου και φαίνεται σε όλες τις συσκευές." : "Your progress is saved to your account and shows on all your devices.")
-      : (isEl ? "Βάλε το email σου. Θα πάρεις σύνδεσμο, χωρίς κωδικό." : "Enter your email. You will get a link, no password needed.");
+      : (isEl ? "Συνδέσου εύκολα με τον λογαριασμό Google σου για να συγχρονίζεται η πρόοδός σου σε όλες τις συσκευές." : "Continue with your Google account to sync your progress across all your devices.");
     $("accLogged").hidden = !sbUser;
     $("accForm").hidden = !!sbUser;
     $("accWho").textContent = sbUser ? sbUser.email : "";
     $("accOut").textContent = isEl ? "Αποσύνδεση" : "Sign out";
-    $("accSend").textContent = isEl ? "Στείλε μου σύνδεσμο" : "Send me a link";
-    $("accEmail").placeholder = isEl ? "το email σου" : "your email";
+    $("accGoogleLabel").textContent = isEl ? "Συνέχεια με Google" : "Continue with Google";
     $("accMsg").textContent = msg || "";
   }
   function setAcc(open) {
@@ -1677,18 +1686,34 @@
   $("accBtn").addEventListener("click", function () { setAcc(true); });
   $("accClose").addEventListener("click", function () { setAcc(false); });
   $("accScrim").addEventListener("click", function () { setAcc(false); });
-  $("accSend").addEventListener("click", async function () {
-    const email = $("accEmail").value.trim();
-    if (!sb) { renderAcc(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page."); return; }
-    if (!email) { renderAcc(currentLang === "el" ? "Γράψε ένα email." : "Please enter an email."); return; }
-    const res = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + location.pathname } });
-    renderAcc(res.error
-      ? (currentLang === "el" ? "Κάτι πήγε στραβά. Δοκίμασε ξανά." : "Something went wrong. Try again.")
-      : (currentLang === "el" ? "Στάλθηκε σύνδεσμος στο email σου. Άνοιξέ τον από αυτή τη συσκευή." : "A link was sent to your email. Open it on this device."));
+  $("accGoogle").addEventListener("click", async function () {
+    if (!sb) {
+      renderAcc(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page.");
+      return;
+    }
+    try {
+      const result = await sb.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: location.origin + location.pathname }
+      });
+      if (result.error) {
+        renderAcc(currentLang === "el" ? "Δεν ήταν δυνατή η σύνδεση με Google. Δοκίμασε ξανά." : "Google sign-in could not start. Please try again.");
+      }
+    } catch (error) {
+      renderAcc(currentLang === "el" ? "Δεν ήταν δυνατή η σύνδεση με Google. Δοκίμασε ξανά." : "Google sign-in could not start. Please try again.");
+    }
   });
   $("accOut").addEventListener("click", async function () {
-    if (sb) await sb.auth.signOut();
-    sbUser = null; renderAcc(currentLang === "el" ? "Αποσυνδέθηκες. Η πρόοδος μένει στη συσκευή." : "You are signed out. Progress stays on this device.");
+    try {
+      if (sb) {
+        const result = await sb.auth.signOut({ scope: "local" });
+        if (result.error) throw result.error;
+      }
+      sbUser = null;
+      renderAcc(currentLang === "el" ? "Αποσυνδέθηκες. Η πρόοδος μένει στη συσκευή." : "You are signed out. Progress stays on this device.");
+    } catch (error) {
+      renderAcc(currentLang === "el" ? "Δεν ολοκληρώθηκε η αποσύνδεση. Έλεγξε τη σύνδεσή σου και δοκίμασε ξανά." : "Sign-out did not complete. Check your connection and try again.");
+    }
   });
   if (sb) {
     sb.auth.onAuthStateChange(function (event, session) {
