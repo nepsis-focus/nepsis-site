@@ -1712,8 +1712,16 @@
     }
   });
   $("accOut").addEventListener("click", async function () {
-    if (sb) await sb.auth.signOut();
-    sbUser = null; renderAcc(currentLang === "el" ? "Αποσυνδέθηκες. Η πρόοδος μένει στη συσκευή." : "You are signed out. Progress stays on this device.");
+    try {
+      if (sb) {
+        const result = await sb.auth.signOut({ scope: "local" });
+        if (result.error) throw result.error;
+      }
+      sbUser = null;
+      renderAcc(currentLang === "el" ? "Αποσυνδέθηκες. Η πρόοδος μένει στη συσκευή." : "You are signed out. Progress stays on this device.");
+    } catch (error) {
+      renderAcc(currentLang === "el" ? "Δεν ολοκληρώθηκε η αποσύνδεση. Έλεγξε τη σύνδεσή σου και δοκίμασε ξανά." : "Sign-out did not complete. Check your connection and try again.");
+    }
   });
   if (sb) {
     sb.auth.onAuthStateChange(function (event, session) {
