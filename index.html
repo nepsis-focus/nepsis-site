@@ -1492,7 +1492,9 @@
       '<button type="button" class="btn btn-primary" id="shareBtn" style="margin-top:14px">' + (isEl ? "Μοιράσου το σερί μου" : "Share my streak") + '</button>' +
       '<div class="sub" style="margin-top:12px">' + distractionLine(p) + '</div>' +
       (sbUser ? '<div class="sub" id="syncMsg" style="font-size:.85rem">' + syncMsg + '</div>' : '') +
-      '<div class="sub" style="font-size:.85rem">' + (isEl ? "Αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Saved only on this device.") + '</div>';
+      '<div class="sub" style="font-size:.85rem">' + (sbUser
+        ? (isEl ? "Η πρόοδός σου αποθηκεύεται στη συσκευή και συγχρονίζεται στον λογαριασμό σου." : "Your progress is saved on this device and synced to your account.")
+        : (isEl ? "Αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Saved only on this device.")) + '</div>';
     const shareEl = el.querySelector('#shareBtn');
     if (shareEl) shareEl.addEventListener('click', shareStreak);
     renderCalendar();
