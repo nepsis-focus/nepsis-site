@@ -1602,7 +1602,7 @@
     $("subModal").classList.toggle("open", open);
     $("subScrim").classList.toggle("open", open);
   }
-  $("subBtn").addEventListener("click", function (e) { e.preventDefault(); setSub(true); });
+  // The homepage primary button now navigates directly to the practice stages.
   $("subClose").addEventListener("click", function () { setSub(false); });
   $("subScrim").addEventListener("click", function () { setSub(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setSub(false); });
