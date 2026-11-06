@@ -48,6 +48,20 @@
   .drawer .close { align-self: flex-end; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--orange); background: none; color: var(--orange); font-size: 1.2rem; cursor: pointer; }
   .drawer a { font-size: 1.4rem; font-weight: 800; color: var(--fg); text-decoration: none; padding: 12px 6px; border-radius: 12px; }
   .drawer a:hover { color: var(--ember); background: #FBE9CF; }
+  .drawer .menu-home { font-size: 1.2rem; margin: 2px 0 8px; }
+  .drawer .menu-group { border-top: 1px solid var(--border); padding: 7px 0; }
+  .drawer .menu-group summary { position: relative; list-style: none; cursor: pointer; padding: 10px 30px 10px 6px; border-radius: 12px; font-size: 1.12rem; font-weight: 900; line-height: 1.3; }
+  .drawer .menu-group summary::-webkit-details-marker { display: none; }
+  .drawer .menu-group summary::after { content: "+"; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--orange); font-size: 1.35rem; font-weight: 700; }
+  .drawer .menu-group[open] summary::after { content: "−"; }
+  .drawer .menu-group summary:hover { color: var(--ember); background: #FBE9CF; }
+  .drawer .menu-group a { display: block; margin: 2px 0 2px 10px; padding: 8px 10px; font-size: 1rem; font-weight: 700; color: var(--muted); }
+  .drawer .menu-group a:hover { color: var(--ember); background: #FBE9CF; }
+  .drawer .menu-group[open] a { animation: nepsis-menu-item .3s ease both; }
+  @media (max-width: 420px) {
+    .drawer { padding: 22px 20px; }
+    .drawer .menu-group summary { font-size: 1.04rem; }
+  }
   .drawer .lang { margin-top: 18px; align-self: flex-start; }
   .scrim { position: fixed; inset: 0; background: rgba(40,20,10,.35); opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 25; }
   .scrim.open { opacity: 1; pointer-events: auto; }
@@ -496,20 +510,35 @@
 
 <nav class="drawer" id="drawer" aria-label="Menu">
   <button type="button" class="close" id="closeBtn" aria-label="Close">✕</button>
-  <a href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
-  <a href="my-nepsis.html" data-el="Το Nepsis μου" data-en="My Nepsis">Το Nepsis μου</a>
-  <a href="reset.html" data-el="Μικρή παύση" data-en="Take a pause">Μικρή παύση</a>
-  <a href="library.html" data-el="Βιβλιοθήκη γνώσης" data-en="Knowledge library">Βιβλιοθήκη γνώσης</a>
-  <a href="diary.html" data-el="Προσωπικό ημερολόγιο" data-en="Private diary">Προσωπικό ημερολόγιο</a>
-  <a href="about.html" data-el="Τι είναι το Nepsis" data-en="About Nepsis">Τι είναι το Nepsis</a>
-  <a href="how.html" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</a>
-  <a href="practice.html#challenge" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</a>
-  <a href="practice.html#stageGrid" data-el="Στάδια" data-en="Stages">Στάδια</a>
-  <a href="practice.html#quiz" data-el="Κουίζ" data-en="Quiz">Κουίζ</a>
-  <a href="practice.html#progress" data-el="Η πρόοδός μου" data-en="My progress">Η πρόοδός μου</a>
-  <a href="practice.html#achievements" data-el="Επιτεύγματα" data-en="Achievements">Επιτεύγματα</a>
-  <a href="practice.html#knowledge" data-el="Γνώση" data-en="Knowledge">Γνώση</a>
-  <a href="faq.html" data-el="Ερωτήσεις" data-en="FAQ">Ερωτήσεις</a>
+  <a class="menu-home" href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
+  <details class="menu-group">
+    <summary data-el="Ξεκίνα τη συγκέντρωση" data-en="Start focusing">Ξεκίνα τη συγκέντρωση</summary>
+    <a href="practice.html#challenge" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</a>
+    <a href="practice.html#stageGrid" data-el="Στάδια" data-en="Stages">Στάδια</a>
+    <a href="practice.html#quiz" data-el="Κουίζ" data-en="Quiz">Κουίζ</a>
+    <a href="reset.html" data-el="Μικρή παύση" data-en="Take a pause">Μικρή παύση</a>
+  </details>
+  <details class="menu-group">
+    <summary data-el="Η πρόοδός μου" data-en="My progress">Η πρόοδός μου</summary>
+    <a href="practice.html#progress" data-el="Η πρόοδός μου" data-en="My progress">Η πρόοδός μου</a>
+    <a href="practice.html#achievements" data-el="Επιτεύγματα" data-en="Achievements">Επιτεύγματα</a>
+  </details>
+  <details class="menu-group">
+    <summary data-el="Ο προσωπικός μου χώρος" data-en="My personal space">Ο προσωπικός μου χώρος</summary>
+    <a href="my-nepsis.html" data-el="Το Nepsis μου" data-en="My Nepsis">Το Nepsis μου</a>
+    <a href="diary.html" data-el="Προσωπικό ημερολόγιο" data-en="Private diary">Προσωπικό ημερολόγιο</a>
+  </details>
+  <details class="menu-group">
+    <summary data-el="Βιβλιοθήκη γνώσης" data-en="Knowledge library">Βιβλιοθήκη γνώσης</summary>
+    <a href="library.html" data-el="Βιβλιοθήκη γνώσης" data-en="Knowledge library">Βιβλιοθήκη γνώσης</a>
+    <a href="practice.html#knowledge" data-el="Γνώση μετά τα στάδια" data-en="Knowledge after each stage">Γνώση μετά τα στάδια</a>
+  </details>
+  <details class="menu-group">
+    <summary data-el="Γνώρισε το Nepsis" data-en="Discover Nepsis">Γνώρισε το Nepsis</summary>
+    <a href="about.html" data-el="Τι είναι το Nepsis" data-en="About Nepsis">Τι είναι το Nepsis</a>
+    <a href="how.html" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</a>
+    <a href="faq.html" data-el="Συχνές ερωτήσεις" data-en="Frequently asked questions">Συχνές ερωτήσεις</a>
+  </details>
 </nav>
 <div class="scrim" id="scrim"></div>
 
