@@ -2057,10 +2057,10 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
     return out;
   }
   // The device always keeps the progress. When signed in, we also save it to the account and say what happened.
-  let syncMsg = "", syncRetries = 0, syncTimer = null;
+  let syncMsg = "", syncRetries = 0, syncTimer = null, syncReady = false;
   function setSync(msg) { syncMsg = msg; const el = document.getElementById("syncMsg"); if (el) el.textContent = msg; }
   async function sbPush(p) {
-    if (!sb || !sbUser) return;
+    if (!sb || !sbUser || !syncReady) return;
     setSync(currentLang === "el" ? "Αποθήκευση στον λογαριασμό…" : "Saving to your account…");
     try {
       const res = await sb.from("progress").upsert({ user_id: sbUser.id, data: p, updated_at: new Date().toISOString() });
@@ -2078,16 +2078,22 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   }
   async function sbPull() {
     if (!sb || !sbUser) return;
+    syncReady = false;
+    clearTimeout(syncTimer);
+    syncRetries = 0;
     const local = loadProgress();
     try {
       const res = await sb.from("progress").select("data").eq("user_id", sbUser.id).maybeSingle();
       if (res.error) throw res.error;
       const remote = res.data && res.data.data ? res.data.data : { days: {}, distractions: {} };
       const merged = mergeProgress(local, remote);
+      syncReady = true;
       try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(merged)); } catch (e) {}
       await sbPush(merged);
       renderProgress();
     } catch (err) {
+      syncReady = false;
+      clearTimeout(syncTimer);
       setSync(currentLang === "el" ? "Δεν ήταν δυνατή η ανάγνωση της αποθηκευμένης προόδου. Δεν έγινε αντικατάσταση των δεδομένων. Η πρόοδός σου παραμένει σε αυτή τη συσκευή." : "Could not read saved progress. No data was overwritten. Your progress remains on this device.");
       renderProgress();
     }
@@ -2147,6 +2153,9 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   if (sb) {
     sb.auth.onAuthStateChange(function (event, session) {
       sbUser = session ? session.user : null;
+      syncReady = false;
+      clearTimeout(syncTimer);
+      syncRetries = 0;
       renderAcc("");
       if (sbUser && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) sbPull();
     });
