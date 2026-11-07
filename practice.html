@@ -2079,12 +2079,18 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   async function sbPull() {
     if (!sb || !sbUser) return;
     const local = loadProgress();
-    const res = await sb.from("progress").select("data").eq("user_id", sbUser.id).maybeSingle();
-    const remote = res.data && res.data.data ? res.data.data : { days: {}, distractions: {} };
-    const merged = mergeProgress(local, remote);
-    try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(merged)); } catch (e) {}
-    sbPush(merged);
-    renderProgress();
+    try {
+      const res = await sb.from("progress").select("data").eq("user_id", sbUser.id).maybeSingle();
+      if (res.error) throw res.error;
+      const remote = res.data && res.data.data ? res.data.data : { days: {}, distractions: {} };
+      const merged = mergeProgress(local, remote);
+      try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(merged)); } catch (e) {}
+      await sbPush(merged);
+      renderProgress();
+    } catch (err) {
+      setSync(currentLang === "el" ? "Δεν ήταν δυνατή η ανάγνωση της αποθηκευμένης προόδου. Δεν έγινε αντικατάσταση των δεδομένων. Η πρόοδός σου παραμένει σε αυτή τη συσκευή." : "Could not read saved progress. No data was overwritten. Your progress remains on this device.");
+      renderProgress();
+    }
   }
   function renderAcc(msg) {
     const isEl = currentLang === "el";
