@@ -29,6 +29,22 @@
     .content { animation:enter .55s cubic-bezier(.16,1,.3,1) both; }
     @keyframes enter { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
   }
+
+/* NEPSIS SIGNATURE REDESIGN — legal page visual system */
+:root{scroll-behavior:smooth}body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+header{position:sticky;top:0;z-index:50;background:rgba(255,248,238,.94);backdrop-filter:blur(18px);border-bottom:1px solid rgba(58,36,24,.09)}
+.logo{letter-spacing:-.065em!important;font-weight:850!important}
+main,.wrap{max-width:1160px}
+body .wrap>header{padding:20px 0}
+h1{font-size:clamp(3rem,6.6vw,6.2rem)!important;line-height:.98!important;letter-spacing:-.065em!important;max-width:12ch}
+h1:after{content:"";display:block;width:min(100%,240px);height:3px;margin-top:34px;background:linear-gradient(90deg,var(--orange),transparent);transform-origin:left;animation:nepsis-legal-line .8s .15s both}
+.content{border-radius:28px!important;padding:clamp(26px,5vw,58px)!important;box-shadow:0 20px 60px -48px rgba(58,36,24,.35)}
+.content h2{letter-spacing:-.035em}
+a{transition:color .2s ease}
+@keyframes nepsis-legal-line{from{transform:scaleX(.08);opacity:.3}to{transform:scaleX(1);opacity:1}}
+@media(max-width:600px){h1{font-size:clamp(2.7rem,12vw,4rem)!important}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body>
