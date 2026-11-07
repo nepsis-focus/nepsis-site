@@ -276,10 +276,10 @@
   .sub-card { position: relative; background: var(--card); border-radius: 28px; padding: 28px; width: min(520px, 100%); max-height: 92vh; overflow: auto; box-shadow: 0 40px 80px -30px rgba(120,60,30,.55); transform: translateY(14px); transition: transform .25s ease; }
   .sub-modal.open .sub-card { transform: translateY(0); }
   .sub-card .close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--orange); background: none; color: var(--orange); font-size: 1.1rem; cursor: pointer; }
-  .sub-frame { width: 100%; height: 420px; border: 0; margin-top: 16px; border-radius: 16px; background: transparent; }
-  /* Give the embedded Brevo form enough vertical room so its country selector and Subscribe button do not collide or get clipped. */
-  .sub-frame { display: block; height: 560px; overflow: auto; }
-  @media (max-width: 600px) { .sub-frame { height: 620px; } .sub-card { max-height: 94vh; padding: 22px 18px; } }
+  .sub-frame { display: block; width: 100%; height: 680px; border: 0; margin-top: 16px; border-radius: 16px; background: transparent; }
+  .sub-card { max-height: 94vh; overflow-y: auto; overscroll-behavior: contain; }
+  @media (max-width: 600px) { .sub-frame { height: 740px; } .sub-card { padding: 22px 18px; } }
+  .sub-form-fallback { display: block; margin: 14px auto 0; width: fit-content; color: var(--orange); font-weight: 800; text-align: center; text-decoration: underline; text-underline-offset: 3px; }
   .acc-btn { border: 1.5px solid var(--border); background: #fff; color: var(--fg); padding: 8px 14px; border-radius: 999px; font: inherit; font-weight: 800; font-size: .85rem; cursor: pointer; }
   .acc-modal { position: fixed; inset: 0; display: grid; place-items: center; padding: 18px; z-index: 45; opacity: 0; pointer-events: none; transition: opacity .25s; }
   .acc-modal.open { opacity: 1; pointer-events: auto; }
@@ -1107,6 +1107,7 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
     <h2 id="subTitle" data-el="Έλα μαζί μας" data-en="Join us">Έλα μαζί μας</h2>
     <p class="muted" style="margin-top:8px" data-el="Μία συμβουλή συγκέντρωσης κάθε εβδομάδα, στο email σου." data-en="One focus tip each week, in your inbox.">Μία συμβουλή συγκέντρωσης κάθε εβδομάδα, στο email σου.</p>
     <iframe class="sub-frame" src="https://19473cf2.sibforms.com/serve/MUIFAMkEqB9sSChSnDcr0Ftuut57yfIjc5IBYBylavwDyffcmiktOmVfqpSm5xXFTr0Ov3cexf_Kk-igMieqlbLcXEAa03kF1ax4ExUerD2nfQ7q84j5b6Y2Xe_02L1juc-zD8Hpnw0-7ZJuKCeJOiFOXqlkNYe23UNpmwfrep-MPrw6ngkbz7F-r1ZBSYDJtDrgPKXLSIQIGr8quA==" title="Subscribe" loading="lazy"></iframe>
+    <a class="sub-form-fallback" href="https://19473cf2.sibforms.com/serve/MUIFAMkEqB9sSChSnDcr0Ftuut57yfIjc5IBYBylavwDyffcmiktOmVfqpSm5xXFTr0Ov3cexf_Kk-igMieqlbLcXEAa03kF1ax4ExUerD2nfQ7q84j5b6Y2Xe_02L1juc-zD8Hpnw0-7ZJuKCeJOiFOXqlkNYe23UNpmwfrep-MPrw6ngkbz7F-r1ZBSYDJtDrgPKXLSIQIGr8quA==" target="_blank" rel="noopener noreferrer" data-el="Άνοιγμα φόρμας σε νέα καρτέλα" data-en="Open form in a new tab">Άνοιγμα φόρμας σε νέα καρτέλα</a>
   </div>
 </div>
 
