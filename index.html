@@ -687,8 +687,8 @@ body.home-page .hero-earth canvas { cursor:grab; }
 body.home-page .hero-earth canvas:active { cursor:grabbing; }
 body.home-page .globe-drag-hint { left:34%; bottom:9%; z-index:4; }
 body.home-page .hero-country {
-  z-index:5; left:clamp(22px,5vw,76px); right:auto; bottom:26px;
-  width:245px; padding:15px 18px; border:1px solid rgba(58,36,24,.1);
+  position:relative; z-index:5; inset:auto; margin:28px 0 0;
+  width:min(100%,320px); padding:15px 18px; border:1px solid rgba(58,36,24,.1);
   background:rgba(255,253,248,.88); backdrop-filter:blur(16px);
   box-shadow:0 18px 50px -34px rgba(58,36,24,.35);
 }
@@ -814,7 +814,7 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   body.home-page .hero::after { background:linear-gradient(180deg,rgba(255,248,238,.1),rgba(255,248,238,.2) 45%,var(--bg) 76%); }
   body.home-page .hero-copy { padding-top:0; }
   body.home-page .hero h1 { font-size:clamp(3.15rem,13vw,4.5rem); max-width:9ch; }
-  body.home-page .hero-country { left:22px; bottom:16px; width:min(230px,calc(100% - 44px)); }
+  body.home-page .hero-country { position:relative; inset:auto; width:min(100%,320px); margin:24px 0 0; }
   body.home-page .globe-drag-hint { left:auto; right:18px; bottom:20%; }
   body.home-page .home-links { grid-template-columns:1fr; }
   body.home-page .home-link { min-height:174px; }
@@ -903,17 +903,16 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
           <a class="btn btn-primary" href="practice.html#stageGrid" id="subBtn" data-el="Δοκίμασε χωρίς λογαριασμό" data-en="Try it without an account">Δοκίμασε χωρίς λογαριασμό</a>
           <a class="btn btn-ghost" href="practice.html#stageGrid" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
         </div>
-
+        <div class="country-box hero-country">
+          <span class="eyebrow" data-el="Από πού μας επισκέπτεσαι;" data-en="Where are you visiting from?">Από πού μας επισκέπτεσαι;</span>
+          <h2 data-el="Διάλεξε τη χώρα σου" data-en="Choose your country">Διάλεξε τη χώρα σου</h2>
+          <label>
+            <span data-el="Χώρα" data-en="Country">Χώρα</span>
+            <select id="countrySel"></select>
+          </label>
+          <p class="msg" id="globeMsg" aria-live="polite"></p>
+        </div>
       </div>
-    </div>
-    <div class="country-box hero-country">
-      <span class="eyebrow" data-el="Από πού μας επισκέπτεσαι;" data-en="Where are you visiting from?">Από πού μας επισκέπτεσαι;</span>
-      <h2 data-el="Διάλεξε τη χώρα σου" data-en="Choose your country">Διάλεξε τη χώρα σου</h2>
-      <label>
-        <span data-el="Χώρα" data-en="Country">Χώρα</span>
-        <select id="countrySel"></select>
-      </label>
-      <p class="msg" id="globeMsg" aria-live="polite"></p>
     </div>
   </section>
 
