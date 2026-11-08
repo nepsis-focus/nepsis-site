@@ -2175,12 +2175,16 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   });
   if (sb) {
     sb.auth.onAuthStateChange(function (event, session) {
-      authGeneration++;
+      const nextUser = session ? session.user : null;
+      const identityChanged = (sbUser ? sbUser.id : null) !== (nextUser ? nextUser.id : null);
+      if (identityChanged || event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "INITIAL_SESSION") {
+        authGeneration++;
+        syncReady = false;
+        clearTimeout(syncTimer);
+        syncRetries = 0;
+      }
       const generation = authGeneration;
-      sbUser = session ? session.user : null;
-      syncReady = false;
-      clearTimeout(syncTimer);
-      syncRetries = 0;
+      sbUser = nextUser;
       renderAcc("");
       if (sbUser && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
         const activeUser = sbUser;
