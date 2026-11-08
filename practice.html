@@ -2187,6 +2187,7 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
       }
       const generation = authGeneration;
       sbUser = nextUser;
+      if (identityChanged) { setSync(""); renderProgress(); }
       renderAcc("");
       if (sbUser && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
         const activeUser = sbUser;
