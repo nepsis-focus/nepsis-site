@@ -452,23 +452,55 @@ async function loadDiaryEntries(expectedUser,expectedGeneration){
  diaryEntries=r.data||[];renderDiaryEntries();
 }
 async function saveDiaryEntry(e){
- e.preventDefault();const title=$("diaryTitle").value.trim(),content=$("diaryContent").value.trim(),entryDate=$("diaryDate").value||dateKey(new Date());
+ e.preventDefault();
+ const targetUser=user,generation=authGeneration;
+ const title=$("diaryTitle").value.trim(),content=$("diaryContent").value.trim(),entryDate=$("diaryDate").value||dateKey(new Date());
  if(!title&&!content){$("diaryMessage").textContent=lang==="el"?"Γράψε έναν τίτλο ή λίγες σκέψεις.":"Write a title or a few thoughts.";return}
  const existing=diaryEntries.find(x=>x.id===editingDiaryId),now=new Date().toISOString(),entry={id:editingDiaryId||newDiaryId(),entry_date:entryDate,title:title.slice(0,120),content:content.slice(0,20000),created_at:existing?.created_at||now,updated_at:now};
- if(user&&sb){const r=await sb.from("private_diary_entries").upsert({...entry,user_id:user.id},{onConflict:"id"});if(r.error){$("diaryMessage").textContent=lang==="el"?"Δεν αποθηκεύτηκε. Δοκίμασε ξανά.":"Could not save. Please try again.";return}await loadDiaryEntries()}
- else{diaryEntries=existing?diaryEntries.map(x=>x.id===entry.id?entry:x):[entry,...diaryEntries];saveLocalDiary();renderDiaryEntries()}
+ if(targetUser&&sb){
+  if(!isCurrentAuth(targetUser,generation))return;
+  const r=await sb.from("private_diary_entries").upsert({...entry,user_id:targetUser.id},{onConflict:"id"});
+  if(!isCurrentAuth(targetUser,generation))return;
+  if(r.error){$("diaryMessage").textContent=lang==="el"?"Δεν αποθηκεύτηκε. Δοκίμασε ξανά.":"Could not save. Please try again.";return}
+  await loadDiaryEntries(targetUser,generation);
+  if(!isCurrentAuth(targetUser,generation))return;
+ }else{
+  if(user||authGeneration!==generation)return;
+  diaryEntries=existing?diaryEntries.map(x=>x.id===entry.id?entry:x):[entry,...diaryEntries];
+  saveLocalDiary();renderDiaryEntries();
+ }
+ if(targetUser?!isCurrentAuth(targetUser,generation):(!!user||authGeneration!==generation))return;
  resetDiaryForm();$("diaryMessage").textContent=lang==="el"?"Η καταχώριση αποθηκεύτηκε.":"Entry saved.";
 }
 async function deleteDiaryEntry(id){
- if(user&&sb){const r=await sb.from("private_diary_entries").delete().eq("id",id).eq("user_id",user.id);if(r.error){$("diaryMessage").textContent=lang==="el"?"Δεν διαγράφηκε. Δοκίμασε ξανά.":"Could not delete. Please try again.";return}await loadDiaryEntries()}
- else{diaryEntries=diaryEntries.filter(x=>x.id!==id);saveLocalDiary();renderDiaryEntries()}
- if(editingDiaryId===id)resetDiaryForm();$("diaryMessage").textContent=lang==="el"?"Η καταχώριση διαγράφηκε.":"Entry deleted.";
+ const targetUser=user,generation=authGeneration;
+ if(targetUser&&sb){
+  if(!isCurrentAuth(targetUser,generation))return;
+  const r=await sb.from("private_diary_entries").delete().eq("id",id).eq("user_id",targetUser.id);
+  if(!isCurrentAuth(targetUser,generation))return;
+  if(r.error){$("diaryMessage").textContent=lang==="el"?"Δεν διαγράφηκε. Δοκίμασε ξανά.":"Could not delete. Please try again.";return}
+  await loadDiaryEntries(targetUser,generation);
+  if(!isCurrentAuth(targetUser,generation))return;
+ }else{
+  if(user||authGeneration!==generation)return;
+  diaryEntries=diaryEntries.filter(x=>x.id!==id);saveLocalDiary();renderDiaryEntries();
+ }
+ if(targetUser?!isCurrentAuth(targetUser,generation):(!!user||authGeneration!==generation))return;
+ if(editingDiaryId===id)resetDiaryForm();
+ $("diaryMessage").textContent=lang==="el"?"Η καταχώριση διαγράφηκε.":"Entry deleted.";
 }
 async function importGuestDiary(){
- if(!user||!sb)return;const entries=readLocalDiary();if(!entries.length)return;
- const payload=entries.map(e=>({...e,user_id:user.id}));const r=await sb.from("private_diary_entries").upsert(payload,{onConflict:"id"});
+ const targetUser=user,generation=authGeneration;
+ if(!targetUser||!sb||!isCurrentAuth(targetUser,generation))return;
+ const entries=readLocalDiary();if(!entries.length)return;
+ const payload=entries.map(e=>({...e,user_id:targetUser.id}));
+ const r=await sb.from("private_diary_entries").upsert(payload,{onConflict:"id"});
+ if(!isCurrentAuth(targetUser,generation))return;
  if(r.error){$("diaryMessage").textContent=lang==="el"?"Δεν έγινε η μεταφορά. Οι τοπικές καταχωρίσεις παραμένουν στη συσκευή.":"Import failed. Local entries remain on this device.";return}
- try{localStorage.removeItem("nepsis-diary-entries")}catch(e){}await loadDiaryEntries();$("diaryMessage").textContent=lang==="el"?"Οι τοπικές καταχωρίσεις μεταφέρθηκαν στον λογαριασμό σου.":"Local entries imported into your account.";
+ try{localStorage.removeItem("nepsis-diary-entries")}catch(e){}
+ await loadDiaryEntries(targetUser,generation);
+ if(!isCurrentAuth(targetUser,generation))return;
+ $("diaryMessage").textContent=lang==="el"?"Οι τοπικές καταχωρίσεις μεταφέρθηκαν στον λογαριασμό σου.":"Local entries imported into your account.";
 }
 function dateKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function dayMinutes(k){return(progress.days[k]||[]).reduce((n,v)=>n+Math.max(0,Number(v)||0),0)}
@@ -511,8 +543,8 @@ function openAccount(){ $("accountModal").classList.add("open");$("accountMessag
 function closeAccount(){$("accountModal").classList.remove("open")}
 $("accountBtn").addEventListener("click",openAccount);$("welcomeAction").addEventListener("click",openAccount);$("accountClose").addEventListener("click",closeAccount);$("accountModal").addEventListener("click",e=>{if(e.target===$("accountModal"))closeAccount()});
 $("sendLink").addEventListener("click",async()=>{const email=$("email").value.trim();if(!sb){$("accountMessage").textContent=t("no");return}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){$("accountMessage").textContent=t("email");return}const r=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});$("accountMessage").textContent=r.error?t("bad"):t("sent")});
-$("signOut").addEventListener("click",async()=>{if(sb)await sb.auth.signOut();user=null;progress=local();userSpace=readLocalSpace();render();$("accountMessage").textContent=t("out")});
-if(sb)sb.auth.onAuthStateChange(async(event,session)=>{authGeneration++;const generation=authGeneration;const activeUser=session?session.user:null;user=activeUser;progress=local();userSpace=readLocalSpace(activeUser);diaryEntries=activeUser?[]:readLocalDiary();$("progressSyncStatus").textContent="";render();if(activeUser){const r=await sb.from("progress").select("data").eq("user_id",activeUser.id).maybeSingle();if(!isCurrentAuth(activeUser,generation))return;if(r.error){progress=local();$("progressSyncStatus").textContent=lang==="el"?"Δεν ήταν δυνατή η ανάγνωση της αποθηκευμένης προόδου. Δεν έγινε αντικατάσταση των δεδομένων σου. Η πρόοδός σου παραμένει σε αυτή τη συσκευή.":"Could not read saved progress. Your data was not overwritten. Progress remains on this device.";await loadUserSpace(activeUser,generation);if(!isCurrentAuth(activeUser,generation))return;await loadDiaryEntries(activeUser,generation);if(!isCurrentAuth(activeUser,generation))return;render();return;}if(r.data&&r.data.data){progress=merge(local(),r.data.data);try{localStorage.setItem(progressStorageKey(activeUser),JSON.stringify(progress))}catch(e){}}else progress=local();if(!isCurrentAuth(activeUser,generation))return;const pushed=await sb.from("progress").upsert({user_id:activeUser.id,data:progress,updated_at:new Date().toISOString()});if(!isCurrentAuth(activeUser,generation))return;if(pushed.error){$("progressSyncStatus").textContent=lang==="el"?"Η πρόοδός σου παραμένει σε αυτή τη συσκευή. Δεν συγχρονίστηκε στον λογαριασμό.":"Your progress remains on this device. It was not synced to your account.";}else{$("progressSyncStatus").textContent="";}await loadUserSpace(activeUser,generation);if(!isCurrentAuth(activeUser,generation))return}else{progress=local();userSpace=readLocalSpace();diaryEntries=readLocalDiary()}if(!isCurrentAuth(activeUser,generation)&&activeUser)return;await loadDiaryEntries(activeUser,generation);if(!activeUser||isCurrentAuth(activeUser,generation))render()});else{progress=local();userSpace=readLocalSpace();diaryEntries=readLocalDiary();render()}
+$("signOut").addEventListener("click",async()=>{if(sb)await sb.auth.signOut();user=null;diaryEntries=readLocalDiary();resetDiaryForm();renderDiaryEntries();progress=local();userSpace=readLocalSpace();render();$("accountMessage").textContent=t("out")});
+if(sb)sb.auth.onAuthStateChange(async(event,session)=>{authGeneration++;const generation=authGeneration;const previousUserId=user?user.id:null;const activeUser=session?session.user:null;const nextUserId=activeUser?activeUser.id:null;if(previousUserId!==nextUserId){resetDiaryForm();$("diaryMessage").textContent="";}user=activeUser;progress=local();userSpace=readLocalSpace(activeUser);diaryEntries=activeUser?[]:readLocalDiary();$("progressSyncStatus").textContent="";render();if(activeUser){const r=await sb.from("progress").select("data").eq("user_id",activeUser.id).maybeSingle();if(!isCurrentAuth(activeUser,generation))return;if(r.error){progress=local();$("progressSyncStatus").textContent=lang==="el"?"Δεν ήταν δυνατή η ανάγνωση της αποθηκευμένης προόδου. Δεν έγινε αντικατάσταση των δεδομένων σου. Η πρόοδός σου παραμένει σε αυτή τη συσκευή.":"Could not read saved progress. Your data was not overwritten. Progress remains on this device.";await loadUserSpace(activeUser,generation);if(!isCurrentAuth(activeUser,generation))return;await loadDiaryEntries(activeUser,generation);if(!isCurrentAuth(activeUser,generation))return;render();return;}if(r.data&&r.data.data){progress=merge(local(),r.data.data);try{localStorage.setItem(progressStorageKey(activeUser),JSON.stringify(progress))}catch(e){}}else progress=local();if(!isCurrentAuth(activeUser,generation))return;const pushed=await sb.from("progress").upsert({user_id:activeUser.id,data:progress,updated_at:new Date().toISOString()});if(!isCurrentAuth(activeUser,generation))return;if(pushed.error){$("progressSyncStatus").textContent=lang==="el"?"Η πρόοδός σου παραμένει σε αυτή τη συσκευή. Δεν συγχρονίστηκε στον λογαριασμό.":"Your progress remains on this device. It was not synced to your account.";}else{$("progressSyncStatus").textContent="";}await loadUserSpace(activeUser,generation);if(!isCurrentAuth(activeUser,generation))return}else{progress=local();userSpace=readLocalSpace();diaryEntries=readLocalDiary()}if(!isCurrentAuth(activeUser,generation)&&activeUser)return;await loadDiaryEntries(activeUser,generation);if(!activeUser||isCurrentAuth(activeUser,generation))render()});else{progress=local();userSpace=readLocalSpace();diaryEntries=readLocalDiary();render()}
 function setLang(next){lang=next;document.documentElement.lang=next;document.querySelectorAll("[data-el][data-en]").forEach(el=>{el.innerHTML=el.getAttribute(next==="el"?"data-el":"data-en")});document.querySelectorAll("[data-placeholder-el][data-placeholder-en]").forEach(el=>{el.placeholder=el.getAttribute(next==="el"?"data-placeholder-el":"data-placeholder-en")});document.querySelectorAll("[data-lang]").forEach(b=>b.classList.toggle("active",b.dataset.lang===next));render()}
 document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.lang)));
 const drawer=$("drawer"),scrim=$("scrim");function menu(open){drawer.classList.toggle("open",open);scrim.classList.toggle("open",open)}$("menuBtn").addEventListener("click",()=>menu(true));$("closeBtn").addEventListener("click",()=>menu(false));scrim.addEventListener("click",()=>menu(false));drawer.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>menu(false)));
