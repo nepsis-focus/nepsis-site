@@ -57,7 +57,11 @@ async function recentAgentAnalysisExists() {
 function filesForFailures(failures) {
   const selected = [];
   for (const failure of failures) {
-    const route = String(failure).split(":")[0].trim();
+    // Watchdog failures are prefixed with a viewport name, e.g. "mobile /practice.html: ...".
+    // Extract the route itself rather than treating the viewport prefix as part of the filename.
+    const routeMatch = String(failure).match(/(?:^|\s)(\/[^:\s]*):/);
+    if (!routeMatch) continue;
+    const route = routeMatch[1];
     const file = route === "/" ? "index.html" : route.replace(/^\/+/, "");
     if (allowedFiles.has(file) && !selected.includes(file)) selected.push(file);
     if (selected.length >= 3) break;
