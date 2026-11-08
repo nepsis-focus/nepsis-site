@@ -1824,6 +1824,7 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
 
   // ---------- progress on this device (no account) ----------
   const PROGRESS_KEY = "nepsis-progress";
+  function progressStorageKey() { return sbUser && sbUser.id ? PROGRESS_KEY + ":user:" + sbUser.id : PROGRESS_KEY; }
   const FACTS = {
     5:  { el: "Η Gloria Mark (UC Irvine) βρήκε ότι ο μέσος χρόνος σε μία οθόνη πριν την αλλαγή έπεσε από περίπου 2,5 λεπτά το 2004 σε περίπου 47 δευτερόλεπτα γύρω στο 2020.",
           en: "Gloria Mark (UC Irvine) found that the average time people spend on one screen before switching fell from about 2.5 minutes in 2004 to about 47 seconds around 2020.",
@@ -1849,8 +1850,9 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
     ["none", "Τίποτα", "Nothing"]
   ];
   function fmtKey(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
-  function loadProgress() { try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || { days: {} }; } catch (e) { return { days: {} }; } }
-  function saveProgress(p) { try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(p)); } catch (e) {} sbPush(p); }
+  function loadProgress() { try { return JSON.parse(localStorage.getItem(progressStorageKey())) || { days: {}, distractions: {} }; } catch (e) { return { days: {}, distractions: {} }; } }
+  function storeProgress(p) { try { localStorage.setItem(progressStorageKey(), JSON.stringify(p)); } catch (e) {} }
+  function saveProgress(p) { storeProgress(p); sbPush(p); }
   function markStage(min) {
     const p = loadProgress(), k = fmtKey(new Date());
     p.days[k] = p.days[k] || [];
@@ -2040,6 +2042,11 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   const SB_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
   const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY) : null;
   let sbUser = null;
+  let authGeneration = 0;
+  function isCurrentAuth(expectedUser, expectedGeneration) {
+    return !!expectedUser && !!sbUser &&
+      sbUser.id === expectedUser.id && authGeneration === expectedGeneration;
+  }
 
   function mergeProgress(a, b) {
     const out = { days: {}, distractions: {} };
@@ -2057,34 +2064,59 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
     return out;
   }
   // The device always keeps the progress. When signed in, we also save it to the account and say what happened.
-  let syncMsg = "", syncRetries = 0, syncTimer = null;
+  let syncMsg = "", syncRetries = 0, syncTimer = null, syncReady = false;
   function setSync(msg) { syncMsg = msg; const el = document.getElementById("syncMsg"); if (el) el.textContent = msg; }
-  async function sbPush(p) {
-    if (!sb || !sbUser) return;
+  async function sbPush(p, expectedUser, expectedGeneration) {
+    const targetUser = expectedUser || sbUser;
+    const generation = expectedGeneration === undefined ? authGeneration : expectedGeneration;
+    if (!sb || !isCurrentAuth(targetUser, generation) || !syncReady) return;
     setSync(currentLang === "el" ? "Αποθήκευση στον λογαριασμό…" : "Saving to your account…");
     try {
-      const res = await sb.from("progress").upsert({ user_id: sbUser.id, data: p, updated_at: new Date().toISOString() });
+      const res = await sb.from("progress").upsert({ user_id: targetUser.id, data: p, updated_at: new Date().toISOString() });
+      if (!isCurrentAuth(targetUser, generation)) return;
       if (res.error) throw res.error;
       syncRetries = 0;
       setSync(currentLang === "el" ? "Αποθηκεύτηκε στον λογαριασμό σου." : "Saved to your account.");
     } catch (err) {
+      if (!isCurrentAuth(targetUser, generation)) return;
       setSync(currentLang === "el" ? "Δεν αποθηκεύτηκε στον λογαριασμό. Η πρόοδος μένει στη συσκευή." : "Not saved to your account. Progress stays on this device.");
       if (syncRetries < 3) {
         syncRetries++;
         clearTimeout(syncTimer);
-        syncTimer = setTimeout(function () { sbPush(loadProgress()); }, 15000);
+        syncTimer = setTimeout(function () {
+          if (isCurrentAuth(targetUser, generation) && syncReady) sbPush(loadProgress(), targetUser, generation);
+        }, 15000);
       }
     }
   }
-  async function sbPull() {
-    if (!sb || !sbUser) return;
-    const local = loadProgress();
-    const res = await sb.from("progress").select("data").eq("user_id", sbUser.id).maybeSingle();
-    const remote = res.data && res.data.data ? res.data.data : { days: {}, distractions: {} };
-    const merged = mergeProgress(local, remote);
-    try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(merged)); } catch (e) {}
-    sbPush(merged);
-    renderProgress();
+  async function sbPull(expectedUser, expectedGeneration) {
+    const targetUser = expectedUser || sbUser;
+    const generation = expectedGeneration === undefined ? authGeneration : expectedGeneration;
+    if (!sb || !isCurrentAuth(targetUser, generation)) return;
+    syncReady = false;
+    clearTimeout(syncTimer);
+    syncRetries = 0;
+    try {
+      const res = await sb.from("progress").select("data").eq("user_id", targetUser.id).maybeSingle();
+      if (!isCurrentAuth(targetUser, generation)) return;
+      if (res.error) throw res.error;
+      const remote = res.data && res.data.data ? res.data.data : { days: {}, distractions: {} };
+      const merged = mergeProgress(loadProgress(), remote);
+      if (!isCurrentAuth(targetUser, generation)) return;
+      storeProgress(merged);
+      syncReady = true;
+      await sbPush(merged, targetUser, generation);
+      if (!isCurrentAuth(targetUser, generation)) return;
+      renderProgress();
+    } catch (err) {
+      if (!isCurrentAuth(targetUser, generation)) return;
+      syncReady = false;
+      clearTimeout(syncTimer);
+      setSync(currentLang === "el"
+        ? "Δεν ήταν δυνατή η ανάγνωση της αποθηκευμένης προόδου. Δεν αντικαταστάθηκαν τα δεδομένα σου. Η πρόοδός σου παραμένει σε αυτή τη συσκευή."
+        : "Could not read saved progress. Your data was not overwritten. Progress remains on this device.");
+      renderProgress();
+    }
   }
   function renderAcc(msg) {
     const isEl = currentLang === "el";
@@ -2132,7 +2164,12 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
         const result = await sb.auth.signOut({ scope: "local" });
         if (result.error) throw result.error;
       }
+      authGeneration++;
       sbUser = null;
+      syncReady = false;
+      clearTimeout(syncTimer);
+      syncRetries = 0;
+      renderProgress();
       renderAcc(currentLang === "el" ? "Αποσυνδέθηκες. Η πρόοδος μένει στη συσκευή." : "You are signed out. Progress stays on this device.");
     } catch (error) {
       renderAcc(currentLang === "el" ? "Δεν ολοκληρώθηκε η αποσύνδεση. Έλεγξε τη σύνδεσή σου και δοκίμασε ξανά." : "Sign-out did not complete. Check your connection and try again.");
@@ -2140,9 +2177,25 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   });
   if (sb) {
     sb.auth.onAuthStateChange(function (event, session) {
-      sbUser = session ? session.user : null;
+      const nextUser = session ? session.user : null;
+      const identityChanged = (sbUser ? sbUser.id : null) !== (nextUser ? nextUser.id : null);
+      if (identityChanged || event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "INITIAL_SESSION") {
+        authGeneration++;
+        syncReady = false;
+        clearTimeout(syncTimer);
+        syncRetries = 0;
+      }
+      const generation = authGeneration;
+      sbUser = nextUser;
+      if (identityChanged) { setSync(""); renderProgress(); }
       renderAcc("");
-      if (sbUser && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) sbPull();
+      if (sbUser && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
+        const activeUser = sbUser;
+        sbPull(activeUser, generation);
+      } else if (!sbUser && (event === "SIGNED_OUT" || event === "INITIAL_SESSION")) {
+        setSync("");
+        renderProgress();
+      }
     });
   }
 
