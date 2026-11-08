@@ -834,6 +834,106 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   *,*:before,*:after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
 
+
+  /* Homepage editorial principles: fewer, clearer choices instead of a feature directory. */
+  body.home-page .home-principles {
+    padding: clamp(88px, 11vw, 150px) 0 clamp(76px, 10vw, 128px);
+    background: linear-gradient(180deg, var(--bg) 0%, #FFFDF8 100%);
+  }
+  body.home-page .principles-layout {
+    display: grid;
+    grid-template-columns: minmax(250px, .82fr) minmax(0, 1.18fr);
+    column-gap: clamp(42px, 8vw, 118px);
+    align-items: start;
+  }
+  body.home-page .principles-heading { max-width: 560px; }
+  body.home-page .principles-heading h2 {
+    max-width: 10ch;
+    margin: 0 0 22px;
+    font-size: clamp(2.9rem, 5.3vw, 5.4rem);
+    line-height: .98;
+    letter-spacing: -.065em;
+  }
+  body.home-page .principles-heading p {
+    max-width: 43ch;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.8;
+  }
+  body.home-page .principle-list { border-top: 1px solid var(--border); }
+  body.home-page .principle-row {
+    display: grid;
+    grid-template-columns: 48px minmax(0, .9fr) minmax(0, 1.1fr) 28px;
+    gap: 18px;
+    align-items: center;
+    min-height: 142px;
+    padding: 24px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--fg);
+    text-decoration: none;
+    transition: background .22s ease, padding .22s ease;
+  }
+  body.home-page .principle-row:hover {
+    padding-inline: 20px;
+    background: rgba(251, 233, 207, .58);
+  }
+  body.home-page .principle-number {
+    align-self: start;
+    padding-top: 5px;
+    color: var(--ember);
+    font-size: .78rem;
+    font-weight: 900;
+    letter-spacing: .12em;
+  }
+  body.home-page .principle-row strong {
+    font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+    line-height: 1.2;
+    letter-spacing: -.035em;
+  }
+  body.home-page .principle-description {
+    color: var(--muted);
+    font-size: .96rem;
+    line-height: 1.65;
+  }
+  body.home-page .principle-arrow {
+    color: var(--orange);
+    font-size: 1.4rem;
+    transition: transform .22s ease;
+  }
+  body.home-page .principle-row:hover .principle-arrow { transform: translate(3px, -3px); }
+  body.home-page .principles-note {
+    grid-column: 2;
+    margin: 24px 10px 0;
+    color: var(--muted);
+    font-size: .9rem;
+    line-height: 1.7;
+  }
+  @media (max-width: 900px) {
+    body.home-page .principles-layout { grid-template-columns: 1fr; row-gap: 42px; }
+    body.home-page .principles-heading h2 { max-width: 12ch; }
+    body.home-page .principles-note { grid-column: 1; margin-inline: 0; }
+  }
+  @media (max-width: 600px) {
+    body.home-page .home-principles { padding: 72px 0 76px; }
+    body.home-page .principles-layout { row-gap: 30px; }
+    body.home-page .principles-heading h2 { font-size: clamp(2.7rem, 12vw, 4rem); }
+    body.home-page .principle-row {
+      grid-template-columns: 38px minmax(0, 1fr) 24px;
+      gap: 10px;
+      min-height: 0;
+      padding: 22px 4px;
+    }
+    body.home-page .principle-row strong { font-size: 1.2rem; }
+    body.home-page .principle-description { grid-column: 2 / 4; margin-top: -3px; }
+    body.home-page .principle-arrow { grid-column: 3; grid-row: 1; justify-self: end; }
+    body.home-page .principle-row:hover { padding-inline: 10px; }
+    body.home-page .principles-note { margin-top: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body.home-page .principle-row,
+    body.home-page .principle-arrow { transition: none !important; }
+  }
+
 </style>
 </head>
 <body class="home-page">
@@ -901,7 +1001,7 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
         <p class="lead" data-el="Χτίσε συγκέντρωση, ένα βήμα τη φορά." data-en="Build focus, one step at a time.">Χτίσε συγκέντρωση, ένα βήμα τη φορά.</p>
         <div class="btns">
           <a class="btn btn-primary" href="practice.html#stageGrid" id="subBtn" data-el="Δοκίμασε χωρίς λογαριασμό" data-en="Try it without an account">Δοκίμασε χωρίς λογαριασμό</a>
-          <a class="btn btn-ghost" href="practice.html#stageGrid" data-el="Δες τα στάδια ↓" data-en="See the stages ↓">Δες τα στάδια ↓</a>
+          <a class="btn btn-ghost" href="how.html" data-el="Δες πώς λειτουργεί ↓" data-en="See how it works ↓">Δες πώς λειτουργεί ↓</a>
         </div>
         <div class="country-box hero-country">
           <span class="eyebrow" data-el="Από πού μας επισκέπτεσαι;" data-en="Where are you visiting from?">Από πού μας επισκέπτεσαι;</span>
@@ -917,52 +1017,34 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   </section>
 
   <!-- SIMPLE HOME OVERVIEW -->
-  <section class="home-discovery" id="discover">
-    <div class="wrap">
-      <div class="home-intro">
+  <section class="home-principles" id="discover">
+    <div class="wrap principles-layout">
+      <div class="principles-heading">
         <span class="eyebrow" data-el="Μικρά βήματα, κάθε μέρα" data-en="Small steps, every day">Μικρά βήματα, κάθε μέρα</span>
         <h2 data-el="Η συγκέντρωση χτίζεται στην πράξη." data-en="Focus is built through practice.">Η συγκέντρωση χτίζεται στην πράξη.</h2>
-        <p data-el="Το Nepsis σε βοηθά να ξεκινήσεις απλά και να προχωράς με τον δικό σου ρυθμό. Δεν χρειάζεται να τα κάνεις όλα σήμερα." data-en="Nepsis helps you start simply and move at your own pace. You do not have to do everything today.">Το Nepsis σε βοηθά να ξεκινήσεις απλά και να προχωράς με τον δικό σου ρυθμό. Δεν χρειάζεται να τα κάνεις όλα σήμερα.</p>
+        <p data-el="Δεν χρειάζεται να αλλάξεις όλη σου τη μέρα. Ξεκίνα με κάτι μικρό και δώσε του την προσοχή σου." data-en="You do not need to change your whole day. Start with something small and give it your attention.">Δεν χρειάζεται να αλλάξεις όλη σου τη μέρα. Ξεκίνα με κάτι μικρό και δώσε του την προσοχή σου.</p>
       </div>
-      <div class="home-links">
-        <a class="home-link" href="practice.html#challenge">
-          <span class="home-link-number">01</span>
-          <strong data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</strong>
-          <span data-el="Μία μικρή άσκηση για να ξεκινήσεις." data-en="One small exercise to get started.">Μία μικρή άσκηση για να ξεκινήσεις.</span>
-          <span class="home-link-arrow" aria-hidden="true">→</span>
+      <div class="principle-list">
+        <a class="principle-row" href="practice.html#stageGrid">
+          <span class="principle-number">01</span>
+          <strong data-el="Ξεκίνα μικρά." data-en="Start small.">Ξεκίνα μικρά.</strong>
+          <span class="principle-description" data-el="Λίγα λεπτά αρκούν για να κάνεις την αρχή." data-en="A few minutes are enough to begin.">Λίγα λεπτά αρκούν για να κάνεις την αρχή.</span>
+          <span class="principle-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="home-link" href="practice.html#stageGrid">
-          <span class="home-link-number">02</span>
-          <strong data-el="Στάδια συγκέντρωσης" data-en="Focus stages">Στάδια συγκέντρωσης</strong>
-          <span data-el="Διάλεξε διάρκεια από 5 έως 60 λεπτά." data-en="Choose a duration from 5 to 60 minutes.">Διάλεξε διάρκεια από 5 έως 60 λεπτά.</span>
-          <span class="home-link-arrow" aria-hidden="true">→</span>
+        <a class="principle-row" href="how.html">
+          <span class="principle-number">02</span>
+          <strong data-el="Μείνε σε ένα πράγμα." data-en="Stay with one thing.">Μείνε σε ένα πράγμα.</strong>
+          <span class="principle-description" data-el="Δώσε χώρο σε μία εργασία, χωρίς να κυνηγάς την τελειότητα." data-en="Give one task your attention, without chasing perfection.">Δώσε χώρο σε μία εργασία, χωρίς να κυνηγάς την τελειότητα.</span>
+          <span class="principle-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="home-link" href="practice.html#quiz">
-          <span class="home-link-number">03</span>
-          <strong data-el="Βρες από πού να αρχίσεις" data-en="Find where to start">Βρες από πού να αρχίσεις</strong>
-          <span data-el="Κάνε το σύντομο κουίζ." data-en="Take the short quiz.">Κάνε το σύντομο κουίζ.</span>
-          <span class="home-link-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="home-link" href="practice.html#progress">
-          <span class="home-link-number">04</span>
-          <strong data-el="Η πρόοδός σου" data-en="Your progress">Η πρόοδός σου</strong>
-          <span data-el="Δες το σερί, το ημερολόγιο και τα επιτεύγματά σου." data-en="See your streak, calendar and achievements.">Δες το σερί, το ημερολόγιο και τα επιτεύγματά σου.</span>
-          <span class="home-link-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="home-link" href="practice.html#knowledge">
-          <span class="home-link-number">05</span>
-          <strong data-el="Μάθε περισσότερα" data-en="Learn more">Μάθε περισσότερα</strong>
-          <span data-el="Σύντομα επιστημονικά στοιχεία μετά την εξάσκηση." data-en="Short science notes after each session.">Σύντομα επιστημονικά στοιχεία μετά την εξάσκηση.</span>
-          <span class="home-link-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="home-link" href="about.html">
-          <span class="home-link-number">06</span>
-          <strong data-el="Γνώρισε το Nepsis" data-en="Get to know Nepsis">Γνώρισε το Nepsis</strong>
-          <span data-el="Τι είναι και πώς μπορεί να σε βοηθήσει." data-en="What it is and how it can help.">Τι είναι και πώς μπορεί να σε βοηθήσει.</span>
-          <span class="home-link-arrow" aria-hidden="true">→</span>
+        <a class="principle-row" href="about.html">
+          <span class="principle-number">03</span>
+          <strong data-el="Επέστρεψε με τον ρυθμό σου." data-en="Return at your own pace.">Επέστρεψε με τον ρυθμό σου.</strong>
+          <span class="principle-description" data-el="Κάθε νέα προσπάθεια μετράει. Μία μέρα τη φορά." data-en="Every new attempt counts. One day at a time.">Κάθε νέα προσπάθεια μετράει. Μία μέρα τη φορά.</span>
+          <span class="principle-arrow" aria-hidden="true">↗</span>
         </a>
       </div>
-      <p class="home-footnote" data-el="Η πρόοδός σου παραμένει προσωπική. Οι λειτουργίες και οι ασκήσεις είναι διαθέσιμες χωρίς να χρειάζεται να συνδεθείς." data-en="Your progress stays personal. The tools and exercises are available without signing in.">Η πρόοδός σου παραμένει προσωπική. Οι λειτουργίες και οι ασκήσεις είναι διαθέσιμες χωρίς να χρειάζεται να συνδεθείς.</p>
+      <p class="principles-note" data-el="Μπορείς να ξεκινήσεις χωρίς λογαριασμό. Εσύ αποφασίζεις αν και πότε θέλεις να συνδεθείς." data-en="You can start without an account. You decide if and when you want to sign in.">Μπορείς να ξεκινήσεις χωρίς λογαριασμό. Εσύ αποφασίζεις αν και πότε θέλεις να συνδεθείς.</p>
     </div>
   </section>
 
