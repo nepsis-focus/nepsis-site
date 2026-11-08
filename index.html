@@ -1219,11 +1219,6 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
         </svg>
         <span id="accGoogleLabel">Συνέχεια με Google</span>
       </button>
-      <div class="acc-divider" id="accDivider">ή με email</div>
-      <label class="acc-email-label" for="accEmail"><span id="accEmailLabel">Email</span>
-        <input class="acc-email" id="accEmail" type="email" autocomplete="email" inputmode="email" placeholder="Το email σου">
-      </label>
-      <button type="button" class="btn btn-primary acc-email-send" id="accEmailSend">Στείλε μου σύνδεσμο</button>
     </div>
     <p class="acc-msg" id="accMsg" aria-live="polite"></p>
   </div>
@@ -2143,10 +2138,6 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
     $("accWho").textContent = sbUser ? sbUser.email : "";
     $("accOut").textContent = isEl ? "Αποσύνδεση" : "Sign out";
     $("accGoogleLabel").textContent = isEl ? "Συνέχεια με Google" : "Continue with Google";
-    $("accDivider").textContent = isEl ? "ή με email" : "or with email";
-    $("accEmailLabel").textContent = "Email";
-    $("accEmail").placeholder = isEl ? "Το email σου" : "Your email";
-    $("accEmailSend").textContent = isEl ? "Στείλε μου σύνδεσμο" : "Send me a sign-in link";
     $("accMsg").textContent = msg || "";
   }
   function setAcc(open) {
@@ -2157,20 +2148,6 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   $("accBtn").addEventListener("click", function () { setAcc(true); });
   $("accClose").addEventListener("click", function () { setAcc(false); });
   $("accScrim").addEventListener("click", function () { setAcc(false); });
-  $("accEmailSend").addEventListener("click", async function () {
-    const email = $("accEmail").value.trim(), isEl = currentLang === "el";
-    if (!sb) { renderAcc(isEl ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page."); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { renderAcc(isEl ? "Γράψε ένα έγκυρο email." : "Enter a valid email address."); return; }
-    $("accEmailSend").disabled = true;
-    try {
-      const result = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
-      renderAcc(result.error
-        ? (isEl ? "Δεν ήταν δυνατή η αποστολή. Έλεγξε το email και δοκίμασε ξανά." : "Could not send the link. Check the email and try again.")
-        : (isEl ? "Στάλθηκε σύνδεσμος στο email σου. Άνοιξέ τον για να συνδεθείς." : "A sign-in link was sent to your email. Open it to continue."));
-    } catch (error) {
-      renderAcc(isEl ? "Δεν ήταν δυνατή η αποστολή. Δοκίμασε ξανά." : "Could not send the link. Please try again.");
-    } finally { $("accEmailSend").disabled = false; }
-  });
   $("accGoogle").addEventListener("click", async function () {
     if (!sb) {
       renderAcc(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page.");
