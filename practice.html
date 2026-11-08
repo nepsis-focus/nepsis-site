@@ -1829,7 +1829,7 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   }
 
   // ---------- progress on this device (no account) ----------
-  const PROGRESS_KEY = "nepsis-progress";
+  const PROGRESS_KEY = "nepsis-progress:guest";
   function progressStorageKey() { return sbUser && sbUser.id ? PROGRESS_KEY + ":user:" + sbUser.id : PROGRESS_KEY; }
   const FACTS = {
     5:  { el: "Η Gloria Mark (UC Irvine) βρήκε ότι ο μέσος χρόνος σε μία οθόνη πριν την αλλαγή έπεσε από περίπου 2,5 λεπτά το 2004 σε περίπου 47 δευτερόλεπτα γύρω στο 2020.",
