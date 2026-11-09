@@ -9,6 +9,11 @@
   ];
   let drawer = document.getElementById("drawer");
   let button = document.getElementById("menuBtn");
+
+  // Pages with their own complete navigation keep it unchanged.
+  // This shared fallback is only for pages that do not already have a menu.
+  if (drawer && button) return;
+
   if (!drawer) {
     const host = document.querySelector(".top-actions, .controls, .headright, header") || document.body;
     button = document.createElement("button");
