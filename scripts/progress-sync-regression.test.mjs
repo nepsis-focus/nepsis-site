@@ -51,8 +51,8 @@ test("remote SELECT errors abort progress merge and write in both pages", () => 
 });
 
 test("local progress storage is isolated by user and guest identity", () => {
-  assert.match(practice, /nepsis-progress:user:/);
-  assert.match(practice, /nepsis-progress:guest/);
+  assert.match(practice, /const PROGRESS_KEY = ["']nepsis-progress:guest["']/);
+  assert.match(practice, /function progressStorageKey\(\)\s*\{\s*return sbUser && sbUser\.id \? PROGRESS_KEY \+ ["']:user:["'] \+ sbUser\.id : PROGRESS_KEY;\s*\}/);
   assert.match(dashboard, /nepsis-progress:user:/);
   assert.match(dashboard, /nepsis-progress:guest/);
 });
