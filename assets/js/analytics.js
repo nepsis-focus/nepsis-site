@@ -2,7 +2,7 @@
   const EVENTS = new Set(["page_view","stage_selected","timer_started","timer_paused","timer_resumed","session_completed","quiz_started","quiz_completed","calendar_opened","login_started","library_searched","library_saved"]);
   const ALLOWED_PROPERTIES = new Set(["stage","duration","result","section","item_id"]);
   const CONSENT_KEY = "nepsis-analytics-consent-v1";
-  const POSTHOG_PROJECT_TOKEN = ""; // Add the public phc_ project token for the staging project. Never use a personal API key.
+  const POSTHOG_PROJECT_TOKEN = "phc_wSd6sLNCj3UjGVo82Ti8rWCdt4CS7T755jm3TKus7VKt"; // Add the public phc_ project token for the staging project. Never use a personal API key.
   const POSTHOG_API_HOST = "https://eu.i.posthog.com";
   const UMAMI_WEBSITE_ID = "93c6f050-e568-4aba-940d-8fa16c80cdcc";
   const host = window.location.hostname.toLowerCase();
