@@ -124,7 +124,20 @@ try {
           }
         }
 
-                results.push({
+        if (route === "/practice.html") {
+          const stageCount = await page.locator("#stageGrid .stage").count();
+          const stageTimes = (await page.locator("#stageGrid .stage [data-time]").allTextContents())
+            .map(value => value.trim());
+          const expectedTimes = ["05:00", "10:00", "25:00", "45:00", "60:00"];
+          if (stageCount !== 5) {
+            failures.push(viewport.name + ": practice page rendered " + stageCount + " stages instead of 5");
+          }
+          if (JSON.stringify(stageTimes) !== JSON.stringify(expectedTimes)) {
+            failures.push(viewport.name + ": unexpected practice stage times " + JSON.stringify(stageTimes));
+          }
+        }
+
+                        results.push({
           viewport: viewport.name, route, status, title,
           jsErrors: pageErrors.length, consoleErrors: consoleErrors.length,
           internalLinks: internalLinks.length, documentWidth
