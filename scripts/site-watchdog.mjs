@@ -4,11 +4,12 @@ import { writeFile } from "node:fs/promises";
 const base = (process.env.SITE_URL || "https://nepsis-focus.github.io/nepsis-site/").replace(/\/$/, "");
 const routes = [
   "/", "/practice.html", "/my-nepsis.html", "/reset.html", "/library.html",
-  "/diary.html", "/about.html", "/how.html", "/faq.html", "/privacy.html"
+  "/diary.html", "/about.html", "/how.html", "/faq.html", "/privacy.html", "/terms.html"
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 1000, isMobile: false, hasTouch: false },
-  { name: "mobile", width: 390, height: 844, isMobile: true, hasTouch: true }
+  { name: "mobile-390", width: 390, height: 844, isMobile: true, hasTouch: true },
+  { name: "mobile-320", width: 320, height: 740, isMobile: true, hasTouch: true }
 ];
 const failures = [];
 const results = [];
@@ -120,7 +121,7 @@ const report = {
 };
 await writeFile("nepsis-watchdog-report.json", JSON.stringify(report, null, 2), "utf8");
 
-console.log("NEPSIS LIVE-SITE RESPONSIVE HEALTH REPORT");
+console.log("NEPSIS RESPONSIVE HEALTH REPORT");
 console.log(JSON.stringify(report, null, 2));
 
 if (failures.length) {
@@ -128,5 +129,5 @@ if (failures.length) {
   for (const failure of failures) console.error("- " + failure);
   process.exitCode = 1;
 } else {
-  console.log("\nAll ten site pages passed desktop and mobile browser health checks.");
+  console.log("\nAll eleven site pages passed desktop, 390px, and 320px browser health checks.");
 }
