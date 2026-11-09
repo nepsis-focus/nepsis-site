@@ -353,7 +353,7 @@ let currentLang = "el";
 
     card.querySelector("[data-start]").addEventListener("click", function () {
       if (state.busy) return;
-      if (!state.running && window.nepsisAnalytics) window.nepsisAnalytics.track("stage_selected", { stage: s.min });
+      if (!state.running && state.left === state.total && window.nepsisAnalytics) window.nepsisAnalytics.track("stage_selected", { stage: s.min });
       if (state.running) pause(state);
       else start(state);
     });
