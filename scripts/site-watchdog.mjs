@@ -50,13 +50,31 @@ try {
         if (!(await page.locator("body").innerText()).trim()) failures.push(`${viewport.name} ${route}: empty page body`);
         if (!title.trim()) failures.push(`${viewport.name} ${route}: missing document title`);
 
-        const layout = await page.evaluate(() => ({
-          viewportWidth: document.documentElement.clientWidth,
-          documentWidth: document.documentElement.scrollWidth
-        }));
+        const layout = await page.evaluate(() => {
+          const viewportWidth = document.documentElement.clientWidth;
+          const documentWidth = document.documentElement.scrollWidth;
+          const overflowElements = Array.from(document.querySelectorAll("body *")).map(el => {
+            const rect = el.getBoundingClientRect();
+            const style = getComputedStyle(el);
+            return {
+              tag: el.tagName.toLowerCase(),
+              id: el.id || "",
+              className: typeof el.className === "string" ? el.className : "",
+              left: Math.round(rect.left),
+              right: Math.round(rect.right),
+              width: Math.round(rect.width),
+              scrollWidth: el.scrollWidth,
+              overflowX: style.overflowX,
+              position: style.position
+            };
+          }).filter(el => el.width > 0 && (el.right > viewportWidth + 2 || el.left < -2))
+            .sort((a, b) => (b.right - viewportWidth) - (a.right - viewportWidth))
+            .slice(0, 12);
+          return { viewportWidth, documentWidth, overflowElements };
+        });
         documentWidth = layout.documentWidth;
         if (layout.documentWidth > layout.viewportWidth + 2) {
-          failures.push(`${viewport.name} ${route}: horizontal overflow (${layout.documentWidth}px content in ${layout.viewportWidth}px viewport)`);
+          failures.push(\`\${viewport.name} \${route}: horizontal overflow (\${layout.documentWidth}px content in \${layout.viewportWidth}px viewport); elements: \${JSON.stringify(layout.overflowElements)}\`);
         }
 
         for (const message of pageErrors) failures.push(`${viewport.name} ${route}: JavaScript exception: ${message}`);
