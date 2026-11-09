@@ -43,6 +43,7 @@
     }
   }
   if (!button || !drawer) return;
+  drawer.inert = true;
   let scrim = document.getElementById("scrim");
   if (!scrim) {
     scrim = document.createElement("button");
@@ -55,6 +56,7 @@
     drawer.classList.toggle("open", open);
     scrim.classList.toggle("open", open);
     drawer.setAttribute("aria-hidden", String(!open));
+    drawer.inert = !open;
     button.setAttribute("aria-expanded", String(open));
     if (open) drawer.querySelector("a")?.focus(); else button.focus();
   };
