@@ -1,3 +1,9 @@
+/* Keep off-canvas navigation drawers from expanding the document width. */
+html { overflow-x: clip; }
+@supports not (overflow-x: clip) {
+  html { overflow-x: hidden; }
+}
+
 .nepsis-dialog {
   width: min(92vw, 28rem);
   max-width: 28rem;
