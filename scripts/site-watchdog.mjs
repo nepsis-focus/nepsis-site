@@ -13,6 +13,7 @@ const viewports = [
 ];
 const failures = [];
 const results = [];
+const checkedLinks = new Set();
 const browser = await chromium.launch({ headless: true });
 
 try {
@@ -98,19 +99,25 @@ try {
         );
 
         if (viewport.name === "desktop") {
-          for (const href of [...new Set(internalLinks)]) {
-            try {
-              const linkResponse = await context.request.get(href, { timeout: 15000 });
-              if (linkResponse.status() >= 400) {
-                failures.push(`${route}: broken internal link ${href} (HTTP ${linkResponse.status()})`);
+          const pendingLinks = [...new Set(internalLinks)].filter(href => !checkedLinks.has(href));
+          pendingLinks.forEach(href => checkedLinks.add(href));
+
+          for (let offset = 0; offset < pendingLinks.length; offset += 8) {
+            const batch = pendingLinks.slice(offset, offset + 8);
+            await Promise.all(batch.map(async href => {
+              try {
+                const linkResponse = await context.request.get(href, { timeout: 10000 });
+                if (linkResponse.status() >= 400) {
+                  failures.push(`${route}: broken internal link ${href} (HTTP ${linkResponse.status()})`);
+                }
+              } catch (error) {
+                failures.push(`${route}: internal link request failed ${href}: ${error.message}`);
               }
-            } catch (error) {
-              failures.push(`${route}: internal link request failed ${href}: ${error.message}`);
-            }
+            }));
           }
         }
 
-        results.push({
+                results.push({
           viewport: viewport.name, route, status, title,
           jsErrors: pageErrors.length, consoleErrors: consoleErrors.length,
           internalLinks: internalLinks.length, documentWidth
