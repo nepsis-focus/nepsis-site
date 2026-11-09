@@ -105,25 +105,9 @@ try {
             })
         );
 
-        if (viewport.name === "desktop") {
-          const pendingLinks = [...new Set(internalLinks)].filter(href => !checkedLinks.has(href));
-          pendingLinks.forEach(href => checkedLinks.add(href));
-
-          for (let offset = 0; offset < pendingLinks.length; offset += 8) {
-            const batch = pendingLinks.slice(offset, offset + 8);
-            await Promise.all(batch.map(async href => {
-              try {
-                const linkResponse = await context.request.get(href, { timeout: 10000 });
-                if (linkResponse.status() >= 400) {
-                  failures.push(`${route}: broken internal link ${href} (HTTP ${linkResponse.status()})`);
-                }
-              } catch (error) {
-                failures.push(`${route}: internal link request failed ${href}: ${error.message}`);
-              }
-            }));
-          }
-        }
-
+        // Internal destinations are checked separately by the repository link audit.
+        // Avoid issuing repeated preview HTTP requests here; Netlify can reset concurrent requests.
+        
         if (route === "/practice.html") {
           const stageCount = await page.locator("#stageGrid .stage").count();
           const stageTimes = (await page.locator("#stageGrid .stage [data-time]").allTextContents())
