@@ -74,7 +74,7 @@ try {
         });
         documentWidth = layout.documentWidth;
         if (layout.documentWidth > layout.viewportWidth + 2) {
-          failures.push(\`\${viewport.name} \${route}: horizontal overflow (\${layout.documentWidth}px content in \${layout.viewportWidth}px viewport); elements: \${JSON.stringify(layout.overflowElements)}\`);
+          failures.push(`${viewport.name} ${route}: horizontal overflow (${layout.documentWidth}px content in ${layout.viewportWidth}px viewport); elements: ${JSON.stringify(layout.overflowElements)}`);
         }
 
         for (const message of pageErrors) failures.push(`${viewport.name} ${route}: JavaScript exception: ${message}`);
