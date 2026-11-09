@@ -52,6 +52,11 @@ try {
         if (!title.trim()) failures.push(`${viewport.name} ${route}: missing document title`);
 
         const layout = await page.evaluate(() => {
+          const drawer = document.getElementById("drawer");
+          const drawerIsClosed = drawer && !drawer.classList.contains("open");
+          const previousDisplay = drawer?.style.display;
+          if (drawerIsClosed) drawer.style.display = "none";
+
           const viewportWidth = document.documentElement.clientWidth;
           const documentWidth = document.documentElement.scrollWidth;
           const overflowElements = Array.from(document.querySelectorAll("body *")).map(el => {
@@ -71,6 +76,8 @@ try {
           }).filter(el => el.width > 0 && (el.right > viewportWidth + 2 || el.left < -2))
             .sort((a, b) => (b.right - viewportWidth) - (a.right - viewportWidth))
             .slice(0, 12);
+
+          if (drawerIsClosed) drawer.style.display = previousDisplay || "";
           return { viewportWidth, documentWidth, overflowElements };
         });
         documentWidth = layout.documentWidth;
@@ -78,7 +85,7 @@ try {
           failures.push(`${viewport.name} ${route}: horizontal overflow (${layout.documentWidth}px content in ${layout.viewportWidth}px viewport); elements: ${JSON.stringify(layout.overflowElements)}`);
         }
 
-        for (const message of pageErrors) failures.push(`${viewport.name} ${route}: JavaScript exception: ${message}`);
+                for (const message of pageErrors) failures.push(`${viewport.name} ${route}: JavaScript exception: ${message}`);
         for (const message of consoleErrors) {
           if (!/favicon|third.party|third-party/i.test(message)) {
             failures.push(`${viewport.name} ${route}: console error: ${message}`);
