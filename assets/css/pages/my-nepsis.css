@@ -246,3 +246,12 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   .lang button{padding:6px 7px;font-size:.72rem}
   .menu-btn{width:36px;height:36px;padding:0;flex:0 0 36px}
 }
+
+
+@media(max-width:380px){
+  .grid{grid-template-columns:minmax(0,1fr);min-width:0}
+  .grid>.panel{min-width:0;width:100%}
+  .section-title{overflow-wrap:anywhere}
+  .calendar-head{flex-wrap:wrap;gap:6px}
+  .calendar{min-width:0}
+}
