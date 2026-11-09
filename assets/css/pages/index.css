@@ -938,3 +938,13 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   .lang button { padding: 5px 7px; font-size: .72rem; }
   .menu-btn { width: 36px; height: 36px; flex: 0 0 36px; }
 }
+
+
+@media (max-width: 380px) {
+  body.home-page .home-principles .wrap { padding-left: 18px; padding-right: 18px; }
+  body.home-page .principles-layout { grid-template-columns: minmax(0, 1fr); column-gap: 0; row-gap: 28px; }
+  body.home-page .principles-heading,
+  body.home-page .principle-list,
+  body.home-page .principles-note { min-width: 0; width: 100%; }
+  body.home-page .principles-heading h2 { overflow-wrap: anywhere; }
+}
