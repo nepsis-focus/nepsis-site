@@ -236,3 +236,13 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   *,*:before,*:after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
 
+
+
+@media(max-width:380px){
+  .wrap.top{width:calc(100% - 20px)}
+  .logo{gap:6px;font-size:1.1rem}
+  .headright{gap:5px}
+  .account-btn{padding:6px 8px;font-size:.75rem}
+  .lang button{padding:6px 7px;font-size:.72rem}
+  .menu-btn{width:36px;height:36px;padding:0;flex:0 0 36px}
+}
