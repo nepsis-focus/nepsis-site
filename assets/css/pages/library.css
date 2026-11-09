@@ -246,3 +246,13 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   *,*:before,*:after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
 
+
+
+@media(max-width:380px){
+  .top{gap:6px}
+  .logo{gap:6px;font-size:1.08rem}
+  .controls{gap:5px;min-width:0;flex-wrap:nowrap}
+  .controls .lang button{padding:6px 7px;font-size:.72rem}
+  .controls .back{padding:6px 7px;font-size:.68rem}
+  .nepsis-menu-button{min-width:34px;min-height:34px;flex:0 0 34px;padding:0}
+}
