@@ -928,3 +928,13 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
     body.home-page .principle-arrow { transition: none !important; }
   }
 
+
+
+@media (max-width: 380px) {
+  header.top .top-in { padding-left: 14px; padding-right: 14px; }
+  .logo { gap: 7px; font-size: 1.1rem; }
+  .head-right { gap: 6px; }
+  .acc-btn { padding: 6px 8px; font-size: .76rem; }
+  .lang button { padding: 5px 7px; font-size: .72rem; }
+  .menu-btn { width: 36px; height: 36px; flex: 0 0 36px; }
+}
