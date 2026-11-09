@@ -4,11 +4,10 @@
   const CONSENT_KEY = "nepsis-analytics-consent-v1";
   const POSTHOG_PROJECT_TOKEN = "phc_wSd6sLNCj3UjGVo82Ti8rWCdt4CS7T755jm3TKus7VKt"; // Add the public phc_ project token for the staging project. Never use a personal API key.
   const POSTHOG_API_HOST = "https://eu.i.posthog.com";
-  const UMAMI_WEBSITE_ID = "93c6f050-e568-4aba-940d-8fa16c80cdcc";
   const host = window.location.hostname.toLowerCase();
   const isPreviewHost = /^deploy-preview-\d+--nepsis-focus\.netlify\.app$/.test(host);
   const isProductionHost = host === "nepsis-focus.github.io";
-  let umamiScript = null;
+  let postHogInitialized = false;
 
   function readConsent() {
     try { const value=localStorage.getItem(CONSENT_KEY); return value==="granted"||value==="denied"?value:null; }
@@ -33,15 +32,6 @@
     }
     return safe;
   }
-  function loadUmami() {
-    if(umamiScript||document.querySelector('script[data-nepsis-provider="umami"]')) return;
-    umamiScript=document.createElement("script");
-    umamiScript.defer=true;
-    umamiScript.src="https://cloud.umami.is/script.js";
-    umamiScript.dataset.websiteId=UMAMI_WEBSITE_ID;
-    umamiScript.dataset.nepsisProvider="umami";
-    document.head.appendChild(umamiScript);
-  }
   function installPostHogStub() {
     if(window.posthog&&window.posthog.__SV) return;
     !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],Object.defineProperty(u,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e}}),Object.defineProperty(u.people,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(){return u.toString(1)+".people (stub)"}}),o="capture opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing identify reset register register_once unregister get_distinct_id get_session_id get_session_replay_url startSessionRecording stopSessionRecording sessionRecordingStarted on setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags group resetGroups getGroups debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
@@ -49,17 +39,19 @@
   function loadPostHog() {
     if(!POSTHOG_PROJECT_TOKEN||!POSTHOG_PROJECT_TOKEN.startsWith("phc_")) return false;
     installPostHogStub();
-    window.posthog.init(POSTHOG_PROJECT_TOKEN,{
-      api_host:POSTHOG_API_HOST,defaults:"2026-08-30",capture_pageview:false,autocapture:false,
-      disable_session_recording:true,opt_out_capturing_by_default:true,person_profiles:"never"
-    });
-    window.posthog.opt_in_capturing({captureEventName:false});
+    if(!postHogInitialized) {
+      window.posthog.init(POSTHOG_PROJECT_TOKEN,{
+        api_host:POSTHOG_API_HOST,defaults:"2026-08-30",capture_pageview:false,autocapture:false,
+        disable_session_recording:true,opt_out_capturing_by_default:true,person_profiles:"never"
+      });
+      postHogInitialized=true;
+    }
+    if(typeof window.posthog.opt_in_capturing==="function") window.posthog.opt_in_capturing({captureEventName:false});
     return true;
   }
   function startAnalytics() {
-    if(readConsent()!=="granted") return;
-    if(isPreviewHost) { if(loadPostHog()) window.nepsisAnalytics.track("page_view",{section:pageSection()}); }
-    else if(isProductionHost) loadUmami();
+    if(readConsent()!=="granted"||(!isPreviewHost&&!isProductionHost)) return;
+    if(loadPostHog()) window.nepsisAnalytics.track("page_view",{section:pageSection()});
   }
 
   window.nepsisAnalytics=Object.freeze({
@@ -128,7 +120,6 @@
     }
     if(value==="denied") {
       if(window.posthog&&typeof window.posthog.opt_out_capturing==="function") window.posthog.opt_out_capturing();
-      const loadedUmami=document.querySelector('script[data-nepsis-provider="umami"]');if(loadedUmami)loadedUmami.remove();
       hidePanel();if(previous==="granted")window.location.reload();return;
     }
     hidePanel();startAnalytics();
