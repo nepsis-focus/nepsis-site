@@ -353,6 +353,7 @@ let currentLang = "el";
 
     card.querySelector("[data-start]").addEventListener("click", function () {
       if (state.busy) return;
+      if (!state.running && state.left === state.total && window.nepsisAnalytics) window.nepsisAnalytics.track("stage_selected", { stage: s.min });
       if (state.running) pause(state);
       else start(state);
     });
@@ -456,6 +457,7 @@ let currentLang = "el";
 
   function finishTimer(state) {
     stopTimerLocally(state);
+    if (window.nepsisAnalytics) window.nepsisAnalytics.track("session_completed", { stage: state.min, duration: state.min, result: "completed" });
     state.left = 0;
     state.busy = false;
     state.verifying = false;
@@ -471,6 +473,7 @@ let currentLang = "el";
 
   async function start(state) {
     if (state.busy) return;
+    const isResume = state.left < state.total;
     state.busy = true;
     state.el.querySelector("[data-msg]").textContent = currentLang === "el"
       ? "Έλεγχος χρονόμετρου…"
@@ -490,6 +493,7 @@ let currentLang = "el";
         return;
       }
       state.running = true;
+      if (window.nepsisAnalytics) window.nepsisAnalytics.track(isResume ? "timer_resumed" : "timer_started", { stage: state.min, duration: state.min });
       state.endAt = Date.now() + state.left * 1000;
       clearInterval(state.id);
       state.id = setInterval(function () { tickState(state); }, 250);
@@ -524,6 +528,7 @@ let currentLang = "el";
       state.left = Math.max(0, Number(result.remaining_seconds) || 0);
       stopTimerLocally(state);
       draw(state);
+      if (window.nepsisAnalytics) window.nepsisAnalytics.track("timer_paused", { stage: state.min, duration: state.min });
       verifyAfterPause = state.left === 0;
       state.el.querySelector("[data-msg]").textContent = "";
     } catch (err) {
@@ -778,8 +783,14 @@ let currentLang = "el";
       '<div class="sub" style="margin-top:10px">' + (isEl
         ? "Κάθε μέρα που ολοκλήρωσες στάδιο έχει χρώμα. Πιο σκούρο σημαίνει μεγαλύτερο στάδιο."
         : "Each day you completed a stage is coloured. Darker means a longer stage.") + '</div>';
-    el.querySelector("[data-prev]").addEventListener("click", function () { calMonth = new Date(y, m - 1, 1); renderCalendar(); });
-    el.querySelector("[data-next]").addEventListener("click", function () { calMonth = new Date(y, m + 1, 1); renderCalendar(); });
+    el.querySelector("[data-prev]").addEventListener("click", function () {
+      if (window.nepsisAnalytics) window.nepsisAnalytics.track("calendar_opened", { section: "practice_calendar" });
+      calMonth = new Date(y, m - 1, 1); renderCalendar();
+    });
+    el.querySelector("[data-next]").addEventListener("click", function () {
+      if (window.nepsisAnalytics) window.nepsisAnalytics.track("calendar_opened", { section: "practice_calendar" });
+      calMonth = new Date(y, m + 1, 1); renderCalendar();
+    });
   }
 
   // ---------- quiz: suggests a starting stage ----------
@@ -792,6 +803,8 @@ let currentLang = "el";
       o: [["Όχι ακόμα", "Not yet", 0], ["Μερικές φορές", "Sometimes", 1], ["Ναι, συχνά", "Yes, often", 2]] }
   ];
   let quizAns = [];
+  let quizStarted = false;
+  let quizCompleted = false;
   function buildQuiz() {
     const el = $("quiz");
     if (!el) return;
@@ -814,7 +827,15 @@ let currentLang = "el";
     }
     el.innerHTML = html;
     el.querySelectorAll("[data-o]").forEach(function (b) {
-      b.addEventListener("click", function () { quizAns[Number(b.dataset.q)] = Number(b.dataset.o); buildQuiz(); });
+      b.addEventListener("click", function () {
+        if (!quizStarted) { quizStarted = true; if (window.nepsisAnalytics) window.nepsisAnalytics.track("quiz_started", { section: "practice_quiz" }); }
+        quizAns[Number(b.dataset.q)] = Number(b.dataset.o);
+        if (!quizCompleted && quizAns.length === QUIZ.length && quizAns.every(function (value) { return value !== undefined; })) {
+          quizCompleted = true;
+          if (window.nepsisAnalytics) window.nepsisAnalytics.track("quiz_completed", { result: "completed" });
+        }
+        buildQuiz();
+      });
     });
     const go = el.querySelector("[data-goto]");
     if (go) go.addEventListener("click", function () {
