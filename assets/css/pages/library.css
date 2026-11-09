@@ -256,3 +256,11 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   .controls .back{padding:6px 7px;font-size:.68rem}
   .nepsis-menu-button{min-width:34px;min-height:34px;flex:0 0 34px;padding:0}
 }
+
+
+@media(max-width:380px){
+  #cards{width:100%;min-width:0;grid-template-columns:minmax(0,1fr)}
+  #cards>.card{width:100%;min-width:0}
+  #cards .meta{min-width:0;flex-wrap:wrap}
+  #cards h2,#cards p,#cards .try,#cards .source{min-width:0;overflow-wrap:anywhere}
+}
