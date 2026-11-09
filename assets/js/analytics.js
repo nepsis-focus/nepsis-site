@@ -60,7 +60,7 @@
       if(!EVENTS.has(name)) return false;
       const safe=safeProperties(properties);
       window.dispatchEvent(new CustomEvent("nepsis:analytics",{detail:{name,properties:safe}}));
-      if(readConsent()==="granted"&&isPreviewHost&&window.posthog&&typeof window.posthog.capture==="function") window.posthog.capture(name,safe);
+      if(readConsent()==="granted"&&(isPreviewHost||isProductionHost)&&window.posthog&&typeof window.posthog.capture==="function") window.posthog.capture(name,safe);
       return true;
     }
   });
