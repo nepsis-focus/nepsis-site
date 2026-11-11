@@ -2,9 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [practice, dashboard] = await Promise.all([
+const [practice, dashboard, home] = await Promise.all([
   readFile(new URL("../assets/js/pages/practice-1.js", import.meta.url), "utf8"),
-  readFile(new URL("../assets/js/pages/my-nepsis-1.js", import.meta.url), "utf8")
+  readFile(new URL("../assets/js/pages/my-nepsis-1.js", import.meta.url), "utf8"),
+  readFile(new URL("../assets/js/pages/index-1.js", import.meta.url), "utf8")
 ]);
 
 function extractGuard(source, variable) {
@@ -50,9 +51,22 @@ test("remote SELECT errors abort progress merge and write in both pages", () => 
   assert.match(auth, /if\(r\.error\)\{[\s\S]*?return;\}/);
 });
 
+test("homepage remote SELECT errors abort progress merge and write", () => {
+  const pullStart = home.indexOf("async function sbPull(");
+  const pullEnd = home.indexOf("function renderAcc(", pullStart);
+  const pull = home.slice(pullStart, pullEnd);
+  assert.ok(pull.indexOf('.select("data")') < pull.indexOf("if (res.error) throw res.error"));
+  assert.ok(pull.indexOf("if (res.error) throw res.error") < pull.indexOf("const merged = mergeProgress(loadProgress(), remote)"));
+  assert.ok(pull.indexOf("if (res.error) throw res.error") < pull.indexOf("storeProgress(merged)"));
+  assert.match(pull, /syncReady = false/);
+  assert.doesNotMatch(pull, /localStorage\.setItem\(PROGRESS_KEY/);
+});
+
 test("local progress storage is isolated by user and guest identity", () => {
   assert.match(practice, /const PROGRESS_KEY = ["']nepsis-progress:guest["']/);
   assert.match(practice, /function progressStorageKey\(\)\s*\{\s*return sbUser && sbUser\.id \? PROGRESS_KEY \+ ["']:user:["'] \+ sbUser\.id : PROGRESS_KEY;\s*\}/);
+  assert.match(home, /const PROGRESS_KEY = ["']nepsis-progress:guest["']/);
+  assert.match(home, /function progressStorageKey\(\)\s*\{\s*return sbUser && sbUser\.id \? PROGRESS_KEY \+ ["']:user:["'] \+ sbUser\.id : PROGRESS_KEY;\s*\}/);
   assert.match(dashboard, /nepsis-progress:user:/);
   assert.match(dashboard, /nepsis-progress:guest/);
 });
@@ -62,4 +76,6 @@ test("both sync implementations guard the awaited SELECT response", () => {
   assert.match(pull, /await sb\.from\("progress"\)[\s\S]*?if \(!isCurrentAuth\(targetUser, generation\)\) return;/);
   const auth = dashboard.slice(dashboard.indexOf("if(sb)sb.auth.onAuthStateChange"));
   assert.match(auth, /await sb\.from\("progress"\)[\s\S]*?if\(!isCurrentAuth\(activeUser,generation\)\)return;/);
+  const homePull = home.slice(home.indexOf("async function sbPull("), home.indexOf("function renderAcc("));
+  assert.match(homePull, /await sb\.from\("progress"\)[\s\S]*?if \(!isCurrentAuth\(targetUser, generation\)\) return;/);
 });
