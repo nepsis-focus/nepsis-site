@@ -1,5 +1,19 @@
   let currentLang = "el";
   const $ = (id) => document.getElementById(id);
+  // Dynamic copy keeps both languages on the node (data-el / data-en), so setLang
+  // can switch it later. Pass empty strings to clear the node and its copy.
+  function setBiText(node, el, en) {
+    if (!node) return;
+    if (!el && !en) {
+      node.removeAttribute("data-el");
+      node.removeAttribute("data-en");
+      node.textContent = "";
+      return;
+    }
+    node.setAttribute("data-el", el);
+    node.setAttribute("data-en", en);
+    node.textContent = currentLang === "en" ? en : el;
+  }
 
   // ---------- language ----------
   function setLang(l) {
@@ -10,7 +24,7 @@
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderParkLabels(); renderParkReview(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc(""); updateTabTitle();
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderParkLabels(); renderParkReview(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc(""); renderFinishCards(); updateTabTitle();
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -393,9 +407,9 @@
       if (!text) return;
       lastParkedId = saveParkedThought(text, s.min);
       parkInput.value = "";
-      parkOk.textContent = currentLang === "el" ? "Το κράτησα." : "Saved. Back to now.";
+      setBiText(parkOk, "Το κράτησα.", "Saved. Back to now.");
       clearTimeout(parkOk._hide);
-      parkOk._hide = setTimeout(function () { parkOk.textContent = ""; }, 2000);
+      parkOk._hide = setTimeout(function () { setBiText(parkOk, "", ""); }, 2000);
       // One short question to return to the reading; no music choice, no extra guidance.
       nextBox.hidden = false;
       nextInput.value = "";
@@ -544,11 +558,9 @@
       if (!st || !st.running) return;
       var el = st.el.querySelector("[data-park-return]");
       if (!el) return;
-      el.textContent = currentLang === "el"
-        ? "Καλώς ήρθες πίσω. Συνέχισε από εκεί που ήσουν."
-        : "Welcome back. Continue from where you were.";
+      setBiText(el, "Καλώς ήρθες πίσω. Συνέχισε από εκεί που ήσουν.", "Welcome back. Continue from where you were.");
       clearTimeout(el._hide);
-      el._hide = setTimeout(function () { el.textContent = ""; }, 6000);
+      el._hide = setTimeout(function () { setBiText(el, "", ""); }, 6000);
     });
   });
 
@@ -635,10 +647,13 @@
     return result;
   }
 
-  function timerErrorText() {
-    return currentLang === "el"
-      ? "Δεν μπορέσαμε να συνδεθούμε με τον έλεγχο του χρονόμετρου. Έλεγξε το ίντερνετ και πάτησε ξανά."
-      : "We could not reach timer verification. Check your internet connection and try again.";
+  function setMsg(state, el, en) {
+    setBiText(state.el.querySelector("[data-msg]"), el, en);
+  }
+  function setTimerError(state) {
+    setMsg(state,
+      "Δεν μπορέσαμε να συνδεθούμε με τον έλεγχο του χρονόμετρου. Έλεγξε το ίντερνετ και πάτησε ξανά.",
+      "We could not reach timer verification. Check your internet connection and try again.");
   }
 
   function stopTimerLocally(state) {
@@ -660,18 +675,14 @@
     notifyDone(state);
     showAfter(state);
     state.el.classList.add("is-complete");
-    state.el.querySelector("[data-msg]").textContent = currentLang === "el"
-      ? "Ολοκληρώθηκε."
-      : "Session complete.";
+    setMsg(state, "Ολοκληρώθηκε.", "Session complete.");
     renderStageLabels();
   }
 
   async function start(state) {
     if (state.busy) return;
     state.busy = true;
-    state.el.querySelector("[data-msg]").textContent = currentLang === "el"
-      ? "Έλεγχος χρονόμετρου…"
-      : "Checking timer…";
+    setMsg(state, "Έλεγχος χρονόμετρου…", "Checking timer…");
     renderStageLabels();
     try {
       const result = await timerRequest("start", state);
@@ -683,7 +694,7 @@
       if (result.active !== true) {
         stopTimerLocally(state);
         draw(state);
-        state.el.querySelector("[data-msg]").textContent = timerErrorText();
+        setTimerError(state);
         return;
       }
       state.running = true;
@@ -692,7 +703,7 @@
       updateTabTitle();
       startTicker(state);
       draw(state);
-      state.el.querySelector("[data-msg]").textContent = "";
+      setMsg(state, "", "");
       if (state.left === 0) {
         state.busy = false;
         await verifyTimerCompletion(state);
@@ -700,7 +711,7 @@
       }
     } catch (err) {
       stopTimerLocally(state);
-      state.el.querySelector("[data-msg]").textContent = timerErrorText();
+      setTimerError(state);
       draw(state);
     } finally {
       state.busy = false;
@@ -723,9 +734,9 @@
       stopTimerLocally(state);
       draw(state);
       verifyAfterPause = state.left === 0;
-      state.el.querySelector("[data-msg]").textContent = "";
+      setMsg(state, "", "");
     } catch (err) {
-      state.el.querySelector("[data-msg]").textContent = timerErrorText();
+      setTimerError(state);
     } finally {
       state.busy = false;
       renderStageLabels();
@@ -752,16 +763,18 @@
         stopTimerLocally(state);
       }
       draw(state);
-      state.el.querySelector("[data-msg]").textContent = state.left > 0
-        ? (currentLang === "el"
-          ? "Ο server επιβεβαίωσε ότι απομένουν " + fmt(state.left) + ". Το χρονόμετρο συνεχίζεται."
-          : "The server confirms " + fmt(state.left) + " remaining. The timer continues.")
-        : timerErrorText();
+      if (state.left > 0) {
+        setMsg(state,
+          "Ο server επιβεβαίωσε ότι απομένουν " + fmt(state.left) + ". Το χρονόμετρο συνεχίζεται.",
+          "The server confirms " + fmt(state.left) + " remaining. The timer continues.");
+      } else {
+        setTimerError(state);
+      }
     } catch (err) {
       stopTimerLocally(state);
       state.left = 0;
       draw(state);
-      state.el.querySelector("[data-msg]").textContent = timerErrorText();
+      setTimerError(state);
     } finally {
       state.busy = false;
       state.verifying = false;
@@ -888,19 +901,37 @@
       renderNotifyBtn();
       return;
     }
-    var started = Date.now();
-    Promise.resolve(Notification.requestPermission()).then(function (perm) {
+    // Ask only now, after the click. Any answer other than "granted" shows the note at once:
+    // a silent block that stays "default", a prompt that is dismissed, or "denied".
+    // If the browser never answers (no prompt appears), show the note after a short wait
+    // and hide it again if permission is granted later.
+    var settled = false;
+    function settle(perm) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(pendingTimer);
       if (perm === "granted") {
         notifyBlockedFlag = false;
         try { localStorage.setItem(NOTIFY_KEY, "1"); } catch (e) {}
-      } else if (perm === "denied" || (perm !== "granted" && (Date.now() - started) < 300)) {
+      } else {
         notifyBlockedFlag = true;
       }
       renderNotifyBtn();
-    }).catch(function () {
+    }
+    var pendingTimer = setTimeout(function () {
+      if (settled) return;
       notifyBlockedFlag = true;
       renderNotifyBtn();
-    });
+    }, 4000);
+    try {
+      // Older Safari only supports the callback form; newer browsers return a promise.
+      var ask = Notification.requestPermission(function (perm) { settle(perm); });
+      if (ask && typeof ask.then === "function") {
+        ask.then(settle, function () { settle("error"); });
+      }
+    } catch (e) {
+      settle("error");
+    }
   });
   renderNotifyBtn();
 
@@ -950,7 +981,7 @@
         }
         draw(state);
       } catch (err) {
-        state.el.querySelector("[data-msg]").textContent = timerErrorText();
+        setTimerError(state);
       } finally {
         state.busy = false;
         renderStageLabels();
@@ -1054,7 +1085,7 @@
       '<div class="progress-section">' +
         '<button type="button" class="btn btn-primary" id="shareBtn">' + (isEl ? "Μοιράσου το σερί μου" : "Share my streak") + '</button>' +
         '<div class="sub" style="margin-top:12px">' + distractionLine(p) + '</div>' +
-        (sbUser ? '<div class="sub" id="syncMsg" style="font-size:.85rem">' + syncMsg + '</div>' : '') +
+        (sbUser ? '<div class="sub" id="syncMsg" style="font-size:.85rem">' + escHtml(syncMsgText()) + '</div>' : '') +
         '<div class="sub" style="font-size:.85rem">' + deviceLine + '</div>' +
       '</div>';
     const shareEl = el.querySelector('#shareBtn');
@@ -1064,14 +1095,13 @@
   function showAfter(state) {
     const box = state.el.querySelector("[data-after]");
     const f = FACTS[state.min];
-    const isEl = currentLang === "el";
     box.innerHTML = finishShareHtml(state.min) +
-      '<div class="fact"><div style="font-weight:800">' + (isEl ? "Γνώση" : "Did you know") + '</div>' +
-      '<div style="margin-top:6px">' + (isEl ? f.el : f.en) + '</div>' +
-      '<div class="src">' + (isEl ? "Πηγή: " : "Source: ") + f.src + '</div></div>' +
-      '<div style="font-weight:800;margin-top:14px">' + (isEl ? "Τι σε απέσπασε;" : "What distracted you?") + '</div>' +
+      '<div class="fact">' + bi("div", "", "Γνώση", "Did you know", ' style="font-weight:800"') +
+      bi("div", "", f.el, f.en, ' style="margin-top:6px"') +
+      '<div class="src">' + bi("span", "", "Πηγή: ", "Source: ") + f.src + '</div></div>' +
+      bi("div", "", "Τι σε απέσπασε;", "What distracted you?", ' style="font-weight:800;margin-top:14px"') +
       '<div class="chips">' + DISTRACTIONS.map(function (d) {
-        return '<button type="button" data-word="' + d[0] + '">' + (isEl ? d[1] : d[2]) + '</button>';
+        return bi("button", "", d[1], d[2], ' type="button" data-word="' + d[0] + '"');
       }).join("") + '</div><div class="saved" data-saved></div>';
     box.querySelectorAll("[data-word]").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -1080,7 +1110,7 @@
         p.distractions[k] = p.distractions[k] || [];
         p.distractions[k].push(b.dataset.word);
         saveProgress(p);
-        box.querySelector("[data-saved]").textContent = isEl ? "Αποθηκεύτηκε για σήμερα." : "Saved for today.";
+        setBiText(box.querySelector("[data-saved]"), "Αποθηκεύτηκε για σήμερα.", "Saved for today.");
         renderProgress();
       });
     });
@@ -1090,9 +1120,12 @@
   // ---------- calm share card + “Challenge a friend” after a finished stage ----------
   // The card holds only the stage length: no name, no email, no streak.
   const CHALLENGE_MIN = 5;
+  function escHtml(t) {
+    return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
   function bi(tag, cls, el, en, extra) {
-    return '<' + tag + (cls ? ' class="' + cls + '"' : '') + (extra || '') + ' data-el="' + el + '" data-en="' + en + '">' +
-      (currentLang === "en" ? en : el) + '</' + tag + '>';
+    return '<' + tag + (cls ? ' class="' + cls + '"' : '') + (extra || '') + ' data-el="' + escHtml(el) + '" data-en="' + escHtml(en) + '">' +
+      escHtml(currentLang === "en" ? en : el) + '</' + tag + '>';
   }
   function challengeUrl() {
     const url = new URL("practice.html", window.location.href);
@@ -1123,11 +1156,22 @@
     x.fillText("nepsis-focus.github.io/nepsis-site", 540, 960);
     return c;
   }
+  function finishCardAlt(min) {
+    return currentLang === "en" ? "Nepsis card: " + min + " minutes of focus" : "Κάρτα Nepsis: " + min + " λεπτά συγκέντρωσης";
+  }
+  // The card image is drawn in the current language, so redraw it after a language switch.
+  function renderFinishCards() {
+    document.querySelectorAll("img.finish-card[data-card-min]").forEach(function (img) {
+      const min = Number(img.getAttribute("data-card-min"));
+      try { img.src = drawFinishCard(min).toDataURL("image/png"); } catch (e) {}
+      img.alt = finishCardAlt(min);
+    });
+  }
   function finishShareHtml(min) {
     let src = "";
     try { src = drawFinishCard(min).toDataURL("image/png"); } catch (e) {}
     return '<div class="finish-share">' +
-      (src ? '<img class="finish-card" src="' + src + '" alt="' + (currentLang === "en" ? "Nepsis card: " + min + " minutes of focus" : "Κάρτα Nepsis: " + min + " λεπτά συγκέντρωσης") + '" width="540" height="540">' : '') +
+      (src ? '<img class="finish-card" src="' + src + '" alt="' + finishCardAlt(min) + '" data-card-min="' + min + '" width="540" height="540">' : '') +
       bi("p", "finish-line", "Ωραία. Αν θέλεις, μοιράσου την κάρτα ή κάλεσε έναν φίλο για πέντε λεπτά.", "Nice. If you like, share the card or invite a friend to five minutes.") +
       '<div class="finish-actions">' +
         bi("button", "btn btn-ghost", "Μοιράσου την κάρτα", "Share the card", ' type="button" data-share-card') +
@@ -1299,22 +1343,23 @@
     return out;
   }
   // The device always keeps the progress. When signed in, we also save it to the account and say what happened.
-  let syncMsg = "", syncRetries = 0, syncTimer = null, syncReady = false;
-  function setSync(msg) { syncMsg = msg; const el = document.getElementById("syncMsg"); if (el) el.textContent = msg; }
+  let syncMsgPair = ["", ""], syncRetries = 0, syncTimer = null, syncReady = false;
+  function syncMsgText() { return currentLang === "en" ? syncMsgPair[1] : syncMsgPair[0]; }
+  function setSync(el, en) { syncMsgPair = [el || "", en || ""]; const node = document.getElementById("syncMsg"); if (node) setBiText(node, syncMsgPair[0], syncMsgPair[1]); }
   async function sbPush(p, expectedUser, expectedGeneration) {
     const targetUser = expectedUser || sbUser;
     const generation = expectedGeneration === undefined ? authGeneration : expectedGeneration;
     if (!sb || !isCurrentAuth(targetUser, generation) || !syncReady) return;
-    setSync(currentLang === "el" ? "Αποθήκευση στον λογαριασμό…" : "Saving to your account…");
+    setSync("Αποθήκευση στον λογαριασμό…", "Saving to your account…");
     try {
       const res = await sb.from("progress").upsert({ user_id: targetUser.id, data: p, updated_at: new Date().toISOString() });
       if (!isCurrentAuth(targetUser, generation)) return;
       if (res.error) throw res.error;
       syncRetries = 0;
-      setSync(currentLang === "el" ? "Αποθηκεύτηκε στον λογαριασμό σου." : "Saved to your account.");
+      setSync("Αποθηκεύτηκε στον λογαριασμό σου.", "Saved to your account.");
     } catch (err) {
       if (!isCurrentAuth(targetUser, generation)) return;
-      setSync(currentLang === "el" ? "Δεν αποθηκεύτηκε στον λογαριασμό. Η πρόοδος μένει στη συσκευή." : "Not saved to your account. Progress stays on this device.");
+      setSync("Δεν αποθηκεύτηκε στον λογαριασμό. Η πρόοδος μένει στη συσκευή.", "Not saved to your account. Progress stays on this device.");
       if (syncRetries < 3) {
         syncRetries++;
         clearTimeout(syncTimer);
@@ -1347,9 +1392,7 @@
       if (!isCurrentAuth(targetUser, generation)) return;
       syncReady = false;
       clearTimeout(syncTimer);
-      setSync(currentLang === "el"
-        ? "Δεν ήταν δυνατή η ανάγνωση της αποθηκευμένης προόδου. Δεν αντικαταστάθηκαν τα δεδομένα σου. Η πρόοδός σου παραμένει σε αυτή τη συσκευή."
-        : "Could not read saved progress. Your data was not overwritten. Progress remains on this device.");
+      setSync("Δεν ήταν δυνατή η ανάγνωση της αποθηκευμένης προόδου. Δεν αντικαταστάθηκαν τα δεδομένα σου. Η πρόοδός σου παραμένει σε αυτή τη συσκευή.", "Could not read saved progress. Your data was not overwritten. Progress remains on this device.");
       renderProgress();
     }
   }
@@ -1422,13 +1465,13 @@
       }
       const generation = authGeneration;
       sbUser = nextUser;
-      if (identityChanged) { setSync(""); renderProgress(); }
+      if (identityChanged) { setSync("", ""); renderProgress(); }
       renderAcc("");
       if (sbUser && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
         const activeUser = sbUser;
         sbPull(activeUser, generation);
       } else if (!sbUser && (event === "SIGNED_OUT" || event === "INITIAL_SESSION")) {
-        setSync("");
+        setSync("", "");
         renderProgress();
       }
     });
