@@ -53,3 +53,12 @@ body.home-page .logo .dot {
 .logo span:not(.dot) {
   color: inherit;
 }
+
+body.home-page .hero h1 {
+  max-width: 13ch;
+}
+.hero-copy .knowledge-note {
+  margin-top: 22px;
+  margin-bottom: 0;
+  max-width: 36rem;
+}

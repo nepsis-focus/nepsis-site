@@ -10,7 +10,7 @@
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx);
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc("");
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -1186,5 +1186,5 @@
   document.addEventListener("pointerleave", function () { if (tiltEl) { tiltEl.style.transform = ""; tiltEl = null; } });
   // ---------- start ----------
   renderSelect(); renderCalc(); renderStageLabels();
-  setLang("el");
+  try { setLang(localStorage.getItem("nepsis-lang") === "en" ? "en" : "el"); } catch (e) { setLang("el"); }
   if (document.body.classList.contains("practice-page")) restoreTimers();
