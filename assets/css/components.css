@@ -224,6 +224,37 @@ body.home-page .hero-copy .knowledge-note {
 .practice-page .thought-park-return:empty {
   margin: 0;
 }
+/* Kept notes: shown under the card when no timer is running. */
+.practice-page .thought-park-review {
+  margin: 10px 0 4px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #3A2418;
+}
+.practice-page .stage.is-running .thought-park-review {
+  display: none;
+}
+.practice-page .thought-park-review summary {
+  cursor: pointer;
+  min-height: 2.2rem;
+  display: list-item;
+  padding: 0.3rem 0;
+}
+.practice-page .thought-park-list {
+  margin: 6px 0 8px;
+  padding-left: 1.1rem;
+  max-height: 12rem;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.practice-page .thought-park-list li {
+  margin: 0 0 6px;
+  line-height: 1.35;
+}
+.practice-page .thought-park-when {
+  color: #7A6558;
+  font-size: 0.8rem;
+}
 @media (prefers-reduced-motion: reduce) {
   .practice-page .thought-park-ok { transition: none; }
 }

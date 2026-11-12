@@ -10,7 +10,7 @@
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderParkLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc(""); updateTabTitle();
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderParkLabels(); renderParkReview(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc(""); updateTabTitle();
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -344,6 +344,11 @@
         '<p class="thought-park-privacy" data-park-privacy></p>' +
         '<p class="thought-park-ok" data-park-ok aria-live="polite"></p>' +
       '</div>' +
+      '<details class="thought-park-review" data-park-review hidden>' +
+        '<summary data-park-review-title></summary>' +
+        '<ul class="thought-park-list" data-park-list></ul>' +
+        '<button type="button" class="btn btn-ghost thought-park-clear" data-park-clear></button>' +
+      '</details>' +
       '<div class="msg" data-msg aria-live="polite"></div>' +
       '<div class="after" data-after></div>';
     grid.appendChild(card);
@@ -381,8 +386,15 @@
       clearTimeout(parkOk._hide);
       parkOk._hide = setTimeout(function () { parkOk.textContent = ""; }, 2000);
       parkInput.focus();
+      renderParkReview();
     }
     parkSave.addEventListener("click", keepThought);
+    card.querySelector("[data-park-clear]").addEventListener("click", function () {
+      var ask = currentLang === "el" ? "Να σβηστούν όλες οι σημειώσεις από αυτή τη συσκευή;" : "Delete all notes from this device?";
+      if (!window.confirm(ask)) return;
+      try { localStorage.removeItem(PARK_KEY); } catch (e) {}
+      renderParkReview();
+    });
     parkInput.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -424,6 +436,33 @@
     });
   }
   renderParkLabels();
+
+  // After a stage, show the notes kept during practice, newest first.
+  function renderParkReview() {
+    var list = loadParkedThoughts().slice().reverse();
+    var title = currentLang === "el" ? "Σημειώσεις που κράτησες (" + list.length + ")" : "Notes you kept (" + list.length + ")";
+    var clear = currentLang === "el" ? "Σβήσ' τες όλες" : "Delete all";
+    var locale = currentLang === "el" ? "el-GR" : "en-GB";
+    document.querySelectorAll("[data-park-review]").forEach(function (box) {
+      box.hidden = list.length === 0;
+      box.querySelector("[data-park-review-title]").textContent = title;
+      box.querySelector("[data-park-clear]").textContent = clear;
+      var ul = box.querySelector("[data-park-list]");
+      ul.textContent = "";
+      list.forEach(function (item) {
+        var li = document.createElement("li");
+        var when = document.createElement("span");
+        when.className = "thought-park-when";
+        try {
+          when.textContent = new Date(item.at).toLocaleString(locale, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+        } catch (e) { when.textContent = ""; }
+        li.appendChild(when);
+        li.appendChild(document.createTextNode(" " + String(item.text || "")));
+        ul.appendChild(li);
+      });
+    });
+  }
+  renderParkReview();
 
   var RETURN_AFTER_MS = 30000;
   var parkHiddenAt = 0;
