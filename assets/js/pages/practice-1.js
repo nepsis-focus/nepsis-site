@@ -10,7 +10,7 @@
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc("");
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc(""); updateTabTitle();
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -453,6 +453,7 @@
     clearInterval(state.id);
     state.id = null;
     state.endAt = null;
+    updateTabTitle();
   }
 
   function finishTimer(state) {
@@ -492,6 +493,7 @@
       }
       state.running = true;
       state.endAt = Date.now() + state.left * 1000;
+      updateTabTitle();
       clearInterval(state.id);
       state.id = setInterval(function () { tickState(state); }, 250);
       draw(state);
@@ -573,10 +575,24 @@
     }
   }
 
+  function pageTitle() {
+    const el = document.querySelector("title");
+    if (!el) return "Nepsis";
+    return (currentLang === "en" ? el.dataset.en : el.dataset.el) || el.textContent || "Nepsis";
+  }
+  function updateTabTitle() {
+    let running = null;
+    Object.keys(timers).forEach(function (k) {
+      if (timers[k] && timers[k].running) running = timers[k];
+    });
+    if (running && running.left > 0) document.title = fmt(running.left) + " · " + pageTitle();
+    else document.title = pageTitle();
+  }
   function tickState(state) {
     if (!state.running || state.busy) return;
     state.left = Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000));
     draw(state);
+    updateTabTitle();
     if (state.left === 0) verifyTimerCompletion(state);
   }
 
