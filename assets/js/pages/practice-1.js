@@ -324,6 +324,7 @@
   STAGES.forEach(function (s, i) {
     const card = document.createElement("div");
     card.className = "card stage";
+    card.id = "stage-" + s.min;
     card.innerHTML =
       '<span class="stage-folder-tab" aria-hidden="true"><i></i></span>' +
       '<div class="top"><span>' + (currentLang === "el" ? "ΣΤΑΔΙΟ " : "STAGE ") + (i + 1) + '</span><span class="dot2"></span></div>' +
@@ -453,6 +454,7 @@
     clearInterval(state.id);
     state.id = null;
     state.endAt = null;
+    syncStageVisual(state);
     updateTabTitle();
   }
 
@@ -465,9 +467,10 @@
     draw(state);
     markStage(state.min);
     showAfter(state);
+    state.el.classList.add("is-complete");
     state.el.querySelector("[data-msg]").textContent = currentLang === "el"
-      ? "Ολοκληρώθηκε! Ο χρόνος επιβεβαιώθηκε."
-      : "Done! The time has been verified.";
+      ? "Ολοκληρώθηκε."
+      : "Session complete.";
     renderStageLabels();
   }
 
@@ -493,6 +496,7 @@
       }
       state.running = true;
       state.endAt = Date.now() + state.left * 1000;
+      syncStageVisual(state);
       updateTabTitle();
       clearInterval(state.id);
       state.id = setInterval(function () { tickState(state); }, 250);
@@ -579,6 +583,10 @@
     const el = document.querySelector("title");
     if (!el) return "Nepsis";
     return (currentLang === "en" ? el.dataset.en : el.dataset.el) || el.textContent || "Nepsis";
+  }
+  function syncStageVisual(state) {
+    state.el.classList.toggle("is-running", !!state.running);
+    if (state.running) state.el.classList.remove("is-complete");
   }
   function updateTabTitle() {
     let running = null;

@@ -89,3 +89,93 @@ body.home-page .hero h1 .hero-kicker {
 .hero-copy .knowledge-note p:last-child {
   margin-bottom: 0;
 }
+
+/* Visible practice timer: larger centered time, orange ring, active and complete states. */
+.practice-page .stage {
+  container-type: inline-size;
+  transition: border-color .4s ease, box-shadow .4s ease;
+}
+.practice-page .ring {
+  width: min(100%, 240px);
+  height: auto;
+  aspect-ratio: 1;
+  margin: 12px auto 8px;
+}
+.practice-page .ring svg {
+  width: 100%;
+  height: 100%;
+}
+.practice-page .ring .track {
+  stroke: rgba(240, 138, 36, 0.2);
+}
+.practice-page .ring .prog {
+  stroke: #F08A24;
+  transition: stroke-dashoffset .25s linear, stroke .4s ease;
+}
+.practice-page .ring .time {
+  font-size: clamp(2.5rem, 28cqi, 3.6rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  line-height: 1;
+  color: #3A2418;
+}
+.practice-page .stage.is-running {
+  border-color: #F08A24;
+  box-shadow: 0 14px 36px -18px rgba(240, 138, 36, 0.6);
+}
+.practice-page .stage.is-running .time {
+  color: #F08A24;
+}
+.practice-page .stage.is-running .dot2 {
+  background: #F08A24;
+  box-shadow: 0 0 0 6px rgba(240, 138, 36, 0.22);
+}
+.practice-page .stage.is-complete .msg,
+.practice-page .stage.is-complete .after {
+  animation: nepsis-complete-in .85s ease;
+}
+@keyframes nepsis-complete-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .practice-page .stage.is-complete .msg,
+  .practice-page .stage.is-complete .after {
+    animation: none;
+  }
+}
+
+/* Homepage: one clear Start button and a single row of stages, without pushing the tip away. */
+body.home-page .hero-copy .btns {
+  margin-bottom: 0;
+}
+body.home-page .hero-copy .btn-primary {
+  background: #F08A24;
+  border-color: #F08A24;
+  color: #fff;
+  box-shadow: 0 16px 36px -16px rgba(240, 138, 36, 0.65);
+}
+body.home-page .hero-stages {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin-top: 14px;
+  max-width: 36rem;
+}
+body.home-page .hero-stages a {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 8px 4px;
+  border: 1px solid var(--border, #EEDCC8);
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--fg, #3A2418);
+  font-weight: 800;
+  font-size: 0.88rem;
+  background: #fff;
+  white-space: nowrap;
+}
+body.home-page .hero-copy .knowledge-note {
+  margin-top: 14px;
+}
