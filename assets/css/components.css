@@ -159,3 +159,138 @@ body.home-page .hero-copy .btn-primary {
 body.home-page .hero-copy .knowledge-note {
   margin-top: 14px;
 }
+
+
+/* Thought parking: a small in-stage field, only while a timer is running. */
+.practice-page .thought-park {
+  display: none;
+  margin: 10px 0 4px;
+  text-align: left;
+}
+.practice-page .stage.is-running .thought-park {
+  display: block;
+}
+.practice-page .thought-park-label {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  color: #3A2418;
+}
+/* Stage cards are narrow, so the field takes the full width and the button sits below it. */
+.practice-page .thought-park-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+.practice-page .thought-park-input {
+  flex: 0 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #EADCCB;
+  border-radius: 0.65rem;
+  background: #FFFBF6;
+  color: #3A2418;
+  font: inherit;
+  font-size: 16px;
+}
+.practice-page .thought-park-input:focus {
+  outline: 2px solid rgba(240, 138, 36, 0.45);
+  outline-offset: 1px;
+  border-color: #F08A24;
+}
+.practice-page .thought-park-save {
+  flex: 0 0 auto;
+  width: 100%;
+  white-space: normal;
+}
+.practice-page .thought-park-privacy {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: #7A6558;
+}
+.practice-page .thought-park-ok {
+  min-height: 1.2em;
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: #3A2418;
+}
+.practice-page .thought-park-return {
+  position: static;
+  display: block;
+  min-height: 0;
+  margin: 6px 0 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #FFF8EE;
+  border: 1px solid rgba(240, 138, 36, 0.25);
+  text-align: left;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: #3A2418;
+}
+.practice-page .thought-park-return:empty {
+  display: none;
+}
+/* Kept notes: shown under the card when no timer is running. */
+.practice-page .thought-park-review {
+  margin: 10px 0 4px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: #3A2418;
+}
+.practice-page .stage.is-running .thought-park-review {
+  display: none;
+}
+.practice-page .thought-park-review summary {
+  cursor: pointer;
+  min-height: 2.2rem;
+  display: list-item;
+  padding: 0.3rem 0;
+}
+.practice-page .thought-park-review .thought-park-privacy {
+  margin: 4px 0 6px;
+}
+.practice-page .thought-park-list {
+  margin: 6px 0 8px;
+  padding-left: 1.1rem;
+  max-height: 12rem;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+.practice-page .thought-park-list li {
+  margin: 0 0 6px;
+  line-height: 1.35;
+}
+.practice-page .thought-park-when {
+  color: #7A6558;
+  font-size: 0.8rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .practice-page .thought-park-ok { transition: none; }
+}
+
+/* Return-to-reading question after a note is kept */
+.practice-page .thought-park-next { margin: 8px 0 0; }
+.practice-page .thought-park-next[hidden] { display: none; }
+.practice-page .thought-park-next-q {
+  display: block; margin: 0 0 8px; font-size: 0.9rem; line-height: 1.4; font-weight: 700; color: #3A2418;
+}
+.practice-page .thought-park-anchor {
+  margin: 6px 0 0; font-size: 0.88rem; line-height: 1.4; color: #B4612A; font-weight: 700; overflow-wrap: anywhere;
+}
+.practice-page .thought-park-anchor:empty { display: none; }
+.practice-page .thought-park-next-item { display: block; color: #B4612A; font-size: 0.82rem; }
+@media (min-width: 700px) {
+  .practice-page .thought-park-input { font-size: 0.9rem; padding: 0.5rem 0.6rem; }
+}
+/* Practice page: opt-in completion notification under the stages */
+.notify-row { text-align: center; margin: 18px 0 0; }
+.notify-btn { font-size: 14px; padding: 10px 16px; }
+.notify-btn:disabled { opacity: .6; cursor: not-allowed; }
+.notify-blocked { margin: 10px auto 0; max-width: 32rem; font-size: .9rem; color: var(--muted); }
+.notify-blocked[hidden] { display: none; }
