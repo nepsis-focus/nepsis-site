@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /diary.html
+Disallow: /my-nepsis.html
+Sitemap: https://nepsis-focus.netlify.app/sitemap.xml
