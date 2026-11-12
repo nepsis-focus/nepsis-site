@@ -648,34 +648,65 @@
       });
     } catch (e) { /* some mobile browsers only allow notifications from a service worker */ }
   }
-  var notifyRow = document.createElement("p");
+  var notifyRow = document.createElement("div");
   notifyRow.className = "notify-row";
   var notifyBtn = document.createElement("button");
   notifyBtn.type = "button";
   notifyBtn.className = "btn btn-ghost notify-btn";
+  var notifyBlocked = document.createElement("p");
+  notifyBlocked.className = "notify-blocked";
+  notifyBlocked.hidden = true;
+  notifyBlocked.setAttribute("aria-live", "polite");
+  notifyBlocked.setAttribute("data-el", "Οι ειδοποιήσεις μπλοκαρίστηκαν από τον περιηγητή. Μπορείς να τις επιτρέψεις από τις ρυθμίσεις της σελίδας και να ξαναπατήσεις το κουμπί.");
+  notifyBlocked.setAttribute("data-en", "Notifications were blocked by the browser. You can allow them in the page settings and press the button again.");
   notifyRow.appendChild(notifyBtn);
+  notifyRow.appendChild(notifyBlocked);
   if ("Notification" in window) grid.insertAdjacentElement("afterend", notifyRow);
+  var notifyBlockedFlag = false;
+  function notificationsBlocked() {
+    try { if ("Notification" in window && Notification.permission === "denied") return true; } catch (e) {}
+    return notifyBlockedFlag;
+  }
   function renderNotifyBtn() {
     // renderStageLabels can run (via setLang) before this block has executed.
     if (!notifyBtn || !("Notification" in window)) return;
     const on = notifyEnabled();
-    const denied = Notification.permission === "denied";
-    notifyBtn.disabled = denied;
+    const blocked = notificationsBlocked();
     notifyBtn.setAttribute("aria-pressed", on ? "true" : "false");
-    notifyBtn.textContent = denied
-      ? (currentLang === "el" ? "Οι ειδοποιήσεις είναι μπλοκαρισμένες στον browser" : "Notifications are blocked in your browser")
-      : on
-        ? (currentLang === "el" ? "🔔 Κλείσε τις ειδοποιήσεις" : "🔔 Turn off notifications")
-        : (currentLang === "el" ? "Ειδοποίησέ με όταν τελειώνει ένα στάδιο" : "Notify me when a stage ends");
+    notifyBtn.textContent = on
+      ? (currentLang === "el" ? "🔔 Κλείσε τις ειδοποιήσεις" : "🔔 Turn off notifications")
+      : (currentLang === "el" ? "Ειδοποίησέ με όταν τελειώνει ένα στάδιο" : "Notify me when a stage ends");
+    if (notifyBlocked) {
+      const copy = notifyBlocked.getAttribute(currentLang === "en" ? "data-en" : "data-el");
+      notifyBlocked.textContent = copy;
+      notifyBlocked.hidden = !blocked;
+    }
   }
   notifyBtn.addEventListener("click", function () {
     if (notifyEnabled()) {
+      notifyBlockedFlag = false;
       try { localStorage.removeItem(NOTIFY_KEY); } catch (e) {}
       renderNotifyBtn();
       return;
     }
+    var before = "default";
+    try { before = Notification.permission; } catch (e) {}
+    if (before === "denied") {
+      notifyBlockedFlag = true;
+      renderNotifyBtn();
+      return;
+    }
+    var started = Date.now();
     Promise.resolve(Notification.requestPermission()).then(function (perm) {
-      if (perm === "granted") { try { localStorage.setItem(NOTIFY_KEY, "1"); } catch (e) {} }
+      if (perm === "granted") {
+        notifyBlockedFlag = false;
+        try { localStorage.setItem(NOTIFY_KEY, "1"); } catch (e) {}
+      } else if (perm === "denied" || (perm !== "granted" && (Date.now() - started) < 300)) {
+        notifyBlockedFlag = true;
+      }
+      renderNotifyBtn();
+    }).catch(function () {
+      notifyBlockedFlag = true;
       renderNotifyBtn();
     });
   });
