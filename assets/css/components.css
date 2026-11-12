@@ -288,3 +288,9 @@ body.home-page .hero-copy .knowledge-note {
 @media (min-width: 700px) {
   .practice-page .thought-park-input { font-size: 0.9rem; padding: 0.5rem 0.6rem; }
 }
+/* Practice page: opt-in completion notification under the stages */
+.notify-row { text-align: center; margin: 18px 0 0; }
+.notify-btn { font-size: 14px; padding: 10px 16px; }
+.notify-btn:disabled { opacity: .6; cursor: not-allowed; }
+.notify-blocked { margin: 10px auto 0; max-width: 32rem; font-size: .9rem; color: var(--muted); }
+.notify-blocked[hidden] { display: none; }
