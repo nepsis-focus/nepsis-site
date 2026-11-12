@@ -334,12 +334,14 @@
       '<circle class="prog" cx="75" cy="75" r="66" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg>' +
       '<div class="time" data-time>' + String(s.min).padStart(2, "0") + ':00</div></div>' +
       '<button type="button" class="btn btn-primary start" data-start></button>' +
+      '<p class="thought-park-return" data-park-return aria-live="polite"></p>' +
       '<div class="thought-park">' +
         '<p class="thought-park-label" data-park-label></p>' +
         '<div class="thought-park-row">' +
           '<input type="text" class="thought-park-input" maxlength="200" autocomplete="off" enterkeyhint="done" data-park-input>' +
           '<button type="button" class="btn btn-ghost thought-park-save" data-park-save></button>' +
         '</div>' +
+        '<p class="thought-park-privacy" data-park-privacy></p>' +
         '<p class="thought-park-ok" data-park-ok aria-live="polite"></p>' +
       '</div>' +
       '<div class="msg" data-msg aria-live="polite"></div>' +
@@ -412,14 +414,39 @@
       : "If something pops up, write it down and return to now.";
     var placeholder = currentLang === "el" ? "Μια σύντομη σημείωση" : "A short note";
     var save = currentLang === "el" ? "Κράτησέ το" : "Keep it";
+    var privacy = currentLang === "el" ? "Μένει μόνο σε αυτή τη συσκευή." : "It stays only on this device.";
     document.querySelectorAll(".thought-park").forEach(function (park) {
       park.querySelector("[data-park-label]").textContent = label;
       park.querySelector("[data-park-input]").setAttribute("placeholder", placeholder);
       park.querySelector("[data-park-input]").setAttribute("aria-label", label);
       park.querySelector("[data-park-save]").textContent = save;
+      park.querySelector("[data-park-privacy]").textContent = privacy;
     });
   }
   renderParkLabels();
+
+  var RETURN_AFTER_MS = 30000;
+  var parkHiddenAt = 0;
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      parkHiddenAt = Date.now();
+      return;
+    }
+    var away = parkHiddenAt ? Date.now() - parkHiddenAt : 0;
+    parkHiddenAt = 0;
+    if (away < RETURN_AFTER_MS) return;
+    Object.keys(timers).forEach(function (min) {
+      var st = timers[min];
+      if (!st || !st.running) return;
+      var el = st.el.querySelector("[data-park-return]");
+      if (!el) return;
+      el.textContent = currentLang === "el"
+        ? "Καλώς ήρθες πίσω. Συνέχισε από εκεί που ήσουν."
+        : "Welcome back. Continue from where you were.";
+      clearTimeout(el._hide);
+      el._hide = setTimeout(function () { el.textContent = ""; }, 6000);
+    });
+  });
 
   function fmt(sec) {
     return String(Math.floor(sec / 60)).padStart(2, "0") + ":" + String(sec % 60).padStart(2, "0");
