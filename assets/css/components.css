@@ -28,3 +28,25 @@ html { overflow-x: clip; }
 .nepsis-menu-scrim { position: fixed; z-index: 1001; inset: 0; border: 0; background: rgba(32, 27, 22, .35); opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s ease; }
 .nepsis-menu-scrim.open { opacity: 1; visibility: visible; }
 @media (prefers-reduced-motion: reduce) { .nepsis-site-drawer, .nepsis-menu-scrim { transition: none; } }
+
+/* Simple brand mark: a flat orange dot, with Nepsis as separate text. */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo .dot,
+body.home-page .logo .dot {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  display: inline-block;
+  border-radius: 50%;
+  background: #F0702A;
+  background-image: none;
+  box-shadow: none;
+}
+.logo span:not(.dot) {
+  color: inherit;
+}
