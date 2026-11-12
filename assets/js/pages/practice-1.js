@@ -10,7 +10,7 @@
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz();
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx);
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -710,7 +710,7 @@
     }).join("");
     const deviceLine = sbUser
       ? (isEl ? "Η πρόοδός σου αποθηκεύεται στη συσκευή και συγχρονίζεται στον λογαριασμό σου." : "Your progress is saved on this device and synced to your account.")
-      : (isEl ? "Η πρόοδός σου αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Your progress is saved only on this device.");
+      : (isEl ? "Μένει σε αυτή τη συσκευή μέχρι να συνδεθείς." : "It stays on this device until you sign in.");
     el.innerHTML =
       '<div class="streak">' + (isEl ? "Η προσπάθειά σου μέχρι σήμερα" : "Your progress so far") + '</div>' +
       '<div class="progress-overview">' +
@@ -1132,7 +1132,10 @@
     ["0bf0PLg5I856ySoVv7HCIR"],
     ["7wHb7vPGyj1BKBhAnZS73T"]
   ];
+  let currentMusicIdx = null;
+  let currentAmbientIdx = null;
   function playMusic(i) {
+    currentMusicIdx = i;
     const id = MUSIC[i][0];
     $("musicFrame").innerHTML =
       '<iframe title="Spotify playlist" style="border-radius:20px" src="https://open.spotify.com/embed/playlist/' + id +
@@ -1149,6 +1152,7 @@
   function playAmbientPlaylist(i) {
     const playlist = AMBIENT_PLAYLISTS[i];
     if (!playlist) return;
+    currentAmbientIdx = i;
     const id = playlist.id;
     $("ambientFrame").innerHTML =
       '<iframe title="Spotify ambient playlist" style="border-radius:16px" src="https://open.spotify.com/embed/playlist/' + id +

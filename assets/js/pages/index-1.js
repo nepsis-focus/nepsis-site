@@ -10,7 +10,7 @@ let currentLang = "el";
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz();
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz(); renderDailyTip(); if (currentMusicIdx !== null) playMusic(currentMusicIdx);
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -724,7 +724,7 @@ let currentLang = "el";
       (sbUser ? '<div class="sub" id="syncMsg" style="font-size:.85rem">' + syncMsg + '</div>' : '') +
       '<div class="sub" style="font-size:.85rem">' + (sbUser
         ? (isEl ? "Η πρόοδός σου αποθηκεύεται στη συσκευή και συγχρονίζεται στον λογαριασμό σου." : "Your progress is saved on this device and synced to your account.")
-        : (isEl ? "Αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Saved only on this device.")) + '</div>';
+        : (isEl ? "Μένει σε αυτή τη συσκευή μέχρι να συνδεθείς." : "It stays on this device until you sign in.")) + '</div>';
     const shareEl = el.querySelector('#shareBtn');
     if (shareEl) shareEl.addEventListener('click', shareStreak);
     renderCalendar();
@@ -1105,12 +1105,52 @@ let currentLang = "el";
     }).join("");
   }
 
+  // ---------- three-day tip from tips.json ----------
+  let dailyTip = null;
+  function athensDayNumber(date) {
+    const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Athens", year: "numeric", month: "2-digit", day: "2-digit" }).format(date).split("-");
+    return Math.floor(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])) / 86400000);
+  }
+  function normalizeTips(data) {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.tips)) return data.tips;
+    if (data.el || data.en) return [data];
+    return [];
+  }
+  function pickDailyTip(list, date) {
+    if (!list.length) return null;
+    return list[Math.floor(athensDayNumber(date) / 3) % list.length];
+  }
+  function renderDailyTip() {
+    const box = $("dailyTip");
+    const textEl = $("dailyTipText");
+    const sourceEl = $("dailyTipSource");
+    if (!box || !textEl) return;
+    if (!dailyTip) { box.hidden = true; return; }
+    const isEl = currentLang === "el";
+    textEl.textContent = (isEl ? dailyTip.el : dailyTip.en) || dailyTip.el || dailyTip.en || "";
+    if (sourceEl) {
+      if (dailyTip.source) { sourceEl.hidden = false; sourceEl.textContent = dailyTip.source; }
+      else { sourceEl.hidden = true; sourceEl.textContent = ""; }
+    }
+    box.hidden = false;
+  }
+  function loadDailyTip() {
+    fetch("tips.json", { cache: "no-cache" })
+      .then(function (res) { if (!res.ok) throw new Error("tip"); return res.json(); })
+      .then(function (data) { dailyTip = pickDailyTip(normalizeTips(data), new Date()); renderDailyTip(); })
+      .catch(function () { dailyTip = null; renderDailyTip(); });
+  }
+
   const MUSIC = [
     ["2nAoTMLXOfhOwq8BziSopv"],
     ["0bf0PLg5I856ySoVv7HCIR"],
     ["7wHb7vPGyj1BKBhAnZS73T"]
   ];
+  let currentMusicIdx = null;
   function playMusic(i) {
+    currentMusicIdx = i;
     const id = MUSIC[i][0];
     $("musicFrame").innerHTML =
       '<iframe title="Spotify playlist" style="border-radius:20px" src="https://open.spotify.com/embed/playlist/' + id +
@@ -1140,4 +1180,5 @@ let currentLang = "el";
   // ---------- start ----------
   renderSelect(); renderCalc(); renderStageLabels();
   setLang("el");
+  loadDailyTip();
   if (document.body.classList.contains("practice-page")) restoreTimers();
