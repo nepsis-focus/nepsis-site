@@ -1682,7 +1682,9 @@
     const away = hiddenAt ? Date.now() - hiddenAt : 0;
     hiddenAt = null;
     armIdle();
-    if (away >= WELCOME_AFTER_MS && !nudgeOpen()) {
+    // One welcome-back only: a running stage shows its own in-card message (thought parking),
+    // so this toast is for when no stage is running.
+    if (away >= WELCOME_AFTER_MS && !nudgeOpen() && !anyStageRunning()) {
       const w = $("welcomeBack");
       w.hidden = false;
       requestAnimationFrame(function () { w.classList.add("show"); });
