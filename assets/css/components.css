@@ -43,8 +43,11 @@ body.home-page .logo .dot {
   flex: 0 0 18px;
   display: inline-block;
   border-radius: 50%;
-  background: #F0702A;
-  background-image: none;
+  background: none;
+  background-image: url("../brand/nepsis-mark.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   box-shadow: none;
 }
 .logo span:not(.dot) {
