@@ -665,8 +665,8 @@
     notifyBtn.textContent = denied
       ? (currentLang === "el" ? "Οι ειδοποιήσεις είναι μπλοκαρισμένες στον browser" : "Notifications are blocked in your browser")
       : on
-        ? (currentLang === "el" ? "🔔 Θα σε ειδοποιήσουμε όταν τελειώσει · Απενεργοποίηση" : "🔔 We'll notify you when it ends · Turn off")
-        : (currentLang === "el" ? "🔕 Ειδοποίησέ με όταν τελειώνει ένα στάδιο" : "🔕 Notify me when a stage ends");
+        ? (currentLang === "el" ? "🔔 Κλείσε τις ειδοποιήσεις" : "🔔 Turn off notifications")
+        : (currentLang === "el" ? "Ειδοποίησέ με όταν τελειώνει ένα στάδιο" : "Notify me when a stage ends");
   }
   notifyBtn.addEventListener("click", function () {
     if (notifyEnabled()) {
