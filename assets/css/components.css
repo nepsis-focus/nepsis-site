@@ -159,3 +159,55 @@ body.home-page .hero-copy .btn-primary {
 body.home-page .hero-copy .knowledge-note {
   margin-top: 14px;
 }
+
+
+/* Thought parking: a small in-stage field, only while a timer is running. */
+.practice-page .thought-park {
+  display: none;
+  margin: 10px 0 4px;
+  text-align: left;
+}
+.practice-page .stage.is-running .thought-park {
+  display: block;
+}
+.practice-page .thought-park-label {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  color: #3A2418;
+}
+.practice-page .thought-park-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+.practice-page .thought-park-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #EADCCB;
+  border-radius: 0.65rem;
+  background: #FFFBF6;
+  color: #3A2418;
+  font: inherit;
+  font-size: 16px;
+}
+.practice-page .thought-park-input:focus {
+  outline: 2px solid rgba(240, 138, 36, 0.45);
+  outline-offset: 1px;
+  border-color: #F08A24;
+}
+.practice-page .thought-park-save {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.practice-page .thought-park-ok {
+  min-height: 1.2em;
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: #3A2418;
+}
+@media (prefers-reduced-motion: reduce) {
+  .practice-page .thought-park-ok { transition: none; }
+}

@@ -10,7 +10,7 @@
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc(""); updateTabTitle();
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderParkLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc(""); updateTabTitle();
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -334,6 +334,14 @@
       '<circle class="prog" cx="75" cy="75" r="66" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="0"/></svg>' +
       '<div class="time" data-time>' + String(s.min).padStart(2, "0") + ':00</div></div>' +
       '<button type="button" class="btn btn-primary start" data-start></button>' +
+      '<div class="thought-park">' +
+        '<p class="thought-park-label" data-park-label></p>' +
+        '<div class="thought-park-row">' +
+          '<input type="text" class="thought-park-input" maxlength="200" autocomplete="off" enterkeyhint="done" data-park-input>' +
+          '<button type="button" class="btn btn-ghost thought-park-save" data-park-save></button>' +
+        '</div>' +
+        '<p class="thought-park-ok" data-park-ok aria-live="polite"></p>' +
+      '</div>' +
       '<div class="msg" data-msg aria-live="polite"></div>' +
       '<div class="after" data-after></div>';
     grid.appendChild(card);
@@ -358,7 +366,60 @@
       if (state.running) pause(state);
       else start(state);
     });
+
+    var parkInput = card.querySelector("[data-park-input]");
+    var parkSave = card.querySelector("[data-park-save]");
+    var parkOk = card.querySelector("[data-park-ok]");
+    function keepThought() {
+      var text = (parkInput.value || "").trim();
+      if (!text) return;
+      saveParkedThought(text, s.min);
+      parkInput.value = "";
+      parkOk.textContent = currentLang === "el" ? "Το κράτησα." : "Saved. Back to now.";
+      clearTimeout(parkOk._hide);
+      parkOk._hide = setTimeout(function () { parkOk.textContent = ""; }, 2000);
+      parkInput.focus();
+    }
+    parkSave.addEventListener("click", keepThought);
+    parkInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        keepThought();
+      }
+    });
   });
+
+  var PARK_KEY = "nepsis-thought-park";
+  function loadParkedThoughts() {
+    try {
+      var list = JSON.parse(localStorage.getItem(PARK_KEY) || "[]");
+      return Array.isArray(list) ? list : [];
+    } catch (e) { return []; }
+  }
+  function saveParkedThought(text, stageMin) {
+    var list = loadParkedThoughts();
+    list.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      text: String(text).slice(0, 200),
+      at: Date.now(),
+      stage: stageMin
+    });
+    try { localStorage.setItem(PARK_KEY, JSON.stringify(list.slice(-50))); } catch (e) {}
+  }
+  function renderParkLabels() {
+    var label = currentLang === "el"
+      ? "Αν πετάγεται κάτι, γράψε το και γύρνα στο τώρα."
+      : "If something pops up, write it down and return to now.";
+    var placeholder = currentLang === "el" ? "Μια σύντομη σημείωση" : "A short note";
+    var save = currentLang === "el" ? "Κράτησέ το" : "Keep it";
+    document.querySelectorAll(".thought-park").forEach(function (park) {
+      park.querySelector("[data-park-label]").textContent = label;
+      park.querySelector("[data-park-input]").setAttribute("placeholder", placeholder);
+      park.querySelector("[data-park-input]").setAttribute("aria-label", label);
+      park.querySelector("[data-park-save]").textContent = save;
+    });
+  }
+  renderParkLabels();
 
   function fmt(sec) {
     return String(Math.floor(sec / 60)).padStart(2, "0") + ":" + String(sec % 60).padStart(2, "0");
