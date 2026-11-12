@@ -346,6 +346,7 @@
       '</div>' +
       '<details class="thought-park-review" data-park-review hidden>' +
         '<summary data-park-review-title></summary>' +
+        '<p class="thought-park-privacy" data-park-review-privacy></p>' +
         '<ul class="thought-park-list" data-park-list></ul>' +
         '<button type="button" class="btn btn-ghost thought-park-clear" data-park-clear></button>' +
       '</details>' +
@@ -442,10 +443,12 @@
     var list = loadParkedThoughts().slice().reverse();
     var title = currentLang === "el" ? "Σημειώσεις που κράτησες (" + list.length + ")" : "Notes you kept (" + list.length + ")";
     var clear = currentLang === "el" ? "Σβήσ' τες όλες" : "Delete all";
+    var privacy = currentLang === "el" ? "Μένει μόνο σε αυτή τη συσκευή." : "It stays only on this device.";
     var locale = currentLang === "el" ? "el-GR" : "en-GB";
     document.querySelectorAll("[data-park-review]").forEach(function (box) {
       box.hidden = list.length === 0;
       box.querySelector("[data-park-review-title]").textContent = title;
+      box.querySelector("[data-park-review-privacy]").textContent = privacy;
       box.querySelector("[data-park-clear]").textContent = clear;
       var ul = box.querySelector("[data-park-list]");
       ul.textContent = "";

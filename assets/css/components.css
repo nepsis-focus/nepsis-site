@@ -240,6 +240,9 @@ body.home-page .hero-copy .knowledge-note {
   display: list-item;
   padding: 0.3rem 0;
 }
+.practice-page .thought-park-review .thought-park-privacy {
+  margin: 4px 0 6px;
+}
 .practice-page .thought-park-list {
   margin: 6px 0 8px;
   padding-left: 1.1rem;
