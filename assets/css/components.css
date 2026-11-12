@@ -54,11 +54,33 @@ body.home-page .logo .dot {
   color: inherit;
 }
 
+.hero-copy {
+  container-type: inline-size;
+}
 body.home-page .hero h1 {
-  max-width: 13ch;
+  max-width: 100%;
+}
+body.home-page .hero h1 .hero-kicker,
+body.home-page .hero h1 em {
+  display: block;
+  font-size: clamp(1.85rem, 8.4cqi, 4.2rem);
+}
+body.home-page .hero h1 .hero-kicker {
+  white-space: nowrap;
 }
 .hero-copy .knowledge-note {
-  margin-top: 22px;
+  margin-top: 18px;
   margin-bottom: 0;
   max-width: 36rem;
+  padding: 14px 16px;
+}
+.hero-copy .knowledge-note .eyebrow {
+  margin-bottom: 6px;
+}
+.hero-copy .knowledge-note p {
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+.hero-copy .knowledge-note p:last-child {
+  margin-bottom: 0;
 }
