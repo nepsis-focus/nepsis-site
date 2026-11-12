@@ -243,6 +243,14 @@
         </defs>
       </svg>
       <div class="card" id="quiz" style="margin-bottom:26px;padding:26px"></div>
+      <div class="challenge-invite" id="challengeInvite" hidden>
+        <span class="invite-dot" aria-hidden="true"></span>
+        <div class="invite-copy">
+          <strong data-el="Ένας φίλος σε προσκαλεί σε πέντε λεπτά συγκέντρωσης." data-en="A friend invited you to five minutes of focus.">Ένας φίλος σε προσκαλεί σε πέντε λεπτά συγκέντρωσης.</strong>
+          <span data-el="Διάλεξε ένα μικρό κομμάτι δουλειάς και πάτα έναρξη όταν είσαι έτοιμος ή έτοιμη." data-en="Pick one small piece of work and press start when you are ready.">Διάλεξε ένα μικρό κομμάτι δουλειάς και πάτα έναρξη όταν είσαι έτοιμος ή έτοιμη.</span>
+        </div>
+        <button type="button" class="btn btn-primary" id="inviteStart" data-el="▷ Ξεκίνα τα 5 λεπτά" data-en="▷ Start the 5 minutes">▷ Ξεκίνα τα 5 λεπτά</button>
+      </div>
       <div class="stages" id="stageGrid"></div>
       <div class="knowledge-note" id="knowledge">
         <span class="eyebrow" data-el="Γνώση" data-en="Knowledge">Γνώση</span>
@@ -252,10 +260,12 @@
       <div class="card" style="margin-top:26px;text-align:center">
     <span class="eyebrow" data-el="Μουσική" data-en="Music">Μουσική</span>
     <h2 style="font-size:1.6rem" data-el="Μουσική για συγκέντρωση" data-en="Music to focus with">Μουσική για συγκέντρωση</h2>
+    <p class="ambient-hint" data-el="Ο ήχος είναι προαιρετικός. Τίποτα δεν παίζει μόνο του· διάλεξε εσύ αν θέλεις κάτι." data-en="Sound is optional. Nothing plays on its own; choose something only if you want it.">Ο ήχος είναι προαιρετικός. Τίποτα δεν παίζει μόνο του· διάλεξε εσύ αν θέλεις κάτι.</p>
     <div class="music-row" id="musicPicks">
-      <button type="button" class="active" data-idx="0" data-el="Γρήγορα τραγούδια" data-en="Quick songs">Γρήγορα τραγούδια</button>
-      <button type="button" data-idx="1" data-el="Για διάβασμα" data-en="For studying">Για διάβασμα</button>
-      <button type="button" data-idx="2" data-el="Για χαλάρωση" data-en="For relaxing">Για χαλάρωση</button>
+      <button type="button" class="active" data-idx="none" aria-pressed="true" data-el="Χωρίς ήχο" data-en="No sound">Χωρίς ήχο</button>
+      <button type="button" data-idx="1" aria-pressed="false" data-el="Για διάβασμα" data-en="For studying">Για διάβασμα</button>
+      <button type="button" data-idx="2" aria-pressed="false" data-el="Για χαλάρωση" data-en="For relaxing">Για χαλάρωση</button>
+      <button type="button" data-idx="0" aria-pressed="false" data-el="Γρήγορα τραγούδια" data-en="Quick songs">Γρήγορα τραγούδια</button>
     </div>
     <div id="musicFrame"></div>
     <div class="ambient-wrap">
@@ -298,6 +308,21 @@
   </section>
 
 </main>
+
+<div class="focus-nudge-scrim" id="focusNudgeScrim" hidden></div>
+<div class="focus-nudge" id="focusNudge" role="dialog" aria-modal="false" aria-labelledby="focusNudgeTitle" hidden>
+  <span class="nudge-dot" aria-hidden="true"></span>
+  <h2 id="focusNudgeTitle" data-el="Ας επιστρέψουμε στη δουλειά;" data-en="Shall we get back to work?">Ας επιστρέψουμε στη δουλειά;</h2>
+  <p data-el="Πέρασαν περίπου δέκα λεπτά ήσυχα. Δεν πειράζει· διάλεξε το επόμενο μικρό κομμάτι και δώσ’ του πέντε λεπτά." data-en="About ten quiet minutes have passed. That is okay; choose the next small piece and give it five minutes.">Πέρασαν περίπου δέκα λεπτά ήσυχα. Δεν πειράζει· διάλεξε το επόμενο μικρό κομμάτι και δώσ’ του πέντε λεπτά.</p>
+  <div class="nudge-actions">
+    <button type="button" class="btn btn-primary" id="nudgeStart" data-el="Πέντε λεπτά τώρα" data-en="Five minutes now">Πέντε λεπτά τώρα</button>
+    <button type="button" class="btn btn-ghost" id="nudgeClose" data-el="Είμαι εδώ" data-en="I’m here">Είμαι εδώ</button>
+  </div>
+</div>
+<div class="welcome-back" id="welcomeBack" role="status" aria-live="polite" hidden>
+  <span class="nudge-dot" aria-hidden="true"></span>
+  <span data-el="Καλώς ήρθες πίσω. Συνέχισε από εκεί που ήσουν." data-en="Welcome back. Pick up where you left off.">Καλώς ήρθες πίσω. Συνέχισε από εκεί που ήσουν.</span>
+</div>
 
 
 <div class="scrim" id="subScrim"></div>

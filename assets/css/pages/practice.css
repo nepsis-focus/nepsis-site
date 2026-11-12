@@ -864,3 +864,89 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   .lang button { padding: 5px 7px; font-size: .72rem; }
   .menu-btn { width: 36px; height: 36px; flex: 0 0 36px; }
 }
+
+/* ---------- calm additions: ring breath, finish share card, challenge invite, gentle return ---------- */
+body.practice-page .stage .ring::before {
+  content: ""; position: absolute; inset: 4px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(240,138,36,.18) 0%, rgba(240,138,36,.07) 46%, rgba(240,138,36,0) 70%);
+  opacity: 0; z-index: -1; pointer-events: none;
+  transition: opacity 1.2s ease;
+}
+body.practice-page .stage.is-running .ring::before { opacity: .55; }
+@media (prefers-reduced-motion: no-preference) {
+  body.practice-page .stage.is-running .ring::before { animation: nepsis-ring-breath 8s ease-in-out infinite; }
+  body.practice-page .stage.is-running .ring .prog { animation: nepsis-ring-soft 8s ease-in-out infinite; }
+}
+@keyframes nepsis-ring-breath {
+  0%, 100% { transform: scale(.95); opacity: .35; }
+  50% { transform: scale(1.05); opacity: .8; }
+}
+@keyframes nepsis-ring-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .82; }
+}
+body.practice-page .stage.is-invited { outline: 2px solid rgba(240,138,36,.55); outline-offset: 4px; transition: outline-color 1s ease; }
+
+body.practice-page .finish-share {
+  margin: 4px 0 16px; padding: 16px; border-radius: 20px;
+  background: #FFF8EE; border: 1px solid rgba(240,138,36,.22); text-align: center;
+}
+body.practice-page .finish-card {
+  display: block; width: 100%; max-width: 240px; height: auto; margin: 0 auto 12px;
+  border-radius: 16px; box-shadow: 0 10px 26px -20px rgba(58,36,24,.5);
+}
+body.practice-page .stage .finish-share .finish-line { font-size: .9rem; line-height: 1.55; color: var(--muted, #7A5F50); margin: 0 0 12px; }
+body.practice-page .finish-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+body.practice-page .stage .finish-share .finish-actions .btn { min-height: 40px; padding: 8px 14px; font-size: .86rem; border-radius: 99px; }
+body.practice-page .finish-status { margin: 10px 0 0; font-size: .82rem; color: var(--muted, #7A5F50); overflow-wrap: anywhere; }
+body.practice-page .finish-link { color: var(--ember, #B4612A); font-weight: 700; }
+
+body.practice-page .challenge-invite {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  margin: 0 0 18px; padding: 18px 22px; border-radius: 22px;
+  background: #FFF8EE; border: 1px solid rgba(240,138,36,.35);
+  box-shadow: 0 14px 34px -30px rgba(58,36,24,.45);
+}
+body.practice-page .challenge-invite[hidden] { display: none; }
+body.practice-page .invite-dot, .focus-nudge .nudge-dot, .welcome-back .nudge-dot {
+  width: 14px; height: 14px; border-radius: 50%; background: #F08A24; flex: 0 0 auto;
+}
+body.practice-page .invite-copy { flex: 1 1 260px; display: grid; gap: 4px; }
+body.practice-page .invite-copy span { color: var(--muted, #7A5F50); font-size: .92rem; }
+
+.focus-nudge-scrim {
+  position: fixed; inset: 0; z-index: 80; background: rgba(58,36,24,.18);
+  opacity: 0; transition: opacity .6s ease;
+}
+.focus-nudge {
+  position: fixed; z-index: 81; left: 50%; top: 50%;
+  width: min(440px, calc(100vw - 32px));
+  transform: translate(-50%, -46%); opacity: 0;
+  transition: opacity .6s ease, transform .6s ease;
+  padding: 28px 26px 22px; border-radius: 26px; text-align: center;
+  background: #FFF8EE; border: 1px solid rgba(240,138,36,.4);
+  box-shadow: 0 30px 70px -30px rgba(58,36,24,.5);
+}
+.focus-nudge[hidden], .focus-nudge-scrim[hidden], .welcome-back[hidden] { display: none; }
+body.nudge-visible .focus-nudge { opacity: 1; transform: translate(-50%, -50%); }
+body.nudge-visible .focus-nudge-scrim { opacity: 1; }
+.focus-nudge .nudge-dot { display: block; width: 22px; height: 22px; margin: 0 auto 14px; }
+.focus-nudge h2 { font-size: clamp(1.35rem, 3.4vw, 1.7rem); letter-spacing: -.03em; margin: 0 0 10px; }
+.focus-nudge p { margin: 0 0 18px; line-height: 1.6; color: var(--muted, #7A5F50); }
+.focus-nudge .nudge-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+.welcome-back {
+  position: fixed; z-index: 70; left: 50%; bottom: 22px;
+  transform: translate(-50%, 8px); opacity: 0;
+  transition: opacity .6s ease, transform .6s ease;
+  display: flex; align-items: center; gap: 10px;
+  max-width: calc(100vw - 32px); padding: 12px 18px; border-radius: 99px;
+  background: #FFF8EE; border: 1px solid rgba(240,138,36,.3);
+  box-shadow: 0 14px 34px -24px rgba(58,36,24,.45); font-size: .92rem; font-weight: 700;
+}
+.welcome-back .nudge-dot { width: 10px; height: 10px; }
+.welcome-back.show { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) {
+  .focus-nudge, .focus-nudge-scrim, .welcome-back { transition: none !important; }
+  body.practice-page .stage .ring::before, body.practice-page .stage .ring .prog { animation: none !important; }
+}
