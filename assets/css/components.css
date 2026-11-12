@@ -59,11 +59,16 @@ body.home-page .logo .dot {
 }
 body.home-page .hero h1 {
   max-width: 100%;
+  font-size: clamp(1.85rem, 8.4cqi, 4.2rem);
+  letter-spacing: -0.03em;
+  word-spacing: 0.06em;
 }
 body.home-page .hero h1 .hero-kicker,
 body.home-page .hero h1 em {
   display: block;
-  font-size: clamp(1.85rem, 8.4cqi, 4.2rem);
+  font-size: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
 }
 body.home-page .hero h1 .hero-kicker {
   white-space: nowrap;
