@@ -135,9 +135,33 @@
     earthGroup.add(clouds);
 
     const atmosphere = new THREE.Mesh(
-      new THREE.SphereGeometry(radius * 1.045, 96, 96),
-      new THREE.MeshBasicMaterial({
-        color: 0x62aee8, side: THREE.BackSide, transparent: true, opacity: 0.115, depthWrite: false
+      new THREE.SphereGeometry(radius * 1.06, 64, 64),
+      new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        side: THREE.BackSide,
+        uniforms: {
+          uColor: { value: new THREE.Color(0x62aee8) },
+          uIntensity: { value: 0.92 }
+        },
+        vertexShader: [
+          "varying float vFres;",
+          "void main() {",
+          "  vec3 viewNormal = normalize(normalMatrix * normal);",
+          "  vec4 mv = modelViewMatrix * vec4(position, 1.0);",
+          "  vec3 viewDir = normalize(-mv.xyz);",
+          "  vFres = pow(1.0 - abs(dot(viewNormal, viewDir)), 2.2);",
+          "  gl_Position = projectionMatrix * mv;",
+          "}"
+        ].join("\n"),
+        fragmentShader: [
+          "varying float vFres;",
+          "uniform vec3 uColor;",
+          "uniform float uIntensity;",
+          "void main() {",
+          "  gl_FragColor = vec4(uColor, vFres * uIntensity);",
+          "}"
+        ].join("\n")
       })
     );
     earthGroup.add(atmosphere);
@@ -277,7 +301,7 @@
           earthGroup.rotation.y += 0.00022;
         }
       }
-      clouds.rotation.y += 0.00012;
+      if (!reducedMotion) clouds.rotation.y += 0.00072;
       renderer.render(scene, camera);
     }
     animate();
