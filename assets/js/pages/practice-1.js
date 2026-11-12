@@ -451,8 +451,7 @@
 
   function stopTimerLocally(state) {
     state.running = false;
-    clearInterval(state.id);
-    state.id = null;
+    stopTicker(state);
     state.endAt = null;
     syncStageVisual(state);
     updateTabTitle();
@@ -466,6 +465,7 @@
     clearTimerCredentials(state);
     draw(state);
     markStage(state.min);
+    notifyDone(state);
     showAfter(state);
     state.el.classList.add("is-complete");
     state.el.querySelector("[data-msg]").textContent = currentLang === "el"
@@ -498,8 +498,7 @@
       state.endAt = Date.now() + state.left * 1000;
       syncStageVisual(state);
       updateTabTitle();
-      clearInterval(state.id);
-      state.id = setInterval(function () { tickState(state); }, 250);
+      startTicker(state);
       draw(state);
       state.el.querySelector("[data-msg]").textContent = "";
       if (state.left === 0) {
@@ -556,8 +555,7 @@
       state.running = result.active === true && state.left > 0;
       if (state.running) {
         state.endAt = Date.now() + state.left * 1000;
-        clearInterval(state.id);
-        state.id = setInterval(function () { tickState(state); }, 250);
+        startTicker(state);
       } else {
         stopTimerLocally(state);
       }
@@ -604,7 +602,118 @@
     if (state.left === 0) verifyTimerCompletion(state);
   }
 
+  // Background tabs slow down normal timers, so the tick comes from a small
+  // Web Worker when the browser allows it, with setInterval as the fallback.
+  function startTicker(state) {
+    stopTicker(state);
+    const tick = function () { tickState(state); };
+    if (window.Worker) {
+      try {
+        const worker = new Worker("assets/js/timer-worker.js");
+        worker.onmessage = tick;
+        worker.onerror = function () {
+          worker.terminate();
+          if (state.id && state.id.worker === worker) state.id = { interval: setInterval(tick, 250) };
+        };
+        state.id = { worker: worker };
+        return;
+      } catch (e) { /* fall back below */ }
+    }
+    state.id = { interval: setInterval(tick, 250) };
+  }
+  function stopTicker(state) {
+    if (state.id) {
+      if (state.id.worker) state.id.worker.terminate();
+      if (state.id.interval) clearInterval(state.id.interval);
+    }
+    state.id = null;
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) return;
+    Object.keys(timers).forEach(function (k) { if (timers[k].running) tickState(timers[k]); });
+  });
+
+  // Completion notification, only after the visitor turns it on with a click.
+  var NOTIFY_KEY = "nepsis-timer-notify";
+  function notifyEnabled() {
+    if (!NOTIFY_KEY) return false;
+    try { return "Notification" in window && Notification.permission === "granted" && localStorage.getItem(NOTIFY_KEY) === "1"; } catch (e) { return false; }
+  }
+  function notifyDone(state) {
+    if (!notifyEnabled() || !document.hidden) return;
+    try {
+      new Notification("Nepsis", {
+        body: currentLang === "el" ? "Ολοκλήρωσες το στάδιο των " + state.min + " λεπτών." : "You finished the " + state.min + "-minute stage.",
+        icon: "assets/brand/nepsis-mark.svg"
+      });
+    } catch (e) { /* some mobile browsers only allow notifications from a service worker */ }
+  }
+  var notifyRow = document.createElement("div");
+  notifyRow.className = "notify-row";
+  var notifyBtn = document.createElement("button");
+  notifyBtn.type = "button";
+  notifyBtn.className = "btn btn-ghost notify-btn";
+  var notifyBlocked = document.createElement("p");
+  notifyBlocked.className = "notify-blocked";
+  notifyBlocked.hidden = true;
+  notifyBlocked.setAttribute("aria-live", "polite");
+  notifyBlocked.setAttribute("data-el", "Οι ειδοποιήσεις μπλοκαρίστηκαν από τον περιηγητή. Μπορείς να τις επιτρέψεις από τις ρυθμίσεις της σελίδας και να ξαναπατήσεις το κουμπί.");
+  notifyBlocked.setAttribute("data-en", "Notifications were blocked by the browser. You can allow them in the page settings and press the button again.");
+  notifyRow.appendChild(notifyBtn);
+  notifyRow.appendChild(notifyBlocked);
+  if ("Notification" in window) grid.insertAdjacentElement("afterend", notifyRow);
+  var notifyBlockedFlag = false;
+  function notificationsBlocked() {
+    try { if ("Notification" in window && Notification.permission === "denied") return true; } catch (e) {}
+    return notifyBlockedFlag;
+  }
+  function renderNotifyBtn() {
+    // renderStageLabels can run (via setLang) before this block has executed.
+    if (!notifyBtn || !("Notification" in window)) return;
+    const on = notifyEnabled();
+    const blocked = notificationsBlocked();
+    notifyBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    notifyBtn.textContent = on
+      ? (currentLang === "el" ? "🔔 Κλείσε τις ειδοποιήσεις" : "🔔 Turn off notifications")
+      : (currentLang === "el" ? "Ειδοποίησέ με όταν τελειώνει ένα στάδιο" : "Notify me when a stage ends");
+    if (notifyBlocked) {
+      const copy = notifyBlocked.getAttribute(currentLang === "en" ? "data-en" : "data-el");
+      notifyBlocked.textContent = copy;
+      notifyBlocked.hidden = !blocked;
+    }
+  }
+  notifyBtn.addEventListener("click", function () {
+    if (notifyEnabled()) {
+      notifyBlockedFlag = false;
+      try { localStorage.removeItem(NOTIFY_KEY); } catch (e) {}
+      renderNotifyBtn();
+      return;
+    }
+    var before = "default";
+    try { before = Notification.permission; } catch (e) {}
+    if (before === "denied") {
+      notifyBlockedFlag = true;
+      renderNotifyBtn();
+      return;
+    }
+    var started = Date.now();
+    Promise.resolve(Notification.requestPermission()).then(function (perm) {
+      if (perm === "granted") {
+        notifyBlockedFlag = false;
+        try { localStorage.setItem(NOTIFY_KEY, "1"); } catch (e) {}
+      } else if (perm === "denied" || (perm !== "granted" && (Date.now() - started) < 300)) {
+        notifyBlockedFlag = true;
+      }
+      renderNotifyBtn();
+    }).catch(function () {
+      notifyBlockedFlag = true;
+      renderNotifyBtn();
+    });
+  });
+  renderNotifyBtn();
+
   function renderStageLabels() {
+    renderNotifyBtn();
     STAGES.forEach(function (s, i) {
       const st = timers[s.min];
       if (!st) return;
@@ -643,7 +752,7 @@
         state.running = result.active === true && state.left > 0;
         if (state.running) {
           state.endAt = Date.now() + state.left * 1000;
-          state.id = setInterval(function () { tickState(state); }, 250);
+          startTicker(state);
         } else {
           stopTimerLocally(state);
         }
