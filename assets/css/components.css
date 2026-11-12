@@ -159,3 +159,8 @@ body.home-page .hero-copy .btn-primary {
 body.home-page .hero-copy .knowledge-note {
   margin-top: 14px;
 }
+
+/* Practice page: opt-in completion notification under the stages */
+.notify-row { text-align: center; margin: 18px 0 0; }
+.notify-btn { font-size: 14px; padding: 10px 16px; }
+.notify-btn:disabled { opacity: .6; cursor: not-allowed; }
