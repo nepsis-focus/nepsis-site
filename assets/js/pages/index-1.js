@@ -1040,8 +1040,11 @@ let currentLang = "el";
     }
   }
   if (!REDUCE && window.gsap && window.ScrollTrigger) {
-    gsap.from(".badge, .hero h1, .hero .lead, .hero .btns", {
-      y: 30, opacity: 0, duration: 0.9, stagger: 0.12, ease: "power3.out", clearProps: "transform,opacity"
+    // The title fades in as one whole block (no letter-by-letter, no movement),
+    // so the Greek title keeps its layout while it appears.
+    gsap.from(".hero h1", { opacity: 0, duration: 1.4, ease: "power1.out", clearProps: "opacity" });
+    gsap.from(".badge, .hero .lead, .hero .btns", {
+      y: 18, opacity: 0, duration: 0.9, delay: 0.2, stagger: 0.12, ease: "power3.out", clearProps: "transform,opacity"
     });
     gsap.utils.toArray(".card:not(.stage)").forEach(function (el) {
       gsap.from(el, {

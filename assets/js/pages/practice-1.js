@@ -1065,7 +1065,7 @@
     const box = state.el.querySelector("[data-after]");
     const f = FACTS[state.min];
     const isEl = currentLang === "el";
-    box.innerHTML =
+    box.innerHTML = finishShareHtml(state.min) +
       '<div class="fact"><div style="font-weight:800">' + (isEl ? "Γνώση" : "Did you know") + '</div>' +
       '<div style="margin-top:6px">' + (isEl ? f.el : f.en) + '</div>' +
       '<div class="src">' + (isEl ? "Πηγή: " : "Source: ") + f.src + '</div></div>' +
@@ -1083,6 +1083,105 @@
         box.querySelector("[data-saved]").textContent = isEl ? "Αποθηκεύτηκε για σήμερα." : "Saved for today.";
         renderProgress();
       });
+    });
+    bindFinishShare(box, state.min);
+  }
+
+  // ---------- calm share card + “Challenge a friend” after a finished stage ----------
+  // The card holds only the stage length: no name, no email, no streak.
+  const CHALLENGE_MIN = 5;
+  function bi(tag, cls, el, en, extra) {
+    return '<' + tag + (cls ? ' class="' + cls + '"' : '') + (extra || '') + ' data-el="' + el + '" data-en="' + en + '">' +
+      (currentLang === "en" ? en : el) + '</' + tag + '>';
+  }
+  function challengeUrl() {
+    const url = new URL("practice.html", window.location.href);
+    url.search = "?challenge=" + CHALLENGE_MIN;
+    url.hash = "stage-" + CHALLENGE_MIN;
+    return url.href;
+  }
+  function drawFinishCard(min) {
+    const c = document.createElement("canvas");
+    c.width = 1080; c.height = 1080;
+    const x = c.getContext("2d");
+    const isEl = currentLang === "el";
+    x.fillStyle = "#FFF8EE"; x.fillRect(0, 0, 1080, 1080);
+    const glow = x.createRadialGradient(540, 430, 30, 540, 430, 520);
+    glow.addColorStop(0, "rgba(240,138,36,0.16)"); glow.addColorStop(1, "rgba(240,138,36,0)");
+    x.fillStyle = glow; x.fillRect(0, 0, 1080, 1080);
+    x.beginPath(); x.arc(540, 400, 150, 0, Math.PI * 2);
+    x.strokeStyle = "rgba(240,138,36,0.22)"; x.lineWidth = 6; x.stroke();
+    x.beginPath(); x.arc(540, 400, 64, 0, Math.PI * 2); x.fillStyle = "#F08A24"; x.fill();
+    x.textAlign = "center"; x.fillStyle = "#3A2418";
+    x.font = "900 64px Nunito, sans-serif";
+    x.fillText("Nepsis", 540, 170);
+    x.font = "800 66px Nunito, sans-serif";
+    x.fillText(isEl ? min + " λεπτά συγκέντρωσης" : min + " minutes of focus", 540, 680);
+    x.font = "600 42px Nunito, sans-serif"; x.fillStyle = "#7A5F50";
+    x.fillText(isEl ? "Ένα μικρό βήμα, με ηρεμία." : "One small step, calmly.", 540, 760);
+    x.font = "700 34px Nunito, sans-serif"; x.fillStyle = "#B4612A";
+    x.fillText("nepsis-focus.github.io/nepsis-site", 540, 960);
+    return c;
+  }
+  function finishShareHtml(min) {
+    let src = "";
+    try { src = drawFinishCard(min).toDataURL("image/png"); } catch (e) {}
+    return '<div class="finish-share">' +
+      (src ? '<img class="finish-card" src="' + src + '" alt="' + (currentLang === "en" ? "Nepsis card: " + min + " minutes of focus" : "Κάρτα Nepsis: " + min + " λεπτά συγκέντρωσης") + '" width="540" height="540">' : '') +
+      bi("p", "finish-line", "Ωραία. Αν θέλεις, μοιράσου την κάρτα ή κάλεσε έναν φίλο για πέντε λεπτά.", "Nice. If you like, share the card or invite a friend to five minutes.") +
+      '<div class="finish-actions">' +
+        bi("button", "btn btn-ghost", "Μοιράσου την κάρτα", "Share the card", ' type="button" data-share-card') +
+        bi("button", "btn btn-primary", "Πρόκληση σε φίλο", "Challenge a friend", ' type="button" data-challenge') +
+      '</div>' +
+      '<p class="finish-status" data-share-status aria-live="polite"></p>' +
+    '</div>';
+  }
+  function setShareStatus(box, el, en, link) {
+    const st = box.querySelector("[data-share-status]");
+    if (!st) return;
+    st.innerHTML = "";
+    const span = document.createElement("span");
+    span.dataset.el = el; span.dataset.en = en;
+    span.textContent = currentLang === "en" ? en : el;
+    st.appendChild(span);
+    if (link) {
+      const a = document.createElement("a");
+      a.href = link; a.textContent = link; a.className = "finish-link";
+      st.appendChild(document.createTextNode(" "));
+      st.appendChild(a);
+    }
+  }
+  function bindFinishShare(box, min) {
+    const cardBtn = box.querySelector("[data-share-card]");
+    const challengeBtn = box.querySelector("[data-challenge]");
+    if (cardBtn) cardBtn.addEventListener("click", function () {
+      drawFinishCard(min).toBlob(async function (blob) {
+        if (!blob) return;
+        const file = new File([blob], "nepsis-" + min + "-min.png", { type: "image/png" });
+        const text = currentLang === "el" ? "Μόλις έκανα " + min + " λεπτά συγκέντρωσης στο Nepsis." : "I just did " + min + " minutes of focus on Nepsis.";
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file], title: "Nepsis", text: text }); return; } catch (e) { return; }
+        }
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob); a.download = file.name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setShareStatus(box, "Η κάρτα κατέβηκε στη συσκευή σου.", "The card was saved to your device.");
+      }, "image/png");
+    });
+    if (challengeBtn) challengeBtn.addEventListener("click", async function () {
+      const url = challengeUrl();
+      const text = currentLang === "el"
+        ? "Σε προκαλώ σε πέντε λεπτά ήρεμης συγκέντρωσης στο Nepsis."
+        : "I challenge you to five calm minutes of focus on Nepsis.";
+      if (navigator.share) {
+        try { await navigator.share({ title: "Nepsis", text: text, url: url }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+      }
+      try {
+        await navigator.clipboard.writeText(text + " " + url);
+        setShareStatus(box, "Ο σύνδεσμος αντιγράφηκε. Στείλ’ τον σε όποιον θέλεις.", "Link copied. Send it to anyone you like.");
+      } catch (e) {
+        setShareStatus(box, "Αντίγραψε αυτόν τον σύνδεσμο:", "Copy this link:", url);
+      }
     });
   }
 
@@ -1467,7 +1566,23 @@
       '?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' +
       '<p style="margin-top:10px"><a href="https://open.spotify.com/playlist/' + id + '" target="_blank" rel="noopener" style="color:var(--ember);font-weight:800">' +
       (currentLang === "el" ? "Άνοιγμα στο Spotify" : "Open in Spotify") + '</a></p>';
-    document.querySelectorAll("#musicPicks button").forEach(function (b, j) { b.classList.toggle("active", j === i); });
+    markMusicPick(String(i));
+  }
+  function markMusicPick(value) {
+    document.querySelectorAll("#musicPicks button").forEach(function (b) {
+      const on = b.dataset.idx === value;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+  function stopAllSound() {
+    currentMusicIdx = null;
+    currentAmbientIdx = null;
+    $("musicFrame").innerHTML = "";
+    $("ambientFrame").innerHTML = '<p class="ambient-hint" data-el="Επίλεξε μία από τις λίστες για να φορτώσει εδώ." data-en="Choose a playlist and it will appear here.">' +
+      (currentLang === "en" ? "Choose a playlist and it will appear here." : "Επίλεξε μία από τις λίστες για να φορτώσει εδώ.") + '</p>';
+    document.querySelectorAll("#ambientPicks button").forEach(function (b) { b.classList.remove("active"); });
+    markMusicPick("none");
   }
   const AMBIENT_PLAYLISTS = [
     { id: "37i9dQZF1DXbcPC6Vvqudd", label: "Βροχή / Rain" },
@@ -1487,14 +1602,19 @@
     document.querySelectorAll("#ambientPicks button").forEach(function (b, j) {
       b.classList.toggle("active", j === i);
     });
+    const none = document.querySelector('#musicPicks button[data-idx="none"]');
+    if (none && currentMusicIdx === null) { none.classList.remove("active"); none.setAttribute("aria-pressed", "false"); }
   }
   document.querySelectorAll("#musicPicks button").forEach(function (b) {
-    b.addEventListener("click", function () { playMusic(Number(b.dataset.idx)); });
+    b.addEventListener("click", function () {
+      if (b.dataset.idx === "none") stopAllSound();
+      else playMusic(Number(b.dataset.idx));
+    });
   });
   document.querySelectorAll("#ambientPicks button").forEach(function (b) {
     b.addEventListener("click", function () { playAmbientPlaylist(Number(b.dataset.ambient)); });
   });
-  if (document.body.classList.contains("practice-page")) playMusic(0);
+  // No sound starts on its own: the visitor chooses music or ambient sound, or keeps “No sound”.
 
   // 3D tilt for cards that the pointer is over (only on devices with a mouse or pen)
   let tiltEl = null;
@@ -1509,7 +1629,91 @@
     c.style.transform = "perspective(1000px) rotateY(" + (x * 8) + "deg) rotateX(" + (-y * 8) + "deg) translateY(-4px)";
   });
   document.addEventListener("pointerleave", function () { if (tiltEl) { tiltEl.style.transform = ""; tiltEl = null; } });
+  // ---------- gentle return: idle nudge after ~10 quiet minutes, soft welcome back after a tab switch ----------
+  // No counters, no scores: only an invitation to return to the work.
+  const IDLE_MS = 10 * 60 * 1000;
+  const WELCOME_AFTER_MS = 30 * 1000;
+  let idleTimer = null, hiddenAt = null, welcomeTimer = null;
+  function anyStageRunning() {
+    return Object.keys(timers).some(function (k) { return timers[k] && timers[k].running; });
+  }
+  function nudgeOpen() { return !$("focusNudge").hidden; }
+  function showNudge() {
+    if (document.hidden || anyStageRunning() || nudgeOpen()) { armIdle(); return; }
+    $("focusNudgeScrim").hidden = false;
+    $("focusNudge").hidden = false;
+    requestAnimationFrame(function () { document.body.classList.add("nudge-visible"); });
+    $("nudgeStart").focus({ preventScroll: true });
+  }
+  function hideNudge() {
+    document.body.classList.remove("nudge-visible");
+    $("focusNudge").hidden = true;
+    $("focusNudgeScrim").hidden = true;
+    armIdle();
+  }
+  function armIdle() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(showNudge, IDLE_MS);
+  }
+  function onActivity() { if (!nudgeOpen()) armIdle(); }
+  ["pointerdown", "keydown", "scroll", "touchstart", "wheel"].forEach(function (ev) {
+    window.addEventListener(ev, onActivity, { passive: true });
+  });
+  let lastMove = 0;
+  window.addEventListener("pointermove", function () {
+    const now = Date.now();
+    if (now - lastMove > 5000) { lastMove = now; onActivity(); }
+  }, { passive: true });
+  function goToStage(min, startNow) {
+    const st = timers[min];
+    if (!st) return;
+    st.el.scrollIntoView({ behavior: REDUCE ? "auto" : "smooth", block: "center" });
+    st.el.classList.add("is-invited");
+    setTimeout(function () { st.el.classList.remove("is-invited"); }, 6000);
+    if (startNow && !st.running && !st.busy) start(st);
+    else st.el.querySelector("[data-start]").focus({ preventScroll: true });
+  }
+  $("nudgeStart").addEventListener("click", function () { hideNudge(); goToStage(CHALLENGE_MIN, false); });
+  $("nudgeClose").addEventListener("click", hideNudge);
+  $("focusNudgeScrim").addEventListener("click", hideNudge);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && nudgeOpen()) hideNudge(); });
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) { hiddenAt = Date.now(); clearTimeout(idleTimer); return; }
+    const away = hiddenAt ? Date.now() - hiddenAt : 0;
+    hiddenAt = null;
+    armIdle();
+    // One welcome-back only: a running stage shows its own in-card message (thought parking),
+    // so this toast is for when no stage is running.
+    if (away >= WELCOME_AFTER_MS && !nudgeOpen() && !anyStageRunning()) {
+      const w = $("welcomeBack");
+      w.hidden = false;
+      requestAnimationFrame(function () { w.classList.add("show"); });
+      clearTimeout(welcomeTimer);
+      welcomeTimer = setTimeout(function () {
+        w.classList.remove("show");
+        setTimeout(function () { w.hidden = true; }, 600);
+      }, 6000);
+    }
+  });
+
+  // A friend's “Challenge a friend” link: practice.html?challenge=5#stage-5
+  function handleChallengeLink() {
+    let params;
+    try { params = new URLSearchParams(window.location.search); } catch (e) { return; }
+    if (params.get("challenge") !== String(CHALLENGE_MIN)) return;
+    const invite = $("challengeInvite");
+    invite.hidden = false;
+    $("inviteStart").addEventListener("click", function () {
+      invite.hidden = true;
+      goToStage(CHALLENGE_MIN, true);
+    });
+    setTimeout(function () {
+      invite.scrollIntoView({ behavior: "auto", block: "center" });
+      $("inviteStart").focus({ preventScroll: true });
+    }, 350);
+  }
+
   // ---------- start ----------
   renderSelect(); renderCalc(); renderStageLabels();
   try { setLang(localStorage.getItem("nepsis-lang") === "en" ? "en" : "el"); } catch (e) { setLang("el"); }
-  if (document.body.classList.contains("practice-page")) restoreTimers();
+  if (document.body.classList.contains("practice-page")) { restoreTimers(); handleChallengeLink(); armIdle(); }
