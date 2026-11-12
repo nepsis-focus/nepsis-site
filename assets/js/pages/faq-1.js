@@ -34,5 +34,5 @@
   document.querySelectorAll(".lang button").forEach(function (button) {
     button.addEventListener("click", function () { setLang(button.dataset.lang); });
   });
-  setLang("el");
+  try { setLang(localStorage.getItem("nepsis-lang") === "en" ? "en" : "el"); } catch (e) { setLang("el"); }
 })();

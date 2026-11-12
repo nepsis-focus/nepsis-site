@@ -10,7 +10,7 @@
       if (el.tagName === "H1" || el.classList.contains("hero-h1")) el.innerHTML = v; else el.textContent = v;
     });
     document.querySelectorAll(".lang button").forEach(function (b) { b.classList.toggle("active", b.dataset.lang === l); });
-    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz();
+    renderSelect(); renderCalc(); renderGlobeMsg(); renderStageLabels(); renderProgress(); buildQuiz(); if (currentMusicIdx !== null) playMusic(currentMusicIdx); if (currentAmbientIdx !== null) playAmbientPlaylist(currentAmbientIdx); renderAcc(""); updateTabTitle();
   }
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
@@ -324,6 +324,7 @@
   STAGES.forEach(function (s, i) {
     const card = document.createElement("div");
     card.className = "card stage";
+    card.id = "stage-" + s.min;
     card.innerHTML =
       '<span class="stage-folder-tab" aria-hidden="true"><i></i></span>' +
       '<div class="top"><span>' + (currentLang === "el" ? "ΣΤΑΔΙΟ " : "STAGE ") + (i + 1) + '</span><span class="dot2"></span></div>' +
@@ -453,6 +454,8 @@
     clearInterval(state.id);
     state.id = null;
     state.endAt = null;
+    syncStageVisual(state);
+    updateTabTitle();
   }
 
   function finishTimer(state) {
@@ -464,9 +467,10 @@
     draw(state);
     markStage(state.min);
     showAfter(state);
+    state.el.classList.add("is-complete");
     state.el.querySelector("[data-msg]").textContent = currentLang === "el"
-      ? "Ολοκληρώθηκε! Ο χρόνος επιβεβαιώθηκε."
-      : "Done! The time has been verified.";
+      ? "Ολοκληρώθηκε."
+      : "Session complete.";
     renderStageLabels();
   }
 
@@ -492,6 +496,8 @@
       }
       state.running = true;
       state.endAt = Date.now() + state.left * 1000;
+      syncStageVisual(state);
+      updateTabTitle();
       clearInterval(state.id);
       state.id = setInterval(function () { tickState(state); }, 250);
       draw(state);
@@ -573,10 +579,28 @@
     }
   }
 
+  function pageTitle() {
+    const el = document.querySelector("title");
+    if (!el) return "Nepsis";
+    return (currentLang === "en" ? el.dataset.en : el.dataset.el) || el.textContent || "Nepsis";
+  }
+  function syncStageVisual(state) {
+    state.el.classList.toggle("is-running", !!state.running);
+    if (state.running) state.el.classList.remove("is-complete");
+  }
+  function updateTabTitle() {
+    let running = null;
+    Object.keys(timers).forEach(function (k) {
+      if (timers[k] && timers[k].running) running = timers[k];
+    });
+    if (running && running.left > 0) document.title = fmt(running.left) + " · " + pageTitle();
+    else document.title = pageTitle();
+  }
   function tickState(state) {
     if (!state.running || state.busy) return;
     state.left = Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000));
     draw(state);
+    updateTabTitle();
     if (state.left === 0) verifyTimerCompletion(state);
   }
 
@@ -710,7 +734,7 @@
     }).join("");
     const deviceLine = sbUser
       ? (isEl ? "Η πρόοδός σου αποθηκεύεται στη συσκευή και συγχρονίζεται στον λογαριασμό σου." : "Your progress is saved on this device and synced to your account.")
-      : (isEl ? "Η πρόοδός σου αποθηκεύεται μόνο σε αυτή τη συσκευή." : "Your progress is saved only on this device.");
+      : (isEl ? "Μένει σε αυτή τη συσκευή μέχρι να συνδεθείς." : "It stays on this device until you sign in.");
     el.innerHTML =
       '<div class="streak">' + (isEl ? "Η προσπάθειά σου μέχρι σήμερα" : "Your progress so far") + '</div>' +
       '<div class="progress-overview">' +
@@ -1132,7 +1156,10 @@
     ["0bf0PLg5I856ySoVv7HCIR"],
     ["7wHb7vPGyj1BKBhAnZS73T"]
   ];
+  let currentMusicIdx = null;
+  let currentAmbientIdx = null;
   function playMusic(i) {
+    currentMusicIdx = i;
     const id = MUSIC[i][0];
     $("musicFrame").innerHTML =
       '<iframe title="Spotify playlist" style="border-radius:20px" src="https://open.spotify.com/embed/playlist/' + id +
@@ -1149,6 +1176,7 @@
   function playAmbientPlaylist(i) {
     const playlist = AMBIENT_PLAYLISTS[i];
     if (!playlist) return;
+    currentAmbientIdx = i;
     const id = playlist.id;
     $("ambientFrame").innerHTML =
       '<iframe title="Spotify ambient playlist" style="border-radius:16px" src="https://open.spotify.com/embed/playlist/' + id +
@@ -1182,5 +1210,5 @@
   document.addEventListener("pointerleave", function () { if (tiltEl) { tiltEl.style.transform = ""; tiltEl = null; } });
   // ---------- start ----------
   renderSelect(); renderCalc(); renderStageLabels();
-  setLang("el");
+  try { setLang(localStorage.getItem("nepsis-lang") === "en" ? "en" : "el"); } catch (e) { setLang("el"); }
   if (document.body.classList.contains("practice-page")) restoreTimers();

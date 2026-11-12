@@ -1,5 +1,12 @@
-{
-  "en": "One notification can pull you away for a few seconds. Turn off the ones you don't need.",
-  "el": "Μία ειδοποίηση μπορεί να σε αποσπάσει για λίγα δευτερόλεπτα. Κλείσε όσες δεν χρειάζεσαι.",
-  "source": "Fournier et al., Computers in Human Behavior, 2026"
-}
+[
+  {
+    "en": "One notification can pull you away for a few seconds. Turn off the ones you don't need.",
+    "el": "Μία ειδοποίηση μπορεί να σε αποσπάσει για λίγα δευτερόλεπτα. Κλείσε όσες δεν χρειάζεσαι.",
+    "source": "Fournier et al., Computers in Human Behavior, 2026"
+  },
+  {
+    "en": "Songs with lyrics can make reading and memorising a little harder. For your next study session, try instrumental music or silence.",
+    "el": "Οι στίχοι μπορεί να δυσκολέψουν λίγο το διάβασμα. Δοκίμασε ορχηστρική μουσική ή ησυχία.",
+    "source": "Souza & Leal Barbosa, Journal of Cognition, 2023"
+  }
+]
