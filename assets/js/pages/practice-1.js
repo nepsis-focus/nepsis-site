@@ -343,6 +343,14 @@
         '</div>' +
         '<p class="thought-park-privacy" data-park-privacy></p>' +
         '<p class="thought-park-ok" data-park-ok aria-live="polite"></p>' +
+        '<div class="thought-park-next" data-park-next hidden>' +
+          '<label class="thought-park-next-q" for="park-next-' + s.min + '" data-park-next-q></label>' +
+          '<div class="thought-park-row">' +
+            '<input type="text" id="park-next-' + s.min + '" class="thought-park-input" maxlength="160" autocomplete="off" enterkeyhint="go" data-park-next-input>' +
+            '<button type="button" class="btn btn-ghost thought-park-save" data-park-next-go></button>' +
+          '</div>' +
+        '</div>' +
+        '<p class="thought-park-anchor" data-park-anchor aria-live="polite"></p>' +
       '</div>' +
       '<details class="thought-park-review" data-park-review hidden>' +
         '<summary data-park-review-title></summary>' +
@@ -373,6 +381,8 @@
       if (state.busy) return;
       if (state.running) pause(state);
       else start(state);
+      lastRanStage = s.min;
+      renderParkReview();
     });
 
     var parkInput = card.querySelector("[data-park-input]");
@@ -381,14 +391,36 @@
     function keepThought() {
       var text = (parkInput.value || "").trim();
       if (!text) return;
-      saveParkedThought(text, s.min);
+      lastParkedId = saveParkedThought(text, s.min);
       parkInput.value = "";
       parkOk.textContent = currentLang === "el" ? "Το κράτησα." : "Saved. Back to now.";
       clearTimeout(parkOk._hide);
       parkOk._hide = setTimeout(function () { parkOk.textContent = ""; }, 2000);
-      parkInput.focus();
+      // One short question to return to the reading; no music choice, no extra guidance.
+      nextBox.hidden = false;
+      nextInput.value = "";
+      nextInput.focus();
       renderParkReview();
     }
+    var lastParkedId = null;
+    var nextBox = card.querySelector("[data-park-next]");
+    var nextInput = card.querySelector("[data-park-next-input]");
+    var anchor = card.querySelector("[data-park-anchor]");
+    function keepNextStep() {
+      var next = (nextInput.value || "").trim().slice(0, 160);
+      nextBox.hidden = true;
+      nextInput.value = "";
+      if (!next) return;
+      anchor.dataset.next = next;
+      if (lastParkedId) setParkedNext(lastParkedId, next);
+      renderParkLabels();
+      renderParkReview();
+    }
+    card.querySelector("[data-park-next-go]").addEventListener("click", keepNextStep);
+    nextInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); keepNextStep(); }
+      else if (e.key === "Escape") { nextBox.hidden = true; nextInput.value = ""; }
+    });
     parkSave.addEventListener("click", keepThought);
     card.querySelector("[data-park-clear]").addEventListener("click", function () {
       var ask = currentLang === "el" ? "Να σβηστούν όλες οι σημειώσεις από αυτή τη συσκευή;" : "Delete all notes from this device?";
@@ -405,6 +437,9 @@
   });
 
   var PARK_KEY = "nepsis-thought-park";
+  // Kept notes show only on the card of the stage that ran (this visit),
+  // or, before any stage runs, on the stage of the newest note.
+  var lastRanStage = null;
   function loadParkedThoughts() {
     try {
       var list = JSON.parse(localStorage.getItem(PARK_KEY) || "[]");
@@ -419,21 +454,39 @@
       at: Date.now(),
       stage: stageMin
     });
+    var id = list[list.length - 1].id;
     try { localStorage.setItem(PARK_KEY, JSON.stringify(list.slice(-50))); } catch (e) {}
+    return id;
+  }
+  function setParkedNext(id, next) {
+    var list = loadParkedThoughts();
+    list.forEach(function (item) { if (item && item.id === id) item.next = String(next).slice(0, 160); });
+    try { localStorage.setItem(PARK_KEY, JSON.stringify(list)); } catch (e) {}
   }
   function renderParkLabels() {
     var label = currentLang === "el"
       ? "Αν πετάγεται κάτι, γράψε το και γύρνα στο τώρα."
       : "If something pops up, write it down and return to now.";
-    var placeholder = currentLang === "el" ? "Μια σύντομη σημείωση" : "A short note";
+    var placeholder = currentLang === "el" ? "Σύντομη σημείωση" : "A short note";
     var save = currentLang === "el" ? "Κράτησέ το" : "Keep it";
     var privacy = currentLang === "el" ? "Μένει μόνο σε αυτή τη συσκευή." : "It stays only on this device.";
+    var nextQ = currentLang === "el"
+      ? "Ποιο είναι το αμέσως επόμενο μικρό κομμάτι που είχες να διαβάσεις;"
+      : "What is the very next small piece you were about to read?";
+    var nextPh = currentLang === "el" ? "π.χ. σελίδα 12" : "e.g. page 12";
+    var nextGo = currentLang === "el" ? "Πάμε" : "Go";
+    var nextLead = currentLang === "el" ? "Επόμενο: " : "Next: ";
     document.querySelectorAll(".thought-park").forEach(function (park) {
       park.querySelector("[data-park-label]").textContent = label;
       park.querySelector("[data-park-input]").setAttribute("placeholder", placeholder);
       park.querySelector("[data-park-input]").setAttribute("aria-label", label);
       park.querySelector("[data-park-save]").textContent = save;
       park.querySelector("[data-park-privacy]").textContent = privacy;
+      park.querySelector("[data-park-next-q]").textContent = nextQ;
+      park.querySelector("[data-park-next-input]").setAttribute("placeholder", nextPh);
+      park.querySelector("[data-park-next-go]").textContent = nextGo;
+      var anchor = park.querySelector("[data-park-anchor]");
+      anchor.textContent = anchor.dataset.next ? nextLead + anchor.dataset.next : "";
     });
   }
   renderParkLabels();
@@ -445,8 +498,11 @@
     var clear = currentLang === "el" ? "Σβήσ' τες όλες" : "Delete all";
     var privacy = currentLang === "el" ? "Μένει μόνο σε αυτή τη συσκευή." : "It stays only on this device.";
     var locale = currentLang === "el" ? "el-GR" : "en-GB";
+    var showOn = lastRanStage !== null ? lastRanStage : (list.length && list[0].stage ? Number(list[0].stage) : null);
     document.querySelectorAll("[data-park-review]").forEach(function (box) {
-      box.hidden = list.length === 0;
+      var card = box.closest(".stage");
+      var cardMin = card && card.id ? Number(card.id.replace("stage-", "")) : null;
+      box.hidden = list.length === 0 || cardMin !== showOn;
       box.querySelector("[data-park-review-title]").textContent = title;
       box.querySelector("[data-park-review-privacy]").textContent = privacy;
       box.querySelector("[data-park-clear]").textContent = clear;
@@ -461,6 +517,12 @@
         } catch (e) { when.textContent = ""; }
         li.appendChild(when);
         li.appendChild(document.createTextNode(" " + String(item.text || "")));
+        if (item.next) {
+          var nx = document.createElement("span");
+          nx.className = "thought-park-next-item";
+          nx.textContent = (currentLang === "el" ? "Επόμενο: " : "Next: ") + String(item.next);
+          li.appendChild(nx);
+        }
         ul.appendChild(li);
       });
     });

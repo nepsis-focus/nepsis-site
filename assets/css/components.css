@@ -176,13 +176,17 @@ body.home-page .hero-copy .knowledge-note {
   line-height: 1.35;
   color: #3A2418;
 }
+/* Stage cards are narrow, so the field takes the full width and the button sits below it. */
 .practice-page .thought-park-row {
   display: flex;
+  flex-direction: column;
   gap: 8px;
   align-items: stretch;
 }
 .practice-page .thought-park-input {
-  flex: 1;
+  flex: 0 0 auto;
+  width: 100%;
+  box-sizing: border-box;
   min-width: 0;
   min-height: 2.6rem;
   padding: 0.55rem 0.75rem;
@@ -200,7 +204,8 @@ body.home-page .hero-copy .knowledge-note {
 }
 .practice-page .thought-park-save {
   flex: 0 0 auto;
-  white-space: nowrap;
+  width: 100%;
+  white-space: normal;
 }
 .practice-page .thought-park-privacy {
   margin: 6px 0 0;
@@ -215,14 +220,21 @@ body.home-page .hero-copy .knowledge-note {
   color: #3A2418;
 }
 .practice-page .thought-park-return {
+  position: static;
+  display: block;
   min-height: 0;
-  margin: 0 0 8px;
+  margin: 6px 0 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #FFF8EE;
+  border: 1px solid rgba(240, 138, 36, 0.25);
+  text-align: left;
   font-size: 0.95rem;
   line-height: 1.35;
   color: #3A2418;
 }
 .practice-page .thought-park-return:empty {
-  margin: 0;
+  display: none;
 }
 /* Kept notes: shown under the card when no timer is running. */
 .practice-page .thought-park-review {
@@ -260,4 +272,19 @@ body.home-page .hero-copy .knowledge-note {
 }
 @media (prefers-reduced-motion: reduce) {
   .practice-page .thought-park-ok { transition: none; }
+}
+
+/* Return-to-reading question after a note is kept */
+.practice-page .thought-park-next { margin: 8px 0 0; }
+.practice-page .thought-park-next[hidden] { display: none; }
+.practice-page .thought-park-next-q {
+  display: block; margin: 0 0 8px; font-size: 0.9rem; line-height: 1.4; font-weight: 700; color: #3A2418;
+}
+.practice-page .thought-park-anchor {
+  margin: 6px 0 0; font-size: 0.88rem; line-height: 1.4; color: #B4612A; font-weight: 700; overflow-wrap: anywhere;
+}
+.practice-page .thought-park-anchor:empty { display: none; }
+.practice-page .thought-park-next-item { display: block; color: #B4612A; font-size: 0.82rem; }
+@media (min-width: 700px) {
+  .practice-page .thought-park-input { font-size: 0.9rem; padding: 0.5rem 0.6rem; }
 }
