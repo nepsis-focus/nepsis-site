@@ -198,6 +198,12 @@
   .cmp.off .pill { background: transparent; border: 1px solid #F2A37A; color: #F6E9DE; }
   .cmp.on .pill { background: var(--sun); color: var(--fg); }
 
+  .premium-choices .choice-copy { margin: 0 0 16px; color: var(--muted); }
+  .premium-choices .cmp.off .choice-copy { color: #F6E9DE; }
+  .premium-choices .btns { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
+  .premium-choices .btn { padding: 12px 16px; min-height: 0; white-space: normal; text-align: center; }
+  .premium-note { margin-top: 18px; color: var(--muted); font-size: .95rem; max-width: 62ch; }
+
   /* stages */
   .stages { display: grid; gap: 16px; grid-template-columns: 1fr; }
   @media (min-width: 640px) { .stages { grid-template-columns: 1fr 1fr; } }
