@@ -73,6 +73,7 @@ footer { margin-top:auto; border-top:1px solid var(--border); padding:25px 0 30p
 @media(max-width:760px) {
   .wrap { padding:0 20px; }
   .page-heading { padding:48px 0 35px; }
+  h1 { font-size:2rem; overflow-wrap:anywhere; }
   .content-section { padding:36px 0; }
   .content-grid { grid-template-columns:1fr; }
   .research-panel { grid-template-columns:1fr; gap:12px; padding:22px; }

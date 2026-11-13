@@ -62,7 +62,10 @@ jobs:
           npm install --no-save playwright
           npx playwright install --with-deps chromium
 
-      - name: Test the deployed Netlify preview
+      - name: Serve the site
+        run: python3 -m http.server 4173 >/tmp/nepsis-preview.log 2>&1 &
+
+      - name: Test this pull request in a browser
         env:
-          SITE_URL: https://deploy-preview-54--nepsis-focus.netlify.app
+          SITE_URL: http://127.0.0.1:4173
         run: node scripts/site-watchdog.mjs

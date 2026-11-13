@@ -4,7 +4,8 @@ import { writeFile } from "node:fs/promises";
 const base = (process.env.SITE_URL || "https://nepsis-focus.github.io/nepsis-site/").replace(/\/$/, "");
 const routes = [
   "/", "/practice.html", "/my-nepsis.html", "/reset.html", "/library.html",
-  "/diary.html", "/about.html", "/how.html", "/faq.html", "/privacy.html", "/terms.html"
+  "/diary.html", "/about.html", "/how.html", "/faq.html", "/privacy.html",
+  "/terms.html", "/premium.html"
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 1000, isMobile: false, hasTouch: false },
@@ -158,5 +159,5 @@ if (failures.length) {
   for (const failure of failures) console.error("- " + failure);
   process.exitCode = 1;
 } else {
-  console.log("\nAll eleven site pages passed desktop, 390px, and 320px browser health checks.");
+  console.log("\nAll " + routes.length + " site pages passed desktop, 390px, and 320px browser health checks.");
 }

@@ -345,7 +345,7 @@ let currentLang = "el";
   const grid = $("stageGrid");
   const timers = {};
 
-  STAGES.forEach(function (s, i) {
+  if (grid) STAGES.forEach(function (s, i) {
     const card = document.createElement("div");
     card.className = "card stage";
     card.innerHTML =
@@ -872,12 +872,17 @@ let currentLang = "el";
 
   // ---------- subscribe panel (opens inside the site) ----------
   function setSub(open) {
-    $("subModal").classList.toggle("open", open);
-    $("subScrim").classList.toggle("open", open);
+    const modal = $("subModal");
+    const scrim = $("subScrim");
+    if (!modal || !scrim) return;
+    modal.classList.toggle("open", open);
+    scrim.classList.toggle("open", open);
   }
   // The homepage primary button now navigates directly to the practice stages.
-  $("subClose").addEventListener("click", function () { setSub(false); });
-  $("subScrim").addEventListener("click", function () { setSub(false); });
+  const subClose = $("subClose");
+  if (subClose) subClose.addEventListener("click", function () { setSub(false); });
+  const subScrim = $("subScrim");
+  if (subScrim) subScrim.addEventListener("click", function () { setSub(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setSub(false); });
 
   // ---------- account (Supabase: email link, no password) ----------
@@ -932,8 +937,11 @@ let currentLang = "el";
     renderProgress();
   }
   function renderAcc(msg) {
+    const btn = $("accBtn");
+    if (!btn) return;
     const isEl = currentLang === "el";
-    $("accBtn").textContent = sbUser ? (isEl ? "Λογαριασμός" : "Account") : (isEl ? "Σύνδεση" : "Sign in");
+    btn.textContent = sbUser ? (isEl ? "Λογαριασμός" : "Account") : (isEl ? "Σύνδεση" : "Sign in");
+    if (!$("accEyebrow")) return;
     $("accEyebrow").textContent = isEl ? "Λογαριασμός" : "Account";
     $("accTitle").textContent = sbUser ? (isEl ? "Είσαι συνδεδεμένος" : "You are signed in") : (isEl ? "Σύνδεση" : "Sign in");
     $("accText").textContent = sbUser
@@ -947,14 +955,21 @@ let currentLang = "el";
     $("accMsg").textContent = msg || "";
   }
   function setAcc(open) {
-    $("accModal").classList.toggle("open", open);
-    $("accScrim").classList.toggle("open", open);
+    const modal = $("accModal");
+    const scrim = $("accScrim");
+    if (!modal || !scrim) return;
+    modal.classList.toggle("open", open);
+    scrim.classList.toggle("open", open);
     if (open) renderAcc("");
   }
-  $("accBtn").addEventListener("click", function () { setAcc(true); });
-  $("accClose").addEventListener("click", function () { setAcc(false); });
-  $("accScrim").addEventListener("click", function () { setAcc(false); });
-  $("accGoogle").addEventListener("click", async function () {
+  const accBtn = $("accBtn");
+  if (accBtn) accBtn.addEventListener("click", function () { setAcc(true); });
+  const accClose = $("accClose");
+  if (accClose) accClose.addEventListener("click", function () { setAcc(false); });
+  const accScrim = $("accScrim");
+  if (accScrim) accScrim.addEventListener("click", function () { setAcc(false); });
+  const accGoogle = $("accGoogle");
+  if (accGoogle) accGoogle.addEventListener("click", async function () {
     if (!sb) {
       renderAcc(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page.");
       return;
@@ -971,7 +986,8 @@ let currentLang = "el";
       renderAcc(currentLang === "el" ? "Δεν ήταν δυνατή η σύνδεση με Google. Δοκίμασε ξανά." : "Google sign-in could not start. Please try again.");
     }
   });
-  $("accOut").addEventListener("click", async function () {
+  const accOut = $("accOut");
+  if (accOut) accOut.addEventListener("click", async function () {
     try {
       if (sb) {
         const result = await sb.auth.signOut({ scope: "local" });

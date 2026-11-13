@@ -188,4 +188,10 @@ jobs:
           GITHUB_ISSUE_NUMBER: ${{ needs.browser-health-check.outputs.issue_number }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           OPENAI_MODEL: gpt-5.4-mini
-        run: node scripts/nepsis-ai-agent.mjs
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "OPENAI_API_KEY is not set. Skipping automatic diagnosis."
+            echo "Add it under Settings → Secrets and variables → Actions if you want this step."
+            exit 0
+          fi
+          node scripts/nepsis-ai-agent.mjs
