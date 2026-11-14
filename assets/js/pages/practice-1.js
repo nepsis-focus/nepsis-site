@@ -106,7 +106,8 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100);
     camera.position.set(0, 0, 5.6);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const isMobile = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
     if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.setClearColor(0x000000, 0);
 
@@ -289,9 +290,17 @@
     }
     resize();
 
-    function animate() {
+    let animating = true;
+    let lastFrame = 0;
+    const targetFPS = isMobile ? 30 : 60;
+    const frameInterval = 1000 / targetFPS;
+
+    function animate(now) {
+      if (!animating) return;
       requestAnimationFrame(animate);
-      if (focusAnimation) focusAnimation(performance.now());
+      if (now - lastFrame < frameInterval) return;
+      lastFrame = now;
+      if (focusAnimation) focusAnimation(now);
       if (!dragging) {
         if (Math.abs(velocityX) > 0.00004 || Math.abs(velocityY) > 0.00004) {
           earthGroup.rotation.y += velocityX;
@@ -304,7 +313,43 @@
       if (!reducedMotion) clouds.rotation.y += 0.00072;
       renderer.render(scene, camera);
     }
-    animate();
+
+    function startAnim() {
+      if (animating) return;
+      animating = true;
+      requestAnimationFrame(animate);
+    }
+    function stopAnim() {
+      animating = false;
+    }
+
+    // IntersectionObserver — pause when off-screen
+    const stageEl = $("globeStage");
+    if (stageEl && "IntersectionObserver" in window) {
+      const io = new IntersectionObserver(function (entries) {
+        const visible = entries.some(function (e) { return e.isIntersecting; });
+        if (visible && !document.hidden && !document.body.classList.contains("zen-active")) {
+          startAnim();
+        } else {
+          stopAnim();
+        }
+      }, { threshold: 0.1 });
+      io.observe(stageEl);
+    }
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stopAnim();
+      else if (!document.body.classList.contains("zen-active")) startAnim();
+    });
+
+    // Pause in Zen Mode
+    const zenObserver = new MutationObserver(function () {
+      if (document.body.classList.contains("zen-active")) stopAnim();
+      else startAnim();
+    });
+    zenObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+    requestAnimationFrame(animate);
 
     globeApp = {
       focusCountry: focusCountry,
@@ -330,7 +375,16 @@
 
   renderSelect();
   renderGlobeMsg();
-  initGlobe();
+  // Lazy start globe after load so FCP/LCP are not blocked
+  function startGlobeLazy() {
+    if (window.requestIdleCallback) {
+      requestIdleCallback(function () { initGlobe(); }, { timeout: 2000 });
+    } else {
+      setTimeout(initGlobe, 500);
+    }
+  }
+  if (document.readyState === "complete") startGlobeLazy();
+  else window.addEventListener("load", startGlobeLazy);
 
   // ---------- server-verified focus timers ----------
   const STAGES = [
