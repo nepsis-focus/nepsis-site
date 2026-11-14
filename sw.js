@@ -1,6 +1,6 @@
 // Nepsis Service Worker — lightweight, update-friendly
 // Version bump this string when you want to force cache refresh
-const CACHE_VERSION = 'nepsis-v1';
+const CACHE_VERSION = 'nepsis-v2';
 const CACHE_NAME = `nepsis-static-${CACHE_VERSION}`;
 
 // Core static assets to cache (adjust paths as needed)

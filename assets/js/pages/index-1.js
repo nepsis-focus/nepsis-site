@@ -1017,7 +1017,11 @@ let currentLang = "el";
     if (open) renderAcc("");
   }
   const accBtn = $("accBtn");
-  if (accBtn) accBtn.addEventListener("click", function () { setAcc(true); });
+  if (accBtn) accBtn.addEventListener("click", function (event) {
+    if (sbUser) { event.preventDefault(); setAcc(true); return; }
+    if (accBtn.tagName === "A" && accBtn.getAttribute("href")) return;
+    setAcc(true);
+  });
   const accClose = $("accClose");
   if (accClose) accClose.addEventListener("click", function () { setAcc(false); });
   const accScrim = $("accScrim");
@@ -1025,6 +1029,7 @@ let currentLang = "el";
   const accGoogle = $("accGoogle");
   if (accGoogle) accGoogle.addEventListener("click", async function () {
     if (!sb) {
+      if (accBtn && accBtn.getAttribute("href")) { location.assign(accBtn.getAttribute("href")); return; }
       renderAcc(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page.");
       return;
     }

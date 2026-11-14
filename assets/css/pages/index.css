@@ -969,3 +969,7 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   body.home-page .principles-note { min-width: 0; width: 100%; }
   body.home-page .principles-heading h2 { overflow-wrap: anywhere; }
 }
+
+a.acc-btn { text-decoration: none; display: inline-flex; align-items: center; }
+.acc-modal { z-index: 80; }
+.acc-scrim { z-index: 79; }

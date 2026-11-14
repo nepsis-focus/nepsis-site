@@ -1007,3 +1007,7 @@ body.zen-active #stageGrid > .stage.is-running * {
   transition: opacity 0.3s ease;
 }
 .live-focus-count:empty { opacity: 0; }
+
+a.acc-btn { text-decoration: none; display: inline-flex; align-items: center; }
+.acc-modal { z-index: 80; }
+.acc-scrim { z-index: 79; }
