@@ -1130,6 +1130,93 @@
     url.hash = "stage-" + CHALLENGE_MIN;
     return url.href;
   }
+  function drawStoryCard(min) {
+    const c = document.createElement("canvas");
+    c.width = 1080; c.height = 1920;
+    const ctx = c.getContext("2d");
+    const isEl = currentLang === "el";
+    const p = loadProgress();
+    const streak = currentStreak(p);
+
+    // Dark minimal background
+    ctx.fillStyle = "#0C0C0F";
+    ctx.fillRect(0, 0, 1080, 1920);
+
+    // Subtle warm glow
+    const glow = ctx.createRadialGradient(540, 760, 60, 540, 760, 780);
+    glow.addColorStop(0, "rgba(240,112,42,0.22)");
+    glow.addColorStop(1, "rgba(240,112,42,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, 1080, 1920);
+
+    // Top brand
+    ctx.fillStyle = "#FFFFFF";
+    ctx.textAlign = "center";
+    ctx.font = "700 38px Nunito, system-ui, sans-serif";
+    ctx.fillText("NEPSIS", 540, 280);
+
+    // Big minutes
+    ctx.font = "900 180px Nunito, system-ui, sans-serif";
+    ctx.fillText(String(min), 540, 720);
+
+    ctx.font = "700 48px Nunito, system-ui, sans-serif";
+    ctx.fillStyle = "#EDEDEF";
+    const minutesLine = isEl ? "λεπτά πραγματικής συγκέντρωσης" : "minutes of real focus";
+    ctx.fillText(minutesLine, 540, 820);
+
+    // Streak (only if > 0)
+    let nextY = 980;
+    if (streak > 0) {
+      ctx.font = "800 52px Nunito, system-ui, sans-serif";
+      ctx.fillStyle = "#F0702A";
+      const streakText = isEl
+        ? (streak === 1 ? "1 μέρα σερί" : streak + " μέρες σερί")
+        : (streak === 1 ? "1 day streak" : streak + " day streak");
+      ctx.fillText(streakText, 540, nextY);
+      nextY += 100;
+    }
+
+    // Encouragement phrase
+    const phrasesEl = [
+      "Μπράβο. Κράτησες την προσοχή σου.",
+      "Κάθε λεπτό μετράει.",
+      "Η συγκέντρωση χτίζεται έτσι."
+    ];
+    const phrasesEn = [
+      "Well done. You held your attention.",
+      "Every minute counts.",
+      "Focus is built like this."
+    ];
+    const phrase = (isEl ? phrasesEl : phrasesEn)[Math.floor(Math.random() * 3)];
+    ctx.font = "600 42px Nunito, system-ui, sans-serif";
+    ctx.fillStyle = "#FFFFFF";
+    // Simple wrap for longer phrases
+    const maxWidth = 860;
+    const words = phrase.split(" ");
+    let line = "";
+    const lines = [];
+    for (let i = 0; i < words.length; i++) {
+      const test = line + words[i] + " ";
+      if (ctx.measureText(test).width > maxWidth && line) {
+        lines.push(line.trim());
+        line = words[i] + " ";
+      } else {
+        line = test;
+      }
+    }
+    lines.push(line.trim());
+    lines.forEach(function (ln, idx) {
+      ctx.fillText(ln, 540, nextY + idx * 56);
+    });
+
+    // Bottom URL
+    ctx.font = "500 30px Nunito, system-ui, sans-serif";
+    ctx.fillStyle = "#8A8A8E";
+    ctx.fillText("nepsis-focus.github.io/nepsis-site", 540, 1780);
+
+    return c;
+  }
+
   function drawFinishCard(min) {
     const c = document.createElement("canvas");
     c.width = 1080; c.height = 1080;
@@ -1160,6 +1247,7 @@
       (src ? '<img class="finish-card" src="' + src + '" alt="' + (currentLang === "en" ? "Nepsis card: " + min + " minutes of focus" : "Κάρτα Nepsis: " + min + " λεπτά συγκέντρωσης") + '" width="540" height="540">' : '') +
       bi("p", "finish-line", "Ωραία. Αν θέλεις, μοιράσου την κάρτα ή κάλεσε έναν φίλο για πέντε λεπτά.", "Nice. If you like, share the card or invite a friend to five minutes.") +
       '<div class="finish-actions">' +
+        bi("button", "btn btn-primary", "Μοιράσου τη νίκη σου (Story)", "Share your win (Story)", ' type="button" data-share-story') +
         bi("button", "btn btn-ghost", "Μοιράσου την κάρτα", "Share the card", ' type="button" data-share-card') +
         bi("button", "btn btn-primary", "Πρόκληση σε φίλο", "Challenge a friend", ' type="button" data-challenge') +
       '</div>' +
@@ -1182,8 +1270,28 @@
     }
   }
   function bindFinishShare(box, min) {
+    const storyBtn = box.querySelector("[data-share-story]");
     const cardBtn = box.querySelector("[data-share-card]");
     const challengeBtn = box.querySelector("[data-challenge]");
+    if (storyBtn) storyBtn.addEventListener("click", function () {
+      drawStoryCard(min).toBlob(async function (blob) {
+        if (!blob) return;
+        const file = new File([blob], "nepsis-story.png", { type: "image/png" });
+        const text = currentLang === "el"
+          ? "Μόλις ολοκλήρωσα " + min + " λεπτά συγκέντρωσης στο Nepsis."
+          : "I just completed " + min + " minutes of focus on Nepsis.";
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file], title: "Nepsis", text: text }); return; } catch (e) { /* cancelled */ }
+        }
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "nepsis-story.png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setShareStatus(box, "Η Story κατέβηκε στη συσκευή σου.", "The Story was saved to your device.");
+      }, "image/png");
+    });
     if (cardBtn) cardBtn.addEventListener("click", function () {
       drawFinishCard(min).toBlob(async function (blob) {
         if (!blob) return;
