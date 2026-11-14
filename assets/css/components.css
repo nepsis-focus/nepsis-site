@@ -294,3 +294,41 @@ body.home-page .hero-copy .knowledge-note {
 .notify-btn:disabled { opacity: .6; cursor: not-allowed; }
 .notify-blocked { margin: 10px auto 0; max-width: 32rem; font-size: .9rem; color: var(--muted); }
 .notify-blocked[hidden] { display: none; }
+
+/* Google OAuth: calm loading state on the sign-in button */
+.nepsis-oauth-spinner {
+  display: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 2px solid rgba(58, 36, 24, .18);
+  border-top-color: var(--orange, #B9552A);
+  box-sizing: border-box;
+}
+button.is-oauth-loading,
+.btn.is-oauth-loading {
+  cursor: wait;
+  opacity: .92;
+  pointer-events: none;
+}
+button.is-oauth-loading .nepsis-oauth-spinner,
+.btn.is-oauth-loading .nepsis-oauth-spinner {
+  display: inline-block;
+  animation: nepsis-oauth-spin .7s linear infinite;
+}
+button.is-oauth-loading > svg,
+.btn.is-oauth-loading > svg {
+  opacity: .35;
+}
+@media (prefers-reduced-motion: reduce) {
+  button.is-oauth-loading .nepsis-oauth-spinner,
+  .btn.is-oauth-loading .nepsis-oauth-spinner {
+    animation: none;
+    border-top-color: rgba(58, 36, 24, .18);
+    background: var(--orange, #B9552A);
+  }
+}
+@keyframes nepsis-oauth-spin {
+  to { transform: rotate(360deg); }
+}
