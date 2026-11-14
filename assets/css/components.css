@@ -77,7 +77,8 @@ body.home-page .hero h1 .hero-kicker {
   margin-top: 18px;
   margin-bottom: 0;
   max-width: 36rem;
-  padding: 14px 16px;
+  padding: 14px 16px 16px;
+  overflow: visible;
 }
 .hero-copy .knowledge-note .eyebrow {
   margin-bottom: 6px;
@@ -88,6 +89,39 @@ body.home-page .hero h1 .hero-kicker {
 }
 .hero-copy .knowledge-note p:last-child {
   margin-bottom: 0;
+}
+.whop-upsell {
+  margin-top: 12px;
+  padding: 12px 0 2px;
+  border-top: 1px solid rgba(58, 36, 24, 0.08);
+}
+.whop-upsell a {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  font-weight: 700;
+  color: var(--muted, #7A5F50);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.whop-upsell a:hover,
+.whop-upsell a:focus-visible {
+  color: var(--orange, #F0702A);
+  text-decoration: underline;
+}
+.whop-upsell a:focus-visible {
+  outline: 3px solid #F0702A55;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.hero-copy .knowledge-note .whop-upsell {
+  margin-top: 10px;
+  margin-bottom: 0;
+  padding: 10px 0 0;
+}
+.hero-copy .knowledge-note .whop-upsell a {
+  font-size: 0.8rem;
+  line-height: 1.55;
 }
 
 /* Visible practice timer: larger centered time, orange ring, active and complete states. */

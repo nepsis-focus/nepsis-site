@@ -12,7 +12,7 @@
 
 ## Event schema
 
-Allowed names: `page_view`, `stage_selected`, `timer_started`, `timer_paused`, `timer_resumed`, `session_completed`, `quiz_started`, `quiz_completed`, `calendar_opened`, `login_started`, `library_searched`, `library_saved`.
+Allowed names: `page_view`, `stage_selected`, `timer_started`, `timer_paused`, `timer_resumed`, `session_completed`, `quiz_started`, `quiz_completed`, `calendar_opened`, `login_started`, `library_searched`, `library_saved`, `whop_upsell_clicked`.
 
 Allowed properties: `stage`, `duration`, `result`, `section`, and `item_id`. Values are restricted to finite non-negative numbers, booleans, or short alphanumeric identifiers. Search terms, diary text, profile values, email, account identifiers, and quiz answers must never be passed.
 

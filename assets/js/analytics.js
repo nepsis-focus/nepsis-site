@@ -1,5 +1,5 @@
 (() => {
-  const EVENTS = new Set(["page_view","stage_selected","timer_started","timer_paused","timer_resumed","session_completed","quiz_started","quiz_completed","calendar_opened","login_started","library_searched","library_saved"]);
+  const EVENTS = new Set(["page_view","stage_selected","timer_started","timer_paused","timer_resumed","session_completed","quiz_started","quiz_completed","calendar_opened","login_started","library_searched","library_saved","whop_upsell_clicked"]);
   const ALLOWED_PROPERTIES = new Set(["stage","duration","result","section","item_id"]);
   const CONSENT_KEY = "nepsis-analytics-consent-v1";
   const POSTHOG_PROJECT_TOKEN = "phc_wSd6sLNCj3UjGVo82Ti8rWCdt4CS7T755jm3TKus7VKt"; // Add the public phc_ project token for the staging project. Never use a personal API key.
@@ -139,6 +139,8 @@
   document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>window.setTimeout(renderLanguage,0)));
   document.addEventListener("click",event=>{
     if(event.target.closest("#accBtn, #accountBtn, #googleSignIn")) window.nepsisAnalytics.track("login_started",{section:pageSection()});
+    const whop=event.target.closest("[data-whop-upsell]");
+    if(whop) window.nepsisAnalytics.track("whop_upsell_clicked",{section:pageSection(),item_id:whop.getAttribute("data-whop-upsell")||"whop"});
   });
 
   const consent=readConsent();
