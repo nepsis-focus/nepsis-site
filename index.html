@@ -27,6 +27,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/pages/index.css">
   <link rel="stylesheet" href="assets/css/components.css">
+
+<!-- PWA -->
+<link rel="manifest" href="/nepsis-site/manifest.json">
+<meta name="theme-color" content="#F0702A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nepsis">
+<link rel="apple-touch-icon" href="/nepsis-site/icons/icon-192.png">
+
+<!-- SEO / Open Graph -->
+<meta name="robots" content="index, follow">
+<meta property="og:locale:alternate" content="en_US">
+
+<!-- Service Worker registration -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("/nepsis-site/sw.js", { scope: "/nepsis-site/" })
+      .then(function (reg) { console.log("Nepsis SW registered:", reg.scope); })
+      .catch(function (err) { console.warn("SW registration failed:", err); });
+  });
+}
+</script>
+
 </head>
 <body class="home-page">
 
