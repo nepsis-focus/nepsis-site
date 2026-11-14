@@ -1,0 +1,360 @@
+/* Nepsis warm night theme — OLED-friendly, not pure black.
+   Soft umber surfaces + warm cream text keep contrast gentle at night. */
+
+:root {
+  color-scheme: light;
+  --theme-header-bg: rgba(255, 248, 238, 0.94);
+  --theme-surface: #ffffff;
+  --theme-surface-soft: #fffaf4;
+  --theme-hero-veil: rgba(255, 248, 238, 0.96);
+  --theme-scrim: rgba(40, 20, 10, 0.4);
+  --theme-shadow: rgba(120, 60, 30, 0.28);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1A1512;
+  --card: #241C17;
+  --fg: #F2E6D8;
+  --muted: #B39A88;
+  --orange: #E8924A;
+  --ember: #E06A52;
+  --sun: #E8C56A;
+  --border: #3D3128;
+  --green: #8FA892;
+  --grad: linear-gradient(120deg, #E8C56A 0%, #E8924A 55%, #E06A52 100%);
+  --paper: #1A1512;
+  --ink: #F2E6D8;
+  --theme-header-bg: rgba(26, 21, 18, 0.94);
+  --theme-surface: #2A221C;
+  --theme-surface-soft: #2E251F;
+  --theme-hero-veil: rgba(26, 21, 18, 0.94);
+  --theme-scrim: rgba(8, 5, 3, 0.62);
+  --theme-shadow: rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme="dark"] body {
+  background: var(--bg);
+  color: var(--fg);
+  background-image: radial-gradient(ellipse at 50% -10%, rgba(232, 146, 74, 0.08), transparent 55%);
+}
+
+/* Sticky headers / chrome */
+html[data-theme="dark"] header,
+html[data-theme="dark"] header.top {
+  background: var(--theme-header-bg) !important;
+  border-bottom-color: var(--border) !important;
+}
+
+/* Surfaces that were hard-coded white/cream */
+html[data-theme="dark"] .lang,
+html[data-theme="dark"] .menu-btn,
+html[data-theme="dark"] .btn-ghost,
+html[data-theme="dark"] .acc-btn,
+html[data-theme="dark"] .account-btn,
+html[data-theme="dark"] .back,
+html[data-theme="dark"] .filter,
+html[data-theme="dark"] .secondary,
+html[data-theme="dark"] .cal-head .nav,
+html[data-theme="dark"] .top a.back,
+html[data-theme="dark"] .top button,
+html[data-theme="dark"] .toolbar button,
+html[data-theme="dark"] .toolbar label,
+html[data-theme="dark"] .entry-actions button,
+html[data-theme="dark"] .save-article,
+html[data-theme="dark"] .drawer .close,
+html[data-theme="dark"] .nepsis-menu-button,
+html[data-theme="dark"] .theme-toggle {
+  background: var(--theme-surface) !important;
+  color: var(--fg) !important;
+  border-color: var(--border) !important;
+}
+
+html[data-theme="dark"] .lang button.active,
+html[data-theme="dark"] .top button.active,
+html[data-theme="dark"] .filter.active {
+  background: var(--orange) !important;
+  color: #1A1512 !important;
+  border-color: var(--orange) !important;
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .search input,
+html[data-theme="dark"] .hero-country select,
+html[data-theme="dark"] .acc-card input,
+html[data-theme="dark"] .acc-email,
+html[data-theme="dark"] .account-card input,
+html[data-theme="dark"] .nepsis-dialog input {
+  background: var(--theme-surface) !important;
+  color: var(--fg) !important;
+  border-color: var(--border) !important;
+}
+
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .stat,
+html[data-theme="dark"] .entry,
+html[data-theme="dark"] .note,
+html[data-theme="dark"] .content,
+html[data-theme="dark"] .acc-card,
+html[data-theme="dark"] .account-card,
+html[data-theme="dark"] .nepsis-dialog,
+html[data-theme="dark"] .nepsis-site-drawer {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 18px 40px -28px var(--theme-shadow) !important;
+  color: var(--fg);
+}
+
+html[data-theme="dark"] .drawer a:hover,
+html[data-theme="dark"] .nepsis-site-drawer a:hover,
+html[data-theme="dark"] .nepsis-site-drawer a:focus-visible {
+  background: var(--theme-surface-soft) !important;
+}
+
+html[data-theme="dark"] .scrim,
+html[data-theme="dark"] .nepsis-menu-scrim,
+html[data-theme="dark"] .account {
+  background: var(--theme-scrim) !important;
+}
+
+html[data-theme="dark"] .nepsis-dialog::backdrop {
+  background: rgba(8, 5, 3, 0.7);
+}
+
+/* Hero veils that hard-coded cream */
+html[data-theme="dark"] .hero::after,
+html[data-theme="dark"] body.home-page .hero::after {
+  background: linear-gradient(
+    90deg,
+    var(--bg) 0%,
+    rgba(26, 21, 18, 0.96) 24%,
+    rgba(26, 21, 18, 0.72) 42%,
+    rgba(26, 21, 18, 0) 70%
+  ) !important;
+}
+
+html[data-theme="dark"] body.home-page .hero {
+  background:
+    radial-gradient(52% 76% at 77% 46%, rgba(87, 153, 193, 0.1), transparent 72%),
+    radial-gradient(38% 58% at 6% 80%, rgba(232, 146, 74, 0.12), transparent 74%),
+    var(--bg) !important;
+}
+
+html[data-theme="dark"] body.home-page .globe-drag-hint {
+  background: rgba(36, 28, 23, 0.82) !important;
+  border-color: var(--border) !important;
+  color: var(--fg);
+}
+
+html[data-theme="dark"] .welcome {
+  background: linear-gradient(120deg, #2A221C, #32261E) !important;
+}
+
+html[data-theme="dark"] .hero-country,
+html[data-theme="dark"] body.home-page .hero-country {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--fg) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35) !important;
+}
+
+html[data-theme="dark"] .hero-country label,
+html[data-theme="dark"] .hero-country h2 {
+  color: var(--fg) !important;
+}
+
+html[data-theme="dark"] .knowledge-note,
+html[data-theme="dark"] .daily-challenge {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+}
+
+html[data-theme="dark"] .research-panel {
+  background: #2A221C !important;
+}
+
+html[data-theme="dark"] .calendar span,
+html[data-theme="dark"] .calendar .day {
+  background: #2A221C !important;
+}
+
+html[data-theme="dark"] .cmp.on {
+  background: var(--card) !important;
+  border-color: rgba(232, 146, 74, 0.45) !important;
+}
+
+html[data-theme="dark"] .practice-page .ring .time {
+  color: var(--fg);
+}
+
+html[data-theme="dark"] .practice-page .thought-park-label,
+html[data-theme="dark"] .practice-page .thought-park-ok,
+html[data-theme="dark"] .practice-page .thought-park-review,
+html[data-theme="dark"] .practice-page .thought-park-next-q {
+  color: var(--fg) !important;
+}
+
+html[data-theme="dark"] .practice-page .thought-park-input {
+  background: var(--theme-surface) !important;
+  color: var(--fg) !important;
+  border-color: var(--border) !important;
+}
+
+html[data-theme="dark"] .practice-page .thought-park-return {
+  background: var(--theme-surface-soft) !important;
+  border-color: rgba(232, 146, 74, 0.28) !important;
+  color: var(--fg) !important;
+}
+
+html[data-theme="dark"] .practice-page .thought-park-privacy,
+html[data-theme="dark"] .practice-page .thought-park-when {
+  color: var(--muted) !important;
+}
+
+/* Soften primary CTAs for night: keep brand warmth, lower glare */
+html[data-theme="dark"] .btn-primary,
+html[data-theme="dark"] .primary {
+  box-shadow: 0 14px 32px -20px rgba(232, 146, 74, 0.55) !important;
+}
+
+html[data-theme="dark"] body.home-page .hero-copy .btn-primary {
+  background: #E8924A !important;
+  border-color: #E8924A !important;
+  box-shadow: 0 14px 32px -18px rgba(232, 146, 74, 0.55) !important;
+}
+
+/* Reset / ambient pages: keep a soft warm glow, never pure black */
+html[data-theme="dark"] body {
+  background-color: var(--bg);
+}
+
+html[data-theme="dark"] footer,
+html[data-theme="dark"] .muted,
+html[data-theme="dark"] .entry time {
+  color: var(--muted);
+}
+
+html[data-theme="dark"] .chips button.sel,
+html[data-theme="dark"] .chips button:hover,
+html[data-theme="dark"] .badge2.done {
+  background: var(--fg) !important;
+  color: var(--bg) !important;
+}
+
+html[data-theme="dark"] .acc-google,
+html[data-theme="dark"] .account-card .google {
+  background: var(--theme-surface) !important;
+  color: var(--fg) !important;
+}
+
+html[data-theme="dark"] .danger {
+  background: #3A2420 !important;
+  color: #F0B4A8 !important;
+  border-color: #5A3830 !important;
+}
+
+html[data-theme="dark"] .drawer,
+html[data-theme="dark"] .nepsis-site-drawer {
+  background: var(--bg) !important;
+}
+
+/* Discrete theme control */
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border, #EEDCC8);
+  background: var(--theme-surface, #fff);
+  color: var(--fg, #3A2418);
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  flex: 0 0 auto;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.28s ease, background-color 0.28s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  border-color: var(--orange, #F0702A);
+}
+
+.theme-toggle:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.theme-toggle svg.icon-system,
+.theme-toggle svg.icon-sun,
+.theme-toggle svg.icon-moon {
+  display: none;
+}
+
+.theme-toggle[data-mode="system"] svg.icon-system,
+.theme-toggle[data-mode="light"] svg.icon-sun,
+.theme-toggle[data-mode="dark"] svg.icon-moon {
+  display: block;
+}
+
+/* Keep the header chrome on one line on small phones after adding the toggle. */
+@media (max-width: 480px) {
+  .head-right,
+  .headright,
+  .controls,
+  .top-actions {
+    gap: 5px !important;
+  }
+  .theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .theme-toggle svg {
+    width: 15px;
+    height: 15px;
+  }
+  .menu-btn {
+    width: 36px !important;
+    height: 36px !important;
+    flex: 0 0 36px;
+  }
+  .acc-btn,
+  .account-btn {
+    padding: 6px 8px !important;
+    font-size: 0.74rem !important;
+  }
+  .lang button {
+    padding: 5px 7px !important;
+    font-size: 0.72rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+  }
+  .logo {
+    font-size: 1.05rem !important;
+    gap: 6px !important;
+  }
+  .acc-btn,
+  .account-btn {
+    padding: 5px 6px !important;
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle {
+    transition: none;
+  }
+}

@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Warm theme boot — apply before paint to avoid a light flash at night */
+(function () {
+  try {
+    var p = localStorage.getItem("nepsis-theme") || "system";
+    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.style.colorScheme = t;
+  } catch (e) {}
+})();
+</script>
 <title data-el="Nepsis · Το Nepsis μου" data-en="Nepsis · My Nepsis">Nepsis · Το Nepsis μου</title>
 <meta name="description" content="Ο προσωπικός σου χώρος στο Nepsis: πρόοδος, συνέπεια και επόμενα βήματα.">
 <link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
@@ -12,6 +24,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/pages/my-nepsis.css">
   <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+
 </head>
 <body>
 <header><div class="wrap top"><a class="logo" href="index.html"><span class="dot"></span>Nepsis</a><div class="headright"><button class="account-btn" id="accountBtn">Σύνδεση</button><div class="lang"><button class="active" data-lang="el">ΕΛ</button><button data-lang="en">EN</button></div><button class="menu-btn" id="menuBtn" aria-label="Μενού">☰</button></div></div></header>
@@ -177,4 +191,5 @@
 <script src="assets/js/analytics.js"></script>
 <script src="assets/js/site-navigation.js"></script>
 <script src="assets/js/site-preferences.js"></script>
+<script src="assets/js/ambient-sounds.js"></script>
 </body></html>

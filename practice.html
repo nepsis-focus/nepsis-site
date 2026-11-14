@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Warm theme boot — apply before paint to avoid a light flash at night */
+(function () {
+  try {
+    var p = localStorage.getItem("nepsis-theme") || "system";
+    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.style.colorScheme = t;
+  } catch (e) {}
+})();
+</script>
 <title data-el="Nepsis · Εξάσκηση και πρόοδος" data-en="Nepsis · Practice and progress">Nepsis · Εξάσκηση και πρόοδος</title>
 <meta name="description" content="Εξασκήσου με τα στάδια συγκέντρωσης, το σύντομο κουίζ και το προσωπικό ημερολόγιο προόδου του Nepsis.">
 <link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
@@ -27,6 +39,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/pages/practice.css">
   <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+
 
 <!-- PWA -->
 <link rel="manifest" href="/nepsis-site/manifest.json">
@@ -44,7 +58,8 @@
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("/nepsis-site/sw.js", { scope: "/nepsis-site/" })
+    var base = location.pathname.replace(/[^/]*$/, "");
+    navigator.serviceWorker.register(base + "sw.js", { scope: base })
       .then(function (reg) { console.log("Nepsis SW registered:", reg.scope); })
       .catch(function (err) { console.warn("SW registration failed:", err); });
   });
@@ -298,7 +313,7 @@ if ("serviceWorker" in navigator) {
     <div id="musicFrame"></div>
     <div class="ambient-wrap">
       <p class="ambient-title" data-el="Ήχοι περιβάλλοντος" data-en="Ambient sounds">Ήχοι περιβάλλοντος</p>
-      <p class="ambient-hint" data-el="Διάλεξε τι θα ήθελες να ακούς όσο συγκεντρώνεσαι." data-en="Choose what you would like to hear while you focus.">Διάλεξε τι θα ήθελες να ακούς όσο συγκεντρώνεσαι.</p>
+      <p class="ambient-hint" data-el="Για άμεσους ήχους χωρίς άλλη εφαρμογή, άνοιξε το μικρό κουμπί ήχου στη γωνία. Εδώ μπορείς επίσης να ανοίξεις λίστες Spotify." data-en="For instant sounds without another app, open the small sound button in the corner. You can also open Spotify playlists here.">Για άμεσους ήχους χωρίς άλλη εφαρμογή, άνοιξε το μικρό κουμπί ήχου στη γωνία. Εδώ μπορείς επίσης να ανοίξεις λίστες Spotify.</p>
       <div class="ambient-row" id="ambientPicks">
         <button type="button" data-ambient="0"><span aria-hidden="true">🌧️</span><span data-el="Βροχή" data-en="Rain">Βροχή</span></button>
         <button type="button" data-ambient="1"><span aria-hidden="true">🌊</span><span data-el="Θάλασσα" data-en="Ocean">Θάλασσα</span></button>
@@ -417,5 +432,6 @@ if ("serviceWorker" in navigator) {
 <script src="assets/js/analytics.js"></script>
 <script src="assets/js/site-navigation.js"></script>
 <script src="assets/js/site-preferences.js"></script>
+<script src="assets/js/ambient-sounds.js"></script>
 </body>
 </html>
