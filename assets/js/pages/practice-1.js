@@ -667,6 +667,7 @@
 
   function stopTimerLocally(state) {
     state.running = false;
+    document.body.classList.remove("zen-active");
     stopTicker(state);
     state.endAt = null;
     syncStageVisual(state);
@@ -711,6 +712,7 @@
         return;
       }
       state.running = true;
+      document.body.classList.add("zen-active");
       state.endAt = Date.now() + state.left * 1000;
       syncStageVisual(state);
       updateTabTitle();
@@ -807,8 +809,12 @@
     Object.keys(timers).forEach(function (k) {
       if (timers[k] && timers[k].running) running = timers[k];
     });
-    if (running && running.left > 0) document.title = fmt(running.left) + " · " + pageTitle();
-    else document.title = pageTitle();
+    if (running && running.left > 0) {
+      const focusWord = currentLang === "el" ? "Εστίαση" : "Focus";
+      document.title = "(" + fmt(running.left) + ") Nepsis — " + focusWord;
+    } else {
+      document.title = pageTitle();
+    }
   }
   function tickState(state) {
     if (!state.running || state.busy) return;

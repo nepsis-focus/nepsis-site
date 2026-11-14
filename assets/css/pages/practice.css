@@ -950,3 +950,32 @@ body.nudge-visible .focus-nudge-scrim { opacity: 1; }
   .focus-nudge, .focus-nudge-scrim, .welcome-back { transition: none !important; }
   body.practice-page .stage .ring::before, body.practice-page .stage .ring .prog { animation: none !important; }
 }
+
+/* ===== Zen Mode ===== */
+body.zen-active header.top,
+body.zen-active .drawer,
+body.zen-active .scrim,
+body.zen-active .hero,
+body.zen-active .home-discovery,
+body.zen-active section.block > .wrap > *:not(#stageGrid),
+body.zen-active #stageGrid > .stage:not(.is-running),
+body.zen-active footer,
+body.zen-active .knowledge-note,
+body.zen-active .stage-note {
+  opacity: 0.15;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+body.zen-active #stageGrid > .stage.is-running {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.4s ease;
+  position: relative;
+  z-index: 20;
+  box-shadow: 0 24px 60px -12px rgba(240, 112, 42, 0.35);
+}
+
+body.zen-active #stageGrid > .stage.is-running * {
+  opacity: 1;
+}
