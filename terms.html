@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Warm theme boot — apply before paint to avoid a light flash at night */
+(function () {
+  try {
+    var p = localStorage.getItem("nepsis-theme") || "system";
+    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.style.colorScheme = t;
+  } catch (e) {}
+})();
+</script>
 <title data-el="Nepsis · Όροι χρήσης" data-en="Nepsis · Terms of Service">Nepsis · Όροι χρήσης / Terms of Service</title>
 <meta name="description" content="Όροι χρήσης της ιστοσελίδας Nepsis. / Terms of use for the Nepsis website.">
 <link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
@@ -24,6 +36,8 @@
 <meta name="twitter:image" content="https://nepsis-focus.github.io/nepsis-site/assets/brand/nepsis-og.png">
 <link rel="stylesheet" href="assets/css/pages/terms.css">
   <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+
 
 <!-- PWA -->
 <link rel="manifest" href="/nepsis-site/manifest.json">

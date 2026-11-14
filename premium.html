@@ -3,6 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Warm theme boot — apply before paint to avoid a light flash at night */
+(function () {
+  try {
+    var p = localStorage.getItem("nepsis-theme") || "system";
+    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.style.colorScheme = t;
+  } catch (e) {}
+})();
+</script>
 <title data-el="Nepsis · Nepsis+" data-en="Nepsis · Nepsis+">Nepsis · Nepsis+</title>
 <meta name="description" content="Community, courses and deeper practice. Core practice stays free.">
 <link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
@@ -15,6 +27,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/pages/information.css">
 <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+
 
 <!-- PWA -->
 <link rel="manifest" href="/nepsis-site/manifest.json">
