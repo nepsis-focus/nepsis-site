@@ -1156,6 +1156,16 @@ let currentLang = "el";
       clearProps: "transform,opacity",
       scrollTrigger: { trigger: ".home-discovery", start: "top 78%", once: true }
     });
+    gsap.from(".why-nepsis-head > *", {
+      y: 22, opacity: 0, duration: 0.7, stagger: 0.08, ease: "power3.out",
+      clearProps: "transform,opacity",
+      scrollTrigger: { trigger: ".why-nepsis", start: "top 82%", once: true }
+    });
+    gsap.from(".why-nepsis-item", {
+      y: 28, opacity: 0, duration: 0.75, stagger: 0.12, ease: "power3.out",
+      clearProps: "transform,opacity",
+      scrollTrigger: { trigger: ".why-nepsis-grid", start: "top 86%", once: true }
+    });
   }
 
   // Subtle pointer-following light for the homepage navigation cards.
