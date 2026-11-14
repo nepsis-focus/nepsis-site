@@ -850,103 +850,101 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
 }
 
 
-  /* Homepage editorial principles: fewer, clearer choices instead of a feature directory. */
-  body.home-page .home-principles {
-    padding: clamp(88px, 11vw, 150px) 0 clamp(76px, 10vw, 128px);
-    background: linear-gradient(180deg, var(--bg) 0%, #FFFDF8 100%);
+  /* Why Nepsis: three clear differentiators under the hero. */
+  body.home-page .why-nepsis {
+    padding: clamp(72px, 9vw, 120px) 0 clamp(64px, 8vw, 104px);
+    background:
+      radial-gradient(42% 70% at 12% 0%, rgba(247, 209, 90, .18) 0%, transparent 70%),
+      linear-gradient(180deg, var(--bg) 0%, #FFFDF8 100%);
+    border-top: 1px solid rgba(238, 220, 200, .65);
   }
-  body.home-page .principles-layout {
-    display: grid;
-    grid-template-columns: minmax(250px, .82fr) minmax(0, 1.18fr);
-    column-gap: clamp(42px, 8vw, 118px);
-    align-items: start;
+  body.home-page .why-nepsis-head {
+    max-width: 720px;
+    margin: 0 0 clamp(36px, 5vw, 56px);
   }
-  body.home-page .principles-heading { max-width: 560px; }
-  body.home-page .principles-heading h2 {
-    max-width: 10ch;
-    margin: 0 0 22px;
-    font-size: clamp(2.9rem, 5.3vw, 5.4rem);
-    line-height: .98;
-    letter-spacing: -.065em;
+  body.home-page .why-nepsis-head h2 {
+    max-width: 18ch;
+    margin: 0 0 16px;
+    font-size: clamp(2rem, 3.8vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -.03em;
   }
-  body.home-page .principles-heading p {
-    max-width: 43ch;
+  body.home-page .why-nepsis-head p {
+    max-width: 52ch;
     color: var(--muted);
-    font-size: 1.08rem;
-    line-height: 1.8;
+    font-size: 1.05rem;
+    line-height: 1.7;
   }
-  body.home-page .principle-list { border-top: 1px solid var(--border); }
-  body.home-page .principle-row {
+  body.home-page .why-nepsis-grid {
     display: grid;
-    grid-template-columns: 48px minmax(0, .9fr) minmax(0, 1.1fr) 28px;
-    gap: 18px;
-    align-items: center;
-    min-height: 142px;
-    padding: 24px 10px;
-    border-bottom: 1px solid var(--border);
-    color: var(--fg);
-    text-decoration: none;
-    transition: background .22s ease, padding .22s ease;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border);
   }
-  body.home-page .principle-row:hover {
-    padding-inline: 20px;
-    background: rgba(251, 233, 207, .58);
+  body.home-page .why-nepsis-item {
+    padding: clamp(28px, 3.5vw, 40px) clamp(18px, 2.4vw, 32px) clamp(8px, 1vw, 16px);
+    border-right: 1px solid var(--border);
+    min-width: 0;
   }
-  body.home-page .principle-number {
-    align-self: start;
-    padding-top: 5px;
+  body.home-page .why-nepsis-item:first-child {
+    padding-left: 0;
+  }
+  body.home-page .why-nepsis-item:last-child {
+    border-right: 0;
+    padding-right: 0;
+  }
+  body.home-page .why-nepsis-index {
+    display: block;
+    margin-bottom: 18px;
     color: var(--ember);
     font-size: .78rem;
     font-weight: 900;
-    letter-spacing: .12em;
+    letter-spacing: .14em;
   }
-  body.home-page .principle-row strong {
-    font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  body.home-page .why-nepsis-item h3 {
+    margin: 0 0 10px;
+    font-size: clamp(1.2rem, 1.7vw, 1.45rem);
+    font-weight: 900;
+    letter-spacing: -.02em;
     line-height: 1.2;
-    letter-spacing: -.035em;
   }
-  body.home-page .principle-description {
+  body.home-page .why-nepsis-lead {
+    margin: 0 0 12px;
+    color: var(--fg);
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+  body.home-page .why-nepsis-item > p:last-child {
+    margin: 0;
     color: var(--muted);
-    font-size: .96rem;
+    font-size: .95rem;
     line-height: 1.65;
   }
-  body.home-page .principle-arrow {
-    color: var(--orange);
-    font-size: 1.4rem;
-    transition: transform .22s ease;
-  }
-  body.home-page .principle-row:hover .principle-arrow { transform: translate(3px, -3px); }
-  body.home-page .principles-note {
-    grid-column: 2;
-    margin: 24px 10px 0;
-    color: var(--muted);
-    font-size: .9rem;
-    line-height: 1.7;
-  }
   @media (max-width: 900px) {
-    body.home-page .principles-layout { grid-template-columns: 1fr; row-gap: 42px; }
-    body.home-page .principles-heading h2 { max-width: 12ch; }
-    body.home-page .principles-note { grid-column: 1; margin-inline: 0; }
+    body.home-page .why-nepsis-grid {
+      grid-template-columns: 1fr;
+      border-top: 0;
+    }
+    body.home-page .why-nepsis-item {
+      padding: 26px 0;
+      border-right: 0;
+      border-top: 1px solid var(--border);
+    }
+    body.home-page .why-nepsis-item:first-child,
+    body.home-page .why-nepsis-item:last-child {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
   @media (max-width: 600px) {
-    body.home-page .home-principles { padding: 72px 0 76px; }
-    body.home-page .principles-layout { row-gap: 30px; }
-    body.home-page .principles-heading h2 { font-size: clamp(2.7rem, 12vw, 4rem); }
-    body.home-page .principle-row {
-      grid-template-columns: 38px minmax(0, 1fr) 24px;
-      gap: 10px;
-      min-height: 0;
-      padding: 22px 4px;
-    }
-    body.home-page .principle-row strong { font-size: 1.2rem; }
-    body.home-page .principle-description { grid-column: 2 / 4; margin-top: -3px; }
-    body.home-page .principle-arrow { grid-column: 3; grid-row: 1; justify-self: end; }
-    body.home-page .principle-row:hover { padding-inline: 10px; }
-    body.home-page .principles-note { margin-top: 18px; }
+    body.home-page .why-nepsis { padding: 64px 0 68px; }
+    body.home-page .why-nepsis-head { margin-bottom: 28px; }
+    body.home-page .why-nepsis-head h2 { max-width: 16ch; }
+    body.home-page .why-nepsis-item { padding: 22px 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    body.home-page .principle-row,
-    body.home-page .principle-arrow { transition: none !important; }
+    body.home-page .why-nepsis-item { transition: none !important; }
   }
 
 
@@ -962,12 +960,8 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
 
 
 @media (max-width: 380px) {
-  body.home-page .home-principles .wrap { padding-left: 18px; padding-right: 18px; }
-  body.home-page .principles-layout { grid-template-columns: minmax(0, 1fr); column-gap: 0; row-gap: 28px; }
-  body.home-page .principles-heading,
-  body.home-page .principle-list,
-  body.home-page .principles-note { min-width: 0; width: 100%; }
-  body.home-page .principles-heading h2 { overflow-wrap: anywhere; }
+  body.home-page .why-nepsis .wrap { padding-left: 18px; padding-right: 18px; }
+  body.home-page .why-nepsis-head h2 { overflow-wrap: anywhere; }
 }
 
 a.acc-btn { text-decoration: none; display: inline-flex; align-items: center; }
