@@ -944,6 +944,7 @@ let currentLang = "el";
   const SB_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
   const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY) : null;
   let sbUser = null;
+  if (sb && window.NepsisGoogleAuth) window.NepsisGoogleAuth.watchPopupCompletion(sb);
 
   function mergeProgress(a, b) {
     const out = { days: {}, distractions: {} };
@@ -1005,7 +1006,13 @@ let currentLang = "el";
     $("accForm").hidden = !!sbUser;
     $("accWho").textContent = sbUser ? sbUser.email : "";
     $("accOut").textContent = isEl ? "Αποσύνδεση" : "Sign out";
-    $("accGoogleLabel").textContent = isEl ? "Συνέχεια με Google" : "Continue with Google";
+    const googleBtn = $("accGoogle");
+    const googleLabel = $("accGoogleLabel");
+    if (googleLabel && (!googleBtn || googleBtn.dataset.oauthBusy !== "1")) {
+      googleLabel.textContent = window.NepsisGoogleAuth
+        ? window.NepsisGoogleAuth.idleLabel(currentLang)
+        : (isEl ? "Συνέχεια με Google" : "Continue with Google");
+    }
     $("accMsg").textContent = msg || "";
   }
   function setAcc(open) {
@@ -1033,17 +1040,20 @@ let currentLang = "el";
       renderAcc(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page.");
       return;
     }
-    try {
-      const result = await sb.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: location.origin + location.pathname }
-      });
-      if (result.error) {
-        renderAcc(currentLang === "el" ? "Δεν ήταν δυνατή η σύνδεση με Google. Δοκίμασε ξανά." : "Google sign-in could not start. Please try again.");
-      }
-    } catch (error) {
-      renderAcc(currentLang === "el" ? "Δεν ήταν δυνατή η σύνδεση με Google. Δοκίμασε ξανά." : "Google sign-in could not start. Please try again.");
+    const failMsg = currentLang === "el"
+      ? "Δεν ήταν δυνατή η σύνδεση με Google. Δοκίμασε ξανά."
+      : "Google sign-in could not start. Please try again.";
+    if (!window.NepsisGoogleAuth) {
+      renderAcc(failMsg);
+      return;
     }
+    await window.NepsisGoogleAuth.signIn({
+      client: sb,
+      button: accGoogle,
+      lang: currentLang,
+      onMessage: function (text) { renderAcc(text); },
+      onError: function () { renderAcc(failMsg); }
+    });
   });
   const accOut = $("accOut");
   if (accOut) accOut.addEventListener("click", async function () {
