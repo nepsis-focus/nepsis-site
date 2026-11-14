@@ -42,7 +42,8 @@
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("/nepsis-site/sw.js", { scope: "/nepsis-site/" })
+    var base = location.pathname.replace(/[^/]*$/, "");
+    navigator.serviceWorker.register(base + "sw.js", { scope: base })
       .then(function (reg) { console.log("Nepsis SW registered:", reg.scope); })
       .catch(function (err) { console.warn("SW registration failed:", err); });
   });
