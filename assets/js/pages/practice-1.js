@@ -665,9 +665,58 @@
       : "We could not reach timer verification. Check your internet connection and try again.";
   }
 
+  // ---------- Live Focus Counter (Supabase Presence – no DB writes) ----------
+  let presenceChannel = null;
+  let presenceActive = false;
+
+  function updateLiveFocusText(count) {
+    const el = document.getElementById("liveFocusCount");
+    if (!el) return;
+    const isEl = currentLang === "el";
+    if (count > 2) {
+      el.textContent = isEl
+        ? count + " άτομα εστιάζουν αυτή τη στιγμή"
+        : count + " people are focusing right now";
+    } else {
+      el.textContent = isEl
+        ? "Ξεκίνα το επόμενο στάδιο συγκέντρωσης"
+        : "Start the next focus stage";
+    }
+  }
+
+  function joinFocusPresence() {
+    if (!sb || presenceActive) return;
+    try {
+      const key = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now() + Math.random());
+      presenceChannel = sb.channel("nepsis-focus-presence", {
+        config: { presence: { key: key } }
+      });
+      presenceChannel
+        .on("presence", { event: "sync" }, function () {
+          const state = presenceChannel.presenceState();
+          const count = Object.keys(state).length;
+          updateLiveFocusText(count);
+        })
+        .subscribe(function (status) {
+          if (status === "SUBSCRIBED") {
+            presenceChannel.track({ focusing: true, at: Date.now() });
+            presenceActive = true;
+          }
+        });
+    } catch (e) { /* silent – counter is optional */ }
+  }
+
+  function leaveFocusPresence() {
+    if (presenceChannel && presenceActive) {
+      try { presenceChannel.untrack(); } catch (e) {}
+      presenceActive = false;
+    }
+  }
+
   function stopTimerLocally(state) {
     state.running = false;
     document.body.classList.remove("zen-active");
+    leaveFocusPresence();
     stopTicker(state);
     state.endAt = null;
     syncStageVisual(state);
@@ -713,6 +762,7 @@
       }
       state.running = true;
       document.body.classList.add("zen-active");
+      joinFocusPresence();
       state.endAt = Date.now() + state.left * 1000;
       syncStageVisual(state);
       updateTabTitle();
