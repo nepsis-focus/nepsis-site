@@ -1,6 +1,6 @@
 // Nepsis Service Worker — lightweight, update-friendly
 // Version bump this string when you want to force cache refresh
-const CACHE_VERSION = 'nepsis-v4';
+const CACHE_VERSION = 'nepsis-v5';
 const CACHE_NAME = `nepsis-static-${CACHE_VERSION}`;
 
 // Paths are relative to this script so the same list works on GitHub Pages
@@ -33,8 +33,8 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(CORE_ASSETS))
-      .then(() => self.skipWaiting())
       .catch((err) => console.warn('SW install cache failed (non-critical):', err))
+      .then(() => self.skipWaiting())
   );
 });
 

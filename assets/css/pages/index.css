@@ -826,7 +826,21 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
 }
 @media(max-width:600px) {
   body.home-page .hero { min-height:760px; padding:30px 0 40px; }
-  body.home-page .hero-earth { width:112vw; height:112vw; right:-38vw; top:38%; opacity:.72; }
+  /* The centered ~90vw square above loses to this block: an unscoped
+     translateY(-50%), a leftover left:50%, and width:112vw (then capped by
+     max-width:100%) shift the globe halfway off the right edge. Reset those
+     offsets here so a square fills most of the phone width and stays on screen. */
+  body.home-page .hero-earth {
+    position: relative;
+    inset: auto;
+    width: 92vw;
+    height: 92vw;
+    max-width: 100%;
+    margin: 0 auto 12px;
+    transform: none;
+    opacity: 1;
+    flex: 0 0 auto;
+  }
   body.home-page .hero::after { background:linear-gradient(180deg,rgba(255,248,238,.1),rgba(255,248,238,.2) 45%,var(--bg) 76%); }
   body.home-page .hero-copy { padding-top:0; }
   body.home-page .hero h1 { font-size:clamp(3.15rem,13vw,4.5rem); max-width:9ch; }

@@ -4,7 +4,7 @@ import { writeFile } from "node:fs/promises";
 const base = (process.env.SITE_URL || "https://nepsis-focus.github.io/nepsis-site/").replace(/\/$/, "");
 const routes = [
   "/", "/practice.html", "/my-nepsis.html", "/reset.html", "/library.html",
-  "/diary.html", "/about.html", "/how.html", "/faq.html", "/privacy.html",
+  "/diary.html", "/about.html", "/how.html", "/faq.html", "/exams.html", "/privacy.html",
   "/terms.html", "/premium.html"
 ];
 const viewports = [

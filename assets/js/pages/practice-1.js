@@ -1519,6 +1519,12 @@
     setMenu(false);
     setAcc(false);
   });
+  // exams.html links here so the existing Brevo form opens. The hash does not start a timer.
+  function openNewsletterFromHash() {
+    if (location.hash === "#newsletter") setSub(true);
+  }
+  openNewsletterFromHash();
+  window.addEventListener("hashchange", openNewsletterFromHash);
 
   // ---------- account (Supabase: email link, no password) ----------
   const SB_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
