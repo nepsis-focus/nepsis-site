@@ -638,6 +638,7 @@
     const ring = state.el.querySelector(".prog");
     state.el.querySelector("[data-time]").textContent = fmt(state.left);
     ring.setAttribute("stroke-dashoffset", String(C * (1 - state.left / state.total)));
+    if (pipState === state) renderPip();
   }
 
   function timerStorageKey(state) {
@@ -778,6 +779,7 @@
   }
 
   function finishTimer(state) {
+    if (pipState === state) pipHoldFinished = true;
     stopTimerLocally(state);
     state.left = 0;
     state.busy = false;
@@ -907,6 +909,8 @@
   function syncStageVisual(state) {
     state.el.classList.toggle("is-running", !!state.running);
     if (state.running) state.el.classList.remove("is-complete");
+    if (state.running && pipState === state) pipHoldFinished = false;
+    syncPipLauncher();
   }
   function updateTabTitle() {
     let running = null;
@@ -958,6 +962,303 @@
     if (document.hidden) return;
     Object.keys(timers).forEach(function (k) { if (timers[k].running) tickState(timers[k]); });
   });
+
+  // Opt-in floating mini timer (Document Picture-in-Picture).
+  // The window only mirrors the existing tick — it never starts a second clock —
+  // and closing it leaves the page timer alone. The launcher is omitted entirely
+  // where requestWindow is missing, so Safari and Firefox stay unchanged.
+  var pipWindow = null;
+  var pipState = null;
+  var pipLauncher = null;
+  var pipLauncherState = null;
+  var pipHoldFinished = false;
+  var pipFinishTimer = null;
+  var pipFinishArmed = false;
+  var pipOpening = false;
+  var pipThemeObserver = null;
+
+  function pipSupported() {
+    try {
+      return !!(window.documentPictureInPicture &&
+        typeof window.documentPictureInPicture.requestWindow === "function");
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function livePipWindow() {
+    try {
+      var live = window.documentPictureInPicture && window.documentPictureInPicture.window;
+      if (live && !live.closed) {
+        pipWindow = live;
+        return live;
+      }
+    } catch (e) {}
+    if (pipWindow && !pipWindow.closed) return pipWindow;
+    return null;
+  }
+
+  function stageNeedsLauncher(st) {
+    if (!st || st.left <= 0 || st.el.classList.contains("is-complete")) return false;
+    if (st.running) return true;
+    // A paused session can reopen the window; a stage that never started cannot.
+    return !!st.sessionId;
+  }
+
+  function initPipLauncher() {
+    if (!pipSupported() || pipLauncher) return;
+    pipLauncher = document.createElement("button");
+    pipLauncher.type = "button";
+    pipLauncher.className = "pip-timer-btn";
+    pipLauncher.hidden = true;
+    pipLauncher.setAttribute("aria-expanded", "false");
+    pipLauncher.innerHTML =
+      '<span class="pip-dot" aria-hidden="true"></span>' +
+      '<span data-el="Μίνι χρονόμετρο" data-en="Mini timer">Μίνι χρονόμετρο</span>';
+    pipLauncher.addEventListener("click", function () {
+      if (pipLauncherState) openMiniTimer(pipLauncherState);
+    });
+    document.body.appendChild(pipLauncher);
+  }
+
+  function syncPipLauncher() {
+    if (!pipLauncher) return;
+    var running = null;
+    var paused = null;
+    Object.keys(timers).forEach(function (k) {
+      var st = timers[k];
+      if (!stageNeedsLauncher(st)) return;
+      if (st.running) running = st;
+      else paused = st;
+    });
+    pipLauncherState = running || paused;
+    if (!pipLauncherState) {
+      pipLauncher.hidden = true;
+    } else {
+      var ring = pipLauncherState.el.querySelector(".ring");
+      if (ring && pipLauncher.previousElementSibling !== ring) {
+        ring.insertAdjacentElement("afterend", pipLauncher);
+      }
+      pipLauncher.hidden = false;
+    }
+    pipLauncher.setAttribute("aria-expanded", livePipWindow() ? "true" : "false");
+    if (pipState) renderPip();
+  }
+
+  function pipCopy() {
+    var el = currentLang === "el";
+    return {
+      pause: el ? "Παύση" : "Pause",
+      resume: el ? "Συνέχεια" : "Resume",
+      close: el ? "Κλείσιμο" : "Close",
+      checking: el ? "Έλεγχος…" : "Checking…",
+      done: el ? "Ολοκληρώθηκε." : "Session complete."
+    };
+  }
+
+  function pipIsFinished(state) {
+    if (!state || state.running) return false;
+    if (pipHoldFinished && pipState === state) return true;
+    return state.left === 0 && state.el.classList.contains("is-complete");
+  }
+
+  function pipTimerCss() {
+    return [
+      ":root { color-scheme: light; --bg: #FFF8EE; --fg: #3A2418; --muted: #7A5F50; --orange: #F0702A; --border: #EEDCC8; --card: #FFFDF8; }",
+      "html[data-theme=\"dark\"] { color-scheme: dark; --bg: #1A1512; --fg: #F2E6D8; --muted: #B39A88; --orange: #E8924A; --border: #3D3128; --card: #241C17; }",
+      "* { box-sizing: border-box; }",
+      "html, body { margin: 0; height: 100%; }",
+      "body { min-height: 100%; font-family: \"Nunito\", system-ui, -apple-system, \"Segoe UI\", sans-serif; background: var(--bg); color: var(--fg); }",
+      ".pip-timer { min-height: 100%; padding: 16px 16px 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }",
+      ".pip-top { display: flex; align-items: center; justify-content: center; gap: 8px; max-width: 100%; }",
+      ".pip-dot { width: 14px; height: 14px; border-radius: 50%; flex: 0 0 auto; background: radial-gradient(circle at 35% 30%, #FFE58A 0%, #F7B232 35%, #F0702A 70%, #D8392B 100%); box-shadow: 0 0 0 4px rgba(240,112,42,.16); }",
+      "html[data-theme=\"dark\"] .pip-dot { box-shadow: 0 0 0 4px rgba(232,146,74,.22); }",
+      ".pip-stage { margin: 0; font-size: .95rem; font-weight: 800; letter-spacing: -.02em; overflow-wrap: anywhere; }",
+      ".pip-time { margin: 0; font-size: clamp(2.4rem, 18vw, 3.4rem); font-weight: 900; letter-spacing: -.05em; font-variant-numeric: tabular-nums; line-height: 1; }",
+      ".pip-done { margin: 0; font-weight: 800; color: var(--orange); }",
+      ".pip-done[hidden] { display: none; }",
+      ".pip-action { margin-top: 4px; max-width: 100%; border: 0; border-radius: 999px; background: var(--orange); color: #fff; font: inherit; font-weight: 800; font-size: .92rem; padding: 8px 18px; cursor: pointer; }",
+      "html[data-theme=\"dark\"] .pip-action { color: #1A1512; }",
+      ".pip-action:disabled { opacity: .6; cursor: progress; }",
+      ".pip-action:focus-visible { outline: 3px solid rgba(240,112,42,.45); outline-offset: 2px; }"
+    ].join("\n");
+  }
+
+  function applyPipTheme() {
+    var win = livePipWindow();
+    if (!win) return;
+    var theme = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    win.document.documentElement.setAttribute("data-theme", theme);
+    win.document.documentElement.style.colorScheme = theme;
+  }
+
+  function watchPipTheme() {
+    if (pipThemeObserver) return;
+    pipThemeObserver = new MutationObserver(applyPipTheme);
+    pipThemeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+
+  function copyPipStyles(doc) {
+    if (!doc.head.querySelector("style[data-pip-timer]")) {
+      var style = doc.createElement("style");
+      style.setAttribute("data-pip-timer", "");
+      style.textContent = pipTimerCss();
+      doc.head.appendChild(style);
+    }
+    if (!doc.head.querySelector("link[data-pip-font]")) {
+      document.querySelectorAll('link[rel="stylesheet"]').forEach(function (link) {
+        if (!link.href || link.href.indexOf("fonts.googleapis.com") === -1) return;
+        var copy = doc.createElement("link");
+        copy.rel = "stylesheet";
+        copy.href = link.href;
+        copy.setAttribute("data-pip-font", "");
+        doc.head.appendChild(copy);
+      });
+    }
+  }
+
+  function onPipAction() {
+    var state = pipState;
+    if (!state) return;
+    if (pipIsFinished(state)) {
+      var win = livePipWindow();
+      if (win) {
+        try { win.close(); } catch (e) {}
+      }
+      return;
+    }
+    if (state.busy) return;
+    if (state.running) pause(state);
+    else if (state.left > 0) start(state);
+  }
+
+  function armPipFinishClose() {
+    if (pipFinishArmed) return;
+    pipFinishArmed = true;
+    clearTimeout(pipFinishTimer);
+    pipFinishTimer = setTimeout(function () {
+      pipFinishTimer = null;
+      if (pipState && pipIsFinished(pipState)) {
+        var open = livePipWindow();
+        if (open) {
+          try { open.close(); } catch (e) {}
+        }
+      }
+    }, 8000);
+  }
+
+  function renderPip() {
+    var win = livePipWindow();
+    if (!win || !pipState) return;
+    pipWindow = win;
+    var state = pipState;
+    if (state.running) {
+      pipHoldFinished = false;
+      pipFinishArmed = false;
+      clearTimeout(pipFinishTimer);
+      pipFinishTimer = null;
+    }
+    var root = win.document.querySelector(".pip-timer");
+    if (!root) return;
+    var finished = pipIsFinished(state);
+    var copy = pipCopy();
+    var mainTime = state.el.querySelector("[data-time]");
+    win.document.documentElement.lang = currentLang;
+    root.querySelector(".pip-stage").textContent = state.el.querySelector("[data-stage-name]").textContent;
+    root.querySelector(".pip-time").textContent = finished ? fmt(0) : (mainTime ? mainTime.textContent : fmt(state.left));
+    var done = root.querySelector(".pip-done");
+    done.hidden = !finished;
+    done.textContent = copy.done;
+    root.classList.toggle("is-finished", finished);
+    var action = root.querySelector(".pip-action");
+    if (finished) {
+      action.textContent = copy.close;
+      action.disabled = false;
+      armPipFinishClose();
+    } else if (state.busy) {
+      action.textContent = copy.checking;
+      action.disabled = true;
+    } else if (state.running) {
+      action.textContent = copy.pause;
+      action.disabled = false;
+    } else {
+      action.textContent = copy.resume;
+      action.disabled = state.left <= 0;
+    }
+  }
+
+  function buildPipDocument(win) {
+    var doc = win.document;
+    doc.documentElement.lang = currentLang;
+    if (!doc.head.querySelector("meta[name='viewport']")) {
+      var meta = doc.createElement("meta");
+      meta.setAttribute("name", "viewport");
+      meta.setAttribute("content", "width=device-width, initial-scale=1");
+      doc.head.appendChild(meta);
+    }
+    copyPipStyles(doc);
+    doc.title = "Nepsis";
+    doc.body.textContent = "";
+    var root = doc.createElement("div");
+    root.className = "pip-timer";
+    root.innerHTML =
+      '<div class="pip-top"><span class="pip-dot" aria-hidden="true"></span><p class="pip-stage"></p></div>' +
+      '<p class="pip-time"></p>' +
+      '<p class="pip-done" hidden></p>' +
+      '<button type="button" class="pip-action"></button>';
+    doc.body.appendChild(root);
+    root.querySelector(".pip-action").addEventListener("click", onPipAction);
+    applyPipTheme();
+  }
+
+  function releasePipWindow() {
+    pipWindow = null;
+    pipState = null;
+    pipHoldFinished = false;
+    pipFinishArmed = false;
+    clearTimeout(pipFinishTimer);
+    pipFinishTimer = null;
+    syncPipLauncher();
+  }
+
+  function bindPipWindow(win, state) {
+    pipWindow = win;
+    pipState = state;
+    if (state.running) pipHoldFinished = false;
+    buildPipDocument(win);
+    renderPip();
+    watchPipTheme();
+    syncPipLauncher();
+    win.addEventListener("pagehide", function () {
+      if (pipWindow === win) releasePipWindow();
+    });
+  }
+
+  function openMiniTimer(state) {
+    if (!state || !pipSupported() || pipOpening) return;
+    var existing = livePipWindow();
+    if (existing) {
+      pipWindow = existing;
+      pipState = state;
+      if (state.running) pipHoldFinished = false;
+      if (!existing.document.querySelector(".pip-timer")) buildPipDocument(existing);
+      renderPip();
+      try { existing.focus(); } catch (e) {}
+      syncPipLauncher();
+      return;
+    }
+    // requestWindow consumes the click's user activation and must stay in this turn.
+    pipOpening = true;
+    var requested = state;
+    documentPictureInPicture.requestWindow({ width: 360, height: 240 }).then(function (win) {
+      pipOpening = false;
+      bindPipWindow(win, requested);
+    }).catch(function () {
+      pipOpening = false;
+    });
+  }
+
+  initPipLauncher();
 
   // Completion notification, only after the visitor turns it on with a click.
   var NOTIFY_KEY = "nepsis-timer-notify";
@@ -1054,6 +1355,7 @@
           : (currentLang === "el" ? "▷ Έναρξη" : "▷ Start");
       card.querySelector(".top span").textContent = (currentLang === "el" ? "ΣΤΑΔΙΟ " : "STAGE ") + (i + 1);
     });
+    syncPipLauncher();
   }
 
   async function restoreTimers() {
