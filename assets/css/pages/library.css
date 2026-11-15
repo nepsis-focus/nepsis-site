@@ -27,6 +27,8 @@ h1{font-size:clamp(2.5rem,6vw,4.3rem);line-height:1.04;letter-spacing:-.045em;ma
 .empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:20px}
 .note{margin:24px auto 0;max-width:850px;padding:18px 20px;border-left:3px solid var(--green);background:#F2F0E7;border-radius:0 16px 16px 0;color:var(--muted);font-size:.86rem}
 footer{text-align:center;border-top:1px solid var(--border);padding:24px;color:var(--muted);font-size:.85rem}
+.library-more{margin-top:8px}
+.library-more a{font-weight:800;color:var(--fg);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
 @media(max-width:700px){.grid{grid-template-columns:1fr}.card{min-height:0}.search{flex-direction:column}.search input{width:100%}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
 

@@ -442,3 +442,64 @@ body.tip-page .tip-source a {
 body.tip-page .tip-action { margin-top: 28px; }
 body.tip-page .tip-action .btn { max-width: 100%; text-align: center; }
 
+/* January exams page — calm countdown, same warm surfaces */
+.exam-page .page-heading h1 { overflow-wrap:break-word; }
+.exam-when {
+  max-width:min(640px, 100%);
+  margin-top:28px;
+  padding:22px 22px 18px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:var(--card);
+}
+.exam-when label span { display:block; margin-bottom:8px; font-weight:800; }
+.exam-when input[type="date"] {
+  display:block;
+  width:min(100%, 16rem);
+  max-width:100%;
+  min-width:0;
+  padding:10px 12px;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  background:var(--card);
+  color:var(--fg);
+  font:inherit;
+  font-weight:700;
+}
+.exam-count { margin-top:2px; font-size:1.2rem; font-weight:800; letter-spacing:-.02em; overflow-wrap:break-word; }
+.exam-change {
+  display:inline-block;
+  margin-top:8px;
+  padding:0;
+  border:0;
+  background:none;
+  color:var(--ember);
+  font:inherit;
+  font-size:.9rem;
+  font-weight:800;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:pointer;
+}
+.exam-change[hidden],
+#examForm[hidden],
+#examCountdown[hidden] { display:none !important; }
+.exam-copy p { max-width:68ch; margin-top:16px; }
+.exam-copy p:first-child { margin-top:0; }
+.exam-copy a { color:var(--ember); font-weight:800; }
+.exam-actions { margin-top:28px; }
+.exam-sources {
+  max-width:68ch;
+  margin:12px 0 0;
+  padding-left:1.15em;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.exam-sources li + li { margin-top:4px; }
+.exam-sources a { overflow-wrap:anywhere; }
+@media(max-width:760px) {
+  .exam-page .page-heading h1 { font-size:clamp(1.85rem, 8vw, 2.2rem); }
+  .exam-when { padding:18px 16px 14px; }
+  .exam-when input[type="date"] { width:100%; }
+}
+
