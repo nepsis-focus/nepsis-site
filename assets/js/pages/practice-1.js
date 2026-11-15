@@ -687,6 +687,39 @@
     return { session_id: state.sessionId, token: state.sessionToken };
   }
 
+  let focusSupabaseClientInstance = null;
+  function focusSupabaseClient() {
+    if (focusSupabaseClientInstance) return focusSupabaseClientInstance;
+    if (!window.supabase || !window.supabase.createClient) return null;
+    focusSupabaseClientInstance = window.supabase.createClient(
+      "https://emhukqvetlhjgadgskbl.supabase.co",
+      "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl"
+    );
+    return focusSupabaseClientInstance;
+  }
+
+  async function claimVerifiedTimerSession(state, sessionId, token) {
+    if (!sessionId || !token || state._focusClaimedSessionId === sessionId) return;
+    const client = focusSupabaseClient();
+    if (!client || !window.crypto || !window.crypto.subtle) return;
+    try {
+      const authResult = await client.auth.getSession();
+      const signedInUser = authResult && authResult.data && authResult.data.session && authResult.data.session.user;
+      if (!signedInUser || (authResult && authResult.error)) return;
+      const digest = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+      const tokenHash = Array.from(new Uint8Array(digest)).map(function (byte) {
+        return byte.toString(16).padStart(2, "0");
+      }).join("");
+      const result = await client.rpc("nepsis_timer_claim", {
+        p_session_id: sessionId,
+        p_token_hash: tokenHash
+      });
+      if (!result.error && result.data === true) state._focusClaimedSessionId = sessionId;
+    } catch (e) {
+      // Session tracking is optional; the server-verified timer still works for guests.
+    }
+  }
+
   async function timerRequest(action, state) {
     const credentials = timerCredentials(state);
     const response = await fetch(SB_URL + "/functions/v1/focus-timer", {
@@ -707,10 +740,14 @@
     if (!response.ok || !result || result.ok !== true) {
       throw new Error(result && result.error ? result.error : "timer_request_failed");
     }
+    const sessionId = typeof result.session_id === "string"
+      ? result.session_id
+      : (state.sessionId || credentials.session_id);
     if (typeof result.session_id === "string") {
       state.sessionId = result.session_id;
       saveTimerCredentials(state);
     }
+    if (typeof sessionId === "string") await claimVerifiedTimerSession(state, sessionId, credentials.token);
     return result;
   }
 
