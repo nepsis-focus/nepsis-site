@@ -40,6 +40,18 @@ html { overflow-x: clip; }
   margin-top: 64px;
   z-index: 1;
 }
+/* The 404 page lifts the drawer over the header. Put the header bar
+   back above that drawer, but let clicks pass through to Close, and
+   keep the menu button itself clickable so it can toggle. */
+body.missing-page:has(#drawer.open) header.top {
+  z-index: 85;
+  pointer-events: none;
+}
+body.missing-page:has(#drawer.open) #menuBtn {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+}
 
 /* Closed overlays leave the render and hit trees. .open keeps the painted look. */
 .scrim:not(.open),
