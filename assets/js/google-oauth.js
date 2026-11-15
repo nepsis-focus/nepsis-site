@@ -42,56 +42,98 @@
     else if (!loading) button.textContent = text;
   }
 
-  function showLoginNotice(session, lang, announce) {
-    var user = session && session.user;
-    if (!user || !global.document || !document.body) return;
+  function injectAuthStyles() {
+    if (document.getElementById("nepsis-auth-feedback-styles")) return;
+    var style = document.createElement("style");
+    style.id = "nepsis-auth-feedback-styles";
+    style.textContent = [
+      ".nepsis-auth-state{display:inline-flex;align-items:center;gap:6px;max-width:210px;padding:7px 10px;border:1px solid rgba(75,125,83,.28);border-radius:999px;background:rgba(102,145,98,.1);color:#426647;font:800 .76rem/1.2 Nunito,system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
+      ".nepsis-auth-state[hidden]{display:none!important}",
+      ".nepsis-auth-state-mark{display:grid;place-items:center;width:17px;height:17px;flex:0 0 17px;border-radius:50%;background:#668f62;color:#fff;font-size:.68rem}",
+      "html[data-theme=dark] .nepsis-auth-state{color:#c5dfbf;background:rgba(143,168,146,.12);border-color:rgba(143,168,146,.3)}",
+      "html[data-theme=dark] .nepsis-auth-state-mark{background:#8fa892;color:#1a1512}",
+      "@media(max-width:520px){.nepsis-auth-state{max-width:112px;padding:6px 7px;font-size:.68rem;gap:4px}.nepsis-auth-state-mark{width:15px;height:15px;flex-basis:15px}}",
+      "@media(prefers-reduced-motion:reduce){#nepsis-auth-notice{transition:none!important}}"
+    ].join("");
+    document.head.appendChild(style);
+  }
+
+  function authButton() {
+    return document.getElementById("accountBtn") || document.getElementById("accBtn");
+  }
+
+  function updateSignedInIndicator(session, lang) {
+    var button = authButton();
+    if (!button || !session || !session.user) return;
+    injectAuthStyles();
     var english = langKey(lang || document.documentElement.lang) === "en";
-    var email = user.email || "";
-    var display = email || (english ? "Your account" : "Ο λογαριασμός σου");
+    var email = session.user.email || (english ? "Your account" : "Ο λογαριασμός σου");
+    var host = button.closest(".headright, .head-right") || button.parentElement;
+    if (!host) return;
 
-    // Keep the existing account controls, but make the authenticated state explicit.
-    ["accountBtn", "accBtn"].forEach(function (id) {
-      var button = document.getElementById(id);
-      if (!button) return;
-      button.dataset.nepsisSignedIn = "true";
-      button.setAttribute("aria-label", (english ? "Signed in as " : "Συνδεδεμένος ως ") + display);
-      button.title = (english ? "Signed in as " : "Συνδεδεμένος ως ") + display;
-      var label = english ? "My account" : "Ο λογαριασμός μου";
-      if (button.textContent !== label) button.textContent = label;
-    });
-
-    var accountTitle = document.getElementById("accountTitle");
-    var accountCopy = document.getElementById("accountCopy");
-    var accountWho = document.getElementById("accWho");
-    if (accountTitle) accountTitle.textContent = english ? "You’re signed in" : "Συνδέθηκες επιτυχώς";
-    if (accountCopy) accountCopy.textContent = display;
-    if (accountWho) accountWho.textContent = display;
-
-    if (announce) {
-      var toast = document.getElementById("nepsis-auth-notice");
-      if (!toast) {
-        toast = document.createElement("div");
-        toast.id = "nepsis-auth-notice";
-        toast.setAttribute("role", "status");
-        toast.setAttribute("aria-live", "polite");
-        toast.style.cssText = "position:fixed;z-index:99999;left:50%;bottom:22px;transform:translate(-50%,12px);max-width:calc(100vw - 32px);padding:13px 18px;border:1px solid rgba(185,85,42,.28);border-radius:16px;background:var(--card,#fffaf4);color:var(--fg,#3a2418);box-shadow:0 18px 42px -24px rgba(58,36,24,.5);font:700 .94rem/1.45 Nunito,system-ui,sans-serif;opacity:0;transition:opacity .25s ease,transform .25s ease";
-        document.body.appendChild(toast);
-      }
-      toast.textContent = english ? "Signed in successfully · " + display : "Συνδέθηκες επιτυχώς · " + display;
-      requestAnimationFrame(function () {
-        toast.style.opacity = "1";
-        toast.style.transform = "translate(-50%,0)";
-      });
-      global.clearTimeout(toast.__nepsisTimer);
-      toast.__nepsisTimer = global.setTimeout(function () {
-        toast.style.opacity = "0";
-        toast.style.transform = "translate(-50%,12px)";
-      }, 5200);
+    var badge = document.getElementById("nepsis-auth-state");
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.id = "nepsis-auth-state";
+      badge.className = "nepsis-auth-state";
+      badge.setAttribute("role", "status");
+      var mark = document.createElement("span");
+      mark.className = "nepsis-auth-state-mark";
+      mark.setAttribute("aria-hidden", "true");
+      mark.textContent = "✓";
+      var label = document.createElement("span");
+      label.className = "nepsis-auth-state-label";
+      badge.append(mark, label);
+      button.insertAdjacentElement("afterend", badge);
     }
+    badge.querySelector(".nepsis-auth-state-label").textContent = english ? "Signed in" : "Συνδεδεμένος";
+    badge.title = email;
+    button.dataset.nepsisSignedIn = "true";
+    button.setAttribute("aria-label", (english ? "Account, signed in as " : "Λογαριασμός, συνδεδεμένος ως ") + email);
+    button.title = (english ? "Signed in as " : "Συνδεδεμένος ως ") + email;
 
-    try {
-      global.dispatchEvent(new CustomEvent("nepsis:auth", { detail: { user: user, signedIn: true } }));
-    } catch (error) {}
+    var who = document.getElementById("accWho") || document.getElementById("accountWho");
+    if (who) who.textContent = email;
+    var title = document.getElementById("accTitle") || document.getElementById("accountTitle");
+    if (title) title.textContent = english ? "You’re signed in" : "Συνδέθηκες επιτυχώς";
+  }
+
+  function announceSignedIn(session, lang) {
+    if (!session || !session.user || !document.body) return;
+    updateSignedInIndicator(session, lang);
+    injectAuthStyles();
+    var english = langKey(lang || document.documentElement.lang) === "en";
+    var email = session.user.email || (english ? "your account" : "τον λογαριασμό σου");
+    var toast = document.getElementById("nepsis-auth-notice");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "nepsis-auth-notice";
+      toast.setAttribute("role", "status");
+      toast.setAttribute("aria-live", "polite");
+      toast.style.cssText = "position:fixed;z-index:99999;left:50%;bottom:22px;transform:translate(-50%,12px);max-width:calc(100vw - 32px);padding:13px 18px;border:1px solid rgba(185,85,42,.28);border-radius:16px;background:var(--card,#fffaf4);color:var(--fg,#3a2418);box-shadow:0 18px 42px -24px rgba(58,36,24,.5);font:700 .94rem/1.45 Nunito,system-ui,sans-serif;opacity:0;transition:opacity .25s ease,transform .25s ease";
+      document.body.appendChild(toast);
+    }
+    toast.textContent = english ? "Signed in successfully · " + email : "Συνδέθηκες επιτυχώς · " + email;
+    global.requestAnimationFrame(function () {
+      toast.style.opacity = "1";
+      toast.style.transform = "translate(-50%,0)";
+    });
+    global.clearTimeout(toast.__nepsisTimer);
+    toast.__nepsisTimer = global.setTimeout(function () {
+      toast.style.opacity = "0";
+      toast.style.transform = "translate(-50%,12px)";
+    }, 5200);
+  }
+
+  function closeAccountDialogs() {
+    ["accountModal", "accModal"].forEach(function (id) {
+      var modal = document.getElementById(id);
+      if (modal) modal.classList.remove("open");
+    });
+    ["accScrim"].forEach(function (id) {
+      var scrim = document.getElementById(id);
+      if (scrim) scrim.classList.remove("open");
+    });
   }
 
   function openAuthPopup() {
@@ -112,22 +154,33 @@
     if (authWatchers) authWatchers.add(client);
 
     client.auth.onAuthStateChange(function (event, session) {
-      if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
-        showLoginNotice(session, document.documentElement.lang, event === "SIGNED_IN");
-        if (inPopup) {
-          try { global.close(); } catch (error) {}
+      if (event === "SIGNED_OUT") {
+        var badge = document.getElementById("nepsis-auth-state");
+        if (badge) badge.remove();
+        var button = authButton();
+        if (button) {
+          delete button.dataset.nepsisSignedIn;
+          button.removeAttribute("title");
         }
+        return;
+      }
+      if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
+        updateSignedInIndicator(session, document.documentElement.lang);
+        if (event === "SIGNED_IN") {
+          announceSignedIn(session, document.documentElement.lang);
+          closeAccountDialogs();
+        }
+        if (inPopup) { try { global.close(); } catch (error) {} }
       }
     });
 
     client.auth.getSession().then(function (result) {
       if (result && result.data && result.data.session) {
-        showLoginNotice(result.data.session, document.documentElement.lang, false);
+        updateSignedInIndicator(result.data.session, document.documentElement.lang);
         if (inPopup) { try { global.close(); } catch (error) {} }
       }
     }).catch(function () {});
 
-    // The My Nepsis weekly chart is optional; the dashboard remains usable if its CDN is unavailable.
     if (document.getElementById("weekBars") && !document.querySelector('script[data-nepsis-chart-addon]')) {
       var chartAddon = document.createElement("script");
       chartAddon.src = "assets/js/pages/my-nepsis-chart.js";
@@ -181,13 +234,23 @@
         }
         var authListener = client.auth.onAuthStateChange(function (event, session) {
           if (event === "SIGNED_IN" && session) {
-            showLoginNotice(session, lang, true);
+            announceSignedIn(session, lang);
+            closeAccountDialogs();
             if (popup && !popup.closed) { try { popup.close(); } catch (error) {} }
             cleanup(true);
           }
         });
         subscription = authListener && authListener.data ? authListener.data.subscription : null;
-        poll = setInterval(function () { if (!popup || popup.closed) cleanup(true); }, 400);
+        poll = setInterval(function () {
+          if (!popup || popup.closed) {
+            client.auth.getSession().then(function (result) {
+              if (result && result.data && result.data.session) {
+                announceSignedIn(result.data.session, lang);
+                closeAccountDialogs();
+              }
+            }).catch(function () {}).finally(function () { cleanup(true); });
+          }
+        }, 400);
         return { ok: true, mode: "popup" };
       }
 
