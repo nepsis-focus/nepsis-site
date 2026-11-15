@@ -10,6 +10,148 @@
   const isProductionHost = host === "nepsis-focus.github.io";
   let umamiScript = null;
 
+  // ===== ΝΕΟ: Telemetry constants =====
+  const SUPABASE_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
+  const ANON_ID_KEY = "nepsis-anon-id";
+  const SESSION_ID_KEY = "nepsis-session-id";
+
+  // Κατάσταση tracking (μόνο στη μνήμη)
+  const telemetryState = {
+    startTime: Date.now(),
+    maxScroll: 0,
+    lastSection: "",
+    lastClick: "",
+    sessionId: null,
+    anonId: null
+  };
+
+  function getOrCreateId(key, storage) {
+    try {
+      let id = storage.getItem(key);
+      if (!id) {
+        id = crypto.randomUUID();
+        storage.setItem(key, id);
+      }
+      return id;
+    } catch (_) {
+      return "fallback-" + Math.random().toString(36).slice(2);
+    }
+  }
+
+  function initTelemetryIds() {
+    telemetryState.anonId = getOrCreateId(ANON_ID_KEY, localStorage);
+    telemetryState.sessionId = getOrCreateId(SESSION_ID_KEY, sessionStorage);
+  }
+
+  function updateScrollDepth() {
+    const scrolled = window.scrollY + window.innerHeight;
+    const total = Math.max(document.documentElement.scrollHeight, 1);
+    const percent = Math.min(100, Math.round((scrolled / total) * 100));
+    if (percent > telemetryState.maxScroll) telemetryState.maxScroll = percent;
+  }
+
+  function updateLastSection() {
+    const sections = document.querySelectorAll("section[id], main > section, [data-section]");
+    let best = "";
+    let bestRatio = 0;
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      const visible = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+      const ratio = visible / Math.max(rect.height, 1);
+      if (ratio > bestRatio && ratio > 0.3) {
+        bestRatio = ratio;
+        best = sec.id || sec.getAttribute("data-section") || sec.tagName.toLowerCase();
+      }
+    });
+    if (best) telemetryState.lastSection = best;
+  }
+
+  function updateLastClick(target) {
+    if (!target) return;
+    const el = target.closest("a, button, [id], [data-whop-upsell]") || target;
+    const info = el.id || el.getAttribute("data-whop-upsell") || el.textContent?.trim().slice(0, 40) || el.tagName;
+    telemetryState.lastClick = info;
+  }
+
+  function buildPayload(eventType) {
+    const timeOnPage = Math.round((Date.now() - telemetryState.startTime) / 1000);
+    return {
+      anon_id: telemetryState.anonId,
+      session_id: telemetryState.sessionId,
+      event_type: eventType,
+      page: location.pathname + location.hash,
+      section: telemetryState.lastSection || pageSection(),
+      scroll_depth: telemetryState.maxScroll,
+      time_on_page: timeOnPage,
+      last_click: telemetryState.lastClick,
+      properties: { host: host }
+    };
+  }
+
+  function sendTelemetry(eventType, useKeepalive = false) {
+    if (readConsent() !== "granted") return;
+    if (!telemetryState.anonId) return;
+
+    const payload = buildPayload(eventType);
+    const body = JSON.stringify(payload);
+    if (body.length > 60000) return; // Ασφάλεια κάτω από 64KB
+
+    const headers = {
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+      "Prefer": "return=minimal"
+    };
+
+    // Αν υπάρχει ενεργό session, προσπάθησε να βάλεις user token (προαιρετικό)
+    try {
+      if (window.supabase?.auth) {
+        window.supabase.auth.getSession().then(({ data }) => {
+          if (data?.session?.access_token) {
+            headers.Authorization = `Bearer ${data.session.access_token}`;
+            if (data.session.user?.id) payload.user_id = data.session.user.id;
+          }
+        }).catch(() => {});
+      }
+    } catch (_) {}
+
+    fetch(`${SUPABASE_URL}/rest/v1/site_telemetry`, {
+      method: "POST",
+      headers,
+      body,
+      keepalive: useKeepalive
+    }).catch(() => {}); // Αθόρυβα
+  }
+
+  function setupTelemetryTracking() {
+    initTelemetryIds();
+    updateScrollDepth();
+    updateLastSection();
+
+    let scrollTimer;
+    window.addEventListener("scroll", () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        updateScrollDepth();
+        updateLastSection();
+      }, 150);
+    }, { passive: true });
+
+    document.addEventListener("click", (e) => updateLastClick(e.target), true);
+
+    // Exit events — visibilitychange + pagehide με keepalive
+    const sendExit = () => sendTelemetry("exit", true);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") sendExit();
+    });
+    window.addEventListener("pagehide", sendExit);
+
+    // Page enter
+    sendTelemetry("page_enter");
+  }
+  // ===== Τέλος νέου telemetry κώδικα =====
+
   function readConsent() {
     try { const value=localStorage.getItem(CONSENT_KEY); return value==="granted"||value==="denied"?value:null; }
     catch (_) { return null; }
@@ -60,6 +202,8 @@
     if(readConsent()!=="granted") return;
     if(isPreviewHost) { if(loadPostHog()) window.nepsisAnalytics.track("page_view",{section:pageSection()}); }
     else if(isProductionHost) loadUmami();
+    // Νέο: ξεκίνα και το telemetry
+    setupTelemetryTracking();
   }
 
   window.nepsisAnalytics=Object.freeze({
@@ -69,6 +213,10 @@
       const safe=safeProperties(properties);
       window.dispatchEvent(new CustomEvent("nepsis:analytics",{detail:{name,properties:safe}}));
       if(readConsent()==="granted"&&isPreviewHost&&window.posthog&&typeof window.posthog.capture==="function") window.posthog.capture(name,safe);
+      // Νέο: στείλε και στο Supabase αν είναι βασικό event
+      if (readConsent() === "granted" && (name === "page_view" || name === "session_completed")) {
+        sendTelemetry(name);
+      }
       return true;
     }
   });
