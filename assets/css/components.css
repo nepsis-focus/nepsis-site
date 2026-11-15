@@ -29,6 +29,18 @@ html { overflow-x: clip; }
 .nepsis-menu-scrim.open { opacity: 1; visibility: visible; pointer-events: auto; }
 @media (prefers-reduced-motion: reduce) { .nepsis-site-drawer, .nepsis-menu-scrim { transition: none; } }
 
+/* The sticky header paints over the drawer's Close control. Keep that
+   control below the header so it can be seen and clicked, without
+   covering the menu button. */
+#drawer .close {
+  position: relative;
+  top: auto;
+  right: auto;
+  align-self: flex-end;
+  margin-top: 64px;
+  z-index: 1;
+}
+
 /* Closed overlays leave the render and hit trees. .open keeps the painted look. */
 .scrim:not(.open),
 .acc-scrim:not(.open),

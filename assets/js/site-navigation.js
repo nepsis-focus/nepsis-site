@@ -60,7 +60,7 @@
     button.setAttribute("aria-expanded", String(open));
     if (open) drawer.querySelector("a")?.focus(); else button.focus();
   };
-  button.addEventListener("click", () => setOpen(true));
+  button.addEventListener("click", () => setOpen(!drawer.classList.contains("open")));
   scrim.addEventListener("click", () => setOpen(false));
   drawer.addEventListener("click", event => { if (event.target.closest("a")) setOpen(false); });
   document.addEventListener("keydown", event => { if (event.key === "Escape" && drawer.classList.contains("open")) setOpen(false); });

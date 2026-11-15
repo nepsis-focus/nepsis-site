@@ -24,7 +24,7 @@
     $("scrim").classList.toggle("open", open);
     $("menuBtn").setAttribute("aria-expanded", open ? "true" : "false");
   }
-  $("menuBtn").addEventListener("click", function () { setMenu(true); });
+  $("menuBtn").addEventListener("click", function () { setMenu(!$("drawer").classList.contains("open")); });
   $("closeBtn").addEventListener("click", function () { setMenu(false); });
   $("scrim").addEventListener("click", function () { setMenu(false); });
   $("drawer").querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
