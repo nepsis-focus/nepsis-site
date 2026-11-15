@@ -413,6 +413,35 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   *,*:before,*:after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
 }
 
+/* Standalone tip pages: same editorial shell, narrower measure so long titles stay inside the screen */
+body.tip-page:not(.home-page):not(.practice-page) .page-heading h1 {
+  max-width: min(18ch, 100%);
+  overflow-wrap: anywhere;
+}
+body.tip-page:not(.home-page):not(.practice-page) .page-heading::after {
+  content: none;
+  animation: none;
+}
+body.tip-page .tip-copy {
+  max-width: 68ch;
+  font-size: 1.06rem;
+  line-height: 1.75;
+}
+body.tip-page .tip-source {
+  max-width: 100%;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: .95rem;
+  overflow-wrap: anywhere;
+}
+body.tip-page .tip-source a {
+  color: var(--ember);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+body.tip-page .tip-action { margin-top: 28px; }
+body.tip-page .tip-action .btn { max-width: 100%; text-align: center; }
+
 /* January exams page — calm countdown, same warm surfaces */
 .exam-page .page-heading h1 { overflow-wrap:break-word; }
 .exam-when {

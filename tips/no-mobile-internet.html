@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Warm theme boot — apply before paint to avoid a light flash at night */
+(function () {
+  try {
+    var p = localStorage.getItem("nepsis-theme") || "system";
+    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.style.colorScheme = t;
+  } catch (e) {}
+})();
+</script>
+<meta name="description" content="Σε τυχαιοποιημένη μελέτη με 467 άτομα, δύο εβδομάδες χωρίς internet στο κινητό βελτίωσαν την προσοχή και την ευεξία. Δοκίμασέ το σε ένα στάδιο.">
+<title data-el="Nepsis · Χωρίς internet στο κινητό" data-en="Nepsis · Without mobile internet">Nepsis · Χωρίς internet στο κινητό</title>
+<link rel="icon" href="../assets/brand/nepsis-mark.svg" type="image/svg+xml">
+<link rel="canonical" href="https://nepsis-focus.github.io/nepsis-site/tips/no-mobile-internet.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nepsis">
+<meta property="og:locale" content="el_GR">
+<meta property="og:url" content="https://nepsis-focus.github.io/nepsis-site/tips/no-mobile-internet.html">
+<meta property="og:title" content="Nepsis · Χωρίς internet στο κινητό">
+<meta property="og:description" content="Σε τυχαιοποιημένη μελέτη με 467 άτομα, δύο εβδομάδες χωρίς internet στο κινητό βελτίωσαν την προσοχή και την ευεξία. Δοκίμασέ το σε ένα στάδιο.">
+<meta property="og:image" content="https://nepsis-focus.github.io/nepsis-site/assets/brand/nepsis-og.png">
+<meta property="og:image:alt" content="Nepsis">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Nepsis · Χωρίς internet στο κινητό">
+<meta name="twitter:description" content="Σε τυχαιοποιημένη μελέτη με 467 άτομα, δύο εβδομάδες χωρίς internet στο κινητό βελτίωσαν την προσοχή και την ευεξία. Δοκίμασέ το σε ένα στάδιο.">
+<meta name="twitter:image" content="https://nepsis-focus.github.io/nepsis-site/assets/brand/nepsis-og.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/pages/information.css">
+  <link rel="stylesheet" href="../assets/css/components.css">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+
+
+<!-- PWA -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#F0702A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nepsis">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+
+<!-- SEO / Open Graph -->
+<meta name="robots" content="index, follow">
+<meta property="og:locale:alternate" content="en_US">
+
+<!-- Service Worker registration -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    var scopeUrl = new URL("../", location.href);
+    var swUrl = new URL("../sw.js", location.href);
+    navigator.serviceWorker.register(swUrl, { scope: scopeUrl.pathname })
+      .then(function (reg) { console.log("Nepsis SW registered:", reg.scope); })
+      .catch(function (err) { console.warn("SW registration failed:", err); });
+  });
+}
+</script>
+
+</head>
+<body class="tip-page">
+<header class="top">
+  <div class="wrap top-in">
+    <a class="logo" href="../index.html"><span class="dot" aria-hidden="true"></span>Nepsis</a>
+    <div class="head-right">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="el" class="active">ΕΛ</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <button type="button" class="menu-btn" id="menuBtn" aria-label="Άνοιγμα μενού" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<nav class="drawer" id="drawer" aria-label="Κύριο μενού">
+  <button type="button" class="close" id="closeBtn" aria-label="Κλείσιμο">✕</button>
+  <a href="../index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
+  <a href="../practice.html#challenge" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</a>
+  <a href="../practice.html#stageGrid" data-el="Στάδια συγκέντρωσης" data-en="Focus stages">Στάδια συγκέντρωσης</a>
+  <a href="../practice.html#quiz" data-el="Κουίζ" data-en="Quiz">Κουίζ</a>
+  <a href="../practice.html#progress" data-el="Η πρόοδός μου" data-en="My progress">Η πρόοδός μου</a>
+  <a href="../reset.html" data-el="Μικρή παύση" data-en="Take a pause">Μικρή παύση</a>
+  <a href="../my-nepsis.html" data-el="Το Nepsis μου" data-en="My Nepsis">Το Nepsis μου</a>
+  <a href="../diary.html" data-el="Προσωπικό ημερολόγιο" data-en="Private diary">Προσωπικό ημερολόγιο</a>
+  <a href="../library.html" data-el="Βιβλιοθήκη γνώσης" data-en="Knowledge library">Βιβλιοθήκη γνώσης</a>
+  <a href="../about.html" data-el="Τι είναι το Nepsis" data-en="About Nepsis">Τι είναι το Nepsis</a>
+  <a href="../how.html" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</a>
+  <a href="../faq.html" data-el="Συχνές ερωτήσεις" data-en="Frequently asked questions">Συχνές ερωτήσεις</a>
+  <a href="../privacy.html" data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</a>
+</nav>
+<div class="scrim" id="scrim"></div>
+
+<main>
+<div class="wrap">
+  <section class="page-heading">
+    <h1 data-el="Χωρίς internet στο κινητό" data-en="Without mobile internet">Χωρίς internet στο κινητό</h1>
+  </section>
+  <section class="content-section">
+    <p class="tip-copy" data-el="Ερευνητές έκοψαν το internet στο κινητό 467 συμμετεχόντων για δύο εβδομάδες. Κλήσεις και μηνύματα δούλευαν κανονικά. Η διαρκής προσοχή, η ψυχική υγεία και η ευεξία τους βελτιώθηκαν. Δοκίμασέ το σε μικρότερη κλίμακα: κλείσε τα δεδομένα και το Wi-Fi του κινητού για ένα στάδιο 25 λεπτών." data-en="Researchers turned off mobile internet for 467 participants for two weeks. Calls and texts still worked. Their sustained attention, mental health and well-being improved. Try a smaller version: turn off your phone's data and Wi-Fi for one 25-minute stage.">Ερευνητές έκοψαν το internet στο κινητό 467 συμμετεχόντων για δύο εβδομάδες. Κλήσεις και μηνύματα δούλευαν κανονικά. Η διαρκής προσοχή, η ψυχική υγεία και η ευεξία τους βελτιώθηκαν. Δοκίμασέ το σε μικρότερη κλίμακα: κλείσε τα δεδομένα και το Wi-Fi του κινητού για ένα στάδιο 25 λεπτών.</p>
+    <p class="tip-source"><span data-el="Πηγή" data-en="Source">Πηγή</span>: <a href="https://academic.oup.com/pnasnexus/article/4/2/pgaf017/8016017" target="_blank" rel="noopener">Castelo et al., PNAS Nexus, 2025</a></p>
+    <p class="tip-action"><a class="btn" href="../practice.html#stage-5" data-el="Ξεκίνα 5′" data-en="Start 5′">Ξεκίνα 5′</a></p>
+  </section>
+</div>
+</main>
+<footer>
+  <div class="wrap foot">
+    <a class="logo" href="../index.html"><span class="dot" aria-hidden="true"></span>Nepsis</a>
+    <span data-el="Μικρά βήματα. Μία μέρα τη φορά." data-en="Small steps. One day at a time.">Μικρά βήματα. Μία μέρα τη φορά.</span>
+    <span><a href="../privacy.html" data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</a> · © 2026 Nepsis</span>
+  </div>
+</footer>
+<script src="../assets/js/pages/tip-1.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.9/dist/lenis.min.js"></script>
+
+<script src="../assets/js/site-interactions.js"></script>
+
+
+<script src="../assets/js/site-motion.js"></script>
+
+
+<script src="../assets/js/dialogs.js"></script>
+<script src="../assets/js/analytics.js"></script>
+<script src="../assets/js/site-navigation.js"></script>
+<script src="../assets/js/site-preferences.js"></script>
+<script src="../assets/js/ambient-sounds.js"></script>
+</body>
+</html>

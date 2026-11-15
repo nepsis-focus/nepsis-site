@@ -22,6 +22,7 @@ h1{font-size:clamp(2.5rem,6vw,4.3rem);line-height:1.04;letter-spacing:-.045em;ma
 .card h2{font-size:1.35rem;line-height:1.2;margin-bottom:9px}.card p{font-size:.94rem;color:var(--muted)}
 .try{margin-top:16px;padding:13px 15px;border-radius:15px;background:#F7EFE3;color:var(--fg);font-size:.88rem}.try strong{display:block;color:var(--orange);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
 .source{margin-top:auto;padding-top:18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.source a{font-weight:900;color:var(--orange);text-decoration:none;font-size:.88rem}.source a:hover{text-decoration:underline}.source small{color:var(--muted);font-size:.75rem}
+.read-more{display:inline-block;align-self:flex-start;margin-top:12px;max-width:100%;font-weight:900;color:var(--orange);text-decoration:none;font-size:.88rem}.read-more:hover{text-decoration:underline}
 #cards .whop-upsell{margin-top:14px;padding:14px 0 0}
 .empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:20px}
 .note{margin:24px auto 0;max-width:850px;padding:18px 20px;border-left:3px solid var(--green);background:#F2F0E7;border-radius:0 16px 16px 0;color:var(--muted);font-size:.86rem}

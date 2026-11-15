@@ -1704,7 +1704,7 @@
         const file = new File([blob], "nepsis-" + min + "-min.png", { type: "image/png" });
         const text = currentLang === "el" ? "Μόλις έκανα " + min + " λεπτά συγκέντρωσης στο Nepsis." : "I just did " + min + " minutes of focus on Nepsis.";
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          try { await navigator.share({ files: [file], title: "Nepsis", text: text }); return; } catch (e) { return; }
+          try { await navigator.share({ files: [file], title: "Nepsis", text: text }); return; } catch (e) { if (e && e.name === "AbortError") return; }
         }
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob); a.download = file.name;

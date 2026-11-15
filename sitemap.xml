@@ -36,6 +36,21 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://nepsis-focus.github.io/nepsis-site/tips/no-mobile-internet.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nepsis-focus.github.io/nepsis-site/tips/check-the-source.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://nepsis-focus.github.io/nepsis-site/tips/ai-in-studying.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://nepsis-focus.github.io/nepsis-site/premium.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
