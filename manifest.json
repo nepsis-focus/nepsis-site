@@ -2,8 +2,8 @@
   "name": "Nepsis — Εξάσκηση Συγκέντρωσης",
   "short_name": "Nepsis",
   "description": "Εξάσκηση συγκέντρωσης με μικρά καθημερινά βήματα. Privacy-first.",
-  "start_url": "/nepsis-site/",
-  "scope": "/nepsis-site/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#3A2418",
   "theme_color": "#F0702A",
@@ -13,19 +13,19 @@
   "categories": ["education", "lifestyle", "productivity"],
   "icons": [
     {
-      "src": "/nepsis-site/icons/icon-192.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/nepsis-site/icons/icon-512.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/nepsis-site/icons/icon-512-maskable.png",
+      "src": "icons/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

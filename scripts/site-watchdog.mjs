@@ -86,6 +86,30 @@ try {
           failures.push(`${viewport.name} ${route}: horizontal overflow (${layout.documentWidth}px content in ${layout.viewportWidth}px viewport); elements: ${JSON.stringify(layout.overflowElements)}`);
         }
 
+        const overlays = await page.evaluate(() => {
+          const selectors = ".scrim, .acc-scrim, .acc-modal, .sub-modal, .account, .nepsis-menu-scrim, .focus-nudge-scrim";
+          const stuck = Array.from(document.querySelectorAll(selectors)).filter((el) => {
+            if (el.classList.contains("open")) return false;
+            if (el.classList.contains("focus-nudge-scrim") && document.body.classList.contains("nudge-visible")) return false;
+            const style = getComputedStyle(el);
+            return style.display !== "none" && style.pointerEvents !== "none";
+          }).map((el) => el.id || el.className);
+          const button = document.querySelector("#accBtn, #accountBtn, #menuBtn");
+          let hitsControl = true;
+          if (button) {
+            const rect = button.getBoundingClientRect();
+            const top = document.elementFromPoint(rect.left + rect.width / 2, rect.top + Math.min(rect.height / 2, 12));
+            hitsControl = !!top && (top === button || button.contains(top));
+          }
+          return { stuck, hitsControl, hasButton: !!button };
+        });
+        if (overlays.stuck.length) {
+          failures.push(`${viewport.name} ${route}: closed overlay still captures pointer events: ${overlays.stuck.join(", ")}`);
+        }
+        if (overlays.hasButton && !overlays.hitsControl) {
+          failures.push(`${viewport.name} ${route}: header control is covered by another layer`);
+        }
+
                 for (const message of pageErrors) failures.push(`${viewport.name} ${route}: JavaScript exception: ${message}`);
         for (const message of consoleErrors) {
           if (!/favicon|third.party|third-party/i.test(message)) {

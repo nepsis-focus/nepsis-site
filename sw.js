@@ -1,26 +1,31 @@
 // Nepsis Service Worker — lightweight, update-friendly
 // Version bump this string when you want to force cache refresh
-const CACHE_VERSION = 'nepsis-v3';
+const CACHE_VERSION = 'nepsis-v4';
 const CACHE_NAME = `nepsis-static-${CACHE_VERSION}`;
+
+// Paths are relative to this script so the same list works on GitHub Pages
+// (/nepsis-site/) and on hosts that serve the site at /.
+const ROOT = new URL('./', self.location);
+const asset = (path) => new URL(path, ROOT).href;
 
 // Core static assets to cache (adjust paths as needed)
 const CORE_ASSETS = [
-  '/nepsis-site/',
-  '/nepsis-site/index.html',
-  '/nepsis-site/practice.html',
-  '/nepsis-site/about.html',
-  '/nepsis-site/how.html',
-  '/nepsis-site/faq.html',
-  '/nepsis-site/library.html',
-  '/nepsis-site/premium.html',
-  '/nepsis-site/privacy.html',
-  '/nepsis-site/terms.html',
-  '/nepsis-site/reset.html',
-  '/nepsis-site/manifest.json',
-  '/nepsis-site/icons/icon-192.png',
-  '/nepsis-site/icons/icon-512.png',
-  '/nepsis-site/assets/brand/nepsis-mark.svg',
-  '/nepsis-site/assets/brand/nepsis-og.png'
+  asset('./'),
+  asset('index.html'),
+  asset('practice.html'),
+  asset('about.html'),
+  asset('how.html'),
+  asset('faq.html'),
+  asset('library.html'),
+  asset('premium.html'),
+  asset('privacy.html'),
+  asset('terms.html'),
+  asset('reset.html'),
+  asset('manifest.json'),
+  asset('icons/icon-192.png'),
+  asset('icons/icon-512.png'),
+  asset('assets/brand/nepsis-mark.svg'),
+  asset('assets/brand/nepsis-og.png')
 ];
 
 // Install: cache core assets, then skip waiting so new SW activates quickly
@@ -66,7 +71,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone)).catch(() => {});
           return response;
         })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('/nepsis-site/')))
+        .catch(() => caches.match(request).then((cached) => cached || caches.match(asset('./'))))
     );
     return;
   }
