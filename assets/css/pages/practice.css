@@ -1013,3 +1013,50 @@ body.zen-active #stageGrid > .stage.is-running * {
 a.acc-btn { text-decoration: none; display: inline-flex; align-items: center; }
 .acc-modal { z-index: 80; }
 .acc-scrim { z-index: 79; }
+
+/* Opt-in mini timer, shown beside the running stage only when Document Picture-in-Picture exists. */
+body.practice-page .pip-timer-btn {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 6px 12px;
+  min-height: 36px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--card, #FFFDF8);
+  color: var(--fg);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  cursor: pointer;
+  box-shadow: 0 8px 18px -14px rgba(120, 60, 30, .55);
+}
+body.practice-page .pip-timer-btn[hidden] { display: none !important; }
+body.practice-page .pip-timer-btn .pip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: radial-gradient(circle at 35% 30%, #FFE58A 0%, #F7B232 35%, #F0702A 70%, #D8392B 100%);
+  box-shadow: 0 0 0 3px rgba(240, 112, 42, .16);
+}
+body.practice-page .pip-timer-btn span[data-el] { min-width: 0; overflow-wrap: anywhere; }
+body.practice-page .pip-timer-btn:focus-visible {
+  outline: 3px solid rgba(240, 112, 42, .4);
+  outline-offset: 2px;
+}
+html[data-theme="dark"] body.practice-page .pip-timer-btn {
+  background: var(--card);
+  color: var(--fg);
+  border-color: var(--border);
+  box-shadow: 0 8px 18px -14px rgba(0, 0, 0, .45);
+}
+html[data-theme="dark"] body.practice-page .pip-timer-btn .pip-dot {
+  box-shadow: 0 0 0 3px rgba(232, 146, 74, .22);
+}
