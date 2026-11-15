@@ -665,6 +665,7 @@ body.practice-page .stages { display:grid; grid-template-columns:repeat(5,minmax
 body.practice-page .stage {
   min-height:270px; border-radius:26px; padding:22px 16px;
   box-shadow:0 12px 36px -28px rgba(58,36,24,.38);
+  scroll-margin-top: 96px;
 }
 body.practice-page .stage .ring { transform:scale(1.08); }
 body.practice-page .stage .start { min-height:44px; border-radius:99px; }
