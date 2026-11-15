@@ -24,7 +24,7 @@
     $("scrim").classList.toggle("open", open);
     $("menuBtn").setAttribute("aria-expanded", open ? "true" : "false");
   }
-  $("menuBtn").addEventListener("click", function () { setMenu(true); });
+  $("menuBtn").addEventListener("click", function () { setMenu(!$("drawer").classList.contains("open")); });
   $("closeBtn").addEventListener("click", function () { setMenu(false); });
   $("scrim").addEventListener("click", function () { setMenu(false); });
   $("drawer").querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
@@ -1814,7 +1814,13 @@
   // The practice page primary button now scrolls directly to the stages.
   $("subClose").addEventListener("click", function () { setSub(false); });
   $("subScrim").addEventListener("click", function () { setSub(false); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setSub(false); });
+  $("subModal").addEventListener("click", function (e) { if (e.target === $("subModal")) setSub(false); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    setSub(false);
+    setMenu(false);
+    setAcc(false);
+  });
   // exams.html links here so the existing Brevo form opens. The hash does not start a timer.
   function openNewsletterFromHash() {
     if (location.hash === "#newsletter") setSub(true);
@@ -1937,6 +1943,7 @@
   });
   $("accClose").addEventListener("click", function () { setAcc(false); });
   $("accScrim").addEventListener("click", function () { setAcc(false); });
+  $("accModal").addEventListener("click", function (e) { if (e.target === $("accModal")) setAcc(false); });
   $("accGoogle").addEventListener("click", async function () {
     if (!sb) {
       const link = $("accBtn");

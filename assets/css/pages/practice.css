@@ -264,14 +264,15 @@
   .qtext { font-weight: 800; }
   .chips button.sel { background: var(--fg); color: #FFF8EE; }
   .sub-modal { position: fixed; inset: 0; display: grid; place-items: center; padding: 18px; z-index: 40; opacity: 0; pointer-events: none; transition: opacity .25s; }
-  .sub-modal.open { opacity: 1; pointer-events: auto; }
+  .sub-modal.open { opacity: 1; pointer-events: none; }
   .sub-card { position: relative; background: var(--card); border-radius: 28px; padding: 28px; width: min(520px, 100%); max-height: 92vh; overflow: auto; box-shadow: 0 40px 80px -30px rgba(120,60,30,.55); transform: translateY(14px); transition: transform .25s ease; }
-  .sub-modal.open .sub-card { transform: translateY(0); }
+  .sub-modal.open .sub-card { transform: translateY(0); pointer-events: auto; }
   .sub-card .close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--orange); background: none; color: var(--orange); font-size: 1.1rem; cursor: pointer; }
   .sub-frame { width: 100%; height: 420px; border: 0; margin-top: 16px; border-radius: 16px; background: transparent; }
   .acc-btn { border: 1.5px solid var(--border); background: #fff; color: var(--fg); padding: 8px 14px; border-radius: 999px; font: inherit; font-weight: 800; font-size: .85rem; cursor: pointer; }
   .acc-modal { position: fixed; inset: 0; display: grid; place-items: center; padding: 18px; z-index: 45; opacity: 0; pointer-events: none; transition: opacity .25s; }
-  .acc-modal.open { opacity: 1; pointer-events: auto; }
+  .acc-modal.open { opacity: 1; pointer-events: none; }
+  .acc-modal.open .acc-card { pointer-events: auto; }
   .acc-card { position: relative; background: var(--card); border-radius: 28px; padding: 28px; width: min(460px, 100%); box-shadow: 0 40px 80px -30px rgba(120,60,30,.55); }
   .acc-card .close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--orange); background: none; color: var(--orange); font-size: 1.1rem; cursor: pointer; }
   .acc-card input { width: 100%; font: inherit; padding: 13px 14px; border-radius: 14px; border: 1.5px solid var(--border); background: #fff; margin-top: 10px; }
@@ -931,7 +932,7 @@ body.practice-page .invite-copy span { color: var(--muted, #7A5F50); font-size: 
 
 .focus-nudge-scrim {
   position: fixed; inset: 0; z-index: 80; background: rgba(58,36,24,.18);
-  opacity: 0; transition: opacity .6s ease;
+  opacity: 0; pointer-events: none; transition: opacity .6s ease;
 }
 .focus-nudge {
   position: fixed; z-index: 81; left: 50%; top: 50%;
@@ -942,9 +943,10 @@ body.practice-page .invite-copy span { color: var(--muted, #7A5F50); font-size: 
   background: #FFF8EE; border: 1px solid rgba(240,138,36,.4);
   box-shadow: 0 30px 70px -30px rgba(58,36,24,.5);
 }
-.focus-nudge[hidden], .focus-nudge-scrim[hidden], .welcome-back[hidden] { display: none; }
-body.nudge-visible .focus-nudge { opacity: 1; transform: translate(-50%, -50%); }
-body.nudge-visible .focus-nudge-scrim { opacity: 1; }
+.focus-nudge[hidden], .focus-nudge-scrim[hidden], .welcome-back[hidden] { display: none !important; }
+.focus-nudge, .welcome-back { pointer-events: none; }
+body.nudge-visible .focus-nudge { opacity: 1; transform: translate(-50%, -50%); pointer-events: auto; }
+body.nudge-visible .focus-nudge-scrim { opacity: 1; pointer-events: auto; }
 .focus-nudge .nudge-dot { display: block; width: 22px; height: 22px; margin: 0 auto 14px; }
 .focus-nudge h2 { font-size: clamp(1.35rem, 3.4vw, 1.7rem); letter-spacing: -.03em; margin: 0 0 10px; }
 .focus-nudge p { margin: 0 0 18px; line-height: 1.6; color: var(--muted, #7A5F50); }
@@ -960,7 +962,7 @@ body.nudge-visible .focus-nudge-scrim { opacity: 1; }
   box-shadow: 0 14px 34px -24px rgba(58,36,24,.45); font-size: .92rem; font-weight: 700;
 }
 .welcome-back .nudge-dot { width: 10px; height: 10px; }
-.welcome-back.show { opacity: 1; transform: translate(-50%, 0); }
+.welcome-back.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 @media (prefers-reduced-motion: reduce) {
   .focus-nudge, .focus-nudge-scrim, .welcome-back { transition: none !important; }
   body.practice-page .stage .ring::before, body.practice-page .stage .ring .prog { animation: none !important; }

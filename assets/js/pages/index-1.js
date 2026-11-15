@@ -24,7 +24,7 @@ let currentLang = "el";
     $("scrim").classList.toggle("open", open);
     $("menuBtn").setAttribute("aria-expanded", open ? "true" : "false");
   }
-  $("menuBtn").addEventListener("click", function () { setMenu(true); });
+  $("menuBtn").addEventListener("click", function () { setMenu(!$("drawer").classList.contains("open")); });
   $("closeBtn").addEventListener("click", function () { setMenu(false); });
   $("scrim").addEventListener("click", function () { setMenu(false); });
   $("drawer").querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
@@ -937,7 +937,14 @@ let currentLang = "el";
   if (subClose) subClose.addEventListener("click", function () { setSub(false); });
   const subScrim = $("subScrim");
   if (subScrim) subScrim.addEventListener("click", function () { setSub(false); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setSub(false); });
+  const subModalEl = $("subModal");
+  if (subModalEl) subModalEl.addEventListener("click", function (e) { if (e.target === subModalEl) setSub(false); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    setSub(false);
+    setMenu(false);
+    setAcc(false);
+  });
 
   // ---------- account (Supabase: email link, no password) ----------
   const SB_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
@@ -1033,6 +1040,8 @@ let currentLang = "el";
   if (accClose) accClose.addEventListener("click", function () { setAcc(false); });
   const accScrim = $("accScrim");
   if (accScrim) accScrim.addEventListener("click", function () { setAcc(false); });
+  const accModalEl = $("accModal");
+  if (accModalEl) accModalEl.addEventListener("click", function (e) { if (e.target === accModalEl) setAcc(false); });
   const accGoogle = $("accGoogle");
   if (accGoogle) accGoogle.addEventListener("click", async function () {
     if (!sb) {
