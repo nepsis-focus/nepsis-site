@@ -1,0 +1,6 @@
+# Serve internal links exactly as written. Pretty URLs rewrites
+# relative .html links into root-absolute extensionless paths
+# such as /practice and /tips/check-the-source, which 404 on
+# GitHub Pages under /nepsis-site/.
+[build.processing.html]
+  pretty_urls = false

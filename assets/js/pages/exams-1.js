@@ -62,7 +62,12 @@
 
   function countdownText(date) {
     var days = daysUntil(date);
-    if (days <= 0) {
+    if (days < 0) {
+      return currentLang === "en"
+        ? "That date has passed — enter your next exam."
+        : "Η ημερομηνία έχει περάσει — βάλε την επόμενη εξέτασή σου.";
+    }
+    if (days === 0) {
       return currentLang === "en" ? "Good luck with your exams." : "Καλή επιτυχία στις εξετάσεις.";
     }
     if (days === 1) {
