@@ -1,6 +1,6 @@
 // Nepsis Service Worker — lightweight, update-friendly
 // Version bump this string when you want to force cache refresh
-const CACHE_VERSION = 'nepsis-v5';
+const CACHE_VERSION = 'nepsis-v6';
 const CACHE_NAME = `nepsis-static-${CACHE_VERSION}`;
 
 // Paths are relative to this script so the same list works on GitHub Pages
@@ -55,14 +55,11 @@ self.addEventListener('activate', (event) => {
 // cache-first for static assets, fallback to cache if offline
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-
-  // Only handle GET and same-origin
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Network-first for navigations / HTML
   if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
       fetch(request)
@@ -76,7 +73,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for other static assets
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
