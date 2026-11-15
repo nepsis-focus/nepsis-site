@@ -9,6 +9,7 @@
     en: "Nepsis is preparing your secure session…"
   };
   var authWatchers = typeof WeakSet === "function" ? new WeakSet() : null;
+  var activeSession = null;
 
   function langKey(lang) { return lang === "en" ? "en" : "el"; }
   function idleLabel(lang) { return IDLE_LABEL[langKey(lang)]; }
@@ -65,11 +66,19 @@
   function updateSignedInIndicator(session, lang) {
     var button = authButton();
     if (!button || !session || !session.user) return;
+    activeSession = session;
     injectAuthStyles();
     var english = langKey(lang || document.documentElement.lang) === "en";
     var email = session.user.email || (english ? "Your account" : "Ο λογαριασμός σου");
+    var label = english ? "My account" : "Ο λογαριασμός μου";
     var host = button.closest(".headright, .head-right") || button.parentElement;
     if (!host) return;
+
+    if (!button.dataset.nepsisOriginalLabel) button.dataset.nepsisOriginalLabel = button.textContent.trim();
+    button.dataset.nepsisSignedIn = "true";
+    button.setAttribute("aria-label", (english ? "Account, signed in as " : "Λογαριασμός, συνδεδεμένος ως ") + email);
+    button.title = (english ? "Signed in as " : "Συνδεδεμένος ως ") + email;
+    if (!labelNode(button)) button.textContent = label;
 
     var badge = document.getElementById("nepsis-auth-state");
     if (!badge) {
@@ -81,21 +90,33 @@
       mark.className = "nepsis-auth-state-mark";
       mark.setAttribute("aria-hidden", "true");
       mark.textContent = "✓";
-      var label = document.createElement("span");
-      label.className = "nepsis-auth-state-label";
-      badge.append(mark, label);
+      var badgeLabel = document.createElement("span");
+      badgeLabel.className = "nepsis-auth-state-label";
+      badge.append(mark, badgeLabel);
       button.insertAdjacentElement("afterend", badge);
     }
     badge.querySelector(".nepsis-auth-state-label").textContent = english ? "Signed in" : "Συνδεδεμένος";
     badge.title = email;
-    button.dataset.nepsisSignedIn = "true";
-    button.setAttribute("aria-label", (english ? "Account, signed in as " : "Λογαριασμός, συνδεδεμένος ως ") + email);
-    button.title = (english ? "Signed in as " : "Συνδεδεμένος ως ") + email;
 
     var who = document.getElementById("accWho") || document.getElementById("accountWho");
     if (who) who.textContent = email;
     var title = document.getElementById("accTitle") || document.getElementById("accountTitle");
     if (title) title.textContent = english ? "You’re signed in" : "Συνδέθηκες επιτυχώς";
+  }
+
+  function clearSignedInIndicator() {
+    activeSession = null;
+    var badge = document.getElementById("nepsis-auth-state");
+    if (badge) badge.remove();
+    var button = authButton();
+    if (!button) return;
+    if (button.dataset.nepsisSignedIn === "true") {
+      var original = button.dataset.nepsisOriginalLabel || idleLabel(document.documentElement.lang);
+      if (!labelNode(button)) button.textContent = original;
+    }
+    delete button.dataset.nepsisSignedIn;
+    button.removeAttribute("title");
+    button.removeAttribute("aria-label");
   }
 
   function announceSignedIn(session, lang) {
@@ -130,10 +151,8 @@
       var modal = document.getElementById(id);
       if (modal) modal.classList.remove("open");
     });
-    ["accScrim"].forEach(function (id) {
-      var scrim = document.getElementById(id);
-      if (scrim) scrim.classList.remove("open");
-    });
+    var scrim = document.getElementById("accScrim");
+    if (scrim) scrim.classList.remove("open");
   }
 
   function openAuthPopup() {
@@ -155,13 +174,7 @@
 
     client.auth.onAuthStateChange(function (event, session) {
       if (event === "SIGNED_OUT") {
-        var badge = document.getElementById("nepsis-auth-state");
-        if (badge) badge.remove();
-        var button = authButton();
-        if (button) {
-          delete button.dataset.nepsisSignedIn;
-          button.removeAttribute("title");
-        }
+        clearSignedInIndicator();
         return;
       }
       if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
@@ -188,6 +201,14 @@
       chartAddon.dataset.nepsisChartAddon = "true";
       document.head.appendChild(chartAddon);
     }
+
+    // Re-label the status badge if the user switches the site language.
+    if (global.MutationObserver && !document.documentElement.dataset.nepsisAuthLangObserver) {
+      document.documentElement.dataset.nepsisAuthLangObserver = "true";
+      new MutationObserver(function () {
+        if (activeSession) updateSignedInIndicator(activeSession, document.documentElement.lang);
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+    }
   }
 
   function signIn(options) {
@@ -201,6 +222,7 @@
 
     if (!client) { onError(new Error("missing-client")); return Promise.resolve({ ok: false, mode: "error" }); }
     if (button && button.dataset.oauthBusy === "1") return Promise.resolve({ ok: false, mode: "busy" });
+    watchPopupCompletion(client);
 
     var popup = openAuthPopup();
     setButtonLoading(button, true, lang);
@@ -234,8 +256,6 @@
         }
         var authListener = client.auth.onAuthStateChange(function (event, session) {
           if (event === "SIGNED_IN" && session) {
-            announceSignedIn(session, lang);
-            closeAccountDialogs();
             if (popup && !popup.closed) { try { popup.close(); } catch (error) {} }
             cleanup(true);
           }
