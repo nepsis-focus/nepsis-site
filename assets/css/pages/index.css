@@ -982,3 +982,61 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
 a.acc-btn { text-decoration: none; display: inline-flex; align-items: center; }
 .acc-modal { z-index: 80; }
 .acc-scrim { z-index: 79; }
+
+
+/* Bento homepage — clear, calm entry points */
+body.home-page .bento-home { padding: clamp(70px, 9vw, 112px) 0; background: var(--card); border-top: 1px solid var(--border); }
+body.home-page .bento-head { display:flex; align-items:end; justify-content:space-between; gap:32px; margin:0 0 clamp(28px,4vw,44px); }
+body.home-page .bento-head h2 { max-width:14ch; font-size:clamp(2.05rem,4vw,3.2rem); line-height:1.05; letter-spacing:-.045em; }
+body.home-page .bento-head > p { max-width:38ch; margin:0 0 4px; color:var(--muted); font-size:1rem; line-height:1.7; }
+body.home-page .bento-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:16px; }
+body.home-page .bento-card { position:relative; display:flex; min-width:0; flex-direction:column; overflow:hidden; padding:clamp(22px,3vw,34px); border:1px solid var(--border); border-radius:26px; background:var(--bg); color:var(--fg); text-decoration:none; box-shadow:0 12px 34px -30px rgba(58,36,24,.42); transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease; }
+body.home-page .bento-card:hover { transform:translateY(-4px); border-color:rgba(185,85,42,.5); box-shadow:0 22px 42px -32px rgba(58,36,24,.5); }
+body.home-page .bento-card:focus-visible { outline:3px solid var(--orange); outline-offset:3px; }
+body.home-page .bento-card-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+body.home-page .bento-kicker { font-size:.7rem; font-weight:900; letter-spacing:.15em; color:var(--muted); }
+body.home-page .bento-card h3 { max-width:16ch; margin:0 0 10px; font-size:clamp(1.35rem,2.2vw,2rem); line-height:1.08; letter-spacing:-.04em; }
+body.home-page .bento-card p { max-width:38ch; margin:0; color:var(--muted); line-height:1.65; }
+body.home-page .bento-focus { grid-column:span 7; min-height:370px; justify-content:space-between; color:#fff9f1; border-color:#3A2418; background:radial-gradient(80% 100% at 100% 0%,rgba(247,209,90,.22),transparent 68%),linear-gradient(145deg,#3A2418,#533322 72%,#6b3b24); }
+body.home-page .bento-focus .bento-kicker { color:#f7d15a; }
+body.home-page .bento-focus h3 { font-size:clamp(2rem,4.2vw,3.4rem); max-width:9ch; }
+body.home-page .bento-focus p { color:rgba(255,249,241,.76); max-width:34ch; }
+body.home-page .bento-copy { position:relative; z-index:1; max-width:520px; }
+body.home-page .bento-action { display:inline-flex; align-items:center; gap:8px; margin-top:22px; font-size:.9rem; font-weight:850; }
+body.home-page .bento-action::after { content:"↗"; color:var(--orange); font-size:1.1rem; }
+body.home-page .bento-focus .bento-action::after { color:#f7d15a; }
+body.home-page .bento-orbit { position:absolute; width:210px; height:210px; right:-30px; top:58px; border:1px solid rgba(247,209,90,.36); border-radius:50%; box-shadow:0 0 0 20px rgba(247,209,90,.045),0 0 0 42px rgba(247,209,90,.035); }
+body.home-page .bento-orbit::before,body.home-page .bento-orbit::after { content:""; position:absolute; border:1px solid rgba(247,209,90,.24); border-radius:50%; }
+body.home-page .bento-orbit::before { inset:28px; }
+body.home-page .bento-orbit::after { inset:62px; }
+body.home-page .bento-orbit i { position:absolute; width:12px; height:12px; left:37px; top:31px; border-radius:50%; background:#f7d15a; box-shadow:0 0 25px #f7d15a; }
+body.home-page .bento-duration { position:absolute; right:28px; bottom:26px; padding:8px 13px; border:1px solid rgba(255,255,255,.22); border-radius:99px; color:rgba(255,249,241,.8); font-size:.74rem; font-weight:800; letter-spacing:.08em; }
+body.home-page .bento-week { grid-column:span 5; min-height:370px; justify-content:space-between; background:linear-gradient(150deg,#fffdf8,#f5e6d4); }
+body.home-page .bento-arrow { color:var(--orange); font-size:1.35rem; }
+body.home-page .bento-mini-chart { display:flex; align-items:end; gap:8px; height:74px; margin:20px 0 24px; }
+body.home-page .bento-mini-chart i { display:block; flex:1; height:34%; border-radius:99px 99px 5px 5px; background:linear-gradient(180deg,#f7d15a,#f0702a); opacity:.72; }
+body.home-page .bento-mini-chart i:nth-child(2),body.home-page .bento-mini-chart i:nth-child(6) { height:55%; }
+body.home-page .bento-mini-chart i:nth-child(3),body.home-page .bento-mini-chart i:nth-child(5) { height:73%; }
+body.home-page .bento-mini-chart i:nth-child(4) { height:100%; opacity:1; }
+body.home-page .bento-week h3 { max-width:13ch; }
+body.home-page .bento-privacy { grid-column:span 5; min-height:265px; background:linear-gradient(145deg,#f0e8de,#e6d7c7); }
+body.home-page .bento-lock { display:grid; width:38px; height:38px; place-items:center; border:1px solid var(--border); border-radius:50%; background:var(--card); color:var(--ember); font-size:1.3rem; }
+body.home-page .bento-privacy h3 { max-width:14ch; margin-top:auto; }
+body.home-page .bento-next { grid-column:span 7; min-height:265px; justify-content:space-between; background:linear-gradient(135deg,#fffdf8,#f8efdc); }
+body.home-page .bento-sun { color:var(--orange); font-size:1.7rem; }
+body.home-page .bento-next h3 { max-width:14ch; }
+@media(max-width:780px) {
+  body.home-page .bento-head { align-items:flex-start; flex-direction:column; gap:14px; }
+  body.home-page .bento-head h2 { max-width:18ch; }
+  body.home-page .bento-focus,body.home-page .bento-week { grid-column:span 6; }
+  body.home-page .bento-privacy,body.home-page .bento-next { grid-column:span 6; }
+}
+@media(max-width:560px) {
+  body.home-page .bento-home { padding:62px 0; }
+  body.home-page .bento-grid { grid-template-columns:minmax(0,1fr); gap:12px; }
+  body.home-page .bento-focus,body.home-page .bento-week,body.home-page .bento-privacy,body.home-page .bento-next { grid-column:1; min-height:250px; }
+  body.home-page .bento-focus { min-height:340px; }
+  body.home-page .bento-orbit { right:-95px; opacity:.72; }
+  body.home-page .bento-duration { right:20px; bottom:20px; }
+}
+@media(prefers-reduced-motion:reduce) { body.home-page .bento-card { transition:none; } }
