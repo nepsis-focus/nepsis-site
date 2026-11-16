@@ -212,7 +212,29 @@ let currentLang = "el";
     let velocityX = 0;
     let velocityY = 0;
     let focusAnimation = null;
-    const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let lastFrame = 0;
+    const motionPreference = window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)")
+      : null;
+    let reducedMotion = Boolean(motionPreference && motionPreference.matches);
+
+    function onMotionPreferenceChange(event) {
+      reducedMotion = event.matches;
+      if (reducedMotion) {
+        velocityX = 0;
+        velocityY = 0;
+        focusAnimation = null;
+      } else {
+        lastFrame = 0;
+      }
+    }
+    if (motionPreference) {
+      if (motionPreference.addEventListener) {
+        motionPreference.addEventListener("change", onMotionPreferenceChange);
+      } else if (motionPreference.addListener) {
+        motionPreference.addListener(onMotionPreferenceChange);
+      }
+    }
 
     earthGroup.rotation.set(0.08, -112 * Math.PI / 180, 0);
 
@@ -234,6 +256,12 @@ let currentLang = "el";
       const startX = earthGroup.rotation.x;
       const startY = earthGroup.rotation.y;
       const deltaY = Math.atan2(Math.sin(targetY - startY), Math.cos(targetY - startY));
+      if (reducedMotion) {
+        earthGroup.rotation.x = targetX;
+        earthGroup.rotation.y = startY + deltaY;
+        focusAnimation = null;
+        return;
+      }
       const startedAt = performance.now();
       const duration = 950;
       focusAnimation = function (now) {
@@ -266,6 +294,7 @@ let currentLang = "el";
     }
     function onPointerUp() {
       dragging = false;
+      if (reducedMotion) { velocityX = 0; velocityY = 0; }
       canvas.style.cursor = "grab";
     }
     canvas.addEventListener("pointerdown", onPointerDown);
@@ -291,36 +320,41 @@ let currentLang = "el";
     resize();
 
     let animating = true;
-    let lastFrame = 0;
     const targetFPS = isMobile ? 30 : 60;
     const frameInterval = 1000 / targetFPS;
+    const rotationPeriodMs = 90000;
+    const rotationRate = (2 * Math.PI) / rotationPeriodMs;
 
     function animate(now) {
       if (!animating) return;
       requestAnimationFrame(animate);
       if (now - lastFrame < frameInterval) return;
+      const elapsedMs = lastFrame ? Math.min(now - lastFrame, 100) : frameInterval;
       lastFrame = now;
+      const deltaSeconds = elapsedMs / 1000;
       if (focusAnimation) focusAnimation(now);
       if (!dragging) {
-        if (Math.abs(velocityX) > 0.00004 || Math.abs(velocityY) > 0.00004) {
+        if (!reducedMotion && (Math.abs(velocityX) > 0.00004 || Math.abs(velocityY) > 0.00004)) {
           earthGroup.rotation.y += velocityX;
           earthGroup.rotation.x = Math.max(-1.35, Math.min(1.35, earthGroup.rotation.x + velocityY));
           velocityX *= 0.94; velocityY *= 0.94;
         } else if (!reducedMotion && !focusAnimation) {
-          earthGroup.rotation.y += 0.00022;
+          earthGroup.rotation.y += rotationRate * deltaSeconds;
         }
       }
-      if (!reducedMotion) clouds.rotation.y += 0.00072;
+      if (!reducedMotion) clouds.rotation.y += rotationRate * 0.15 * deltaSeconds;
       renderer.render(scene, camera);
     }
 
     function startAnim() {
       if (animating) return;
       animating = true;
+      lastFrame = 0;
       requestAnimationFrame(animate);
     }
     function stopAnim() {
       animating = false;
+      lastFrame = 0;
     }
 
     // IntersectionObserver — pause when off-screen
