@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="el" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F0702A">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Nepsis · AI Study &amp; Focus Coach</title>
+  <link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/pages/coach.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    (function(){try{var p=localStorage.getItem('nepsis-theme')||'system';var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='dark'||(p!=='light'&&d)?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}})();
+  </script>
+</head>
+<body class="coach-page">
+  <header class="coach-header">
+    <div class="coach-header-inner">
+      <a class="coach-brand" href="index.html"><span class="dot" aria-hidden="true"></span>Nepsis</a>
+      <div class="coach-controls">
+        <span id="coachAccountStatus" class="coach-status" aria-live="polite"></span>
+        <div class="coach-lang" role="group" aria-label="Language">
+          <button type="button" data-set-lang="el" aria-pressed="true">ΕΛ</button>
+          <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="coach-wrap">
+    <section class="coach-hero">
+      <div class="coach-kicker" data-el="Nepsis · Coach" data-en="Nepsis · Coach">Nepsis · Coach</div>
+      <h1 data-el="Βρες το επόμενο ήρεμο βήμα." data-en="Find your next calm step.">Βρες το επόμενο ήρεμο βήμα.</h1>
+      <p data-el="Πες τι έχεις μπροστά σου, πώς νιώθεις και πόσο χρόνο έχεις. Θα πάρεις ένα εφαρμόσιμο πλάνο και την κατάλληλη υπάρχουσα ρύθμιση χρονομέτρου Nepsis." data-en="Tell us what is ahead, how focused you feel, and how much time you have. Get an actionable plan and a matching existing Nepsis timer setup.">Πες τι έχεις μπροστά σου, πώς νιώθεις και πόσο χρόνο έχεις. Θα πάρεις ένα εφαρμόσιμο πλάνο και την κατάλληλη υπάρχουσα ρύθμιση χρονομέτρου Nepsis.</p>
+    </section>
+
+    <section id="coachDisabled" class="coach-card coach-disabled" hidden aria-live="polite">
+      <h2 data-el="Η λειτουργία είναι απενεργοποιημένη προς το παρόν." data-en="This feature is currently switched off.">Η λειτουργία είναι απενεργοποιημένη προς το παρόν.</h2>
+      <p class="coach-note" data-el="Η σελίδα είναι απομονωμένη πίσω από feature flag. Για δοκιμή σε branch, ενεργοποίησε το aiCoach στο assets/js/coach-config.js. Δεν αλλάζει ο χρονοδιακόπτης ή ο λογαριασμός σου." data-en="This page is isolated behind a feature flag. To test on the branch, enable aiCoach in assets/js/coach-config.js. Your timer and account are not changed.">Η σελίδα είναι απομονωμένη πίσω από feature flag. Για δοκιμή σε branch, ενεργοποίησε το aiCoach στο assets/js/coach-config.js. Δεν αλλάζει ο χρονοδιακόπτης ή ο λογαριασμός σου.</p>
+      <a class="coach-btn coach-btn-secondary coach-link" href="index.html" data-el="Επιστροφή στο Nepsis" data-en="Back to Nepsis">Επιστροφή στο Nepsis</a>
+    </section>
+
+    <div id="coachApp" class="coach-app" hidden>
+      <section class="coach-card" aria-labelledby="checkinTitle">
+        <h2 id="checkinTitle" data-el="Σύντομο check-in" data-en="Quick check-in">Σύντομο check-in</h2>
+        <p class="coach-note" data-el="Χωρίς συγκατάθεση, το πλάνο μένει τοπικό. Με συγκατάθεση, οι απαντήσεις και το κείμενο που εξήχθη στέλνονται στο Nepsis AI· αν είναι ρυθμισμένο, προωθούνται στο Google Gemini." data-en="Without consent, the plan stays local. With consent, your answers and extracted text are sent to Nepsis AI; if configured, they are forwarded to Google Gemini.">Χωρίς συγκατάθεση, το πλάνο μένει τοπικό. Με συγκατάθεση, οι απαντήσεις και το κείμενο που εξήχθη στέλνονται στο Nepsis AI· αν είναι ρυθμισμένο, προωθούνται στο Google Gemini.</p>
+        <form id="coachForm" class="coach-form" autocomplete="off">
+          <div class="coach-field">
+            <label for="taskType" data-el="Τι έχεις να κάνεις;" data-en="What are you working on?">Τι έχεις να κάνεις;</label>
+            <select id="taskType" required>
+              <option value="study" data-el="Διάβασμα / μάθημα" data-en="Studying / a subject">Διάβασμα / μάθημα</option>
+              <option value="task" data-el="Γενική εργασία / task" data-en="General task">Γενική εργασία / task</option>
+            </select>
+          </div>
+          <div class="coach-field">
+            <label for="coachTopic" data-el="Μάθημα ή task" data-en="Subject or task">Μάθημα ή task</label>
+            <input id="coachTopic" type="text" maxlength="140" required placeholder="π.χ. Βιολογία: κύτταρο" data-placeholder-el="π.χ. Βιολογία: κύτταρο" data-placeholder-en="e.g. Biology: the cell">
+          </div>
+          <div class="coach-field">
+            <label for="coachEnergy" data-el="Ενέργεια / συγκέντρωση" data-en="Energy / focus">Ενέργεια / συγκέντρωση</label>
+            <div class="coach-range-row">
+              <input id="coachEnergy" type="range" min="1" max="5" step="1" value="3" aria-describedby="energyHelp">
+              <output id="coachEnergyValue" for="coachEnergy">3/5</output>
+            </div>
+            <small id="energyHelp" class="coach-privacy" data-el="1 = χαμηλή · 5 = υψηλή" data-en="1 = low · 5 = high">1 = χαμηλή · 5 = υψηλή</small>
+          </div>
+          <div class="coach-field">
+            <label for="coachMinutes" data-el="Διαθέσιμος χρόνος (λεπτά)" data-en="Available time (minutes)">Διαθέσιμος χρόνος (λεπτά)</label>
+            <input id="coachMinutes" type="number" min="5" max="180" step="5" value="45" required inputmode="numeric">
+          </div>
+          <div class="coach-form-actions">
+            <button class="coach-btn" type="submit" data-el="Φτιάξε το πλάνο μου" data-en="Build my plan">Φτιάξε το πλάνο μου</button>
+            <span id="coachUsage" class="coach-privacy" aria-live="polite"></span>
+          </div>
+        </form>
+        <p id="coachMessage" class="coach-status" role="status" aria-live="polite"></p>
+        <div class="coach-field coach-upload-field">
+          <label for="coachFile" data-el="Υλικό μελέτης (προαιρετικό)" data-en="Study material (optional)">Υλικό μελέτης (προαιρετικό)</label>
+          <input id="coachFile" type="file" accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown" aria-describedby="coachFileHelp">
+          <small id="coachFileHelp" class="coach-privacy" data-el="PDF, TXT ή MD · έως 8 MB. Το κείμενο εξάγεται σε αυτή τη συσκευή και δεν αποθηκεύεται αυτόματα." data-en="PDF, TXT, or MD · up to 8 MB. Text is extracted on this device and is not saved automatically.">PDF, TXT ή MD · έως 8 MB. Το κείμενο εξάγεται σε αυτή τη συσκευή και δεν αποθηκεύεται αυτόματα.</small>
+          <p id="coachDocumentStatus" class="coach-status" role="status" aria-live="polite"></p>
+          <button id="saveDocument" class="coach-btn coach-btn-secondary" type="button" hidden data-el="Αποθήκευση ιδιωτικού αντιγράφου (προαιρετικό)" data-en="Save a private copy (optional)">Αποθήκευση ιδιωτικού αντιγράφου (προαιρετικό)</button>
+        </div>
+        <label class="coach-consent" for="aiConsent">
+          <input id="aiConsent" type="checkbox">
+          <span data-el="Συναινώ να σταλούν οι απαντήσεις μου και, αν ανέβασα αρχείο, το εξαγμένο κείμενο στο Nepsis AI για δημιουργία πλάνου. Αν είναι ρυθμισμένο, το κείμενο θα σταλεί στο Google Gemini." data-en="I consent to sending my answers and, if I uploaded a file, its extracted text to Nepsis AI to create a plan. If configured, the text will be sent to Google Gemini.">Συναινώ να σταλούν οι απαντήσεις μου και, αν ανέβασα αρχείο, το εξαγμένο κείμενο στο Nepsis AI για δημιουργία πλάνου. Αν είναι ρυθμισμένο, το κείμενο θα σταλεί στο Google Gemini.</span>
+        </label>
+      </section>
+
+      <section id="coachResult" class="coach-card coach-result" hidden aria-live="polite">
+        <div class="coach-result-top">
+          <div>
+            <div class="coach-kicker" data-el="Το πλάνο σου" data-en="Your plan">Το πλάνο σου</div>
+            <h2 id="resultTitle"></h2>
+          </div>
+          <span id="timerPattern" class="coach-timer-pill"></span>
+        </div>
+        <p id="timerWhy" class="coach-note"></p>
+        <h3 data-el="Μικρά βήματα" data-en="Small steps">Μικρά βήματα</h3>
+        <ol id="microTasks" class="coach-list"></ol>
+        <h3 data-el="Ερωτήσεις για να ξεκινήσεις" data-en="Questions to get started">Ερωτήσεις για να ξεκινήσεις</h3>
+        <ul id="studyQuestions" class="coach-q-list"></ul>
+        <div id="quizBlock" hidden>
+          <h3 data-el="Ερωτήσεις ανάκλησης" data-en="Active recall quiz">Ερωτήσεις ανάκλησης</h3>
+          <ol id="recallQuiz" class="coach-list"></ol>
+        </div>
+        <div class="coach-form-actions">
+          <a id="launchTimer" class="coach-btn" href="practice.html#stageGrid" data-el="Άνοιξε και ξεκίνα το χρονόμετρο Nepsis" data-en="Open and start the Nepsis timer">Άνοιξε και ξεκίνα το χρονόμετρο Nepsis</a>
+          <span class="coach-privacy" data-el="Θα ανοίξει το ήδη υπάρχον χρονόμετρο στην προτεινόμενη διάρκεια." data-en="This opens the existing timer at the recommended duration.">Θα ανοίξει το ήδη υπάρχον χρονόμετρο στην προτεινόμενη διάρκεια.</span>
+        </div>
+      </section>
+
+      <aside id="coachUpsell" class="coach-card coach-upsell" hidden>
+        <div class="coach-kicker" data-el="Προαιρετικό" data-en="Optional">Προαιρετικό</div>
+        <h2 data-el="Θέλεις περισσότερη υποστήριξη;" data-en="Want more support?">Θέλεις περισσότερη υποστήριξη;</h2>
+        <p data-el="Για απεριόριστα πλάνα και μελλοντική ανάλυση υλικού μελέτης, δες το υπάρχον storefront του Nepsis στο Whop. Η συνδρομή είναι προαιρετική." data-en="For unlimited plans and future study-material analysis, visit Nepsis's existing Whop storefront. A subscription is optional.">Για απεριόριστα πλάνα και μελλοντική ανάλυση υλικού μελέτης, δες το υπάρχον storefront του Nepsis στο Whop. Η συνδρομή είναι προαιρετική.</p>
+        <a class="coach-btn coach-link" href="https://whop.com/nepsis-focus" target="_blank" rel="noopener noreferrer" data-el="Δες το Nepsis στο Whop →" data-en="Explore Nepsis on Whop →">Δες το Nepsis στο Whop →</a>
+      </aside>
+      <p class="coach-foot" data-el="Η εξαγωγή κειμένου γίνεται τοπικά. Το αρχείο δεν αποθηκεύεται εκτός αν επιλέξεις ρητά «Αποθήκευση ιδιωτικού αντιγράφου». Το AI μπορεί να επιστρέψει σε τοπικό πλάνο αν δεν είναι διαθέσιμο. Ο Coach δεν αλλάζει streaks, badges, κρυπτογραφημένο journal ή offline sync." data-en="Text extraction happens locally. The file is not stored unless you explicitly choose “Save a private copy”. AI can fall back to a local plan when unavailable. Coach does not change streaks, badges, the encrypted journal, or offline sync.">Η εξαγωγή κειμένου γίνεται τοπικά. Το αρχείο δεν αποθηκεύεται εκτός αν επιλέξεις ρητά «Αποθήκευση ιδιωτικού αντιγράφου». Το AI μπορεί να επιστρέψει σε τοπικό πλάνο αν δεν είναι διαθέσιμο. Ο Coach δεν αλλάζει streaks, badges, κρυπτογραφημένο journal ή offline sync.</p>
+    </div>
+  </main>
+  <script src="assets/js/coach-config.js"></script>
+  <script src="assets/js/pages/coach.js"></script>
+</body>
+</html>
