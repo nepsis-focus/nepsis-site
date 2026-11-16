@@ -1892,30 +1892,58 @@
     });
     return out;
   }
-  // The device always keeps the progress. When signed in, we also save it to the account and say what happened.
+  // Every pending write is keyed by account and has a stable client_id for safe retries.
   let syncMsg = "", syncRetries = 0, syncTimer = null, syncReady = false;
   function setSync(msg) { syncMsg = msg; const el = document.getElementById("syncMsg"); if (el) el.textContent = msg; }
+  function enqueueProgress(p, targetUser) {
+    if (!targetUser || !window.NepsisOfflineQueue) return null;
+    return window.NepsisOfflineQueue.enqueue(targetUser.id, { type: "progress", data: p, updated_at: new Date().toISOString() });
+  }
+  async function flushProgressQueue(expectedUser, expectedGeneration) {
+    const targetUser = expectedUser || sbUser;
+    const generation = expectedGeneration === undefined ? authGeneration : expectedGeneration;
+    if (!window.NepsisOfflineQueue || !sb || !syncReady || !isCurrentAuth(targetUser, generation)) return { sent: 0, blocked: true, error: null };
+    return window.NepsisOfflineQueue.flush(targetUser.id, ["progress"], async function (item) {
+      if (!isCurrentAuth(targetUser, generation) || !syncReady) return false;
+      const res = await sb.from("progress").upsert({ user_id: targetUser.id, data: item.data, updated_at: item.updated_at }, { onConflict: "user_id" });
+      if (!isCurrentAuth(targetUser, generation)) return false;
+      if (res.error) throw res.error;
+      return true;
+    }, function () { return isCurrentAuth(targetUser, generation) && syncReady; });
+  }
+  function scheduleProgressRetry(targetUser, generation) {
+    if (syncRetries >= 3) return;
+    syncRetries++;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(function () {
+      if (isCurrentAuth(targetUser, generation)) sbPull(targetUser, generation);
+    }, Math.min(15000 * syncRetries, 45000));
+  }
   async function sbPush(p, expectedUser, expectedGeneration) {
     const targetUser = expectedUser || sbUser;
     const generation = expectedGeneration === undefined ? authGeneration : expectedGeneration;
-    if (!sb || !isCurrentAuth(targetUser, generation) || !syncReady) return;
+    if (!sb || !isCurrentAuth(targetUser, generation)) return;
+    const queued = enqueueProgress(p, targetUser);
+    if (!queued) {
+      setSync(currentLang === "el" ? "Η πρόοδος μένει στη συσκευή· δεν ήταν δυνατή η δημιουργία ουράς συγχρονισμού." : "Progress stays on this device; the sync queue could not be saved.");
+      return;
+    }
+    if (!syncReady || (typeof navigator !== "undefined" && navigator.onLine === false)) {
+      setSync(currentLang === "el" ? "Η πρόοδος αποθηκεύτηκε στη συσκευή και θα συγχρονιστεί μόλις συνδεθείς." : "Progress is saved on this device and will sync when you reconnect.");
+      return;
+    }
     setSync(currentLang === "el" ? "Αποθήκευση στον λογαριασμό…" : "Saving to your account…");
     try {
-      const res = await sb.from("progress").upsert({ user_id: targetUser.id, data: p, updated_at: new Date().toISOString() });
+      const result = await flushProgressQueue(targetUser, generation);
       if (!isCurrentAuth(targetUser, generation)) return;
-      if (res.error) throw res.error;
+      if (result.error) throw result.error;
+      if (window.NepsisOfflineQueue.has(targetUser.id, queued.client_id)) throw new Error("Progress sync is still pending");
       syncRetries = 0;
       setSync(currentLang === "el" ? "Αποθηκεύτηκε στον λογαριασμό σου." : "Saved to your account.");
     } catch (err) {
       if (!isCurrentAuth(targetUser, generation)) return;
-      setSync(currentLang === "el" ? "Δεν αποθηκεύτηκε στον λογαριασμό. Η πρόοδος μένει στη συσκευή." : "Not saved to your account. Progress stays on this device.");
-      if (syncRetries < 3) {
-        syncRetries++;
-        clearTimeout(syncTimer);
-        syncTimer = setTimeout(function () {
-          if (isCurrentAuth(targetUser, generation) && syncReady) sbPush(loadProgress(), targetUser, generation);
-        }, 15000);
-      }
+      setSync(currentLang === "el" ? "Δεν αποθηκεύτηκε ακόμη στον λογαριασμό. Η πρόοδος μένει στη συσκευή." : "Not saved to your account yet. Progress stays on this device.");
+      scheduleProgressRetry(targetUser, generation);
     }
   }
   async function sbPull(expectedUser, expectedGeneration) {
@@ -1924,7 +1952,7 @@
     if (!sb || !isCurrentAuth(targetUser, generation)) return;
     syncReady = false;
     clearTimeout(syncTimer);
-    syncRetries = 0;
+    if (syncRetries === 0) enqueueProgress(loadProgress(), targetUser);
     try {
       const res = await sb.from("progress").select("data").eq("user_id", targetUser.id).maybeSingle();
       if (!isCurrentAuth(targetUser, generation)) return;
@@ -1944,6 +1972,7 @@
       setSync(currentLang === "el"
         ? "Δεν ήταν δυνατή η ανάγνωση της αποθηκευμένης προόδου. Δεν αντικαταστάθηκαν τα δεδομένα σου. Η πρόοδός σου παραμένει σε αυτή τη συσκευή."
         : "Could not read saved progress. Your data was not overwritten. Progress remains on this device.");
+      scheduleProgressRetry(targetUser, generation);
       renderProgress();
     }
   }
@@ -2034,13 +2063,21 @@
       sbUser = nextUser;
       if (identityChanged) { setSync(""); renderProgress(); }
       renderAcc("");
-      if (sbUser && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
+      if (sbUser && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
         const activeUser = sbUser;
         sbPull(activeUser, generation);
       } else if (!sbUser && (event === "SIGNED_OUT" || event === "INITIAL_SESSION")) {
         setSync("");
         renderProgress();
       }
+    });
+    window.addEventListener("online", function () {
+      const activeUser = sbUser, generation = authGeneration;
+      if (!activeUser) return;
+      sb.auth.getSession().then(function (result) {
+        if (result.error || !result.data || !result.data.session || result.data.session.user.id !== activeUser.id || !isCurrentAuth(activeUser, generation)) return;
+        sbPull(activeUser, generation);
+      }).catch(function () {});
     });
   }
 
