@@ -1,6 +1,6 @@
 // Nepsis Service Worker — lightweight, update-friendly
 // Version bump this string when you want to force cache refresh
-const CACHE_VERSION = 'nepsis-v8';
+const CACHE_VERSION = 'nepsis-v9';
 const CACHE_NAME = `nepsis-static-${CACHE_VERSION}`;
 
 // Paths are relative to this script so the same list works on GitHub Pages
