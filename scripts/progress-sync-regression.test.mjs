@@ -1,11 +1,28 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import vm from "node:vm";
 
-const [practice, dashboard] = await Promise.all([
+const [practice, dashboard, queueSource, diary, serviceWorker] = await Promise.all([
   readFile(new URL("../assets/js/pages/practice-1.js", import.meta.url), "utf8"),
-  readFile(new URL("../assets/js/pages/my-nepsis-1.js", import.meta.url), "utf8")
+  readFile(new URL("../assets/js/pages/my-nepsis-1.js", import.meta.url), "utf8"),
+  readFile(new URL("../assets/js/offline-sync-queue.js", import.meta.url), "utf8"),
+  readFile(new URL("../assets/js/pages/diary-1.js", import.meta.url), "utf8"),
+  readFile(new URL("../sw.js", import.meta.url), "utf8")
 ]);
+
+function createQueueHarness() {
+  const values = new Map();
+  const localStorage = {
+    getItem(key) { return values.has(key) ? values.get(key) : null; },
+    setItem(key, value) { values.set(key, String(value)); },
+    removeItem(key) { values.delete(key); }
+  };
+  const window = { localStorage, crypto: { randomUUID: (() => { let id = 0; return () => `client-${++id}`; })() } };
+  const navigator = { onLine: true };
+  vm.runInNewContext(queueSource, { window, navigator, Uint8Array, Date, Math, Set, JSON, encodeURIComponent });
+  return { queue: window.NepsisOfflineQueue, navigator };
+}
 
 function extractGuard(source, variable) {
   const match = source.match(/function isCurrentAuth\(expectedUser,expectedGeneration\)\{[^}]+\}/) ||
@@ -62,4 +79,59 @@ test("both sync implementations guard the awaited SELECT response", () => {
   assert.match(pull, /await sb\.from\("progress"\)[\s\S]*?if \(!isCurrentAuth\(targetUser, generation\)\) return;/);
   const auth = dashboard.slice(dashboard.indexOf("if(sb)sb.auth.onAuthStateChange"));
   assert.match(auth, /await sb\.from\("progress"\)[\s\S]*?if\(!isCurrentAuth\(activeUser,generation\)\)return;/);
+});
+
+test("offline queue client_id values are unique and stored per user", () => {
+  const { queue } = createQueueHarness();
+  const accountA = queue.enqueue("account-a", { type: "progress", data: { days: {} } });
+  const accountB = queue.enqueue("account-b", { type: "diary_entry", row: { id: "entry-b" } });
+  const nextA = queue.enqueue("account-a", { type: "progress", data: { days: { today: [25] } } });
+  assert.notEqual(accountA.client_id, accountB.client_id);
+  assert.notEqual(accountA.client_id, nextA.client_id);
+  assert.deepEqual(queue.read("account-a").map(item => item.type), ["progress", "progress"]);
+  assert.equal(queue.read("account-b")[0].row.id, "entry-b");
+  queue.removeThrough("account-a", nextA.client_id, ["progress"]);
+  assert.equal(queue.read("account-a").length, 0);
+  assert.equal(queue.read("account-b").length, 1);
+});
+
+test("offline queue retains failed writes and drains only when online", async () => {
+  const { queue, navigator } = createQueueHarness();
+  const queued = queue.enqueue("account-a", { type: "progress", data: { days: {} } });
+  const failed = await queue.flush("account-a", ["progress"], async () => { throw new Error("expired session"); });
+  assert.equal(failed.error.message, "expired session");
+  assert.equal(queue.has("account-a", queued.client_id), true);
+  navigator.onLine = false;
+  const offline = await queue.flush("account-a", ["progress"], async () => true);
+  assert.equal(offline.blocked, true);
+  assert.equal(queue.has("account-a", queued.client_id), true);
+  navigator.onLine = true;
+  const sent = await queue.flush("account-a", ["progress"], async () => true);
+  assert.equal(sent.sent, 1);
+  assert.equal(queue.has("account-a", queued.client_id), false);
+});
+
+test("diary drafts autosave only through the encrypted diary envelope", () => {
+  assert.match(diary, /DRAFT_STORE="nepsis-diary-draft-encrypted-v1"/);
+  assert.match(diary, /seal\(draft,draftKey,un64\(old\.salt\)\)/);
+  assert.match(diary, /addEventListener\("input",queueDraftSave\)/);
+  assert.match(diary, /await restoreDraft\(key\)/);
+  assert.match(diary, /async function openDraft\(box,k\)/);
+});
+
+test("calendar and account writes are queued for reconnect under the active user", () => {
+  assert.match(practice, /NepsisOfflineQueue\.enqueue\(targetUser\.id/);
+  assert.match(practice, /window\.addEventListener\("online"/);
+  assert.match(dashboard, /enqueueDashboardWrite\(targetUser,"user_space"/);
+  assert.match(dashboard, /enqueueDashboardWrite\(targetUser,"diary_entry"/);
+  assert.match(dashboard, /enqueueDashboardWrite\(activeUser,"progress"/);
+  assert.match(dashboard, /window\.addEventListener\("online"/);
+  assert.match(dashboard, /removeThrough\(activeUser\.id,queuedProgress\.client_id/);
+});
+
+test("offline pages and sync scripts are precached", () => {
+  assert.match(serviceWorker, /nepsis-v10/);
+  assert.match(serviceWorker, /asset\('diary\.html'\)/);
+  assert.match(serviceWorker, /asset\('my-nepsis\.html'\)/);
+  assert.match(serviceWorker, /asset\('assets\/js\/offline-sync-queue\.js'\)/);
 });
