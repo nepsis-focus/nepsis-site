@@ -1,6 +1,6 @@
-// Nepsis Service Worker — lightweight, update-friendly
+﻿// Nepsis Service Worker — lightweight, update-friendly
 // Version bump this string when you want to force cache refresh
-const CACHE_VERSION = 'nepsis-v9';
+const CACHE_VERSION = 'nepsis-v10';
 const CACHE_NAME = `nepsis-static-${CACHE_VERSION}`;
 
 // Paths are relative to this script so the same list works on GitHub Pages
@@ -13,6 +13,8 @@ const CORE_ASSETS = [
   asset('./'),
   asset('index.html'),
   asset('practice.html'),
+  asset('diary.html'),
+  asset('my-nepsis.html'),
   asset('about.html'),
   asset('how.html'),
   asset('faq.html'),
@@ -23,6 +25,10 @@ const CORE_ASSETS = [
   asset('reset.html'),
   asset('manifest.json'),
   asset('icons/icon-192.png'),
+  asset('assets/js/offline-sync-queue.js'),
+  asset('assets/js/pages/diary-1.js'),
+  asset('assets/js/pages/practice-1.js'),
+  asset('assets/js/pages/my-nepsis-1.js'),
   asset('icons/icon-512.png'),
   asset('assets/brand/nepsis-mark.svg'),
   asset('assets/brand/nepsis-og.png')
@@ -102,3 +108,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
