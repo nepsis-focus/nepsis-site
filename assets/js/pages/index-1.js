@@ -322,8 +322,8 @@ let currentLang = "el";
     let animating = true;
     const targetFPS = isMobile ? 30 : 60;
     const frameInterval = 1000 / targetFPS;
-    const rotationPeriodMs = 90000;
-    const rotationRate = (2 * Math.PI) / rotationPeriodMs;
+    const rotationPeriodSeconds = 90;
+    const rotationRate = (2 * Math.PI) / rotationPeriodSeconds;
 
     function animate(now) {
       if (!animating) return;
