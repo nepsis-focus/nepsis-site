@@ -1,6 +1,6 @@
 // Nepsis Service Worker — lightweight, update-friendly
 // Version bump this string when you want to force cache refresh
-const CACHE_VERSION = 'nepsis-v7';
+const CACHE_VERSION = 'nepsis-v8';
 const CACHE_NAME = `nepsis-static-${CACHE_VERSION}`;
 
 // Paths are relative to this script so the same list works on GitHub Pages
@@ -69,6 +69,22 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => caches.match(request).then((cached) => cached || caches.match(asset('./'))))
+    );
+    return;
+  }
+
+  // Refresh app code on each visit; use cache only when offline.
+  if (/\.(?:js|css)$/i.test(url.pathname)) {
+    event.respondWith(
+      fetch(new Request(request, { cache: 'reload' }))
+        .then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone)).catch(() => {});
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
     );
     return;
   }
