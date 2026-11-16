@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>
-/* Warm theme boot — apply before paint to avoid a light flash at night */
 (function () {
   try {
     var p = localStorage.getItem("nepsis-theme") || "system";
@@ -27,22 +26,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/pages/information.css">
 <link rel="stylesheet" href="assets/css/components.css">
-  <link rel="stylesheet" href="assets/css/theme.css">
-
-
-<!-- PWA -->
+<link rel="stylesheet" href="assets/css/theme.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#F0702A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nepsis">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-
-<!-- SEO / Open Graph -->
 <meta name="robots" content="index, follow">
 <meta property="og:locale:alternate" content="en_US">
-
-<!-- Service Worker registration -->
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
@@ -53,7 +45,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
-
 </head>
 <body>
 <header class="top">
@@ -83,7 +74,7 @@ if ("serviceWorker" in navigator) {
   <section class="page-heading">
     <span class="eyebrow" data-el="Nepsis+" data-en="Nepsis+">Nepsis+</span>
     <h1 data-el="Περισσότερη συγκέντρωση, όταν τη θέλεις." data-en="More focus, when you want it.">Περισσότερη συγκέντρωση, όταν τη θέλεις.</h1>
-    <p data-el="Η βασική εξάσκηση μένει πάντα δωρεάν. Εδώ διαλέγεις επιπλέον χώρο συζήτησης και μαθημάτων." data-en="The core practice stays free. Here you choose extra space for community and courses.">Η βασική εξάσκηση μένει πάντα δωρεάν. Εδώ διαλέγεις επιπλέον χώρο συζήτησης και μαθημάτων.</p>
+    <p data-el="Η βασική εξάσκηση μένει πάντα δωρεάν. Εδώ διαλέγεις επιπλέον χώρο συζήτησης, μαθημάτων και υλικού." data-en="The core practice stays free. Here you choose extra space for community, courses and materials.">Η βασική εξάσκηση μένει πάντα δωρεάν. Εδώ διαλέγεις επιπλέον χώρο συζήτησης, μαθημάτων και υλικού.</p>
   </section>
 
   <section class="content-section">
@@ -99,12 +90,33 @@ if ("serviceWorker" in navigator) {
           <li data-el="Silent Co-Working & εβδομαδιαίος ρυθμός" data-en="Silent Co-Working & weekly rhythm">Silent Co-Working & εβδομαδιαίος ρυθμός</li>
           <li data-el="Offline Ambient Audio Pack" data-en="Offline Ambient Audio Pack">Offline Ambient Audio Pack</li>
         </ul>
-        <div style="margin-top:20px">
-          <a class="btn btn-primary" href="https://whop.com/checkout/plan_aJl3csgu55WIB" style="text-decoration:none" data-el="Δες το Πρόγραμμα & τα Workbooks στο Whop →" data-en="Explore Courses & Workbooks on Whop →">Δες το Πρόγραμμα & τα Workbooks στο Whop →</a>
+        <div style="margin-top:24px;display:grid;gap:12px;max-width:420px">
+          <a class="btn btn-primary" href="https://whop.com/checkout/plan_aJl3csgu55WIB" style="text-decoration:none;text-align:center" data-el="Μηνιαίο · €4,99" data-en="Monthly · €4.99">Μηνιαίο · €4,99</a>
+          <a class="btn btn-ghost" href="https://whop.com/checkout/plan_aJl3csgu55WIB" style="text-decoration:none;text-align:center" data-el="Ετήσιο · €39 (εξοικονόμηση)" data-en="Annual · €39 (save)">Ετήσιο · €39 (εξοικονόμηση)</a>
         </div>
+        <p style="margin-top:12px;font-size:.85rem;color:var(--muted)" data-el="Ακύρωση οποιαδήποτε στιγμή. Η βασική εξάσκηση μένει δωρεάν." data-en="Cancel anytime. Core practice stays free.">Ακύρωση οποιαδήποτε στιγμή. Η βασική εξάσκηση μένει δωρεάν.</p>
       </article>
     </div>
-    <p class="note" style="margin-top:20px" data-el="Οι πληρωμές γίνονται μέσω Whop. Η μηνιαία και η ετήσια ακυρώνονται όποτε θέλεις. Το Founders Pass είναι μία πληρωμή." data-en="Payments go through Whop. Monthly and annual plans can be cancelled anytime. Founders Pass is a single payment.">Οι πληρωμές γίνονται μέσω Whop. Η μηνιαία και η ετήσια ακυρώνονται όποτε θέλεις. Το Founders Pass είναι μία πληρωμή.</p>
+  </section>
+
+  <section class="content-section" style="margin-top:40px">
+    <div class="section-heading">
+      <h2 data-el="Συχνές ερωτήσεις" data-en="Frequently asked questions">Συχνές ερωτήσεις</h2>
+    </div>
+    <div class="faq-list" style="display:grid;gap:12px">
+      <details>
+        <summary data-el="Μπορώ να ακυρώσω οποιαδήποτε στιγμή;" data-en="Can I cancel anytime?">Μπορώ να ακυρώσω οποιαδήποτε στιγμή;</summary>
+        <p data-el="Ναι. Η μηνιαία και η ετήσια συνδρομή ακυρώνονται όποτε θέλεις από το Whop." data-en="Yes. Both monthly and annual plans can be cancelled anytime from Whop.">Ναι. Η μηνιαία και η ετήσια συνδρομή ακυρώνονται όποτε θέλεις από το Whop.</p>
+      </details>
+      <details>
+        <summary data-el="Τι περιλαμβάνεται;" data-en="What is included?">Τι περιλαμβάνεται;</summary>
+        <p data-el="Τα 15+ PDF workbooks, ο οδηγός μαθημάτων, το silent co-working και το offline audio pack." data-en="The 15+ PDF workbooks, the course guide, silent co-working and the offline audio pack.">Τα 15+ PDF workbooks, ο οδηγός μαθημάτων, το silent co-working και το offline audio pack.</p>
+      </details>
+      <details>
+        <summary data-el="Η βασική εξάσκηση αλλάζει;" data-en="Does the core practice change?">Η βασική εξάσκηση αλλάζει;</summary>
+        <p data-el="Όχι. Το χρονόμετρο, τα στάδια και το ημερολόγιο μένουν δωρεάν για όλους." data-en="No. The timer, stages and diary stay free for everyone.">Όχι. Το χρονόμετρο, τα στάδια και το ημερολόγιο μένουν δωρεάν για όλους.</p>
+      </details>
+    </div>
   </section>
 </div>
 </main>
