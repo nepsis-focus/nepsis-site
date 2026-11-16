@@ -149,10 +149,13 @@
   function closeAccountDialogs() {
     ["accountModal", "accModal"].forEach(function (id) {
       var modal = document.getElementById(id);
-      if (modal) modal.classList.remove("open");
+      if (modal) { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); }
     });
     var scrim = document.getElementById("accScrim");
-    if (scrim) scrim.classList.remove("open");
+    if (scrim) { scrim.classList.remove("open"); scrim.setAttribute("aria-hidden", "true"); }
+    if (document.body) document.body.classList.remove("auth-modal-open");
+    var opener = document.getElementById("accBtn") || document.getElementById("accountBtn");
+    if (opener && typeof opener.focus === "function") opener.focus();
   }
 
   function openAuthPopup() {

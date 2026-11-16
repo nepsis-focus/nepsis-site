@@ -289,3 +289,41 @@ body.my-nepsis-dashboard .week-dashboard-chart .week-bar i { width:min(32px,78%)
 @media(max-width:850px) { body.my-nepsis-dashboard .dashboard-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } body.my-nepsis-dashboard .week-dashboard-grid { grid-template-columns:1fr; } }
 @media(max-width:560px) { body.my-nepsis-dashboard .dashboard-stats { gap:10px; } body.my-nepsis-dashboard .dashboard-stats .stat { min-height:170px; padding:16px; } body.my-nepsis-dashboard .dashboard-stats .stat-head { align-items:flex-start; flex-direction:column; margin-bottom:15px; } body.my-nepsis-dashboard .dashboard-stats .stat-tag { text-align:left; } body.my-nepsis-dashboard .week-feature-head { align-items:flex-start; flex-direction:column; gap:8px; } body.my-nepsis-dashboard .week-feature-head .tool-intro { text-align:left; } body.my-nepsis-dashboard .week-goal-box,body.my-nepsis-dashboard .week-dashboard-chart { padding:14px; } }
 @media(prefers-reduced-motion:reduce) { body.my-nepsis-dashboard .week-goal-track > span { transition:none; } }
+
+
+/* Premium, accessible account modal and passwordless states */
+body.auth-modal-open { overflow:hidden; }
+body.my-nepsis-dashboard .account { z-index:100; padding:18px; backdrop-filter:blur(16px); background:rgba(35,24,18,.46); transition:opacity .28s ease; }
+body.my-nepsis-dashboard .account-card.auth-card { position:relative; width:min(480px,100%); max-height:min(92vh,780px); overflow:auto; padding:clamp(26px,5vw,40px); border:1px solid rgba(255,255,255,.82); border-radius:30px; background:radial-gradient(60% 55% at 100% 0%,rgba(247,209,90,.2),transparent 78%),linear-gradient(145deg,#fffdf8,#f6eadb); box-shadow:0 42px 110px -38px rgba(40,20,10,.7),0 1px 0 rgba(255,255,255,.9) inset; isolation:isolate; }
+body.my-nepsis-dashboard .auth-modal-art { position:absolute; width:210px; height:190px; top:-57px; right:-62px; z-index:-1; opacity:.9; pointer-events:none; }
+body.my-nepsis-dashboard .auth-orbit { position:absolute; inset:0; border:1px solid rgba(185,85,42,.2); border-radius:50%; }
+body.my-nepsis-dashboard .auth-orbit-inner { inset:28px; border-color:rgba(185,85,42,.16); }
+body.my-nepsis-dashboard .auth-orbit-dot { position:absolute; width:12px; height:12px; left:38px; top:48px; border-radius:50%; background:#f7d15a; box-shadow:0 0 0 8px rgba(247,209,90,.18),0 0 30px rgba(240,112,42,.35); }
+body.my-nepsis-dashboard .account-card .close { z-index:2; background:rgba(255,255,255,.72); }
+body.my-nepsis-dashboard .account-card .auth-modal-kicker { display:block; position:relative; z-index:1; margin:5px 48px 12px 0; color:var(--orange); font-size:.7rem; font-weight:900; letter-spacing:.16em; }
+body.my-nepsis-dashboard .account-card h2 { position:relative; z-index:1; max-width:12ch; font-size:clamp(2rem,5vw,2.7rem); line-height:1.02; letter-spacing:-.05em; }
+body.my-nepsis-dashboard .account-card > p:not(.message) { position:relative; z-index:1; max-width:36ch; line-height:1.6; }
+body.my-nepsis-dashboard .auth-perks { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 20px; }
+body.my-nepsis-dashboard .auth-perks span { padding:7px 11px; border:1px solid rgba(185,85,42,.14); border-radius:99px; background:rgba(255,255,255,.56); color:var(--muted); font-size:.75rem; font-weight:850; }
+body.my-nepsis-dashboard .account-card .google { min-height:50px; border-radius:15px; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+body.my-nepsis-dashboard .account-card .google:hover { transform:translateY(-1px); border-color:rgba(185,85,42,.45); box-shadow:0 10px 24px -18px rgba(58,36,24,.5); }
+body.my-nepsis-dashboard .account-divider { display:flex; align-items:center; gap:12px; margin:19px 0 14px; color:var(--muted); font-size:.82rem; font-weight:800; }
+body.my-nepsis-dashboard .account-divider::before,body.my-nepsis-dashboard .account-divider::after { content:""; height:1px; flex:1; background:var(--border); }
+body.my-nepsis-dashboard .account-email-form { display:grid; gap:8px; }
+body.my-nepsis-dashboard .account-email-form label { color:var(--fg); font-size:.84rem; font-weight:850; }
+body.my-nepsis-dashboard .account-card #accountEmail { min-height:50px; margin:0; border-color:rgba(185,85,42,.2); border-radius:15px; background:rgba(255,255,255,.84); }
+body.my-nepsis-dashboard .account-card .email-submit { min-height:50px; margin-top:2px; border-radius:15px; background:linear-gradient(120deg,#c84a1a,#b8341e); color:#fff; }
+body.my-nepsis-dashboard .account-card .email-submit:disabled { opacity:.68; cursor:wait; }
+body.my-nepsis-dashboard .account-card .auth-footnote { margin:12px 0 0; color:var(--muted); font-size:.76rem; line-height:1.5; text-align:center; }
+body.my-nepsis-dashboard .auth-signed-state { margin-top:18px; padding:18px; border:1px solid rgba(72,128,80,.2); border-radius:20px; background:rgba(101,153,104,.1); }
+body.my-nepsis-dashboard .auth-signed-mark { display:grid; width:34px; height:34px; place-items:center; border-radius:50%; background:#5d8f60; color:white; font-weight:900; }
+body.my-nepsis-dashboard .auth-signed-state p { margin:12px 0; font-weight:850; overflow-wrap:anywhere; }
+body.my-nepsis-dashboard .account-card .message { min-height:0; padding:0; border:0; border-radius:14px; line-height:1.5; }
+body.my-nepsis-dashboard .account-card .message:empty { display:none; }
+body.my-nepsis-dashboard .account-card .message.is-success,body.my-nepsis-dashboard .account-card .message.is-error,body.my-nepsis-dashboard .account-card .message.is-loading { padding:11px 13px; border:1px solid var(--border); background:rgba(255,255,255,.7); }
+body.my-nepsis-dashboard .account-card .message.is-success { color:#315d3b; border-color:rgba(72,128,80,.22); background:rgba(101,153,104,.1); }
+body.my-nepsis-dashboard .account-card .message.is-error { color:#9d352a; border-color:rgba(157,53,42,.2); background:rgba(216,57,43,.07); }
+body.my-nepsis-dashboard .account.open .account-card { animation:nepsis-account-enter .32s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes nepsis-account-enter { from { opacity:0; transform:translateY(14px) scale(.985); } to { opacity:1; transform:translateY(0) scale(1); } }
+@media(max-width:520px) { body.my-nepsis-dashboard .account { padding:12px; } body.my-nepsis-dashboard .account-card.auth-card { max-height:94vh; padding:24px 20px; border-radius:25px; } body.my-nepsis-dashboard .auth-modal-art { right:-104px; opacity:.65; } }
+@media(prefers-reduced-motion:reduce) { body.my-nepsis-dashboard .account.open .account-card { animation:none; } body.my-nepsis-dashboard .account-card .google:hover { transform:none; } }

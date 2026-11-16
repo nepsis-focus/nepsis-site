@@ -951,6 +951,7 @@ let currentLang = "el";
   const SB_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
   const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY) : null;
   let sbUser = null;
+  let accReturnFocus = null;
   if (sb && window.NepsisGoogleAuth) window.NepsisGoogleAuth.watchPopupCompletion(sb);
 
   function mergeProgress(a, b) {
@@ -998,29 +999,35 @@ let currentLang = "el";
     sbPush(merged);
     renderProgress();
   }
+  function setAccMessage(message, state) {
+    const node = $("accMsg");
+    if (!node) return;
+    node.textContent = message || "";
+    ["is-success", "is-error", "is-loading"].forEach(function (name) { node.classList.toggle(name, state === name.slice(3)); });
+  }
   function renderAcc(msg) {
     const btn = $("accBtn");
     if (!btn) return;
     const isEl = currentLang === "el";
     btn.textContent = sbUser ? (isEl ? "Λογαριασμός" : "Account") : (isEl ? "Σύνδεση" : "Sign in");
-    if (!$("accEyebrow")) return;
-    $("accEyebrow").textContent = isEl ? "Λογαριασμός" : "Account";
-    $("accTitle").textContent = sbUser ? (isEl ? "Είσαι συνδεδεμένος" : "You are signed in") : (isEl ? "Σύνδεση" : "Sign in");
+    if (!$ ("accEyebrow")) return;
+    $("accEyebrow").textContent = isEl ? "Ο ΧΩΡΟΣ ΣΟΥ" : "YOUR SPACE";
+    $("accTitle").textContent = sbUser ? (isEl ? "Είσαι συνδεδεμένος" : "You are signed in") : (isEl ? "Συνέχισε με ηρεμία" : "Pick up where you left off");
     $("accText").textContent = sbUser
       ? (isEl ? "Η πρόοδός σου αποθηκεύεται στον λογαριασμό σου και φαίνεται σε όλες τις συσκευές." : "Your progress is saved to your account and shows on all your devices.")
-      : (isEl ? "Συνδέσου με Google ή με σύνδεσμο που θα σταλεί στο email σου. Η πρόοδός σου θα συγχρονίζεται στις συσκευές σου." : "Sign in with Google or a link sent to your email. Your progress will sync across your devices.");
+      : (isEl ? "Η διαδρομή σου συνεχίζεται σε κάθε συσκευή. Διάλεξε Google ή ασφαλή σύνδεσμο email." : "Your journey follows you across devices. Choose Google or a secure email link.");
     $("accLogged").hidden = !sbUser;
     $("accForm").hidden = !!sbUser;
     $("accWho").textContent = sbUser ? sbUser.email : "";
     $("accOut").textContent = isEl ? "Αποσύνδεση" : "Sign out";
+    $("accClose").setAttribute("aria-label", isEl ? "Κλείσιμο" : "Close");
+    $("accEmail").placeholder = isEl ? "Το email σου" : "Your email";
     const googleBtn = $("accGoogle");
     const googleLabel = $("accGoogleLabel");
     if (googleLabel && (!googleBtn || googleBtn.dataset.oauthBusy !== "1")) {
-      googleLabel.textContent = window.NepsisGoogleAuth
-        ? window.NepsisGoogleAuth.idleLabel(currentLang)
-        : (isEl ? "Συνέχεια με Google" : "Continue with Google");
+      googleLabel.textContent = window.NepsisGoogleAuth ? window.NepsisGoogleAuth.idleLabel(currentLang) : (isEl ? "Συνέχεια με Google" : "Continue with Google");
     }
-    $("accMsg").textContent = msg || "";
+    setAccMessage(msg || "", "");
   }
   function setAcc(open) {
     const modal = $("accModal");
@@ -1028,41 +1035,62 @@ let currentLang = "el";
     if (!modal || !scrim) return;
     modal.classList.toggle("open", open);
     scrim.classList.toggle("open", open);
-    if (open) renderAcc("");
+    modal.setAttribute("aria-hidden", open ? "false" : "true");
+    scrim.setAttribute("aria-hidden", open ? "false" : "true");
+    document.body.classList.toggle("auth-modal-open", open);
+    if (open) {
+      accReturnFocus = document.activeElement;
+      renderAcc("");
+      window.requestAnimationFrame(function () { const target = sbUser ? $("accOut") : $("accGoogle"); if (target) target.focus(); });
+    } else {
+      const target = accReturnFocus;
+      accReturnFocus = null;
+      if (target && typeof target.focus === "function") target.focus();
+    }
   }
   const accBtn = $("accBtn");
-  if (accBtn) accBtn.addEventListener("click", function (event) {
-    if (sbUser) { event.preventDefault(); setAcc(true); return; }
-    if (accBtn.tagName === "A" && accBtn.getAttribute("href")) return;
-    setAcc(true);
-  });
+  if (accBtn) accBtn.addEventListener("click", function (event) { event.preventDefault(); setAcc(true); });
   const accClose = $("accClose");
   if (accClose) accClose.addEventListener("click", function () { setAcc(false); });
   const accScrim = $("accScrim");
   if (accScrim) accScrim.addEventListener("click", function () { setAcc(false); });
   const accModalEl = $("accModal");
-  if (accModalEl) accModalEl.addEventListener("click", function (e) { if (e.target === accModalEl) setAcc(false); });
+  if (accModalEl) {
+    accModalEl.addEventListener("click", function (e) { if (e.target === accModalEl) setAcc(false); });
+    accModalEl.addEventListener("keydown", function (e) {
+      if (e.key !== "Tab") return;
+      const items = Array.from(accModalEl.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href]')).filter(function (el) { return !el.closest("[hidden]") && el.getClientRects().length; });
+      if (!items.length) { e.preventDefault(); return; }
+      if (e.shiftKey && document.activeElement === items[0]) { e.preventDefault(); items[items.length - 1].focus(); }
+      else if (!e.shiftKey && document.activeElement === items[items.length - 1]) { e.preventDefault(); items[0].focus(); }
+    });
+  }
   const accGoogle = $("accGoogle");
   if (accGoogle) accGoogle.addEventListener("click", async function () {
     if (!sb) {
       if (accBtn && accBtn.getAttribute("href")) { location.assign(accBtn.getAttribute("href")); return; }
-      renderAcc(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page.");
+      setAccMessage(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page.", "error");
       return;
     }
-    const failMsg = currentLang === "el"
-      ? "Δεν ήταν δυνατή η σύνδεση με Google. Δοκίμασε ξανά."
-      : "Google sign-in could not start. Please try again.";
-    if (!window.NepsisGoogleAuth) {
-      renderAcc(failMsg);
-      return;
-    }
-    await window.NepsisGoogleAuth.signIn({
-      client: sb,
-      button: accGoogle,
-      lang: currentLang,
-      onMessage: function (text) { renderAcc(text); },
-      onError: function () { renderAcc(failMsg); }
-    });
+    const failMsg = currentLang === "el" ? "Δεν ήταν δυνατή η σύνδεση με Google. Δοκίμασε ξανά." : "Google sign-in could not start. Please try again.";
+    if (!window.NepsisGoogleAuth) { setAccMessage(failMsg, "error"); return; }
+    await window.NepsisGoogleAuth.signIn({ client: sb, button: accGoogle, lang: currentLang, onMessage: function (text) { setAccMessage(text, text ? "loading" : ""); }, onError: function () { setAccMessage(failMsg, "error"); } });
+  });
+  const accEmailForm = $("accEmailForm");
+  if (accEmailForm) accEmailForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const input = $("accEmail"), submit = $("accEmailSubmit"), email = input.value.trim();
+    if (!input.checkValidity()) { input.reportValidity(); return; }
+    if (!sb) { setAccMessage(currentLang === "el" ? "Η σύνδεση δεν φορτώθηκε. Ανανέωσε τη σελίδα." : "Sign-in did not load. Refresh the page.", "error"); return; }
+    submit.disabled = true; submit.setAttribute("aria-busy", "true");
+    setAccMessage(currentLang === "el" ? "Ετοιμάζουμε τον ασφαλή σύνδεσμο…" : "Preparing your secure link…", "loading");
+    try {
+      const result = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: new URL("my-nepsis.html", window.location.href).toString() } });
+      if (result.error) throw result.error;
+      setAccMessage(currentLang === "el" ? "Στάλθηκε σύνδεσμος στο email σου. Άνοιξέ τον για να συνεχίσεις." : "A sign-in link is on its way. Check your inbox to continue.", "success");
+    } catch (error) {
+      setAccMessage(currentLang === "el" ? "Δεν στάλθηκε ο σύνδεσμος. Έλεγξε τη διεύθυνση και δοκίμασε ξανά." : "We couldn't send the link. Check the address and try again.", "error");
+    } finally { submit.disabled = false; submit.setAttribute("aria-busy", "false"); }
   });
   const accOut = $("accOut");
   if (accOut) accOut.addEventListener("click", async function () {

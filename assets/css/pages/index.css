@@ -1040,3 +1040,45 @@ body.home-page .bento-next h3 { max-width:14ch; }
   body.home-page .bento-duration { right:20px; bottom:20px; }
 }
 @media(prefers-reduced-motion:reduce) { body.home-page .bento-card { transition:none; } }
+
+
+/* Premium, accessible account modal and passwordless states */
+body.auth-modal-open { overflow:hidden; }
+body.home-page .acc-modal { z-index:100; }
+body.home-page .acc-modal.open { pointer-events:auto; }
+body.home-page .acc-card.auth-card { position:relative; width:min(488px,100%); max-height:min(92vh,780px); overflow:auto; padding:clamp(26px,5vw,40px); border:1px solid rgba(255,255,255,.82); border-radius:32px; background:radial-gradient(60% 55% at 100% 0%,rgba(247,209,90,.2),transparent 78%),linear-gradient(145deg,#fffdf8,#f6eadb); box-shadow:0 42px 110px -38px rgba(40,20,10,.7),0 1px 0 rgba(255,255,255,.9) inset; isolation:isolate; }
+body.home-page .auth-modal-art { position:absolute; width:210px; height:190px; top:-57px; right:-62px; z-index:-1; opacity:.9; pointer-events:none; }
+body.home-page .auth-orbit { position:absolute; inset:0; border:1px solid rgba(185,85,42,.2); border-radius:50%; }
+body.home-page .auth-orbit-inner { inset:28px; border-color:rgba(185,85,42,.16); }
+body.home-page .auth-orbit-dot { position:absolute; width:12px; height:12px; left:38px; top:48px; border-radius:50%; background:#f7d15a; box-shadow:0 0 0 8px rgba(247,209,90,.18),0 0 30px rgba(240,112,42,.35); }
+body.home-page .acc-card .close { z-index:2; border-color:rgba(185,85,42,.2); background:rgba(255,255,255,.65); color:var(--fg); }
+body.home-page .acc-card .close:hover { background:#fff; transform:rotate(5deg); }
+body.home-page .acc-card .eyebrow { position:relative; z-index:1; display:block; margin:5px 48px 12px 0; font-size:.7rem; letter-spacing:.16em; }
+body.home-page .acc-card h2 { position:relative; z-index:1; max-width:12ch; font-size:clamp(2rem,5vw,2.75rem); line-height:1.02; letter-spacing:-.05em; }
+body.home-page .acc-card .auth-intro { position:relative; z-index:1; max-width:36ch; margin:12px 0 18px; line-height:1.65; }
+body.home-page .auth-perks { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 20px; }
+body.home-page .auth-perks span { padding:7px 11px; border:1px solid rgba(185,85,42,.14); border-radius:99px; background:rgba(255,255,255,.56); color:var(--muted); font-size:.75rem; font-weight:850; }
+body.home-page .auth-form { position:relative; z-index:1; }
+body.home-page .acc-card .acc-google { min-height:52px; border-radius:15px; background:#fff; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+body.home-page .acc-card .acc-google:hover { transform:translateY(-1px); border-color:rgba(185,85,42,.45); box-shadow:0 10px 24px -18px rgba(58,36,24,.5); }
+body.home-page .acc-divider { margin:19px 0 14px; }
+body.home-page .acc-email-form { display:grid; gap:8px; }
+body.home-page .acc-email-label { color:var(--fg); font-size:.84rem; font-weight:850; }
+body.home-page .acc-card .acc-email { margin:0; min-height:50px; border-color:rgba(185,85,42,.2); border-radius:15px; background:rgba(255,255,255,.84); }
+body.home-page .acc-card .acc-email-send { min-height:50px; margin-top:2px; border:0; border-radius:15px; background:linear-gradient(120deg,#c84a1a,#b8341e); color:#fff; box-shadow:0 12px 26px -17px rgba(184,52,30,.66); }
+body.home-page .acc-card .acc-email-send:disabled { opacity:.68; cursor:wait; }
+body.home-page .acc-card .auth-footnote { margin:12px 0 0; color:var(--muted); font-size:.76rem; line-height:1.5; text-align:center; }
+body.home-page .acc-card .acc-msg { min-height:0; margin:12px 0 0; padding:0; border:0; color:var(--muted); font-size:.86rem; line-height:1.5; }
+body.home-page .acc-card .acc-msg:empty { display:none; }
+body.home-page .acc-card .acc-msg.is-success,body.home-page .acc-card .acc-msg.is-error,body.home-page .acc-card .acc-msg.is-loading { padding:11px 13px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.7); }
+body.home-page .acc-card .acc-msg.is-success { color:#315d3b; border-color:rgba(72,128,80,.22); background:rgba(101,153,104,.1); }
+body.home-page .acc-card .acc-msg.is-error { color:#9d352a; border-color:rgba(157,53,42,.2); background:rgba(216,57,43,.07); }
+body.home-page .acc-card .acc-msg.is-loading { color:var(--orange); }
+body.home-page .auth-signed-state { margin-top:20px; padding:18px; border:1px solid rgba(72,128,80,.2); border-radius:20px; background:rgba(101,153,104,.1); }
+body.home-page .auth-signed-mark { display:grid; width:34px; height:34px; place-items:center; border-radius:50%; background:#5d8f60; color:white; font-weight:900; }
+body.home-page .auth-signed-state p { margin:12px 0 0; font-weight:850; }
+body.home-page .auth-signed-state .go { margin-top:14px; min-height:48px; border-radius:14px; }
+body.home-page .acc-modal.open .acc-card { animation:nepsis-auth-enter .32s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes nepsis-auth-enter { from { opacity:0; transform:translateY(14px) scale(.985); } to { opacity:1; transform:translateY(0) scale(1); } }
+@media(max-width:520px) { body.home-page .acc-modal { padding:12px; } body.home-page .acc-card.auth-card { max-height:94vh; padding:24px 20px; border-radius:26px; } body.home-page .auth-modal-art { right:-104px; opacity:.65; } body.home-page .acc-card h2 { max-width:11ch; } }
+@media(prefers-reduced-motion:reduce) { body.home-page .acc-modal.open .acc-card { animation:none; } body.home-page .acc-card .acc-google:hover { transform:none; } }

@@ -73,7 +73,7 @@ if ("serviceWorker" in navigator) {
   <div class="wrap top-in">
     <a class="logo" href="#top"><span class="dot"></span>Nepsis</a>
     <div class="head-right">
-      <a class="acc-btn" id="accBtn" href="https://emhukqvetlhjgadgskbl.supabase.co/auth/v1/authorize?provider=google&redirect_to=https%3A%2F%2Fnepsis-focus.github.io%2Fnepsis-site%2F">Σύνδεση</a>
+      <a class="acc-btn" id="accBtn" href="https://emhukqvetlhjgadgskbl.supabase.co/auth/v1/authorize?provider=google&redirect_to=https%3A%2F%2Fnepsis-focus.github.io%2Fnepsis-site%2F" aria-haspopup="dialog" aria-controls="accModal">Σύνδεση</a>
       <div class="lang" role="group" aria-label="Language">
         <button type="button" data-lang="el" class="active">ΕΛ</button>
         <button type="button" data-lang="en">EN</button>
@@ -382,30 +382,34 @@ if ("serviceWorker" in navigator) {
 
 </main>
 
-<div class="acc-scrim" id="accScrim"></div>
-<div class="acc-modal" id="accModal" role="dialog" aria-modal="true" aria-labelledby="accTitle">
-  <div class="acc-card">
-    <button type="button" class="close" id="accClose" aria-label="Close">✕</button>
-    <span class="eyebrow" id="accEyebrow">Λογαριασμός</span>
-    <h2 id="accTitle">Σύνδεση</h2>
-    <p class="muted" id="accText" style="margin-top:8px"></p>
-    <div id="accLogged" hidden>
-      <p style="margin-top:14px;font-weight:800" id="accWho"></p>
+<div class="acc-scrim" id="accScrim" aria-hidden="true"></div>
+<div class="acc-modal" id="accModal" role="dialog" aria-modal="true" aria-labelledby="accTitle" aria-hidden="true" tabindex="-1">
+  <div class="acc-card auth-card">
+    <div class="auth-modal-art" aria-hidden="true"><span class="auth-orbit"></span><span class="auth-orbit auth-orbit-inner"></span><span class="auth-orbit-dot"></span></div>
+    <button type="button" class="close" id="accClose" aria-label="Κλείσιμο">✕</button>
+    <span class="eyebrow" id="accEyebrow">Ο ΧΩΡΟΣ ΣΟΥ</span>
+    <h2 id="accTitle">Συνέχισε με ηρεμία</h2>
+    <p class="muted auth-intro" id="accText">Η πρόοδός σου, διαθέσιμη όπου κι αν συνεχίσεις.</p>
+    <div class="auth-perks" aria-label="Account benefits"><span data-el="Ιδιωτική πρόοδος" data-en="Private progress">Ιδιωτική πρόοδος</span><span data-el="Χωρίς κωδικό" data-en="No password">Χωρίς κωδικό</span></div>
+    <div id="accLogged" class="auth-signed-state" hidden>
+      <span class="auth-signed-mark" aria-hidden="true">✓</span>
+      <p id="accWho"></p>
       <button type="button" class="btn btn-ghost go" id="accOut"></button>
     </div>
-    <div id="accForm">
+    <div id="accForm" class="auth-form">
       <button type="button" class="btn acc-google" id="accGoogle" aria-busy="false">
-        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-          <path fill="#FFC107" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11c-.5 2.5-1.9 4.6-4.1 6v5h6.6c3.8-3.5 6.1-8.7 6.1-14.7z"/>
-          <path fill="#FF3D00" d="M24 44c5.4 0 10-1.8 13.4-4.8l-6.6-5c-1.8 1.2-4.1 1.9-6.8 1.9-5.2 0-9.6-3.5-11.2-8.2H6v5.2C9.4 39.6 16.2 44 24 44z"/>
-          <path fill="#4CAF50" d="M12.8 27.9c-.4-1.2-.7-2.5-.7-3.9s.3-2.7.7-3.9v-5.2H6C4.7 17.5 4 20.6 4 24s.7 6.5 2 9.1l6.8-5.2z"/>
-          <path fill="#1976D2" d="M24 12c2.9 0 5.5 1 7.5 3l5.7-5.7C33.8 6.1 29.2 4 24 4 16.2 4 9.4 8.4 6 14.9l6.8 5.2C14.4 15.5 18.8 12 24 12z"/>
-        </svg>
-        <span class="nepsis-oauth-spinner" aria-hidden="true"></span>
-        <span id="accGoogleLabel" data-oauth-label>Συνέχεια με Google</span>
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#FFC107" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11c-.5 2.5-1.9 4.6-4.1 6v5h6.6c3.8-3.5 6.1-8.7 6.1-14.7z"/><path fill="#FF3D00" d="M24 44c5.4 0 10-1.8 13.4-4.8l-6.6-5c-1.8 1.2-4.1 1.9-6.8 1.9-5.2 0-9.6-3.5-11.2-8.2H6v5.2C9.4 39.6 16.2 44 24 44z"/><path fill="#4CAF50" d="M12.8 27.9c-.4-1.2-.7-2.5-.7-3.9s.3-2.7.7-3.9v-5.2H6C4.7 17.5 4 20.6 4 24s.7 6.5 2 9.1l6.8-5.2z"/><path fill="#1976D2" d="M24 12c2.9 0 5.5 1 7.5 3l5.7-5.7C33.8 6.1 29.2 4 24 4 16.2 4 9.4 8.4 6 14.9l6.8 5.2C14.4 15.5 18.8 12 24 12z"/></svg>
+        <span class="nepsis-oauth-spinner" aria-hidden="true"></span><span id="accGoogleLabel" data-oauth-label>Συνέχεια με Google</span>
       </button>
+      <div class="acc-divider"><span data-el="ή με ασφαλή σύνδεσμο email" data-en="or use a secure email link">ή με ασφαλή σύνδεσμο email</span></div>
+      <form id="accEmailForm" class="acc-email-form">
+        <label class="acc-email-label" for="accEmail" data-el="Διεύθυνση email" data-en="Email address">Διεύθυνση email</label>
+        <input class="acc-email" id="accEmail" name="email" type="email" autocomplete="email" inputmode="email" required data-placeholder-el="Το email σου" data-placeholder-en="Your email" placeholder="Το email σου">
+        <button type="submit" class="btn btn-primary acc-email-send" id="accEmailSubmit" aria-busy="false"><span data-el="Στείλε σύνδεσμο ασφαλείας" data-en="Send a secure link">Στείλε σύνδεσμο ασφαλείας</span></button>
+      </form>
+      <p class="auth-footnote" data-el="Δεν χρειάζεται κωδικός. Ο σύνδεσμος λήγει με ασφάλεια." data-en="No password needed. Your sign-in link is time-limited.">Δεν χρειάζεται κωδικός. Ο σύνδεσμος λήγει με ασφάλεια.</p>
     </div>
-    <p class="acc-msg" id="accMsg" aria-live="polite"></p>
+    <p class="acc-msg" id="accMsg" role="status" aria-live="polite"></p>
   </div>
 </div>
 
@@ -417,7 +421,7 @@ if ("serviceWorker" in navigator) {
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.9/dist/lenis.min.js"></script>
