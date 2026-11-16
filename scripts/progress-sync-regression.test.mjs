@@ -130,7 +130,12 @@ test("calendar and account writes are queued for reconnect under the active user
 });
 
 test("offline pages and sync scripts are precached", () => {
-  assert.match(serviceWorker, /nepsis-v10/);
+  assert.match(serviceWorker, /nepsis-v13/);
+  assert.match(serviceWorker, /asset\('coach\.html'\)/);
+  assert.match(serviceWorker, /asset\('assets\/js\/coach-config\.js'\)/);
+  assert.match(serviceWorker, /asset\('assets\/js\/pages\/coach\.js'\)/);
+  assert.match(serviceWorker, /asset\('assets\/js\/pages\/coach-timer-bridge\.js'\)/);
+  assert.match(serviceWorker, /asset\('assets\/css\/pages\/coach\.css'\)/);
   assert.match(serviceWorker, /asset\('diary\.html'\)/);
   assert.match(serviceWorker, /asset\('my-nepsis\.html'\)/);
   assert.match(serviceWorker, /asset\('assets\/js\/offline-sync-queue\.js'\)/);
