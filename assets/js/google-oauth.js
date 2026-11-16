@@ -63,7 +63,15 @@
     return document.getElementById("accountBtn") || document.getElementById("accBtn");
   }
 
+  function syncAnalyticsIdentity(session) {
+    var analytics = global.nepsisAnalytics;
+    if (!analytics) return;
+    if (session && session.user && session.user.id && typeof analytics.setIdentity === "function") analytics.setIdentity(session.user.id, session.access_token || "");
+    else if ((!session || !session.user) && typeof analytics.clearIdentity === "function") analytics.clearIdentity();
+  }
+
   function updateSignedInIndicator(session, lang) {
+    syncAnalyticsIdentity(session);
     var button = authButton();
     if (!button || !session || !session.user) return;
     activeSession = session;
@@ -105,6 +113,7 @@
   }
 
   function clearSignedInIndicator() {
+    syncAnalyticsIdentity(null);
     activeSession = null;
     var badge = document.getElementById("nepsis-auth-state");
     if (badge) badge.remove();

@@ -18,12 +18,9 @@
 
   // Κατάσταση tracking (μόνο στη μνήμη)
   const telemetryState = {
-    startTime: Date.now(),
-    maxScroll: 0,
-    lastSection: "",
-    lastClick: "",
-    sessionId: null,
-    anonId: null
+    startTime: Date.now(), maxScroll: 0, lastSection: "", lastClick: "",
+    sessionId: null, anonId: null, userId: null, accessToken: null,
+    identityLinkPending: false, trackingStarted: false
   };
 
   function getOrCreateId(key, storage) {
@@ -68,10 +65,10 @@
   }
 
   function updateLastClick(target) {
-    if (!target) return;
-    const el = target.closest("a, button, [id], [data-whop-upsell]") || target;
-    const info = el.id || el.getAttribute("data-whop-upsell") || el.textContent?.trim().slice(0, 40) || el.tagName;
-    telemetryState.lastClick = info;
+    if (!target || typeof target.closest !== "function") return;
+    const el = target.closest("a, button, [data-telemetry-label], [data-whop-upsell]") || target;
+    const info = el.id || el.getAttribute("data-telemetry-label") || el.getAttribute("data-whop-upsell") || el.tagName;
+    telemetryState.lastClick = String(info || "control").replace(/[^a-zA-Z0-9_.:-]/g, "").slice(0, 80);
   }
 
   function buildPayload(eventType) {
@@ -80,7 +77,7 @@
       anon_id: telemetryState.anonId,
       session_id: telemetryState.sessionId,
       event_type: eventType,
-      page: location.pathname + location.hash,
+      page: location.pathname,
       section: telemetryState.lastSection || pageSection(),
       scroll_depth: telemetryState.maxScroll,
       time_on_page: timeOnPage,
@@ -89,68 +86,75 @@
     };
   }
 
+  function flushIdentityLink() {
+    if (!telemetryState.identityLinkPending || !telemetryState.userId || !telemetryState.anonId || readConsent() !== "granted") return;
+    telemetryState.identityLinkPending = false;
+    sendTelemetry("identity_linked");
+  }
+
+  function setIdentity(userId, accessToken) {
+    const nextUserId = typeof userId === "string" ? userId.trim() : "";
+    if (!nextUserId) return clearIdentity();
+    if (telemetryState.userId !== nextUserId) telemetryState.identityLinkPending = true;
+    telemetryState.userId = nextUserId;
+    if (typeof accessToken === "string" && accessToken) telemetryState.accessToken = accessToken;
+    flushIdentityLink();
+    return true;
+  }
+
+  function clearIdentity() {
+    telemetryState.userId = null;
+    telemetryState.accessToken = null;
+    telemetryState.identityLinkPending = false;
+    return true;
+  }
+
   function sendTelemetry(eventType, useKeepalive = false) {
-    if (readConsent() !== "granted") return;
-    if (!telemetryState.anonId) return;
-
+    if (readConsent() !== "granted" || !telemetryState.anonId) return;
     const payload = buildPayload(eventType);
+    if (telemetryState.userId) payload.user_id = telemetryState.userId;
     const body = JSON.stringify(payload);
-    if (body.length > 60000) return; // Ασφάλεια κάτω από 64KB
-
+    if (body.length > 60000) return;
     const headers = {
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: "Bearer " + (telemetryState.accessToken || SUPABASE_ANON_KEY),
       "Content-Type": "application/json",
-      "Prefer": "return=minimal"
+      Prefer: "return=minimal"
     };
-
-    // Αν υπάρχει ενεργό session, προσπάθησε να βάλεις user token (προαιρετικό)
-    try {
-      if (window.supabase?.auth) {
-        window.supabase.auth.getSession().then(({ data }) => {
-          if (data?.session?.access_token) {
-            headers.Authorization = `Bearer ${data.session.access_token}`;
-            if (data.session.user?.id) payload.user_id = data.session.user.id;
-          }
-        }).catch(() => {});
-      }
-    } catch (_) {}
-
-    fetch(`${SUPABASE_URL}/rest/v1/site_telemetry`, {
-      method: "POST",
-      headers,
-      body,
-      keepalive: useKeepalive
-    }).catch(() => {}); // Αθόρυβα
+    try { fetch(SUPABASE_URL + "/rest/v1/site_telemetry", { method: "POST", headers, body, keepalive: useKeepalive }).catch(() => {}); }
+    catch (_) {}
   }
 
   function setupTelemetryTracking() {
+    if (telemetryState.trackingStarted) return;
+    telemetryState.trackingStarted = true;
     initTelemetryIds();
     updateScrollDepth();
     updateLastSection();
-
+    flushIdentityLink();
     let scrollTimer;
     window.addEventListener("scroll", () => {
       clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        updateScrollDepth();
-        updateLastSection();
-      }, 150);
+      scrollTimer = setTimeout(() => { updateScrollDepth(); updateLastSection(); }, 150);
     }, { passive: true });
-
-    document.addEventListener("click", (e) => updateLastClick(e.target), true);
-
-    // Exit events — visibilitychange + pagehide με keepalive
-    const sendExit = () => sendTelemetry("exit", true);
+    document.addEventListener("click", e => updateLastClick(e.target), true);
+    let exitSentForVisibilityCycle = false;
+    const sendExit = () => {
+      if (exitSentForVisibilityCycle) return;
+      exitSentForVisibilityCycle = true;
+      clearTimeout(scrollTimer);
+      updateScrollDepth();
+      updateLastSection();
+      sendTelemetry("exit", true);
+    };
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "hidden") sendExit();
+      else exitSentForVisibilityCycle = false;
     });
     window.addEventListener("pagehide", sendExit);
-
-    // Page enter
     sendTelemetry("page_enter");
   }
-  // ===== Τέλος νέου telemetry κώδικα =====
+
 
   function readConsent() {
     try { const value=localStorage.getItem(CONSENT_KEY); return value==="granted"||value==="denied"?value:null; }
@@ -208,6 +212,8 @@
 
   window.nepsisAnalytics=Object.freeze({
     events:Object.freeze([...EVENTS]),
+    setIdentity(userId, accessToken) { return setIdentity(userId, accessToken); },
+    clearIdentity() { return clearIdentity(); },
     track(name,properties={}) {
       if(!EVENTS.has(name)) return false;
       const safe=safeProperties(properties);
@@ -222,8 +228,8 @@
   });
 
   const copy={
-    el:{title:"Προαιρετικά στατιστικά χρήσης",body:"Με τη συγκατάθεσή σου, το Nepsis καταγράφει τις σελίδες που επισκέπτεσαι και επιλεγμένες ενέργειες, ώστε να βελτιώνουμε την εμπειρία. Δεν στέλνουμε περιεχόμενο ημερολογίου, email, αναγνωριστικό λογαριασμού ή κείμενο αναζήτησης. Η καταγραφή συνεδριών είναι απενεργοποιημένη. Μπορείς να αλλάξεις την επιλογή σου οποτεδήποτε.",accept:"Αποδοχή",reject:"Απόρριψη",manage:"Ρυθμίσεις analytics",privacy:"Πολιτική απορρήτου"},
-    en:{title:"Optional usage analytics",body:"With your consent, Nepsis records the pages you visit and selected interactions so we can improve the experience. We do not send diary content, email, account identifiers or search text. Session recording is disabled. You can change your choice at any time.",accept:"Allow analytics",reject:"Reject",manage:"Analytics settings",privacy:"Privacy policy"}
+    el:{title:"Προαιρετικά στατιστικά χρήσης",body:"Με τη συγκατάθεσή σου, καταγράφουμε ένα τυχαίο αναγνωριστικό επισκέπτη, τις σελίδες, το μέγιστο βάθος κύλισης, την τελευταία ενότητα και το τελευταίο κουμπί. Αν συνδεθείς, συνδέουμε αυτά τα στατιστικά με το user ID του λογαριασμού σου στο Supabase. Δεν στέλνουμε email, περιεχόμενο ημερολογίου ή κείμενο αναζήτησης. Η καταγραφή συνεδριών είναι απενεργοποιημένη· μπορείς να αλλάξεις την επιλογή σου οποτεδήποτε.",accept:"Αποδοχή",reject:"Απόρριψη",manage:"Ρυθμίσεις analytics",privacy:"Πολιτική απορρήτου"},
+    en:{title:"Optional usage analytics",body:"With your consent, we record a random visitor ID, pages, maximum scroll depth, the last section and the last button. If you sign in, we link these analytics to your Supabase account user ID. We do not send your email, diary content or search text. Session recording is disabled; you can change your choice at any time.",accept:"Allow analytics",reject:"Reject",manage:"Analytics settings",privacy:"Privacy policy"}
   };
   function language() {
     try { if(localStorage.getItem("nepsis-lang")==="en") return "en"; } catch (_) {}
