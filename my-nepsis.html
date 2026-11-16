@@ -27,7 +27,7 @@
   <link rel="stylesheet" href="assets/css/theme.css">
 
 </head>
-<body>
+<body class="my-nepsis-dashboard">
 <header><div class="wrap top"><a class="logo" href="index.html"><span class="dot"></span>Nepsis</a><div class="headright"><button class="account-btn" id="accountBtn">Σύνδεση</button><div class="lang"><button class="active" data-lang="el">ΕΛ</button><button data-lang="en">EN</button></div><button class="menu-btn" id="menuBtn" aria-label="Μενού">☰</button></div></div></header>
 <nav class="drawer" id="drawer" aria-label="Κύριο μενού">
   <button type="button" class="close" id="closeBtn" aria-label="Κλείσιμο">✕</button>
@@ -49,7 +49,12 @@
 <section class="intro"><span class="eyebrow" data-el="Ο προσωπικός σου χώρος" data-en="Your personal space">Ο προσωπικός σου χώρος</span><h1 data-el="Το Nepsis <em>μου.</em>" data-en="My <em>Nepsis.</em>">Το Nepsis <em>μου.</em></h1><p data-el="Μια καθαρή εικόνα της πορείας σου: οι μικρές προσπάθειες, οι μέρες που επέστρεψες και όσα χτίζεις βήμα βήμα." data-en="A clear view of your journey: small efforts, the days you returned, and what you are building step by step.">Μια καθαρή εικόνα της πορείας σου: οι μικρές προσπάθειες, οι μέρες που επέστρεψες και όσα χτίζεις βήμα βήμα.</p></section>
 <section class="welcome"><div><span class="eyebrow" id="welcomeEyebrow">Καλώς ήρθες</span><h2 id="welcomeTitle">Η πρόοδός σου αρχίζει με ένα μικρό βήμα.</h2><p id="welcomeText">Δοκίμασε το Nepsis χωρίς λογαριασμό. Αν συνδεθείς, η πρόοδός σου μπορεί να συγχρονίζεται στον λογαριασμό σου.</p></div><button class="btn primary" id="welcomeAction">Σύνδεση για συγχρονισμό</button></section>
 <p id="progressSyncStatus" class="sync-status" role="status" aria-live="polite"></p>
- <section class="stats" aria-label="Σύνοψη προόδου"><article class="stat"><span class="label" data-el="Ημέρες με εξάσκηση" data-en="Active days">Ημέρες με εξάσκηση</span><strong id="daysStat">0</strong><small data-el="Κάθε μέρα μετράει" data-en="Every day counts">Κάθε μέρα μετράει</small></article><article class="stat"><span class="label" data-el="Συνεδρίες" data-en="Sessions">Συνεδρίες</span><strong id="sessionsStat">0</strong><small data-el="Ολοκληρωμένα στάδια" data-en="Completed stages">Ολοκληρωμένα στάδια</small></article><article class="stat"><span class="label" data-el="Λεπτά συγκέντρωσης" data-en="Focus minutes">Λεπτά συγκέντρωσης</span><strong id="minutesStat">0</strong><small data-el="Ο χρόνος που αφιέρωσες" data-en="Time you invested">Ο χρόνος που αφιέρωσες</small></article><article class="stat"><span class="label" data-el="Σερί ημερών" data-en="Current streak">Σερί ημερών</span><strong id="streakStat">0</strong><small data-el="Χωρίς πίεση για τελειότητα" data-en="No need to be perfect">Χωρίς πίεση για τελειότητα</small></article></section>
+ <section class="stats dashboard-stats" aria-label="Σύνοψη προόδου">
+ <article class="stat stat-days"><div class="stat-head"><span class="stat-icon" aria-hidden="true">◌</span><span class="stat-tag" data-el="ΣΤΑΘΕΡΑ ΒΗΜΑΤΑ" data-en="STEADY STEPS">ΣΤΑΘΕΡΑ ΒΗΜΑΤΑ</span></div><span class="label" data-el="Ημέρες με εξάσκηση" data-en="Active days">Ημέρες με εξάσκηση</span><strong id="daysStat">0</strong><small data-el="Κάθε μέρα μετράει" data-en="Every day counts">Κάθε μέρα μετράει</small></article>
+ <article class="stat stat-sessions"><div class="stat-head"><span class="stat-icon" aria-hidden="true">↗</span><span class="stat-tag" data-el="ΜΙΚΡΕΣ ΝΙΚΕΣ" data-en="SMALL WINS">ΜΙΚΡΕΣ ΝΙΚΕΣ</span></div><span class="label" data-el="Συνεδρίες" data-en="Sessions">Συνεδρίες</span><strong id="sessionsStat">0</strong><small data-el="Ολοκληρωμένα στάδια" data-en="Completed stages">Ολοκληρωμένα στάδια</small></article>
+ <article class="stat stat-minutes"><div class="stat-head"><span class="stat-icon" aria-hidden="true">◷</span><span class="stat-tag" data-el="ΧΡΟΝΟΣ ΓΙΑ ΣΕΝΑ" data-en="TIME FOR YOU">ΧΡΟΝΟΣ ΓΙΑ ΣΕΝΑ</span></div><span class="label" data-el="Λεπτά συγκέντρωσης" data-en="Focus minutes">Λεπτά συγκέντρωσης</span><strong id="minutesStat">0</strong><small data-el="Ο χρόνος που αφιέρωσες" data-en="Time you invested">Ο χρόνος που αφιέρωσες</small></article>
+ <article class="stat stat-streak"><div class="stat-head"><span class="stat-icon" aria-hidden="true">✦</span><span class="stat-tag" data-el="Ο ΔΙΚΟΣ ΣΟΥ ΡΥΘΜΟΣ" data-en="YOUR OWN RHYTHM">Ο ΔΙΚΟΣ ΣΟΥ ΡΥΘΜΟΣ</span></div><span class="label" data-el="Σερί ημερών" data-en="Current streak">Σερί ημερών</span><strong id="streakStat">0</strong><small data-el="Χωρίς πίεση για τελειότητα" data-en="No need to be perfect">Χωρίς πίεση για τελειότητα</small></article>
+</section>
 <div class="grid"><section class="panel"><h2 class="section-title" data-el="Το ημερολόγιο της προσπάθειας" data-en="Your activity calendar">Το ημερολόγιο της προσπάθειας</h2><div class="calendar-head"><strong id="monthLabel"></strong><span class="muted" data-el="Οι τελευταίες 35 ημέρες" data-en="Last 35 days">Οι τελευταίες 35 ημέρες</span></div><div class="calendar" id="calendar"></div><div class="legend"><span><i></i> <span data-el="Ολοκληρώθηκε στάδιο" data-en="Stage completed">Ολοκληρώθηκε στάδιο</span></span><span>◉ <span data-el="Σήμερα" data-en="Today">Σήμερα</span></span></div></section><section class="panel next"><span class="eyebrow" data-el="Το επόμενο βήμα" data-en="Your next step">Το επόμενο βήμα</span><h2 class="section-title" data-el="Συνέχισε με τον δικό σου ρυθμό." data-en="Continue at your own pace.">Συνέχισε με τον δικό σου ρυθμό.</h2><p data-el="Δεν χρειάζεται να τα κάνεις όλα σήμερα. Μια μικρή συνεδρία αρκεί για να συνεχίσεις την πορεία σου." data-en="You do not have to do everything today. One small session is enough to keep moving.">Δεν χρειάζεται να τα κάνεις όλα σήμερα. Μια μικρή συνεδρία αρκεί για να συνεχίσεις την πορεία σου.</p><a class="btn secondary" href="practice.html#stageGrid" data-el="Πήγαινε στην εξάσκηση →" data-en="Go to practice →">Πήγαινε στην εξάσκηση →</a></section></div>
 
 <section class="tools-grid" aria-label="Προσωπικά εργαλεία">
@@ -154,13 +159,16 @@
   <p class="tool-intro" data-el="Οι πρόσφατες ημέρες εξάσκησης και ο χρόνος που αφιέρωσες." data-en="Your recent practice days and the time you invested.">Οι πρόσφατες ημέρες εξάσκησης και ο χρόνος που αφιέρωσες.</p>
   <div class="history-list" id="historyList"></div>
  </article>
- <article class="tool-panel">
-  <div class="section-kicker" data-el="Μια ματιά πίσω" data-en="A look back">Μια ματιά πίσω</div>
-  <h2 data-el="Η εβδομάδα μου" data-en="My week">Η εβδομάδα μου</h2>
-  <p class="tool-intro" id="weekRange">Η εικόνα της τρέχουσας εβδομάδας σου.</p>
-  <div class="week-metrics"><div class="week-metric"><strong id="weekMinutes">0</strong><span data-el="ΛΕΠΤΑ" data-en="MINUTES">ΛΕΠΤΑ</span></div><div class="week-metric"><strong id="weekDays">0</strong><span data-el="ΗΜΕΡΕΣ" data-en="DAYS">ΗΜΕΡΕΣ</span></div><div class="week-metric"><strong id="weekSessions">0</strong><span data-el="ΣΥΝΕΔΡΙΕΣ" data-en="SESSIONS">ΣΥΝΕΔΡΙΕΣ</span></div></div>
-  <div class="week-bars" id="weekBars" aria-label="Λεπτά ανά ημέρα"></div><p class="week-compare" id="weekCompare"></p>
- </article>
+ <article class="tool-panel week-feature">
+   <div class="week-feature-head"><div><div class="section-kicker" data-el="ΜΙΑ ΜΑΤΙΑ ΠΙΣΩ" data-en="A LOOK BACK">ΜΙΑ ΜΑΤΙΑ ΠΙΣΩ</div><h2 data-el="Η εβδομάδα μου" data-en="My week">Η εβδομάδα μου</h2></div><p class="tool-intro" id="weekRange">Η εικόνα της τρέχουσας εβδομάδας σου.</p></div>
+   <div class="week-dashboard-grid">
+    <div class="week-dashboard-summary">
+     <div class="week-goal-box"><div class="week-goal-head"><span id="weekGoalLabel" data-el="Στόχος εβδομάδας · 3 ημέρες" data-en="Weekly intention · 3 days">Στόχος εβδομάδας · 3 ημέρες</span><strong id="weekGoalValue">0 / 3</strong></div><div class="week-goal-track" id="weekGoalTrack" role="progressbar" aria-labelledby="weekGoalLabel" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><span id="weekGoalBar"></span></div></div>
+     <div class="week-metrics"><div class="week-metric"><strong id="weekMinutes">0</strong><span data-el="ΛΕΠΤΑ" data-en="MINUTES">ΛΕΠΤΑ</span></div><div class="week-metric"><strong id="weekDays">0</strong><span data-el="ΗΜΕΡΕΣ" data-en="DAYS">ΗΜΕΡΕΣ</span></div><div class="week-metric"><strong id="weekSessions">0</strong><span data-el="ΣΥΝΕΔΡΙΕΣ" data-en="SESSIONS">ΣΥΝΕΔΡΙΕΣ</span></div></div>
+    </div>
+    <div class="week-dashboard-chart"><div class="week-bars" id="weekBars" aria-label="Λεπτά ανά ημέρα"></div><p class="week-compare" id="weekCompare"></p></div>
+   </div>
+  </article>
  <article class="tool-panel">
   <div class="section-kicker" data-el="Η μεγάλη εικόνα" data-en="The bigger picture">Η μεγάλη εικόνα</div>
   <h2 data-el="Ο μήνας μου" data-en="My month">Ο μήνας μου</h2>

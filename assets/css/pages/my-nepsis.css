@@ -255,3 +255,37 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   .calendar-head{flex-wrap:wrap;gap:6px}
   .calendar{min-width:0}
 }
+
+
+/* My Nepsis — editorial summary cards and an actionable weekly view */
+body.my-nepsis-dashboard .dashboard-stats { grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:24px 0 32px; }
+body.my-nepsis-dashboard .dashboard-stats .stat { position:relative; min-width:0; min-height:190px; padding:20px 21px; overflow:hidden; border-radius:24px; background:linear-gradient(145deg,#fffdf8,#f6eadb); box-shadow:0 12px 34px -28px #78462866; }
+body.my-nepsis-dashboard .dashboard-stats .stat::after { content:""; position:absolute; width:130px; height:130px; right:-52px; bottom:-58px; border:1px solid rgba(185,85,42,.13); border-radius:50%; box-shadow:0 0 0 14px rgba(185,85,42,.035),0 0 0 30px rgba(185,85,42,.025); pointer-events:none; }
+body.my-nepsis-dashboard .dashboard-stats .stat-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:20px; }
+body.my-nepsis-dashboard .dashboard-stats .stat-icon { display:grid; width:36px; height:36px; place-items:center; border-radius:13px; background:#f2dfc7; color:#b9552a; font-size:1.15rem; }
+body.my-nepsis-dashboard .dashboard-stats .stat-tag { color:var(--muted); font-size:.62rem; font-weight:900; letter-spacing:.11em; text-align:right; }
+body.my-nepsis-dashboard .dashboard-stats .stat .label { display:block; font-size:.84rem; }
+body.my-nepsis-dashboard .dashboard-stats .stat strong { margin:6px 0 4px; font-size:clamp(2rem,4vw,2.8rem); letter-spacing:-.06em; }
+body.my-nepsis-dashboard .dashboard-stats .stat small { position:relative; z-index:1; font-size:.78rem; }
+body.my-nepsis-dashboard .dashboard-stats .stat-streak { color:#fff9f1; border-color:#3a2418; background:radial-gradient(90% 90% at 100% 0%,rgba(247,209,90,.2),transparent 65%),linear-gradient(145deg,#3a2418,#634027); }
+body.my-nepsis-dashboard .dashboard-stats .stat-streak .stat-icon { background:rgba(247,209,90,.16); color:#f7d15a; }
+body.my-nepsis-dashboard .dashboard-stats .stat-streak .stat-tag,body.my-nepsis-dashboard .dashboard-stats .stat-streak .label,body.my-nepsis-dashboard .dashboard-stats .stat-streak small { color:rgba(255,249,241,.75); }
+body.my-nepsis-dashboard .week-feature { grid-column:1/-1; padding:clamp(24px,4vw,38px); background:linear-gradient(135deg,#fffdf8,#f5e8d7); }
+body.my-nepsis-dashboard .week-feature-head { display:flex; justify-content:space-between; align-items:end; gap:22px; margin-bottom:22px; }
+body.my-nepsis-dashboard .week-feature-head h2 { margin:5px 0 0; font-size:clamp(1.55rem,3vw,2rem); }
+body.my-nepsis-dashboard .week-feature-head .tool-intro { margin:0; text-align:right; }
+body.my-nepsis-dashboard .week-dashboard-grid { display:grid; grid-template-columns:minmax(260px,.9fr) minmax(0,1.1fr); gap:clamp(20px,4vw,42px); align-items:center; }
+body.my-nepsis-dashboard .week-goal-box { padding:18px 18px 16px; border:1px solid rgba(185,85,42,.16); border-radius:19px; background:rgba(255,255,255,.64); }
+body.my-nepsis-dashboard .week-goal-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:13px; }
+body.my-nepsis-dashboard .week-goal-head span { color:var(--muted); font-size:.83rem; font-weight:800; }
+body.my-nepsis-dashboard .week-goal-head strong { color:var(--fg); font-size:1.1rem; font-variant-numeric:tabular-nums; }
+body.my-nepsis-dashboard .week-goal-track { height:9px; overflow:hidden; border-radius:99px; background:#eadccb; }
+body.my-nepsis-dashboard .week-goal-track > span { display:block; width:0; height:100%; border-radius:inherit; background:var(--grad); transition:width .45s ease; }
+body.my-nepsis-dashboard .week-metrics { margin:14px 0 0; }
+body.my-nepsis-dashboard .week-metric { background:rgba(255,255,255,.74); }
+body.my-nepsis-dashboard .week-dashboard-chart { min-width:0; padding:18px 18px 12px; border:1px solid rgba(185,85,42,.14); border-radius:19px; background:rgba(255,255,255,.57); }
+body.my-nepsis-dashboard .week-dashboard-chart .week-bars { height:126px; margin-top:0; }
+body.my-nepsis-dashboard .week-dashboard-chart .week-bar i { width:min(32px,78%); }
+@media(max-width:850px) { body.my-nepsis-dashboard .dashboard-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } body.my-nepsis-dashboard .week-dashboard-grid { grid-template-columns:1fr; } }
+@media(max-width:560px) { body.my-nepsis-dashboard .dashboard-stats { gap:10px; } body.my-nepsis-dashboard .dashboard-stats .stat { min-height:170px; padding:16px; } body.my-nepsis-dashboard .dashboard-stats .stat-head { align-items:flex-start; flex-direction:column; margin-bottom:15px; } body.my-nepsis-dashboard .dashboard-stats .stat-tag { text-align:left; } body.my-nepsis-dashboard .week-feature-head { align-items:flex-start; flex-direction:column; gap:8px; } body.my-nepsis-dashboard .week-feature-head .tool-intro { text-align:left; } body.my-nepsis-dashboard .week-goal-box,body.my-nepsis-dashboard .week-dashboard-chart { padding:14px; } }
+@media(prefers-reduced-motion:reduce) { body.my-nepsis-dashboard .week-goal-track > span { transition:none; } }
