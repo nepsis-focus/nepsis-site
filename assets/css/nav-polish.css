@@ -21,6 +21,27 @@
   .nav-home-back { width: 40px; padding: 0; justify-content: center; }
   .nav-home-back-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
+@media (max-width: 560px) {
+  .nav-home-back.nav-has-back { display: none; }
+}
+/* Headers with their own controls (diary, library, pause, thank-you page) stay on one line. */
+header a.back { white-space: nowrap; }
+header .logo { flex-shrink: 0; margin-right: 6px; }
+header .controls, header .top-actions { flex-wrap: nowrap; min-width: 0; }
+header .controls .lang, header .top-actions .lang { display: flex; flex-wrap: nowrap; flex-shrink: 0; }
+.nepsis-menu-button.nav-inline-menu { flex: 0 0 auto; margin-left: auto; }
+.controls .nepsis-menu-button.nav-inline-menu, .top-actions .nepsis-menu-button.nav-inline-menu { margin-left: 0; }
+@media (max-width: 430px) {
+  header .controls, header .top-actions { gap: 5px; }
+  header .controls a.back, header .top-actions a.back { padding: 6px 9px; font-size: .7rem; }
+  header .controls .lang button, header .top-actions button[data-lang] { padding: 6px 8px; font-size: .72rem; }
+  .nepsis-menu-button.nav-inline-menu { min-width: 36px; min-height: 36px; padding: 0; }
+}
+@media (max-width: 380px) {
+  header .controls, header .top-actions { gap: 4px; }
+  header .controls a.back, header .top-actions a.back { padding: 5px 8px; font-size: .66rem; }
+  header .controls .lang button, header .top-actions button[data-lang] { padding: 5px 7px; font-size: .68rem; }
+}
 @media (max-width: 380px) {
   .nav-left { gap: 6px; }
   .nav-home-back { width: 36px; height: 36px; }
