@@ -15,8 +15,25 @@
   } catch (e) {}
 })();
 </script>
+<script>
+/* Language boot: ?lang=en|el in a link wins; otherwise the saved choice;
+   on a first visit, follow the browser language (Greek browsers get Greek). */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search).get("lang");
+    var saved = localStorage.getItem("nepsis-lang");
+    var lang = (q === "en" || q === "el") ? q : saved;
+    if (lang !== "en" && lang !== "el") {
+      var nav = (navigator.languages && navigator.languages[0]) || navigator.language || "el";
+      lang = /^el\b/i.test(nav) ? "el" : "en";
+    }
+    localStorage.setItem("nepsis-lang", lang);
+    document.documentElement.lang = lang;
+  } catch (e) {}
+})();
+</script>
 <title data-el="Nepsis · Η συγκέντρωσή σου, μία μέρα τη φορά" data-en="Nepsis · Your focus, one day at a time">Nepsis · Η συγκέντρωσή σου, μία μέρα τη φορά</title>
-<meta name="description" content="Μικρή πρακτική συγκέντρωσης, στα Ελληνικά και στα Αγγλικά. Διάλεξε ένα στάδιο από 5 έως 60 λεπτά και ξεκίνα σήμερα.">
+<meta name="description" content="Δωρεάν εφαρμογή εστίασης για διάβασμα και δουλειά, στα Ελληνικά και στα Αγγλικά. Στάδια από 5 έως 60 λεπτά, AI Coach και κρυπτογραφημένο ημερολόγιο. Χωρίς κλειδώματα εφαρμογών, χωρίς εγγραφή.">
 <link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
 <link rel="canonical" href="https://nepsis-focus.github.io/nepsis-site/">
 <meta property="og:type" content="website">
@@ -24,22 +41,23 @@
 <meta property="og:locale" content="el_GR">
 <meta property="og:url" content="https://nepsis-focus.github.io/nepsis-site/">
 <meta property="og:title" content="Nepsis — Η συγκέντρωσή σου, μία μέρα τη φορά">
-<meta property="og:description" content="Μικρή πρακτική συγκέντρωσης, στα Ελληνικά και στα Αγγλικά. Διάλεξε ένα στάδιο από 5 έως 60 λεπτά και ξεκίνα σήμερα.">
-<meta property="og:image" content="https://nepsis-focus.github.io/nepsis-site/assets/brand/nepsis-og.png">
-<meta property="og:image:alt" content="Nepsis">
+<meta property="og:description" content="Δωρεάν εφαρμογή εστίασης για διάβασμα και δουλειά, στα Ελληνικά και στα Αγγλικά. Στάδια από 5 έως 60 λεπτά, AI Coach και κρυπτογραφημένο ημερολόγιο. Χωρίς κλειδώματα εφαρμογών, χωρίς εγγραφή.">
+<meta property="og:image" content="https://nepsis-focus.github.io/nepsis-site/assets/brand/nepsis-og.png?v=2">
+<meta property="og:image:alt" content="Nepsis — δωρεάν εφαρμογή εστίασης, χωρίς εγγραφή και χωρίς κλειδώματα εφαρμογών">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Nepsis — Η συγκέντρωσή σου, μία μέρα τη φορά">
-<meta name="twitter:description" content="Μικρή πρακτική συγκέντρωσης, στα Ελληνικά και στα Αγγλικά. Διάλεξε ένα στάδιο από 5 έως 60 λεπτά και ξεκίνα σήμερα.">
-<meta name="twitter:image" content="https://nepsis-focus.github.io/nepsis-site/assets/brand/nepsis-og.png">
+<meta name="twitter:description" content="Δωρεάν εφαρμογή εστίασης για διάβασμα και δουλειά, στα Ελληνικά και στα Αγγλικά. Στάδια από 5 έως 60 λεπτά, AI Coach και κρυπτογραφημένο ημερολόγιο. Χωρίς κλειδώματα εφαρμογών, χωρίς εγγραφή.">
+<meta name="twitter:image" content="https://nepsis-focus.github.io/nepsis-site/assets/brand/nepsis-og.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/pages/index.css">
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="assets/css/theme.css">
+  <link rel="stylesheet" href="assets/css/pages/index-inside.css">
 
 
 <!-- PWA -->
@@ -131,10 +149,10 @@ if ("serviceWorker" in navigator) {
       <div class="hero-copy">
         <span class="badge"><span class="dot" style="width:8px;height:8px"></span>NEPSIS</span>
         <h1 data-el="<span class='hero-kicker'>Η&nbsp;συγκέντρωσή&nbsp;σου,</span> <em>μία μέρα τη φορά.</em>" data-en="<span class='hero-kicker'>Your&nbsp;focus,</span> <em>one day at a time.</em>"><span class="hero-kicker">Η&nbsp;συγκέντρωσή&nbsp;σου,</span> <em>μία μέρα τη φορά.</em></h1>
-        <p class="lead" data-el="Χτίσε συγκέντρωση, ένα βήμα τη φορά." data-en="Build focus, one step at a time.">Χτίσε συγκέντρωση, ένα βήμα τη φορά.</p>
+        <p class="lead" data-el="Δωρεάν εφαρμογή εστίασης για διάβασμα και δουλειά. Χωρίς κλειδώματα εφαρμογών, χωρίς εγγραφή — ξεκίνα σε 5 δευτερόλεπτα." data-en="A free focus app for studying and work. No app-blocking, no sign-up — start in 5 seconds.">Δωρεάν εφαρμογή εστίασης για διάβασμα και δουλειά. Χωρίς κλειδώματα εφαρμογών, χωρίς εγγραφή — ξεκίνα σε 5 δευτερόλεπτα.</p>
         <div class="btns">
           <a class="btn btn-primary" href="practice.html#stageGrid" id="subBtn" data-el="Ξεκίνα" data-en="Start">Ξεκίνα</a>
-          <a class="btn btn-ghost" href="premium.html" data-el="Premium" data-en="Premium">Premium</a>
+          <a class="btn btn-ghost" href="coach.html" data-el="Δοκίμασε τον AI Coach" data-en="Try the AI Coach">Δοκίμασε τον AI Coach</a>
         </div>
         <aside class="knowledge-note" id="dailyTip" hidden>
           <span class="eyebrow" data-el="Συμβουλή" data-en="Tip">Συμβουλή</span>
@@ -227,6 +245,52 @@ if ("serviceWorker" in navigator) {
           <p class="why-nepsis-lead" data-el="Χτίσε συνήθεια χωρίς burnout" data-en="Build a habit without burnout">Χτίσε συνήθεια χωρίς burnout</p>
           <p data-el="Από 5 λεπτά και πάνω. Βιώσιμα βήματα που χτίζουν συγκέντρωση, μία μέρα τη φορά." data-en="From 5 minutes up. Sustainable steps that build focus, one day at a time.">Από 5 λεπτά και πάνω. Βιώσιμα βήματα που χτίζουν συγκέντρωση, μία μέρα τη φορά.</p>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSIDE: everything the free app includes, each card links to its page -->
+  <section class="inside-nepsis" id="inside" aria-labelledby="insideTitle">
+    <div class="wrap">
+      <div class="inside-nepsis-head">
+        <span class="eyebrow" data-el="Τι έχει μέσα" data-en="What&#39;s inside">Τι έχει μέσα</span>
+        <h2 id="insideTitle" data-el="Ό,τι χρειάζεσαι για να εστιάσεις, δωρεάν." data-en="Everything you need to focus, for free.">Ό,τι χρειάζεσαι για να εστιάσεις, δωρεάν.</h2>
+      </div>
+      <div class="inside-nepsis-grid">
+        <a class="inside-nepsis-card" href="practice.html#stageGrid">
+          <span class="inside-nepsis-index" aria-hidden="true">01</span>
+          <h3 data-el="Πέντε στάδια εστίασης" data-en="Five focus stages">Πέντε στάδια εστίασης</h3>
+          <p data-el="Από 5 έως 60 λεπτά. Ανεβαίνεις όταν το τρέχον στάδιο σου φαίνεται φυσικό." data-en="From 5 to 60 minutes. Move up when your current stage feels natural.">Από 5 έως 60 λεπτά. Ανεβαίνεις όταν το τρέχον στάδιο σου φαίνεται φυσικό.</p>
+        </a>
+        <a class="inside-nepsis-card" href="coach.html">
+          <span class="inside-nepsis-index" aria-hidden="true">02</span>
+          <h3 data-el="AI Study &amp; Focus Coach" data-en="AI Study &amp; Focus Coach">AI Study &amp; Focus Coach</h3>
+          <p data-el="Πες τι έχεις μπροστά σου και πόσο χρόνο έχεις. Παίρνεις ένα εφαρμόσιμο πλάνο και το κατάλληλο στάδιο." data-en="Tell it what is ahead and how much time you have. Get a doable plan and the right stage.">Πες τι έχεις μπροστά σου και πόσο χρόνο έχεις. Παίρνεις ένα εφαρμόσιμο πλάνο και το κατάλληλο στάδιο.</p>
+        </a>
+        <a class="inside-nepsis-card" href="diary.html">
+          <span class="inside-nepsis-index" aria-hidden="true">03</span>
+          <h3 data-el="Κρυπτογραφημένο ημερολόγιο" data-en="Encrypted diary">Κρυπτογραφημένο ημερολόγιο</h3>
+          <p data-el="Οι σκέψεις σου κλειδώνουν με τη δική σου φράση πρόσβασης και μένουν στη συσκευή σου." data-en="Your notes are locked with your own passphrase and stay on your device.">Οι σκέψεις σου κλειδώνουν με τη δική σου φράση πρόσβασης και μένουν στη συσκευή σου.</p>
+        </a>
+        <a class="inside-nepsis-card" href="my-nepsis.html#badgeGrid">
+          <span class="inside-nepsis-index" aria-hidden="true">04</span>
+          <h3 data-el="Επιτεύγματα χωρίς πίεση" data-en="Achievements without pressure">Επιτεύγματα χωρίς πίεση</h3>
+          <p data-el="Badges που προσαρμόζονται στον ρυθμό σου και επιβραβεύουν την επιστροφή, όχι το τέλειο σερί." data-en="Badges that adapt to your pace and reward coming back, not a perfect streak.">Badges που προσαρμόζονται στον ρυθμό σου και επιβραβεύουν την επιστροφή, όχι το τέλειο σερί.</p>
+        </a>
+        <a class="inside-nepsis-card" href="library.html">
+          <span class="inside-nepsis-index" aria-hidden="true">05</span>
+          <h3 data-el="Δίγλωσσες κάρτες γνώσης" data-en="Bilingual knowledge cards">Δίγλωσσες κάρτες γνώσης</h3>
+          <p data-el="Σύντομες ιδέες για μάθηση και συνήθειες, στα Ελληνικά και στα Αγγλικά, με αξιόπιστες πηγές." data-en="Short ideas on learning and habits, in Greek and English, with trusted sources.">Σύντομες ιδέες για μάθηση και συνήθειες, στα Ελληνικά και στα Αγγλικά, με αξιόπιστες πηγές.</p>
+        </a>
+        <a class="inside-nepsis-card" href="practice.html#stageGrid">
+          <span class="inside-nepsis-index" aria-hidden="true">06</span>
+          <h3 data-el="Ήχοι για συγκέντρωση" data-en="Ambient sounds">Ήχοι για συγκέντρωση</h3>
+          <p data-el="Ήπιοι ήχοι υποβάθρου για να μπεις πιο εύκολα σε ρυθμό." data-en="Calm background sounds that help you settle into a session.">Ήπιοι ήχοι υποβάθρου για να μπεις πιο εύκολα σε ρυθμό.</p>
+        </a>
+      </div>
+      <div class="btns" style="margin-top:28px;align-items:center">
+        <button type="button" class="btn btn-primary" id="shareBtn" data-el="Μοιράσου το Nepsis" data-en="Share Nepsis">Μοιράσου το Nepsis</button>
+        <p class="muted" id="shareMsg" aria-live="polite" style="margin:0"></p>
       </div>
     </div>
   </section>
@@ -444,5 +508,6 @@ if ("serviceWorker" in navigator) {
 <script src="assets/js/site-navigation.js"></script>
 <script src="assets/js/site-preferences.js"></script>
 <script src="assets/js/ambient-sounds.js"></script>
+<script src="assets/js/share.js"></script>
 </body>
 </html>
