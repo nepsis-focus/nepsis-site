@@ -1,7 +1,5 @@
 # Nepsis robots.txt
-# Allows all bots (including Google) to crawl the public site.
-# Personal / private pages (diary, my-nepsis) contain user data and are not linked publicly.
-
+# Public product and learning pages are crawlable. Private user spaces stay disallowed.
 User-agent: *
 Allow: /
 Disallow: /diary.html
@@ -9,8 +7,35 @@ Disallow: /my-nepsis.html
 Disallow: /nepsis-site/diary.html
 Disallow: /nepsis-site/my-nepsis.html
 
-# Optional: explicitly allow Googlebot
+# Explicitly permit common AI assistants to crawl public pages.
+User-agent: GPTBot
+Allow: /
+Disallow: /diary.html
+Disallow: /my-nepsis.html
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /diary.html
+Disallow: /my-nepsis.html
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /diary.html
+Disallow: /my-nepsis.html
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /diary.html
+Disallow: /my-nepsis.html
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /diary.html
+Disallow: /my-nepsis.html
+
 User-agent: Googlebot
 Allow: /
+Disallow: /diary.html
+Disallow: /my-nepsis.html
 
 Sitemap: https://nepsis-focus.github.io/nepsis-site/sitemap.xml
