@@ -1,3 +1,18 @@
+/* Shared menu polish for every page: back-to-home arrow and a cleaner menu.
+   Loaded from here because this script is already on every page. */
+(() => {
+  const me = document.currentScript;
+  if (!me || document.getElementById("nepsisNavPolish")) return;
+  const css = document.createElement("link");
+  css.id = "nepsisNavPolish";
+  css.rel = "stylesheet";
+  css.href = new URL("../css/nav-polish.css", me.src).href;
+  document.head.append(css);
+  const js = document.createElement("script");
+  js.src = new URL("nav-polish.js", me.src).href;
+  document.body.append(js);
+})();
+
 (() => {
   const links = [
     ["index.html", "Αρχική", "Home"], ["practice.html", "Εξάσκηση", "Practice"],

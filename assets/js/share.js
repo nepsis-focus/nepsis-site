@@ -11,6 +11,8 @@
   }
   function say(el, en) { if (msg) msg.textContent = isEn() ? en : el; }
   btn.addEventListener("click", function () {
+    /* Count share clicks in the visitor stats (only loaded after analytics consent). */
+    if (window.umami && typeof window.umami.track === "function") window.umami.track("share_clicked");
     var text = isEn()
       ? "Nepsis: a free focus app. No app-blocking, no sign-up."
       : "Nepsis: δωρεάν εφαρμογή εστίασης. Χωρίς κλειδώματα, χωρίς εγγραφή.";

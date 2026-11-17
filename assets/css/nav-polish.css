@@ -1,0 +1,145 @@
+/* Nepsis menu polish, shared by every page (loaded from site-navigation.js).
+   Scoped to #drawer and .nav-* so page styles stay as they are.
+   Colours come from the theme variables, so dark mode follows automatically. */
+
+/* Back-to-home arrow next to the logo */
+.nav-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.nav-home-back {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 40px; padding: 0 14px 0 8px;
+  border: 1.5px solid var(--border, #EEDCC8); border-radius: 999px;
+  background: var(--card, #FFFDF8); color: var(--fg, #3A2418);
+  font-size: .9rem; font-weight: 800; line-height: 1; text-decoration: none;
+  transition: border-color .2s ease, color .2s ease, transform .2s ease;
+}
+.nav-home-back svg { width: 20px; height: 20px; flex: 0 0 20px; transition: transform .2s ease; }
+.nav-home-back:hover { border-color: var(--orange, #F0702A); color: var(--ember, #D8392B); }
+.nav-home-back:hover svg { transform: translateX(-2px); }
+.nav-home-back:active { transform: scale(.96); }
+.nav-home-back:focus-visible { outline: 2px solid var(--orange, #F0702A); outline-offset: 2px; }
+@media (max-width: 560px) {
+  .nav-home-back { width: 40px; padding: 0; justify-content: center; }
+  .nav-home-back-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+@media (max-width: 560px) {
+  .nav-home-back.nav-has-back { display: none; }
+}
+/* Headers with their own controls (diary, library, pause, thank-you page) stay on one line. */
+header a.back { white-space: nowrap; }
+header .logo { flex-shrink: 0; margin-right: 6px; }
+header .controls, header .top-actions { flex-wrap: nowrap; min-width: 0; }
+header .controls .lang, header .top-actions .lang { display: flex; flex-wrap: nowrap; flex-shrink: 0; }
+.nepsis-menu-button.nav-inline-menu { flex: 0 0 auto; margin-left: auto; }
+.controls .nepsis-menu-button.nav-inline-menu, .top-actions .nepsis-menu-button.nav-inline-menu { margin-left: 0; }
+@media (max-width: 430px) {
+  header .controls, header .top-actions { gap: 5px; }
+  header .controls a.back, header .top-actions a.back { padding: 6px 9px; font-size: .7rem; }
+  header .controls .lang button, header .top-actions button[data-lang] { padding: 6px 8px; font-size: .72rem; }
+  .nepsis-menu-button.nav-inline-menu { min-width: 36px; min-height: 36px; padding: 0; }
+}
+@media (max-width: 380px) {
+  header .controls, header .top-actions { gap: 4px; }
+  header .controls a.back, header .top-actions a.back { padding: 5px 8px; font-size: .66rem; }
+  header .controls .lang button, header .top-actions button[data-lang] { padding: 5px 7px; font-size: .68rem; }
+}
+@media (max-width: 380px) {
+  .nav-left { gap: 6px; }
+  .nav-home-back { width: 36px; height: 36px; }
+}
+
+/* The menu panel */
+#drawer.drawer {
+  width: min(360px, 88vw);
+  /* The sticky header covers the top of the panel, so the panel content starts below it. */
+  padding: calc(76px + env(safe-area-inset-top, 0px)) 14px calc(20px + env(safe-area-inset-bottom, 0px));
+  gap: 2px;
+  border-radius: 28px 0 0 28px;
+  background: var(--bg, #FFF8EE);
+  box-shadow: -24px 0 64px rgba(58, 36, 24, .16);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.nav-drawer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 4px 14px 8px; margin: 0 0 8px;
+  border-bottom: 1px solid var(--border, #EEDCC8);
+}
+#drawer.drawer a.nav-drawer-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0; margin: 0; background: none;
+  font-size: 1.25rem; font-weight: 900; letter-spacing: -.045em; color: var(--fg, #3A2418);
+  animation: none;
+}
+.nav-drawer-brand .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--orange, #F0702A); box-shadow: none; }
+#drawer.drawer .nav-drawer-head .close {
+  display: grid; place-items: center; align-self: center;
+  position: static; margin: 0;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1.5px solid var(--border, #EEDCC8); background: var(--card, #FFFDF8);
+  color: var(--fg, #3A2418); font-size: 1rem;
+  transition: border-color .2s ease, color .2s ease, transform .25s ease;
+}
+#drawer.drawer .nav-drawer-head .close:hover { border-color: var(--orange, #F0702A); color: var(--orange, #F0702A); transform: rotate(90deg); }
+
+/* Top-level links (Home, Premium) */
+#drawer.drawer > a {
+  display: flex; align-items: center; min-height: 48px;
+  margin: 0; padding: 10px 14px; border-radius: 14px;
+  font-size: 1.05rem; font-weight: 800; color: var(--fg, #3A2418);
+}
+
+/* Links a page hides on purpose (for example behind a feature switch) stay hidden. */
+#drawer.drawer a[hidden] { display: none; }
+
+/* Groups */
+#drawer.drawer .menu-group {
+  margin: 2px 0; padding: 0; border-top: 0; border-radius: 16px;
+  transition: background-color .2s ease;
+}
+#drawer.drawer .menu-group[open] { background: color-mix(in srgb, var(--orange, #F0702A) 7%, transparent); padding-bottom: 6px; }
+#drawer.drawer .menu-group summary {
+  display: flex; align-items: center; min-height: 48px;
+  padding: 10px 46px 10px 14px; border-radius: 14px;
+  font-size: 1.02rem; font-weight: 850; line-height: 1.25; color: var(--fg, #3A2418);
+}
+#drawer.drawer .menu-group summary::after {
+  content: ""; right: 20px; width: 8px; height: 8px;
+  border-right: 2px solid var(--orange, #F0702A); border-bottom: 2px solid var(--orange, #F0702A);
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform .25s ease;
+}
+#drawer.drawer .menu-group[open] summary::after { content: ""; transform: translateY(-25%) rotate(-135deg); }
+#drawer.drawer .menu-group a {
+  display: flex; align-items: center; min-height: 44px;
+  margin: 0 8px 2px 18px; padding: 8px 12px;
+  border-left: 2px solid var(--border, #EEDCC8); border-radius: 0 12px 12px 0;
+  font-size: .97rem; font-weight: 700; color: var(--muted, #7A5F50);
+}
+
+/* Hover, focus and the page you are on */
+#drawer.drawer > a:hover,
+#drawer.drawer .menu-group summary:hover,
+#drawer.drawer .menu-group a:hover {
+  background: color-mix(in srgb, var(--orange, #F0702A) 12%, transparent);
+  color: var(--fg, #3A2418);
+}
+#drawer.drawer a:focus-visible,
+#drawer.drawer summary:focus-visible,
+#drawer.drawer .close:focus-visible { outline: 2px solid var(--orange, #F0702A); outline-offset: 2px; }
+#drawer.drawer a[aria-current="page"] {
+  background: color-mix(in srgb, var(--orange, #F0702A) 16%, transparent);
+  border-left-color: var(--orange, #F0702A);
+  color: var(--ember, #D8392B); font-weight: 850;
+}
+
+/* Language and theme controls sit at the bottom when the page puts them in the menu */
+#drawer.drawer > .lang { margin-top: auto; padding-top: 16px; }
+
+/* Soften what is behind the open menu */
+.scrim.open, .nepsis-menu-scrim.open { -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-home-back, .nav-home-back svg,
+  #drawer.drawer .menu-group, #drawer.drawer .menu-group summary::after,
+  #drawer.drawer .nav-drawer-head .close { transition: none; }
+}
