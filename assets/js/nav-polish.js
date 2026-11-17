@@ -28,12 +28,21 @@
     label.dataset.en = "Home";
     label.textContent = lang() === "en" ? "Home" : "Αρχική";
     back.appendChild(label);
+    /* Pages that already have their own "back" link in the header keep it;
+       on phones the arrow steps aside there so the header fits on one line. */
+    if (logo.closest("header").querySelector("a.back")) back.classList.add("nav-has-back");
     var left = document.createElement("div");
     left.className = "nav-left";
     logo.parentNode.insertBefore(left, logo);
     left.appendChild(back);
     left.appendChild(logo);
   }
+
+  /* The shared fallback menu button can land below the header on pages with
+     their own header controls; put it back on the header line. */
+  var fallbackBtn = document.querySelector("header > .nepsis-menu-button");
+  var controls = fallbackBtn && (fallbackBtn.parentNode.querySelector(".top-actions, .controls") || fallbackBtn.parentNode.querySelector(".top-in, .top"));
+  if (fallbackBtn && controls) { controls.appendChild(fallbackBtn); fallbackBtn.classList.add("nav-inline-menu"); }
 
   /* 2. Menu: header row, current page, one open group at a time */
   var drawer = document.getElementById("drawer");
