@@ -80,3 +80,13 @@
   drawer.addEventListener("click", event => { if (event.target.closest("a")) setOpen(false); });
   document.addEventListener("keydown", event => { if (event.key === "Escape" && drawer.classList.contains("open")) setOpen(false); });
 })();
+
+/* Load the opt-in homepage demo and landing sections after the existing site scripts. */
+(function () {
+  if (!document.body.classList.contains("home-page")) return;
+  var source = document.currentScript;
+  var loader = document.createElement("script");
+  loader.src = new URL("landing-ideas-loader.js", source.src).href;
+  loader.defer = true;
+  document.body.appendChild(loader);
+})();
