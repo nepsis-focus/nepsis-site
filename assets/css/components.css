@@ -4,28 +4,91 @@ html { overflow-x: clip; }
   html { overflow-x: hidden; }
 }
 
+/* The consent UI is injected after the stylesheets; keep its outer box and
+   its content inside the viewport even on pages with different box models. */
+body .nepsis-consent-panel {
+  box-sizing: border-box;
+  max-width: calc(100vw - 28px);
+  max-height: calc(100vh - 20px);
+  max-height: calc(100dvh - 20px);
+  overflow-y: auto;
+}
+
+/* Diary, reset and library have a fallback menu alongside a back link and
+   language/theme controls. On narrow screens the row cannot fit without
+   overlap, so give the brand its own row and retain all the controls below. */
+@media (max-width: 520px) {
+  header:has(> .wrap.top > :is(.controls, .top-actions) > .nepsis-menu-button) {
+    height: auto;
+  }
+  header > .wrap.top:has(> :is(.controls, .top-actions) > .nepsis-menu-button) {
+    height: auto;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px 0;
+  }
+  header > .wrap.top:has(> :is(.controls, .top-actions) > .nepsis-menu-button) > :is(.nav-left, .logo) {
+    flex: 0 0 100%;
+  }
+  header .top-actions:has(> .nepsis-menu-button),
+  header .controls:has(> .nepsis-menu-button) {
+    width: 100%;
+    min-width: 0;
+    flex: 0 0 100%;
+    align-items: center;
+  }
+  header .top-actions:has(> .nepsis-menu-button) > a.back,
+  header .controls:has(> .nepsis-menu-button) > a.back {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 6px;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
+  }
+  header .controls:has(> .nepsis-menu-button) > .lang {
+    gap: 4px;
+  }
+  header .top-actions:has(> .nepsis-menu-button) > button[data-lang],
+  header .controls:has(> .nepsis-menu-button) .lang > button[data-lang],
+  header .top-actions:has(> .nepsis-menu-button) > :is(.theme-toggle, .nepsis-menu-button),
+  header .controls:has(> .nepsis-menu-button) > :is(.theme-toggle, .nepsis-menu-button) {
+    box-sizing: border-box;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    flex: 0 0 44px;
+    padding: 0;
+  }
+}
+
 .nepsis-dialog {
   width: min(92vw, 28rem);
   max-width: 28rem;
   padding: 1.5rem;
-  color: var(--fg, #3A2418);
-  background: var(--card, #FFFBF6);
-  border: 1px solid var(--border, #EADCCB);
+  color: var(--np-text, #27221f);
+  background: var(--np-surface-raised, #fff);
+  border: 1px solid var(--np-border, rgba(53, 43, 37, .12));
   border-radius: 1rem;
-  box-shadow: 0 1.5rem 5rem rgba(14, 27, 23, .25);
+  box-shadow: var(--np-modal-shadow, 0 24px 70px -20px rgba(30, 25, 22, .28));
 }
-.nepsis-dialog::backdrop { background: rgba(14, 27, 23, .55); }
-.nepsis-dialog h2 { margin: 0 0 1rem; font-size: 1.2rem; }
-.nepsis-dialog input { box-sizing: border-box; width: 100%; min-height: 2.8rem; padding: .65rem .8rem; border: 1px solid #a9b6ae; border-radius: .6rem; font: inherit; }
+.nepsis-dialog::backdrop { background: var(--np-scrim, rgba(30, 25, 22, .44)); }
+.nepsis-dialog h2 { margin: 0 0 1rem; font-size: 1.2rem; letter-spacing: -.025em; }
+.nepsis-dialog input { box-sizing: border-box; width: 100%; min-height: 2.8rem; padding: .65rem .8rem; border: 1px solid var(--np-border, rgba(53, 43, 37, .12)); border-radius: .6rem; background: var(--np-surface-muted, #f4f2ee); color: var(--np-text, #27221f); font: inherit; }
 .nepsis-dialog-actions { display: flex; justify-content: flex-end; gap: .65rem; margin-top: 1.1rem; }
 .nepsis-dialog-actions button { min-height: 2.6rem; padding: .5rem .9rem; font: inherit; cursor: pointer; }
 @media (max-width: 390px) { .nepsis-dialog { padding: 1.1rem; } .nepsis-dialog-actions button { flex: 1; } }
-.nepsis-menu-button { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--border, #EADCCB); border-radius: 50%; color: var(--fg, #3A2418); background: var(--card, #FFFBF6); font: inherit; cursor: pointer; }
-.nepsis-site-drawer { position: fixed; z-index: 1002; inset: 0 0 0 auto; display: flex; flex-direction: column; gap: .2rem; width: min(88vw, 22rem); padding: 5.5rem 1.2rem 1.2rem; overflow-y: auto; background: var(--card, #FFFBF6); box-shadow: -1rem 0 3rem rgba(40, 28, 20, .18); transform: translateX(105%); transition: transform .24s ease; }
+.nepsis-menu-button { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--np-border, rgba(53, 43, 37, .12)); border-radius: 12px; color: var(--np-text, #27221f); background: var(--np-surface, #fff); font: inherit; cursor: pointer; }
+.nepsis-site-drawer { position: fixed; z-index: 1002; inset: 0 0 0 auto; display: flex; flex-direction: column; gap: .2rem; width: min(88vw, 22rem); padding: 5.5rem 1.2rem 1.2rem; overflow-y: auto; background: var(--np-surface-raised, #fff); border-left: 1px solid var(--np-border, rgba(53, 43, 37, .12)); box-shadow: -1rem 0 3rem rgba(40, 28, 20, .14); transform: translateX(105%); transition: transform .24s ease; }
 .nepsis-site-drawer.open { transform: translateX(0); }
-.nepsis-site-drawer a { display: block; padding: .75rem .9rem; border-radius: .65rem; color: var(--fg, #3A2418); text-decoration: none; font-weight: 700; }
-.nepsis-site-drawer a:hover, .nepsis-site-drawer a:focus-visible { background: var(--bg, #F6EEE4); outline-color: var(--orange, #B9552A); }
-.nepsis-menu-scrim { position: fixed; z-index: 1001; inset: 0; border: 0; background: rgba(32, 27, 22, .35); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s ease, visibility .2s ease; }
+.nepsis-site-drawer a { display: block; padding: .75rem .9rem; border-radius: .65rem; color: var(--np-text, #27221f); text-decoration: none; font-weight: 650; }
+.nepsis-site-drawer a:hover, .nepsis-site-drawer a:focus-visible { background: var(--np-surface-muted, #f4f2ee); outline-color: var(--np-focus, #a9491c); }
+.nepsis-menu-scrim { position: fixed; z-index: 1001; inset: 0; border: 0; background: var(--np-scrim, rgba(30, 25, 22, .44)); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s ease, visibility .2s ease; }
 .nepsis-menu-scrim.open { opacity: 1; visibility: visible; pointer-events: auto; }
 @media (prefers-reduced-motion: reduce) { .nepsis-site-drawer, .nepsis-menu-scrim { transition: none; } }
 
@@ -190,10 +253,10 @@ body.home-page .hero h1 .hero-kicker {
   height: 100%;
 }
 .practice-page .ring .track {
-  stroke: rgba(240, 138, 36, 0.2);
+  stroke: var(--np-accent-soft, rgba(184, 82, 34, .18));
 }
 .practice-page .ring .prog {
-  stroke: #F08A24;
+  stroke: var(--np-accent, #b85222);
   transition: stroke-dashoffset .25s linear, stroke .4s ease;
 }
 .practice-page .ring .time {
@@ -202,18 +265,18 @@ body.home-page .hero h1 .hero-kicker {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
   line-height: 1;
-  color: #3A2418;
+  color: var(--np-text, #27221f);
 }
 .practice-page .stage.is-running {
-  border-color: #F08A24;
-  box-shadow: 0 14px 36px -18px rgba(240, 138, 36, 0.6);
+  border-color: var(--np-accent, #b85222);
+  box-shadow: 0 0 0 1px var(--np-accent-border, rgba(184, 82, 34, .38)), var(--np-shadow, 0 4px 24px -2px rgba(0, 0, 0, .09));
 }
 .practice-page .stage.is-running .time {
-  color: #F08A24;
+  color: var(--np-accent, #b85222);
 }
 .practice-page .stage.is-running .dot2 {
-  background: #F08A24;
-  box-shadow: 0 0 0 6px rgba(240, 138, 36, 0.22);
+  background: var(--np-accent, #b85222);
+  box-shadow: 0 0 0 6px var(--np-accent-soft, rgba(184, 82, 34, .1));
 }
 .practice-page .stage.is-complete .msg,
 .practice-page .stage.is-complete .after {
@@ -235,10 +298,10 @@ body.home-page .hero-copy .btns {
   margin-bottom: 0;
 }
 body.home-page .hero-copy .btn-primary {
-  background: #F08A24;
-  border-color: #F08A24;
-  color: #fff;
-  box-shadow: 0 16px 36px -16px rgba(240, 138, 36, 0.65);
+  background: var(--np-accent, #b85222);
+  border-color: var(--np-accent, #b85222);
+  color: var(--np-on-accent, #fff);
+  box-shadow: 0 5px 14px -6px var(--np-accent-border, rgba(184, 82, 34, .38));
 }
 body.home-page .hero-copy .knowledge-note {
   margin-top: 14px;
@@ -437,22 +500,20 @@ button.is-oauth-loading > svg,
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 1.5px solid var(--border, #EEDCC8);
-  background: rgba(255, 253, 248, 0.94);
-  color: var(--fg, #3A2418);
-  box-shadow: 0 10px 28px -16px rgba(120, 60, 30, 0.55);
+  border: 1px solid var(--np-border, rgba(53, 43, 37, .12));
+  background: var(--np-surface-raised, #fff);
+  color: var(--np-text, #27221f);
+  box-shadow: var(--np-shadow, 0 4px 24px -2px rgba(0, 0, 0, .09));
   cursor: pointer;
   display: grid;
   place-items: center;
-  backdrop-filter: blur(8px);
   transition: transform .18s ease, border-color .18s ease, color .18s ease, background .18s ease;
 }
 .nepsis-ambient-toggle:hover,
 .nepsis-ambient-toggle:focus-visible {
   transform: translateY(-2px);
-  border-color: var(--orange, #F0702A);
-  color: var(--ember, #D8392B);
-  outline: none;
+  border-color: var(--np-accent-border, rgba(184, 82, 34, .38));
+  color: var(--np-accent, #b85222);
 }
 .nepsis-ambient-icon { width: 22px; height: 22px; display: block; }
 .nepsis-ambient-pulse {
@@ -479,11 +540,10 @@ button.is-oauth-loading > svg,
   width: min(18.5rem, calc(100vw - 28px));
   padding: 14px 14px 12px;
   border-radius: 18px;
-  border: 1px solid var(--border, #EEDCC8);
-  background: rgba(255, 253, 248, 0.97);
-  color: var(--fg, #3A2418);
-  box-shadow: 0 18px 40px -22px rgba(120, 60, 30, 0.55);
-  backdrop-filter: blur(10px);
+  border: 1px solid var(--np-border, rgba(53, 43, 37, .12));
+  background: var(--np-surface-raised, #fff);
+  color: var(--np-text, #27221f);
+  box-shadow: var(--np-modal-shadow, 0 24px 70px -20px rgba(30, 25, 22, .28));
 }
 .nepsis-ambient-panel[hidden] { display: none; }
 .nepsis-ambient-head {
@@ -514,7 +574,6 @@ button.is-oauth-loading > svg,
 .nepsis-ambient-close:focus-visible {
   border-color: var(--orange, #F0702A);
   color: var(--ember, #D8392B);
-  outline: none;
 }
 .nepsis-ambient-hint {
   margin: 6px 0 12px;
@@ -532,8 +591,8 @@ button.is-oauth-loading > svg,
   padding: 0.45rem 0.55rem;
   border-radius: 12px;
   border: 1.5px solid var(--border, #EEDCC8);
-  background: #fff;
-  color: var(--fg, #3A2418);
+  background: var(--np-surface, #fff);
+  color: var(--np-text, #27221f);
   font: inherit;
   font-size: 0.82rem;
   font-weight: 800;
@@ -544,12 +603,11 @@ button.is-oauth-loading > svg,
 .nepsis-ambient-pick:focus-visible {
   transform: translateY(-1px);
   border-color: var(--orange, #F0702A);
-  outline: none;
 }
 .nepsis-ambient-pick.active {
-  background: #FBE9CF;
-  border-color: var(--orange, #F0702A);
-  color: var(--ember, #D8392B);
+  background: var(--np-accent-soft, rgba(184, 82, 34, .1));
+  border-color: var(--np-accent-border, rgba(184, 82, 34, .38));
+  color: var(--np-text, #27221f);
 }
 .nepsis-ambient-vol {
   display: grid;
@@ -568,8 +626,8 @@ button.is-oauth-loading > svg,
   min-height: 2.4rem;
   border-radius: 999px;
   border: 1.5px solid var(--border, #EEDCC8);
-  background: #fff;
-  color: var(--fg, #3A2418);
+  background: var(--np-surface, #fff);
+  color: var(--np-text, #27221f);
   font: inherit;
   font-size: 0.84rem;
   font-weight: 800;
@@ -579,7 +637,6 @@ button.is-oauth-loading > svg,
 .nepsis-ambient-stop:focus-visible:not(:disabled) {
   border-color: var(--orange, #F0702A);
   color: var(--ember, #D8392B);
-  outline: none;
 }
 .nepsis-ambient-stop:disabled {
   opacity: 0.55;

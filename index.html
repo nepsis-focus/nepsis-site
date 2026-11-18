@@ -141,10 +141,6 @@ if ("serviceWorker" in navigator) {
 
   <!-- HERO -->
   <section class="hero" id="globe">
-    <div class="hero-earth" id="globeStage">
-      <canvas id="globeCanvas" role="img" aria-label="Interactive 3D Earth. Drag to rotate." tabindex="0"></canvas>
-      <div class="globe-drag-hint" data-el="Σύρε για να περιστρέψεις τη Γη" data-en="Drag to rotate the Earth">Σύρε για να περιστρέψεις τη Γη</div>
-    </div>
     <div class="wrap">
       <div class="hero-copy">
         <span class="badge"><span class="dot" style="width:8px;height:8px"></span>NEPSIS</span>
@@ -173,6 +169,10 @@ if ("serviceWorker" in navigator) {
           <p class="msg" id="globeMsg" aria-live="polite"></p>
         </div>
       </div>
+    </div>
+    <div class="hero-earth" id="globeStage">
+      <canvas id="globeCanvas" role="img" aria-label="Interactive 3D Earth. Drag to rotate." tabindex="0"></canvas>
+      <div class="globe-drag-hint" data-el="Σύρε για να περιστρέψεις τη Γη" data-en="Drag to rotate the Earth">Σύρε για να περιστρέψεις τη Γη</div>
     </div>
   </section>
 
