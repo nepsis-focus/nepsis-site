@@ -1585,3 +1585,90 @@ body.home-page main .bento-focus h3 { max-width: 13ch; }
     bottom: calc(82px + env(safe-area-inset-bottom));
   }
 }
+
+/* Focused restoration: keep the homepage Earth presentation as in the original site. */
+body.home-page main .hero-earth {
+  position: absolute;
+  grid-column: auto;
+  grid-row: auto;
+  inset: auto;
+  z-index: 0;
+  top: 50%;
+  right: -2.5vw;
+  width: min(92vh, 78vw, 1020px);
+  height: min(92vh, 78vw, 1020px);
+  max-width: none;
+  margin: 0;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 28px 48px rgba(35,74,104,.20));
+  pointer-events: none;
+}
+body.home-page main .hero-earth::before { display: none; }
+body.home-page main .hero-earth #globeCanvas {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  outline: none;
+}
+body.home-page main .globe-drag-hint {
+  left: 31%;
+  bottom: 7%;
+  z-index: 2;
+  background: rgba(255,253,248,.78);
+  border: 1px solid rgba(238,220,200,.8);
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: var(--muted);
+  text-align: left;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 700px) {
+  body.home-page main .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-height: 0;
+    padding: 18px 0 42px;
+  }
+  body.home-page main .hero-earth {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: min(90vw, 390px);
+    height: min(90vw, 390px);
+    max-width: 100%;
+    margin: 0 auto 8px;
+    transform: none;
+    opacity: 1;
+    flex: 0 0 auto;
+  }
+  body.home-page main .hero > .wrap {
+    width: 100%;
+    padding: 0 22px;
+  }
+  body.home-page main .hero-copy {
+    max-width: 100%;
+    padding-top: 0;
+  }
+  body.home-page main .hero-country {
+    position: relative;
+    inset: auto;
+    width: calc(100% - 44px);
+    max-width: 390px;
+    margin: 24px auto 0;
+  }
+  body.home-page main .globe-drag-hint { display: none; }
+}
+
+@media (max-width: 380px) {
+  body.home-page main .hero-earth { width: 88vw; height: 88vw; }
+  body.home-page main .hero > .wrap { padding-left: 18px; padding-right: 18px; }
+  body.home-page main .hero-country { width: calc(100% - 36px); }
+}
