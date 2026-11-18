@@ -327,3 +327,494 @@ body.my-nepsis-dashboard .account.open .account-card { animation:nepsis-account-
 @keyframes nepsis-account-enter { from { opacity:0; transform:translateY(14px) scale(.985); } to { opacity:1; transform:translateY(0) scale(1); } }
 @media(max-width:520px) { body.my-nepsis-dashboard .account { padding:12px; } body.my-nepsis-dashboard .account-card.auth-card { max-height:94vh; padding:24px 20px; border-radius:25px; } body.my-nepsis-dashboard .auth-modal-art { right:-104px; opacity:.65; } }
 @media(prefers-reduced-motion:reduce) { body.my-nepsis-dashboard .account.open .account-card { animation:none; } body.my-nepsis-dashboard .account-card .google:hover { transform:none; } }
+
+/* My Nepsis product dashboard. Keep presentation scoped to this page: the
+   existing IDs, dynamically generated rows and form states remain untouched. */
+body.my-nepsis-dashboard {
+  --dash-canvas: var(--np-canvas, #f8f7f4);
+  --dash-surface: var(--np-surface, #ffffff);
+  --dash-raised: var(--np-surface-raised, #ffffff);
+  --dash-muted-surface: var(--np-surface-muted, #f3f2ef);
+  --dash-text: var(--np-text, #242321);
+  --dash-muted: var(--np-muted, #686865);
+  --dash-border: var(--np-border, #e4e2dd);
+  --dash-accent: var(--np-accent, #c25a27);
+  --dash-accent-soft: #fcf0e9;
+  --dash-accent-ink: #9a401b;
+  --dash-shadow: var(--np-shadow, 0 6px 20px rgba(32, 30, 26, .045));
+  background: var(--dash-canvas);
+  color: var(--dash-text);
+  font-family: Nunito, system-ui, sans-serif;
+}
+html[data-theme="dark"] body.my-nepsis-dashboard {
+  --dash-canvas: var(--np-canvas, #151516);
+  --dash-surface: var(--np-surface, #1d1d20);
+  --dash-raised: var(--np-surface-raised, #252529);
+  --dash-muted-surface: var(--np-surface-muted, #29292d);
+  --dash-text: var(--np-text, #f1efec);
+  --dash-muted: var(--np-muted, #b5b2ad);
+  --dash-border: var(--np-border, #39393d);
+  --dash-accent: var(--np-accent, #f19a63);
+  --dash-accent-soft: #3a2a22;
+  --dash-accent-ink: #f5ad7e;
+  --dash-shadow: var(--np-shadow, 0 8px 24px rgba(0, 0, 0, .16));
+  background: var(--dash-canvas);
+  color: var(--dash-text);
+}
+
+body.my-nepsis-dashboard main.wrap {
+  width: min(1160px, calc(100% - 48px));
+  padding: 48px 0 88px;
+}
+body.my-nepsis-dashboard main.wrap > .intro {
+  max-width: 780px;
+  margin: 0 0 28px;
+  padding: 0;
+}
+body.my-nepsis-dashboard main.wrap > .intro::after { content: none; }
+body.my-nepsis-dashboard .eyebrow,
+body.my-nepsis-dashboard .section-kicker {
+  color: var(--dash-accent-ink);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  line-height: 1.35;
+}
+body.my-nepsis-dashboard main.wrap .intro h1 {
+  max-width: none;
+  margin: 9px 0 10px;
+  color: var(--dash-text);
+  font: 800 clamp(2.15rem, 4vw, 3rem)/1.12 Nunito, system-ui, sans-serif;
+  letter-spacing: -.04em !important;
+  line-height: 1.12 !important;
+}
+body.my-nepsis-dashboard .intro h1 em {
+  font: inherit;
+  font-style: normal;
+  color: var(--dash-accent-ink);
+}
+body.my-nepsis-dashboard main.wrap .intro p {
+  max-width: 68ch;
+  color: var(--dash-muted);
+  font-size: 1rem;
+  line-height: 1.6 !important;
+}
+body.my-nepsis-dashboard .welcome {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 24px 26px;
+  margin: 0 0 18px;
+  border: 1px solid var(--dash-border);
+  border-radius: 16px !important;
+  background: var(--dash-surface);
+  box-shadow: var(--dash-shadow);
+  transform: none;
+}
+body.my-nepsis-dashboard .welcome h2 {
+  margin-top: 4px;
+  color: var(--dash-text);
+  font: 800 clamp(1.12rem, 2vw, 1.35rem)/1.3 Nunito, system-ui, sans-serif;
+  letter-spacing: -.02em;
+}
+body.my-nepsis-dashboard .welcome p {
+  max-width: 68ch;
+  margin-top: 6px;
+  color: var(--dash-muted);
+  font-size: .9rem;
+  line-height: 1.55;
+}
+body.my-nepsis-dashboard .sync-status { margin: 0 0 12px; color: var(--dash-muted); }
+
+/* Four comparable, legible metrics with no decorative overlays. */
+body.my-nepsis-dashboard .dashboard-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px !important;
+  margin: 0 0 24px;
+  perspective: none;
+}
+body.my-nepsis-dashboard .dashboard-stats .stat {
+  min-width: 0;
+  min-height: 158px;
+  padding: 18px 19px;
+  overflow: visible;
+  border: 1px solid var(--dash-border);
+  border-radius: 16px !important;
+  background: var(--dash-surface);
+  color: var(--dash-text);
+  box-shadow: var(--dash-shadow);
+  transform: none;
+}
+body.my-nepsis-dashboard .dashboard-stats .stat::after { content: none; }
+body.my-nepsis-dashboard .dashboard-stats .stat:hover { transform: none; box-shadow: var(--dash-shadow); }
+body.my-nepsis-dashboard .dashboard-stats .stat-head {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+body.my-nepsis-dashboard .dashboard-stats .stat-icon,
+body.my-nepsis-dashboard .dashboard-stats .stat-streak .stat-icon {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--dash-accent-soft);
+  color: var(--dash-accent-ink);
+  font-size: 1rem;
+}
+body.my-nepsis-dashboard .dashboard-stats .stat-tag,
+body.my-nepsis-dashboard .dashboard-stats .stat-streak .stat-tag {
+  color: var(--dash-muted);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .055em;
+  line-height: 1.3;
+  text-align: right;
+}
+body.my-nepsis-dashboard .dashboard-stats .stat .label,
+body.my-nepsis-dashboard .dashboard-stats .stat-streak .label {
+  display: block;
+  color: var(--dash-muted);
+  font-size: .83rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+body.my-nepsis-dashboard .dashboard-stats .stat strong {
+  margin: 6px 0 4px;
+  color: var(--dash-text);
+  font-size: clamp(1.8rem, 3vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -.04em;
+  line-height: 1.05;
+}
+body.my-nepsis-dashboard .dashboard-stats .stat small,
+body.my-nepsis-dashboard .dashboard-stats .stat-streak small {
+  color: var(--dash-muted);
+  font-size: .76rem;
+  line-height: 1.4;
+}
+
+/* Calendar and the next step share the same visual rhythm as the tools. */
+body.my-nepsis-dashboard main.wrap > .grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, .85fr);
+  align-items: stretch;
+  gap: 16px !important;
+}
+body.my-nepsis-dashboard main.wrap .panel,
+body.my-nepsis-dashboard main.wrap .tool-panel {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--dash-border);
+  border-radius: 16px !important;
+  background: var(--dash-surface);
+  color: var(--dash-text);
+  box-shadow: var(--dash-shadow);
+  transform: none;
+}
+body.my-nepsis-dashboard .section-title,
+body.my-nepsis-dashboard .tool-panel h2 {
+  margin: 0 0 8px;
+  color: var(--dash-text);
+  font: 800 1.17rem/1.3 Nunito, system-ui, sans-serif;
+  letter-spacing: -.02em;
+}
+body.my-nepsis-dashboard .panel p,
+body.my-nepsis-dashboard .tool-intro { color: var(--dash-muted); line-height: 1.55; }
+body.my-nepsis-dashboard .tool-intro { margin: 0 0 18px; font-size: .9rem; }
+body.my-nepsis-dashboard .calendar-head { gap: 10px; margin: 20px 0 12px; }
+body.my-nepsis-dashboard .calendar-head strong { color: var(--dash-text); font-size: .9rem; text-transform: capitalize; }
+body.my-nepsis-dashboard .calendar-head .muted { color: var(--dash-muted); font-size: .8rem; }
+body.my-nepsis-dashboard .calendar { gap: 6px; }
+body.my-nepsis-dashboard .calendar span,
+body.my-nepsis-dashboard .calendar .day {
+  aspect-ratio: auto;
+  min-width: 0;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--dash-muted-surface);
+  color: var(--dash-muted);
+  font-size: .8rem;
+  font-weight: 700;
+}
+body.my-nepsis-dashboard .calendar .active { background: #f5d8c7; color: #693016; }
+body.my-nepsis-dashboard .calendar .strong { background: #a84820; color: #fff; }
+body.my-nepsis-dashboard .calendar .today { outline: 2px solid var(--dash-accent-ink); outline-offset: 1px; }
+body.my-nepsis-dashboard .legend { gap: 10px 16px; margin-top: 16px; color: var(--dash-muted); font-size: .77rem; }
+body.my-nepsis-dashboard .legend i { background: #df9870; }
+body.my-nepsis-dashboard main.wrap .next { background: var(--dash-muted-surface); }
+body.my-nepsis-dashboard .next .eyebrow { display: block; margin-bottom: 9px; }
+body.my-nepsis-dashboard .next .section-title { max-width: 25ch; font-size: 1.35rem; }
+body.my-nepsis-dashboard .next p { max-width: 46ch; margin-top: 9px; font-size: .9rem; }
+body.my-nepsis-dashboard .next a { margin-top: 20px; }
+
+/* Personal tools, including rows and empty states inserted by JavaScript. */
+body.my-nepsis-dashboard .tools-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px !important;
+  margin-top: 16px;
+  perspective: none;
+}
+body.my-nepsis-dashboard .tools-grid .tool-panel { overflow: visible; transform-style: flat; }
+body.my-nepsis-dashboard .tools-grid .tool-panel::before { content: none; }
+body.my-nepsis-dashboard .tools-grid .tool-panel:hover,
+body.my-nepsis-dashboard .tools-grid .tool-panel:focus-within { transform: none; }
+body.my-nepsis-dashboard .section-kicker { margin-bottom: 7px; }
+body.my-nepsis-dashboard .profile-top { gap: 12px; margin: 18px 0; }
+body.my-nepsis-dashboard .avatar {
+  width: 48px;
+  height: 48px;
+  background: var(--dash-accent-soft);
+  color: var(--dash-accent-ink);
+  font-size: 1.1rem;
+}
+body.my-nepsis-dashboard .level-pill { margin-top: 3px; padding: 3px 9px; background: var(--dash-muted-surface); color: var(--dash-muted); font-weight: 800; }
+body.my-nepsis-dashboard .field-label { margin: 14px 0 6px; color: var(--dash-text); font-size: .84rem; font-weight: 800; }
+body.my-nepsis-dashboard .tool-input,
+body.my-nepsis-dashboard .tool-textarea,
+body.my-nepsis-dashboard .account-card #accountEmail {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--dash-border);
+  border-radius: 9px;
+  background: var(--dash-raised);
+  color: var(--dash-text);
+  font: inherit;
+}
+body.my-nepsis-dashboard .tool-textarea { min-height: 96px; }
+body.my-nepsis-dashboard .tool-input::placeholder,
+body.my-nepsis-dashboard .tool-textarea::placeholder,
+body.my-nepsis-dashboard #accountEmail::placeholder { color: var(--dash-muted); opacity: 1; }
+body.my-nepsis-dashboard .btn,
+body.my-nepsis-dashboard .tool-button,
+body.my-nepsis-dashboard .mini-button {
+  min-height: 42px;
+  border-radius: 9px;
+  font-weight: 800;
+  line-height: 1.35;
+  white-space: normal;
+}
+body.my-nepsis-dashboard .btn.primary,
+body.my-nepsis-dashboard .tool-button,
+body.my-nepsis-dashboard .account-card .email-submit {
+  padding: 10px 16px;
+  border: 1px solid #a74720;
+  background: #a74720;
+  color: #fff;
+  box-shadow: none;
+}
+body.my-nepsis-dashboard .tool-button { margin-top: 12px; }
+body.my-nepsis-dashboard .btn.secondary,
+body.my-nepsis-dashboard .mini-button {
+  padding: 8px 12px;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-raised);
+  color: var(--dash-text);
+  box-shadow: none;
+}
+body.my-nepsis-dashboard #missionDone { margin-top: 12px; }
+body.my-nepsis-dashboard .mini-button.delete { color: #a3392c; }
+body.my-nepsis-dashboard .tool-message { color: var(--dash-accent-ink); font-weight: 700; }
+body.my-nepsis-dashboard .tool-button:disabled,
+body.my-nepsis-dashboard .mini-button:disabled { opacity: .58; cursor: not-allowed; }
+body.my-nepsis-dashboard .goal-list,
+body.my-nepsis-dashboard .history-list { gap: 8px; }
+body.my-nepsis-dashboard .goal-row,
+body.my-nepsis-dashboard .history-row,
+body.my-nepsis-dashboard .routine-row,
+body.my-nepsis-dashboard .diary-row,
+body.my-nepsis-dashboard .award {
+  min-width: 0;
+  border: 1px solid var(--dash-border);
+  border-radius: 10px;
+  background: var(--dash-muted-surface);
+  color: var(--dash-text);
+}
+body.my-nepsis-dashboard .routine-row { margin-top: 0; }
+body.my-nepsis-dashboard .goal-meta,
+body.my-nepsis-dashboard .history-meta,
+body.my-nepsis-dashboard .routine-period,
+body.my-nepsis-dashboard .routine-note,
+body.my-nepsis-dashboard .diary-date,
+body.my-nepsis-dashboard .diary-preview,
+body.my-nepsis-dashboard .diary-private-note,
+body.my-nepsis-dashboard .challenge-desc,
+body.my-nepsis-dashboard .challenge-status,
+body.my-nepsis-dashboard .award small { color: var(--dash-muted); }
+body.my-nepsis-dashboard .goal-actions,
+body.my-nepsis-dashboard .routine-actions,
+body.my-nepsis-dashboard .diary-row-actions { flex-wrap: wrap; }
+body.my-nepsis-dashboard .empty { padding: 16px; border-color: var(--dash-border); border-radius: 10px; color: var(--dash-muted); font-size: .88rem; line-height: 1.5; }
+body.my-nepsis-dashboard .challenge-item { border-color: var(--dash-border); }
+body.my-nepsis-dashboard .challenge-value { color: var(--dash-accent-ink); }
+body.my-nepsis-dashboard .challenge-track,
+body.my-nepsis-dashboard .week-goal-track { background: var(--dash-muted-surface); }
+body.my-nepsis-dashboard .challenge-track span,
+body.my-nepsis-dashboard .week-goal-track > span,
+body.my-nepsis-dashboard .week-bar i { background: var(--dash-accent); }
+body.my-nepsis-dashboard .award.locked { opacity: 1; filter: none; }
+body.my-nepsis-dashboard .award.locked .award-icon { filter: grayscale(1); }
+body.my-nepsis-dashboard .award-icon { border-radius: 10px; background: var(--dash-raised); }
+body.my-nepsis-dashboard .award strong { line-height: 1.3; }
+body.my-nepsis-dashboard .award small { margin-top: 2px; line-height: 1.35; }
+
+/* Weekly / monthly summaries remain readable and data-driven. */
+body.my-nepsis-dashboard main.wrap .week-feature { grid-column: 1 / -1; padding: 24px; background: var(--dash-surface); }
+body.my-nepsis-dashboard .week-feature-head { gap: 12px; margin-bottom: 18px; }
+body.my-nepsis-dashboard .week-feature-head h2 { margin: 0; font-size: 1.17rem; }
+body.my-nepsis-dashboard .week-dashboard-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: stretch; }
+body.my-nepsis-dashboard .week-goal-box,
+body.my-nepsis-dashboard .week-dashboard-chart {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--dash-border);
+  border-radius: 10px;
+  background: var(--dash-muted-surface);
+}
+body.my-nepsis-dashboard .week-goal-head span { color: var(--dash-muted); }
+body.my-nepsis-dashboard .week-goal-head strong { color: var(--dash-text); }
+body.my-nepsis-dashboard .week-goal-track { background: var(--dash-border); }
+body.my-nepsis-dashboard .week-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 12px 0 0; }
+body.my-nepsis-dashboard .week-metric { min-width: 0; padding: 12px; border-color: var(--dash-border); border-radius: 10px; background: var(--dash-muted-surface); }
+body.my-nepsis-dashboard .week-metric strong { color: var(--dash-text); font-size: 1.35rem; line-height: 1.2; }
+body.my-nepsis-dashboard .week-metric span,
+body.my-nepsis-dashboard .week-bar span,
+body.my-nepsis-dashboard .week-compare { color: var(--dash-muted); }
+body.my-nepsis-dashboard .week-metric span { display: block; margin-top: 3px; font-size: .68rem; overflow-wrap: anywhere; }
+body.my-nepsis-dashboard .week-compare { border-color: var(--dash-border); line-height: 1.5; }
+body.my-nepsis-dashboard main.wrap > .panel:last-child { margin-top: 16px !important; }
+body.my-nepsis-dashboard .privacy { margin-top: 14px; padding: 0 !important; border-radius: 0 !important; color: var(--dash-muted); }
+
+/* Account surfaces and keyboard focus remain clear in either theme. */
+body.my-nepsis-dashboard .account-card.auth-card {
+  border: 1px solid var(--dash-border);
+  border-radius: 18px;
+  background: var(--dash-surface);
+  color: var(--dash-text);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .24);
+}
+body.my-nepsis-dashboard .account-card h2 { color: var(--dash-text); font-family: Nunito, system-ui, sans-serif; font-size: 1.8rem; line-height: 1.15; }
+body.my-nepsis-dashboard .account-card > p:not(.message),
+body.my-nepsis-dashboard .account-divider,
+body.my-nepsis-dashboard .account-card .auth-footnote { color: var(--dash-muted); }
+body.my-nepsis-dashboard .account-card .auth-modal-kicker { color: var(--dash-accent-ink); }
+body.my-nepsis-dashboard .auth-perks span { border-color: var(--dash-border); background: var(--dash-muted-surface); color: var(--dash-muted); }
+body.my-nepsis-dashboard .account-email-form label { color: var(--dash-text); }
+body.my-nepsis-dashboard .account-card .close { background: var(--dash-raised); color: var(--dash-text); border-color: var(--dash-border); }
+body.my-nepsis-dashboard .account-card .message.is-loading { background: var(--dash-muted-surface); color: var(--dash-text); }
+body.my-nepsis-dashboard :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--dash-accent) !important;
+  outline-offset: 3px;
+}
+body.my-nepsis-dashboard :is(.tool-input, .tool-textarea, #accountEmail):focus-visible { border-color: var(--dash-accent); }
+body.my-nepsis-dashboard :is(.btn, .tool-button, .mini-button):hover:not(:disabled) { transform: none; filter: brightness(.96); }
+
+/* Shared dark-theme rules use !important; explicitly keep page-specific
+   surfaces, calendar states and fields consistent with the dashboard tokens. */
+html[data-theme="dark"] body.my-nepsis-dashboard main.wrap .welcome,
+html[data-theme="dark"] body.my-nepsis-dashboard main.wrap .stat,
+html[data-theme="dark"] body.my-nepsis-dashboard main.wrap .panel,
+html[data-theme="dark"] body.my-nepsis-dashboard main.wrap .tool-panel,
+html[data-theme="dark"] body.my-nepsis-dashboard .account-card.auth-card {
+  background: var(--dash-surface) !important;
+  border-color: var(--dash-border) !important;
+  color: var(--dash-text);
+  box-shadow: var(--dash-shadow) !important;
+}
+html[data-theme="dark"] body.my-nepsis-dashboard main.wrap .next { background: var(--dash-muted-surface) !important; }
+html[data-theme="dark"] body.my-nepsis-dashboard .calendar .day { background: var(--dash-muted-surface) !important; color: var(--dash-muted); }
+html[data-theme="dark"] body.my-nepsis-dashboard .calendar .day.active { background: #714a36 !important; color: #fff4ec; }
+html[data-theme="dark"] body.my-nepsis-dashboard .calendar .day.strong { background: #f19a63 !important; color: #27180f; }
+html[data-theme="dark"] body.my-nepsis-dashboard :is(.tool-input, .tool-textarea, #accountEmail) {
+  background: var(--dash-raised) !important;
+  color: var(--dash-text) !important;
+  border-color: var(--dash-border) !important;
+}
+html[data-theme="dark"] body.my-nepsis-dashboard :is(.btn.secondary, .mini-button, .account-card .google) {
+  background: var(--dash-raised) !important;
+  color: var(--dash-text) !important;
+  border-color: var(--dash-border) !important;
+}
+html[data-theme="dark"] body.my-nepsis-dashboard .mini-button.delete { color: #f2a69d !important; }
+html[data-theme="dark"] body.my-nepsis-dashboard .account-card .email-submit { background: #a74720 !important; border-color: #a74720 !important; color: #fff !important; }
+html[data-theme="dark"] body.my-nepsis-dashboard .account-card .message.is-success { color: #b7e2bd; background: #22372a; border-color: #416449; }
+html[data-theme="dark"] body.my-nepsis-dashboard .account-card .message.is-error { color: #ffb6ac; background: #3c2625; border-color: #70413d; }
+
+@media (max-width: 850px) {
+  body.my-nepsis-dashboard .dashboard-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.my-nepsis-dashboard .week-dashboard-grid { grid-template-columns: 1fr; gap: 12px; }
+}
+@media (max-width: 760px) {
+  body.my-nepsis-dashboard main.wrap { width: min(100% - 36px, 1160px); padding: 32px 0 72px; }
+  body.my-nepsis-dashboard .welcome { align-items: flex-start; }
+  body.my-nepsis-dashboard .welcome .btn { width: auto; }
+  body.my-nepsis-dashboard main.wrap > .grid,
+  body.my-nepsis-dashboard .tools-grid { grid-template-columns: minmax(0, 1fr); }
+  body.my-nepsis-dashboard .week-feature { grid-column: auto; }
+}
+@media (max-width: 560px) {
+  body.my-nepsis-dashboard main.wrap { width: calc(100% - 28px); padding-top: 26px; }
+  body.my-nepsis-dashboard main.wrap > .intro { margin-bottom: 22px; }
+  body.my-nepsis-dashboard main.wrap .intro h1 { font-size: clamp(2rem, 9vw, 2.55rem); }
+  body.my-nepsis-dashboard .welcome,
+  body.my-nepsis-dashboard main.wrap .panel,
+  body.my-nepsis-dashboard main.wrap .tool-panel,
+  body.my-nepsis-dashboard main.wrap .week-feature { padding: 20px; }
+  body.my-nepsis-dashboard .welcome { flex-direction: column; gap: 16px; }
+  body.my-nepsis-dashboard .welcome .btn { width: 100%; }
+  body.my-nepsis-dashboard .dashboard-stats { gap: 10px !important; margin-bottom: 16px; }
+  body.my-nepsis-dashboard .dashboard-stats .stat { min-height: 156px; padding: 15px; }
+  body.my-nepsis-dashboard .dashboard-stats .stat-head { flex-direction: row; align-items: center; margin-bottom: 12px; }
+  body.my-nepsis-dashboard .dashboard-stats .stat-tag { text-align: right; }
+  body.my-nepsis-dashboard .calendar { gap: 4px; }
+  body.my-nepsis-dashboard .calendar span { height: 35px; }
+  body.my-nepsis-dashboard .week-feature-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+  body.my-nepsis-dashboard .week-feature-head .tool-intro { text-align: left; }
+  body.my-nepsis-dashboard .week-goal-box,
+  body.my-nepsis-dashboard .week-dashboard-chart { padding: 14px; }
+  body.my-nepsis-dashboard .tool-input,
+  body.my-nepsis-dashboard .tool-textarea,
+  body.my-nepsis-dashboard .account-card #accountEmail { font-size: 16px; }
+}
+@media (max-width: 380px) {
+  body.my-nepsis-dashboard .dashboard-stats .stat-head { align-items: flex-start; flex-direction: column; }
+  body.my-nepsis-dashboard .dashboard-stats .stat-tag { text-align: left; }
+  body.my-nepsis-dashboard .goal-row,
+  body.my-nepsis-dashboard .routine-row { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.my-nepsis-dashboard *,
+  body.my-nepsis-dashboard *::before,
+  body.my-nepsis-dashboard *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* The two language buttons must not collapse into a vertical or invisible
+   control when the compact header and the dark palette meet. */
+body.my-nepsis-dashboard .headright .lang {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  background: transparent;
+}
+body.my-nepsis-dashboard .headright .lang button:not(.active) {
+  background: var(--dash-raised);
+  border-color: var(--dash-border);
+  color: var(--dash-text);
+}
+html[data-theme="dark"] body.my-nepsis-dashboard .headright .lang { background: transparent; }
+html[data-theme="dark"] body.my-nepsis-dashboard .headright .lang button:not(.active) {
+  background: var(--dash-raised);
+  color: var(--dash-text);
+}
+@media (max-width: 480px) {
+  body.my-nepsis-dashboard .headright { gap: 4px !important; }
+}
+@media (max-width: 350px) {
+  body.my-nepsis-dashboard header .top { height: auto; min-height: 66px; padding: 8px 0; flex-wrap: wrap; row-gap: 8px; }
+  body.my-nepsis-dashboard header .top .nav-left,
+  body.my-nepsis-dashboard header .top .headright { flex: 1 1 100%; }
+  body.my-nepsis-dashboard header .top .headright { justify-content: flex-end; }
+}
