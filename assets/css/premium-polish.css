@@ -1,0 +1,149 @@
+/* Premium Nepsis visual layer: restrained surfaces, intentional depth, and accessible motion. */
+:root {
+  --surface-elevated: rgba(255, 253, 248, 0.84);
+  --hairline: rgba(58, 36, 24, 0.09);
+  --elevation-shadow: 0 4px 24px -2px rgba(58, 36, 24, 0.16);
+}
+
+html[data-theme="dark"] {
+  --surface-elevated: rgba(36, 28, 23, 0.88);
+  --hairline: rgba(255, 255, 255, 0.08);
+  --elevation-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.32);
+}
+
+header, header.top, body > header {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.card, .panel, .stat, .tool-panel, .welcome, .nepsis-dialog,
+.nepsis-site-drawer, .nepsis-ambient-panel {
+  border-color: var(--hairline);
+}
+
+button, .btn, .back, .filter, input, textarea, select,
+.card, .panel, .stat, .tool-panel {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:hover, .btn:hover, .back:hover, .filter:hover {
+  transform: translateY(-1px);
+}
+
+.card:hover, .panel:hover, .stat:hover, .tool-panel:hover {
+  border-color: color-mix(in srgb, var(--orange, #B9552A) 38%, var(--border, #EADCCB));
+  box-shadow: 0 18px 38px -26px rgba(58, 36, 24, 0.32);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--orange, #B9552A);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--orange, #B9552A) 16%, transparent);
+}
+
+/* The watchdog checks these real navigation groups at a 320px viewport. */
+@media (max-width: 380px) {
+  header .top, header .top-in, header .top-actions, header .controls,
+  header .head-right, header .headright, header .logo {
+    min-width: 0;
+  }
+
+  header .top, header .top-in {
+    width: calc(100% - 20px) !important;
+  }
+
+  header .top, header .top-in, header .top-actions, header .controls,
+  header .head-right, header .headright {
+    gap: 4px !important;
+  }
+
+  header .logo { gap: 5px !important; }
+  header .logo .dot {
+    width: 16px !important;
+    height: 16px !important;
+    flex-basis: 16px !important;
+  }
+
+  header .top-actions, header .controls, header .head-right, header .headright {
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+  }
+
+  header .lang { max-width: 78px; }
+  header .lang button {
+    min-width: 0;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  header .nepsis-menu-button, header .menu-btn, header .theme-toggle {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    flex: 0 0 32px !important;
+    padding: 0 !important;
+  }
+
+  header .back, header .acc-btn, header .account-btn {
+    min-width: 0;
+    max-width: 112px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* Landing page hierarchy and whitespace. */
+body.home-page .block { padding-block: clamp(76px, 9vw, 124px); }
+body.home-page .hero-copy { max-width: 600px; }
+body.home-page .hero-country { backdrop-filter: blur(12px); }
+body.home-page .bento-card, body.home-page .inside-nepsis-card {
+  border: 1px solid var(--hairline, rgba(58, 36, 24, 0.09));
+  box-shadow: 0 12px 34px -28px rgba(58, 36, 24, 0.32);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body.home-page .bento-card:hover, body.home-page .inside-nepsis-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--orange, #B9552A);
+  box-shadow: 0 18px 38px -26px rgba(58, 36, 24, 0.38);
+}
+
+/* Focus timer: premium stage panels while keeping the timer legible and calm. */
+body.practice-page #stageGrid { gap: clamp(12px, 1.8vw, 20px); }
+body.practice-page .stage {
+  border: 1px solid var(--hairline, rgba(58, 36, 24, 0.09));
+  box-shadow: 0 12px 30px -22px rgba(58, 36, 24, 0.25);
+}
+body.practice-page .stage.is-running {
+  border-color: var(--orange, #B9552A);
+  box-shadow: 0 12px 36px -18px rgba(185, 85, 42, 0.34);
+}
+body.practice-page .stage .time { font-variant-numeric: tabular-nums; }
+
+/* Dashboard: clear grid rhythm and thin card edges. */
+body.my-nepsis-dashboard .dashboard-stats,
+body.my-nepsis-dashboard .tools-grid { gap: clamp(12px, 1.8vw, 18px); }
+body.my-nepsis-dashboard .dashboard-stats .stat,
+body.my-nepsis-dashboard .tools-grid .tool-panel,
+body.my-nepsis-dashboard .week-feature {
+  border: 1px solid var(--hairline, rgba(58, 36, 24, 0.09));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button, .btn, .back, .filter, input, textarea, select,
+  .card, .panel, .stat, .tool-panel,
+  body.home-page .bento-card, body.home-page .inside-nepsis-card {
+    transition: none !important;
+  }
+  button:hover, .btn:hover, .back:hover, .filter:hover,
+  .card:hover, .panel:hover, .stat:hover, .tool-panel:hover,
+  body.home-page .bento-card:hover, body.home-page .inside-nepsis-card:hover {
+    transform: none;
+  }
+}
