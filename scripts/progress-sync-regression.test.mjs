@@ -130,7 +130,7 @@ test("calendar and account writes are queued for reconnect under the active user
 });
 
 test("offline pages and sync scripts are precached", () => {
-  assert.match(serviceWorker, /nepsis-v14/);
+  assert.match(serviceWorker, /nepsis-v15/);
   assert.match(serviceWorker, /asset\('coach\.html'\)/);
   assert.match(serviceWorker, /asset\('assets\/js\/coach-config\.js'\)/);
   assert.match(serviceWorker, /asset\('assets\/js\/pages\/coach\.js'\)/);

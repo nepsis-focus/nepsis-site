@@ -127,6 +127,7 @@
             <span id="coachUsage" class="coach-privacy" aria-live="polite"></span>
           </div>
         </form>
+        <p id="coachStorageStatus" class="coach-privacy" role="status" aria-live="polite" data-el="Τα check-in και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται." data-en="Check-ins and recent history are stored only in this browser; they are never synced.">Τα check-in και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται.</p>
         <p id="coachMessage" class="coach-status" role="status" aria-live="polite"></p>
         <div class="coach-context">
           <div class="coach-context-heading"><span class="coach-step-number" aria-hidden="true">02</span><div><div class="coach-kicker" data-el="Προαιρετικά" data-en="Optional">Προαιρετικά</div><h3 data-el="Πρόσθεσε υλικό ή κράτησέ το ιδιωτικό" data-en="Add material or keep it private">Πρόσθεσε υλικό ή κράτησέ το ιδιωτικό</h3></div></div>
@@ -165,6 +166,14 @@
           <a id="launchTimer" class="coach-btn" href="practice.html#stageGrid" data-el="Άνοιξε και ξεκίνα το χρονόμετρο Nepsis" data-en="Open and start the Nepsis timer">Άνοιξε και ξεκίνα το χρονόμετρο Nepsis</a>
           <span class="coach-privacy" data-el="Ξεκινά το υπάρχον χρονόμετρο στη διάρκεια εστίασης που εμφανίζεται παραπάνω." data-en="Starts the existing timer at the focus duration shown above.">Ξεκινά το υπάρχον χρονόμετρο στη διάρκεια εστίασης που εμφανίζεται παραπάνω.</span>
         </div>
+      </section>
+      <section id="coachHistory" class="coach-card coach-history" aria-labelledby="coachHistoryTitle" hidden>
+        <div class="coach-history-heading">
+          <div class="coach-kicker" data-el="Μόνο σε αυτή τη συσκευή" data-en="This device only">Μόνο σε αυτή τη συσκευή</div>
+          <h2 id="coachHistoryTitle" data-el="Πρόσφατα check-in" data-en="Recent check-ins">Πρόσφατα check-in</h2>
+        </div>
+        <p class="coach-privacy" data-el="Το ιστορικό κρατά μόνο το θέμα και τις επιλογές χρόνου· αρχεία και εξαγμένο κείμενο δεν αποθηκεύονται εδώ." data-en="History stores only the topic and time choices; files and extracted text are never stored here.">Το ιστορικό κρατά μόνο το θέμα και τις επιλογές χρόνου· αρχεία και εξαγμένο κείμενο δεν αποθηκεύονται εδώ.</p>
+        <ol id="coachHistoryList" class="coach-history-list" aria-label="Recent check-ins"></ol>
       </section>
 
       </div>
