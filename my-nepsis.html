@@ -18,6 +18,12 @@
 <title data-el="Nepsis · Το Nepsis μου" data-en="Nepsis · My Nepsis">Nepsis · Το Nepsis μου</title>
 <meta name="description" content="Ο προσωπικός σου χώρος στο Nepsis: πρόοδος, συνέπεια και επόμενα βήματα.">
 <link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#F0702A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nepsis">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +34,7 @@
 
 </head>
 <body class="my-nepsis-dashboard">
-<header><div class="wrap top"><a class="logo" href="index.html"><span class="dot"></span>Nepsis</a><div class="headright"><button class="account-btn" id="accountBtn">Σύνδεση</button><div class="lang"><button class="active" data-lang="el">ΕΛ</button><button data-lang="en">EN</button></div><button class="menu-btn" id="menuBtn" aria-label="Μενού">☰</button></div></div></header>
+<header><div class="wrap top"><a class="logo" href="index.html"><span class="dot"></span>Nepsis</a><div class="headright"><button class="account-btn" id="accountBtn" data-el="Σύνδεση" data-en="Sign in">Σύνδεση</button><div class="lang"><button class="active" data-lang="el">ΕΛ</button><button data-lang="en">EN</button></div><button class="menu-btn" id="menuBtn" aria-label="Μενού">☰</button></div></div></header>
 <nav class="drawer" id="drawer" aria-label="Κύριο μενού">
   <button type="button" class="close" id="closeBtn" aria-label="Κλείσιμο">✕</button>
   <a href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
@@ -189,7 +195,7 @@
 </section>
 <section class="panel" style="margin-top:18px"><h2 class="section-title" data-el="Ένας χώρος που ανήκει σε σένα" data-en="A space that belongs to you">Ένας χώρος που ανήκει σε σένα</h2><p data-el="Οι στόχοι και το προφίλ σου αποθηκεύονται ιδιωτικά. Το ιστορικό και η εβδομαδιαία αναφορά υπολογίζονται από τις συνεδρίες συγκέντρωσης που έχεις καταγράψει." data-en="Your goals and profile are stored privately. Your history and weekly report are calculated from the focus sessions you have recorded.">Οι στόχοι και το προφίλ σου αποθηκεύονται ιδιωτικά. Το ιστορικό και η εβδομαδιαία αναφορά υπολογίζονται από τις συνεδρίες συγκέντρωσης που έχεις καταγράψει.</p><p class="privacy" id="spaceSyncNote" data-el="Ως επισκέπτης, τα στοιχεία σου αποθηκεύονται σε αυτή τη συσκευή. Με σύνδεση, συγχρονίζονται ιδιωτικά στον λογαριασμό σου." data-en="As a guest, your details stay on this device. When signed in, they sync privately to your account.">Ως επισκέπτης, τα στοιχεία σου αποθηκεύονται σε αυτή τη συσκευή. Με σύνδεση, συγχρονίζονται ιδιωτικά στον λογαριασμό σου.</p></section>
 </main>
-<footer><div class="wrap">Nepsis · <a href="privacy.html" style="color:inherit">Πολιτική απορρήτου</a> · <span data-el="Μικρά βήματα. Μία μέρα τη φορά." data-en="Small steps. One day at a time.">Μικρά βήματα. Μία μέρα τη φορά.</span></div></footer>
+<footer><div class="wrap">Nepsis · <a href="privacy.html" style="color:inherit" data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</a> · <span data-el="Μικρά βήματα. Μία μέρα τη φορά." data-en="Small steps. One day at a time.">Μικρά βήματα. Μία μέρα τη φορά.</span></div></footer>
 <div class="account auth-account" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle" aria-hidden="true" tabindex="-1">
  <div class="account-card auth-card">
   <div class="auth-modal-art" aria-hidden="true"><span class="auth-orbit"></span><span class="auth-orbit auth-orbit-inner"></span><span class="auth-orbit-dot"></span></div>
@@ -208,7 +214,7 @@
    </form>
    <p class="auth-footnote" data-el="Δεν χρειάζεται κωδικός. Ο σύνδεσμος λήγει με ασφάλεια." data-en="No password needed. Your sign-in link is time-limited.">Δεν χρειάζεται κωδικός. Ο σύνδεσμος λήγει με ασφάλεια.</p>
   </div>
-  <div id="signedIn" class="auth-signed-state" hidden><span class="auth-signed-mark" aria-hidden="true">✓</span><p id="signedEmail"></p><button class="btn secondary" id="signOut" type="button">Αποσύνδεση</button></div>
+  <div id="signedIn" class="auth-signed-state" hidden><span class="auth-signed-mark" aria-hidden="true">✓</span><p id="signedEmail"></p><button class="btn secondary" id="signOut" type="button" data-el="Αποσύνδεση" data-en="Sign out">Αποσύνδεση</button></div>
   <p class="message" id="accountMessage" role="status" aria-live="polite"></p>
  </div>
 </div>
