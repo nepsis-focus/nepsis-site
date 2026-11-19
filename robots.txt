@@ -1,13 +1,15 @@
 # Nepsis robots.txt
 # Allows all bots (including Google) to crawl the public site.
-# Personal / private pages (diary, my-nepsis) contain user data and are not linked publicly.
+# Personal / private pages (diary, my-nepsis, coach) contain user data or gated tools.
 
 User-agent: *
 Allow: /
 Disallow: /diary.html
 Disallow: /my-nepsis.html
+Disallow: /coach.html
 Disallow: /nepsis-site/diary.html
 Disallow: /nepsis-site/my-nepsis.html
+Disallow: /nepsis-site/coach.html
 
 # Optional: explicitly allow Googlebot
 User-agent: Googlebot
