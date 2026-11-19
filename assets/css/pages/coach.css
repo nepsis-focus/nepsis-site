@@ -136,6 +136,20 @@
 .coach-result-top h2 { max-width: 30ch; overflow-wrap: anywhere; }
 .coach-timer-pill { display: inline-flex; align-items: center; min-height: 42px; padding: 8px 13px; border: 1px solid rgba(240,160,107,.35); border-radius: 999px; color: var(--coach-accent); background: var(--coach-glow); font-size: .84rem; font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; }
 .coach-result .coach-note { margin: 19px 0; }
+.coach-history { padding-top: 24px; padding-bottom: 24px; }
+.coach-history[hidden] { display: none; }
+.coach-history-heading { display: grid; gap: 5px; margin-bottom: 12px; }
+.coach-history-heading .coach-kicker { margin: 0; }
+.coach-history-heading h2 { margin: 0; color: var(--coach-text); font-size: 1.25rem; letter-spacing: -.035em; }
+.coach-history > .coach-privacy { margin: 0 0 14px; }
+.coach-history-list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.coach-history-item { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 13px; border: 1px solid var(--coach-border); border-radius: 14px; background: rgba(255,255,255,.025); }
+.coach-history-copy { display: grid; min-width: 0; gap: 3px; }
+.coach-history-copy strong { overflow-wrap: anywhere; color: var(--coach-text); font-size: .9rem; }
+.coach-history-copy span { color: var(--coach-muted); font-size: .76rem; font-variant-numeric: tabular-nums; }
+.coach-history-load { min-height: 38px; flex: 0 0 auto; padding: 7px 11px; border: 1px solid var(--coach-border); border-radius: 10px; color: var(--coach-text); background: var(--coach-raised); font: inherit; font-size: .78rem; font-weight: 750; cursor: pointer; }
+.coach-history-load:hover { border-color: var(--coach-accent); color: var(--coach-accent); }
+.coach-history-load:focus-visible { outline: 3px solid var(--coach-accent); outline-offset: 3px; }
 .coach-list { display: grid; gap: 8px; margin: 0; padding-left: 1.55rem; color: var(--coach-text); line-height: 1.62; }
 .coach-list li { padding-left: 5px; }
 .coach-list li::marker { color: var(--coach-accent); font-weight: 800; }
@@ -197,6 +211,8 @@
   .coach-side-steps li > span { margin-bottom: 0; }
   .coach-result-top { display: grid; }
   .coach-timer-pill { justify-self: start; white-space: normal; }
+  .coach-history-item { align-items: flex-start; }
+  .coach-history-load { min-height: 42px; }
   .coach-form-actions .coach-btn { width: 100%; }
   .coach-result .coach-form-actions .coach-privacy { width: 100%; }
 }

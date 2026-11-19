@@ -5,6 +5,9 @@
   var MAX_FILE_BYTES = 8 * 1024 * 1024;
   var MAX_DOCUMENT_CHARS = 28000;
   var USAGE_KEY = "nepsis-ai-coach:guest-usage:v1";
+  var CHECKIN_KEY = "nepsis-ai-coach:guest-checkin:v1";
+  var HISTORY_KEY = "nepsis-ai-coach:guest-history:v1";
+  var HISTORY_LIMIT = 8;
   var WHOP_URL = "https://whop.com/nepsis-focus";
   var SUPABASE_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
   var SUPABASE_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
@@ -14,6 +17,8 @@
   var signedIn = false;
   var authClient = null;
   var memoryGuestCount = 0;
+  var memoryCheckin = null;
+  var memoryHistory = [];
   var selectedFile = null;
   var extractedDocumentText = "";
   var extractionPromise = Promise.resolve("");
@@ -176,6 +181,59 @@
     writeUsage(count);
     return { allowed: true, used: count.used, remaining: GUEST_LIMIT - count.used };
   }
+  function copyCheckin(value) {
+    var v = normalized(value);
+    return { type: v.type, topic: v.topic, energy: v.energy, available: v.available, focusMinutes: v.focusMinutes };
+  }
+  function readGuestCheckin() {
+    try {
+      var raw = window.localStorage.getItem(CHECKIN_KEY);
+      if (raw) { memoryCheckin = copyCheckin(JSON.parse(raw)); return copyCheckin(memoryCheckin); }
+    } catch (e) { /* retain this-tab values if storage is blocked */ }
+    return memoryCheckin ? copyCheckin(memoryCheckin) : null;
+  }
+  function saveGuestCheckin(value) {
+    memoryCheckin = copyCheckin(value);
+    try { window.localStorage.setItem(CHECKIN_KEY, JSON.stringify(memoryCheckin)); return true; }
+    catch (e) { return false; }
+  }
+  function cleanHistoryEntry(value) {
+    if (!value || typeof value !== "object") return null;
+    var checkin = copyCheckin(value.checkin || value.values || value);
+    var focus = Number(value.focusMinutes), rest = Number(value.breakMinutes);
+    if (!checkin.topic || !Number.isInteger(focus) || focus < 5 || focus > 180 || focus > checkin.available) return null;
+    if (!Number.isInteger(rest) || rest < 0 || rest > 180) rest = 0;
+    return { createdAt: String(value.createdAt || "").slice(0, 40), checkin: checkin, focusMinutes: focus, breakMinutes: Math.min(rest, checkin.available - focus) };
+  }
+  function readGuestHistory() {
+    try {
+      var raw = window.localStorage.getItem(HISTORY_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        memoryHistory = parsed.map(cleanHistoryEntry).filter(Boolean).slice(0, HISTORY_LIMIT);
+        return memoryHistory.slice();
+      }
+    } catch (e) { /* retain this-tab history if storage is blocked */ }
+    return memoryHistory.slice(0, HISTORY_LIMIT);
+  }
+  function saveGuestHistory(values, plan, now) {
+    var timer = plan && plan.timer || recommend(values);
+    var stamp = now && typeof now.toISOString === "function" ? now.toISOString() : new Date().toISOString();
+    var entry = cleanHistoryEntry({ createdAt: stamp, checkin: copyCheckin(values), focusMinutes: timer.focus, breakMinutes: timer.rest });
+    if (!entry) return false;
+    memoryHistory = [entry].concat(readGuestHistory()).slice(0, HISTORY_LIMIT);
+    try { window.localStorage.setItem(HISTORY_KEY, JSON.stringify(memoryHistory)); return true; }
+    catch (e) { return false; }
+  }
+  function buildAiRequest(values, documentText) {
+    var v = copyCheckin(values);
+    return { consent: true, topic: v.topic, taskType: v.type, energy: v.energy, available: v.available, documentText: String(documentText || "").slice(0, MAX_DOCUMENT_CHARS) };
+  }
+  function validateAiResponse(data) {
+    if (!data || typeof data !== "object" || Array.isArray(data) || !Array.isArray(data.steps) || !Array.isArray(data.questions) || !data.timer || typeof data.timer !== "object") throw new Error("bad_ai_response");
+    return data;
+  }
   function loadPdfJs() {
     if (window.pdfjsLib && window.pdfjsLib.getDocument) return Promise.resolve(window.pdfjsLib);
     return new Promise(function (resolve, reject) {
@@ -253,6 +311,20 @@
     var accountStatus = document.getElementById("coachAccountStatus");
     var activeTimerLink = document.getElementById("launchTimer");
     var recommendedFocusButton = document.getElementById("coachUseRecommended");
+    var historySection = document.getElementById("coachHistory");
+    var historyList = document.getElementById("coachHistoryList");
+    var storageStatus = document.getElementById("coachStorageStatus");
+    var initialCheckin = readGuestCheckin();
+    if (initialCheckin) {
+      type.value = initialCheckin.type;
+      topic.value = initialCheckin.topic;
+      energy.value = String(initialCheckin.energy);
+      minutes.value = String(initialCheckin.available);
+      if (focusDuration) focusDuration.value = initialCheckin.focusMinutes ? String(initialCheckin.focusMinutes) : "";
+      var initialEnergyChoice = document.querySelector('input[name="coachEnergyChoice"][value="' + initialCheckin.energy + '"]');
+      if (initialEnergyChoice) initialEnergyChoice.checked = true;
+      if (energyValue) energyValue.textContent = initialCheckin.energy + "/5";
+    }
 
     function tr(el, elText, enText) { if (el) el.textContent = currentLang === "en" ? enText : elText; }
     function usage() { return readUsage(); }
@@ -260,8 +332,12 @@
       if (accountStatus) accountStatus.textContent = signedIn ? (currentLang === "en" ? "Signed in · unlimited plans" : "Συνδεδεμένος · απεριόριστα πλάνα") : (currentLang === "en" ? "Guest · 2 free plans/day" : "Επισκέπτης · 2 δωρεάν πλάνα/ημέρα");
       if (!signedIn && usageNote) {
         var left = Math.max(0, GUEST_LIMIT - usage().used);
-        usageNote.textContent = currentLang === "en" ? left + " of 2 free plans left today" : "Απομένουν " + left + " από 2 δωρεάν πλάνα σήμερα";
-      } else if (usageNote) usageNote.textContent = currentLang === "en" ? "Plans are not saved to your account in this MVP." : "Σε αυτό το MVP τα πλάνα δεν αποθηκεύονται στον λογαριασμό σου.";
+        usageNote.textContent = currentLang === "en" ? left + " of 2 guest plans left today · history stays on this device" : "Απομένουν " + left + " από 2 πλάνα επισκέπτη · το ιστορικό μένει σε αυτή τη συσκευή";
+      } else if (usageNote) usageNote.textContent = currentLang === "en" ? "AI requests remain subject to service limits · check-ins stay on this device" : "Τα αιτήματα AI έχουν όριο υπηρεσίας · τα check-in μένουν σε αυτή τη συσκευή";
+      if (storageStatus) {
+        var persistent = usage().persistent;
+        storageStatus.textContent = persistent ? (currentLang === "en" ? "Check-ins and recent history are stored only in this browser; they are never synced." : "Τα check-in και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται.") : (currentLang === "en" ? "This browser blocks local storage; saved check-ins may not survive closing this tab." : "Ο browser μπλοκάρει την τοπική αποθήκευση· τα check-in ίσως χαθούν όταν κλείσει η καρτέλα.");
+      }
     }
     function renderPlan(plan) {
       if (!plan || !result) return;
@@ -285,6 +361,52 @@
     function formValues() {
       return normalized({ type: type.value, topic: topic.value, energy: energy.value, available: minutes.value, focusMinutes: focusDuration ? focusDuration.value : 0 });
     }
+    function renderHistory() {
+      if (!historyList) return;
+      while (historyList.firstChild) historyList.removeChild(historyList.firstChild);
+      var entries = readGuestHistory();
+      if (historySection) historySection.hidden = entries.length === 0;
+      entries.forEach(function (entry, index) {
+        var item = document.createElement("li");
+        item.className = "coach-history-item";
+        var copy = document.createElement("div");
+        copy.className = "coach-history-copy";
+        var title = document.createElement("strong");
+        title.textContent = entry.checkin.topic;
+        var detail = document.createElement("span");
+        var date = new Date(entry.createdAt);
+        var dateText = Number.isFinite(date.getTime()) ? date.toLocaleDateString(currentLang === "en" ? "en-US" : "el-GR", { month: "short", day: "numeric" }) : "";
+        detail.textContent = (currentLang === "en" ? entry.focusMinutes + " min focus · " + entry.checkin.available + " min available" : entry.focusMinutes + "′ εστίαση · " + entry.checkin.available + "′ διαθέσιμα") + (dateText ? " · " + dateText : "");
+        copy.appendChild(title);
+        copy.appendChild(detail);
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "coach-history-load";
+        button.textContent = currentLang === "en" ? "Load check-in" : "Φόρτωσε";
+        button.setAttribute("aria-label", (currentLang === "en" ? "Load saved check-in: " : "Φόρτωσε το αποθηκευμένο check-in: ") + entry.checkin.topic);
+        button.addEventListener("click", function () { restoreHistoryEntry(entry); });
+        item.appendChild(copy);
+        item.appendChild(button);
+        historyList.appendChild(item);
+      });
+    }
+    function restoreHistoryEntry(entry) {
+      if (!entry || !entry.checkin) return;
+      type.value = entry.checkin.type;
+      topic.value = entry.checkin.topic;
+      energy.value = String(entry.checkin.energy);
+      minutes.value = String(entry.checkin.available);
+      if (focusDuration) focusDuration.value = String(entry.focusMinutes);
+      var choices = document.querySelectorAll('input[name="coachEnergyChoice"]');
+      Array.prototype.forEach.call(choices, function (choice) { choice.checked = choice.value === String(entry.checkin.energy); });
+      if (energyValue) energyValue.textContent = entry.checkin.energy + "/5";
+      var values = formValues();
+      saveGuestCheckin(values);
+      lastPlan = createPlan(values, currentLang, "");
+      renderPlan(lastPlan);
+      if (message) message.textContent = currentLang === "en" ? "Restored from this browser. Nothing was sent to AI." : "Επαναφέρθηκε από αυτόν τον browser. Δεν στάλθηκε κάτι στο AI.";
+      renderStatus();
+    }
     function syncDurationField() {
       if (!focusDuration) return true;
       var available = Number(minutes.value);
@@ -305,6 +427,8 @@
     }
     function updateFocusChoice() {
       var durationValid = syncDurationField();
+      var currentValues = formValues();
+      saveGuestCheckin(currentValues);
       if (!lastPlan) return;
       if (!durationValid) { disableTimerLaunch(); return; }
       var values = formValues();
@@ -317,23 +441,44 @@
     function showUpsellLimit() {
       if (message) {
         message.classList.add("coach-error");
-        message.textContent = currentLang === "en" ? "You've used today's two free guest plans. Sign in or visit Whop for optional access." : "Χρησιμοποίησες τα δύο δωρεάν πλάνα επισκέπτη για σήμερα. Συνδέσου ή δες το Whop για προαιρετική πρόσβαση.";
+        message.textContent = currentLang === "en" ? "You've reached today's two-plan guest limit. Optional access is available through Whop." : "Έφτασες το ημερήσιο όριο των δύο πλάνων επισκέπτη. Υπάρχει προαιρετική πρόσβαση μέσω Whop.";
       }
       if (upsell) upsell.hidden = false;
       if (result) result.hidden = true;
     }
     async function requestAiPlan(values, documentText) {
-      if (!authClient) throw new Error("ai_unavailable");
-      var sessionResult = await authClient.auth.getSession();
-      var session = sessionResult && sessionResult.data && sessionResult.data.session;
+      var session = null;
+      if (signedIn && authClient && authClient.auth) {
+        try {
+          var sessionResult = await authClient.auth.getSession();
+          session = sessionResult && sessionResult.data && sessionResult.data.session;
+        } catch (e) { /* expired account sessions fall back to the guest request path */ }
+      }
       var bearer = session && session.access_token ? session.access_token : SUPABASE_KEY;
-      var response = await window.fetch(SUPABASE_URL + "/functions/v1/ai-study-coach", {
-        method: "POST", headers: { "content-type": "application/json", apikey: SUPABASE_KEY, authorization: "Bearer " + bearer },
-        body: JSON.stringify({ consent: true, topic: values.topic, taskType: values.type, energy: values.energy, available: values.available, documentText: documentText || "" })
-      });
-      if (!response.ok) throw new Error(response.status === 429 ? "daily_limit_reached" : "ai_unavailable");
-      var data = await response.json();
-      if (!data || !Array.isArray(data.steps) || !Array.isArray(data.questions) || !data.timer) throw new Error("bad_ai_response");
+      var controller = typeof window.AbortController === "function" ? new window.AbortController() : null;
+      var timeout = null;
+      var request = {
+        method: "POST",
+        headers: { "content-type": "application/json", apikey: SUPABASE_KEY, authorization: "Bearer " + bearer },
+        body: JSON.stringify(buildAiRequest(values, documentText))
+      };
+      if (controller) request.signal = controller.signal;
+      var data;
+      try {
+        data = await Promise.race([
+          (async function () {
+            var response = await window.fetch(SUPABASE_URL + "/functions/v1/ai-study-coach", request);
+            if (!response.ok) throw new Error(response.status === 429 ? "daily_limit_reached" : "ai_unavailable");
+            return validateAiResponse(await response.json());
+          })(),
+          new Promise(function (_resolve, reject) {
+            timeout = window.setTimeout(function () {
+              if (controller) controller.abort();
+              reject(new Error("ai_timeout"));
+            }, 10000);
+          })
+        ]);
+      } finally { if (timeout !== null) window.clearTimeout(timeout); }
       var timer = recommend(values);
       var focus = Number(data.timer.focusMinutes);
       if ([5, 10, 25, 45, 60].indexOf(focus) < 0 || focus > values.available) focus = timer.focus;
@@ -381,13 +526,16 @@
           if (message) message.textContent = currentLang === "en" ? "Personalized plan generated with Nepsis AI." : "Το εξατομικευμένο πλάνο δημιουργήθηκε από το Nepsis AI.";
         } catch (error) {
           lastPlan = localPlan;
-          if (message) message.textContent = currentLang === "en" ? "AI is unavailable or its daily limit was reached. Here is your local plan; your file was not saved." : "Το AI δεν είναι διαθέσιμο ή έφτασε το ημερήσιο όριο. Ορίστε το τοπικό πλάνο· το αρχείο δεν αποθηκεύτηκε.";
+          if (message) message.textContent = currentLang === "en" ? "AI is unavailable, slow, or at its daily limit. Here is your local plan; your file was not saved." : "Το AI δεν είναι διαθέσιμο, καθυστερεί ή έφτασε το ημερήσιο όριο. Ορίστε το τοπικό πλάνο· το αρχείο δεν αποθηκεύτηκε.";
         }
       } else {
         lastPlan = localPlan;
         if (message) message.textContent = currentLang === "en" ? "Local plan ready. Nothing was sent to an AI service." : "Το τοπικό πλάνο είναι έτοιμο. Δεν στάλθηκε τίποτα σε υπηρεσία AI.";
       }
       renderPlan(lastPlan);
+      saveGuestCheckin(values);
+      saveGuestHistory(values, lastPlan);
+      renderHistory();
       renderStatus();
       if (submitButton) submitButton.disabled = false;
       if (result) result.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -410,6 +558,8 @@
       if (!syncDurationField()) disableTimerLaunch();
     }
     form.addEventListener("submit", submit);
+    form.addEventListener("input", function () { saveGuestCheckin(formValues()); renderStatus(); });
+    form.addEventListener("change", function () { saveGuestCheckin(formValues()); renderStatus(); });
     if (focusDuration) {
       focusDuration.addEventListener("input", updateFocusChoice);
       focusDuration.addEventListener("change", updateFocusChoice);
@@ -423,6 +573,7 @@
     minutes.addEventListener("input", updateFocusChoice);
     minutes.addEventListener("change", updateFocusChoice);
     syncDurationField();
+    renderHistory();
     var energyChoices = document.querySelectorAll('input[name="coachEnergyChoice"]');
     Array.prototype.forEach.call(energyChoices, function (choice) {
       choice.addEventListener("change", function () {
@@ -498,6 +649,6 @@
     });
   }
 
-  window.NepsisCoach = Object.freeze({ recommend: recommend, createPlan: createPlan, normalize: normalized, applyFocusChoice: applyFocusChoice, timerPattern: timerPattern, guestLimit: GUEST_LIMIT, readGuestUsage: readUsage, consumeGuestPlan: consumeGuestPlan });
+  window.NepsisCoach = Object.freeze({ recommend: recommend, createPlan: createPlan, normalize: normalized, applyFocusChoice: applyFocusChoice, timerPattern: timerPattern, guestLimit: GUEST_LIMIT, readGuestUsage: readUsage, consumeGuestPlan: consumeGuestPlan, readGuestCheckin: readGuestCheckin, saveGuestCheckin: saveGuestCheckin, readGuestHistory: readGuestHistory, saveGuestHistory: saveGuestHistory, buildAiRequest: buildAiRequest, validateAiResponse: validateAiResponse });
   if (document && typeof document.getElementById === "function") init();
 })(typeof window === "undefined" ? globalThis : window, typeof document === "undefined" ? null : document);

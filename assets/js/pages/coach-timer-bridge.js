@@ -12,6 +12,16 @@
   var minutes = Number(value);
   if (!value || !Number.isInteger(minutes) || minutes < 5 || minutes > 180) return;
 
+  // Coach-launched focus remains guest-first: hide only this route's OAuth entry point.
+  document.documentElement.dataset.coachGuestLaunch = "true";
+  var accountButton = document.getElementById("accBtn");
+  if (accountButton) {
+    accountButton.hidden = true;
+    accountButton.removeAttribute("href");
+    accountButton.setAttribute("aria-hidden", "true");
+    accountButton.tabIndex = -1;
+  }
+
   // Remove the one-shot command before starting so a refresh never starts another timer.
   params.delete("coachStart");
   var query = params.toString();
