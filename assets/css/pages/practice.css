@@ -891,6 +891,20 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   .menu-btn { width: 36px; height: 36px; flex: 0 0 36px; }
 }
 
+/* Touch targets for compact practice navigation and calendar controls. */
+body.practice-page .cal-head .nav {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+}
+body.practice-page .stage .start,
+body.practice-page .music-row button,
+body.practice-page .ambient-row button,
+body.practice-page .chips button {
+  min-height: 40px;
+}
+
 /* ---------- calm additions: ring breath, finish share card, challenge invite, gentle return ---------- */
 body.practice-page .stage .ring::before {
   content: ""; position: absolute; inset: 4px; border-radius: 50%;

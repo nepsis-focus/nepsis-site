@@ -1,0 +1,19 @@
+{
+  "routes": [
+    { "path": "/", "title": "Nepsis · Η συγκέντρωσή σου, μία μέρα τη φορά" },
+    { "path": "/about.html", "title": "Nepsis · Τι είναι" },
+    { "path": "/coach.html", "title": "Nepsis · AI Study & Focus Coach" },
+    { "path": "/diary.html", "title": "Nepsis · Προσωπικό ημερολόγιο" },
+    { "path": "/exams.html", "title": "Εξεταστική Ιανουαρίου 2027: συγκέντρωση βήμα βήμα" },
+    { "path": "/faq.html", "title": "Nepsis · Συχνές ερωτήσεις" },
+    { "path": "/how.html", "title": "Nepsis · Πώς δουλεύει" },
+    { "path": "/library.html", "title": "Nepsis · Βιβλιοθήκη γνώσης" },
+    { "path": "/my-nepsis.html", "title": "Nepsis · Το Nepsis μου" },
+    { "path": "/practice.html", "title": "Nepsis · Εξάσκηση και πρόοδος" },
+    { "path": "/premium-success.html", "title": "Nepsis · Ευχαριστούμε" },
+    { "path": "/premium.html", "title": "Nepsis · Nepsis+" },
+    { "path": "/privacy.html", "title": "Nepsis · Πολιτική απορρήτου / Privacy policy" },
+    { "path": "/reset.html", "title": "Nepsis · Μικρή παύση" },
+    { "path": "/terms.html", "title": "Nepsis · Όροι χρήσης / Terms of Service" }
+  ]
+}

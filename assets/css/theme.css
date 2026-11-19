@@ -296,3 +296,73 @@ html[data-theme="dark"] .danger {
     transition-delay: 0s !important;
   }
 }
+
+/* Mobile usability pass: keep primary header controls comfortable for touch.
+   The narrow-screen rules above preserve compact visual sizing, but the
+   interactive boxes should not become smaller than a finger-friendly target. */
+@media (max-width: 480px) {
+  header.top .menu-btn,
+  header .menu-btn,
+  .coach-page .menu-btn,
+  .nepsis-menu-button {
+    width: 44px !important;
+    min-width: 44px;
+    height: 44px !important;
+    min-height: 44px;
+    flex: 0 0 44px !important;
+  }
+  header.top .lang button,
+  header .lang button,
+  .coach-lang button,
+  .lang button[data-lang] {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0 8px !important;
+    display: inline-grid;
+    place-items: center;
+  }
+  .theme-toggle { width: 44px !important; height: 44px !important; }
+}
+
+/* Language pills are controls too; keep their vertical hit area consistent
+   on tablets where the compact legacy rule otherwise leaves them at 30px. */
+.lang button,
+.coach-lang button {
+  min-width: 40px;
+  min-height: 40px;
+}
+.account-btn,
+.acc-btn {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 380px) {
+  /* Give the logo and controls separate rows instead of squeezing controls
+     below the usable touch size at 320px. */
+  header.top .top-in,
+  header > .wrap.top {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  header.top .top-in > .logo,
+  header > .wrap.top > .logo {
+    flex: 0 0 100%;
+  }
+  header.top .top-in > .head-right,
+  header > .wrap.top > .headright {
+    flex: 0 0 100%;
+    justify-content: flex-end;
+  }
+  /* The sticky header is two rows at 320px. Keep the drawer close control
+     below it so the header cannot intercept the tap. */
+  #drawer.drawer {
+    padding-top: 116px !important;
+  }
+}

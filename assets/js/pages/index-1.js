@@ -92,10 +92,11 @@ let currentLang = "el";
       return;
     }
 
+    const isMobile = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
     let renderer;
     try {
       renderer = new THREE.WebGLRenderer({
-        canvas: canvas, alpha: true, antialias: true, powerPreference: "high-performance"
+        canvas: canvas, alpha: true, antialias: !isMobile, powerPreference: "high-performance"
       });
     } catch (error) {
       const msg = $("globeMsg");
@@ -106,8 +107,7 @@ let currentLang = "el";
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100);
     camera.position.set(0, 0, 5.6);
-    const isMobile = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.5));
     if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.setClearColor(0x000000, 0);
 
@@ -122,7 +122,9 @@ let currentLang = "el";
     const earthGroup = new THREE.Group();
     scene.add(earthGroup);
     const radius = 2;
-    const sphereGeometry = new THREE.SphereGeometry(radius, 96, 96);
+    const globeSegments = isMobile ? 48 : 64;
+    const atmosphereSegments = isMobile ? 32 : 48;
+    const sphereGeometry = new THREE.SphereGeometry(radius, globeSegments, globeSegments);
     const earthMaterial = new THREE.MeshPhongMaterial({
       color: 0xffffff, specular: new THREE.Color(0x34495c), shininess: 10
     });
@@ -132,11 +134,11 @@ let currentLang = "el";
     const cloudMaterial = new THREE.MeshPhongMaterial({
       color: 0xffffff, transparent: true, opacity: 0.38, depthWrite: false
     });
-    const clouds = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.009, 96, 96), cloudMaterial);
+    const clouds = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.009, globeSegments, globeSegments), cloudMaterial);
     earthGroup.add(clouds);
 
     const atmosphere = new THREE.Mesh(
-      new THREE.SphereGeometry(radius * 1.06, 64, 64),
+      new THREE.SphereGeometry(radius * 1.06, atmosphereSegments, atmosphereSegments),
       new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
@@ -169,11 +171,11 @@ let currentLang = "el";
 
     const marker = new THREE.Group();
     const markerHalo = new THREE.Mesh(
-      new THREE.SphereGeometry(0.075, 20, 20),
+      new THREE.SphereGeometry(0.075, 12, 12),
       new THREE.MeshBasicMaterial({ color: 0xf0702a, transparent: true, opacity: 0.28 })
     );
     const markerCore = new THREE.Mesh(
-      new THREE.SphereGeometry(0.032, 20, 20),
+      new THREE.SphereGeometry(0.032, 12, 12),
       new THREE.MeshBasicMaterial({ color: 0xf0702a })
     );
     marker.add(markerHalo, markerCore);
@@ -183,7 +185,7 @@ let currentLang = "el";
     const loader = new THREE.TextureLoader();
     loader.setCrossOrigin("anonymous");
     loader.load(
-      "https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_atmos_2048.jpg",
+      "assets/globe/earth-atmos.webp",
       function (texture) {
         if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
         earthMaterial.map = texture;
@@ -195,12 +197,12 @@ let currentLang = "el";
         if (msg && !selectedCountry()) msg.textContent = currentLang === "el" ? "Δεν φορτώθηκε η εικόνα της Γης. Έλεγξε τη σύνδεσή σου." : "Earth texture could not load. Check your connection.";
       }
     );
-    loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_normal_2048.jpg", function (texture) {
+    loader.load("assets/globe/earth-normal.webp", function (texture) {
       earthMaterial.normalMap = texture;
       earthMaterial.normalScale = new THREE.Vector2(0.42, 0.42);
       earthMaterial.needsUpdate = true;
     });
-    loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_clouds_1024.png", function (texture) {
+    loader.load("assets/globe/earth-clouds.webp", function (texture) {
       if (THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
       cloudMaterial.map = texture;
       cloudMaterial.needsUpdate = true;
@@ -319,8 +321,8 @@ let currentLang = "el";
     }
     resize();
 
-    let animating = true;
-    const targetFPS = isMobile ? 30 : 60;
+    let animating = false;
+    const targetFPS = isMobile ? 30 : 45;
     const frameInterval = 1000 / targetFPS;
     const rotationPeriodSeconds = 90;
     const rotationRate = (2 * Math.PI) / rotationPeriodSeconds;
@@ -383,7 +385,7 @@ let currentLang = "el";
     });
     zenObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
-    requestAnimationFrame(animate);
+    if (!stageEl || !("IntersectionObserver" in window)) startAnim();
 
     globeApp = {
       focusCountry: focusCountry,
@@ -1208,7 +1210,7 @@ let currentLang = "el";
   // ---------- motion: smooth scroll (Lenis) and entrance animations (GSAP) ----------
   // Turned off for people who ask their device to reduce motion.
   const REDUCE = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!REDUCE && window.Lenis) {
+  if (!REDUCE && window.Lenis && !document.body.classList.contains("home-page") && !document.body.classList.contains("practice-page")) {
     const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
     if (window.gsap && window.ScrollTrigger) {
       gsap.registerPlugin(ScrollTrigger);
