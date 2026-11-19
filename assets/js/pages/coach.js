@@ -28,7 +28,25 @@
     var type = input && input.type === "task" ? "task" : "study";
     var energy = clamp(Math.round(Number(input && input.energy) || 3), 1, 5);
     var available = clamp(Math.round(Number(input && input.available) || 5), 5, 180);
-    return { topic: topic, type: type, energy: energy, available: available };
+    var focusMinutes = Math.round(Number(input && input.focusMinutes) || 0);
+    if (STAGES.indexOf(focusMinutes) < 0 || focusMinutes > available) focusMinutes = 0;
+    return { topic: topic, type: type, energy: energy, available: available, focusMinutes: focusMinutes };
+  }
+  function applyFocusChoice(timer, focusMinutes, available, energy) {
+    var requested = Math.round(Number(focusMinutes) || 0);
+    var base = timer;
+    if (!base || base.focus > available) base = recommend({ available: available, energy: energy });
+    else base = { focus: base.focus, rest: Math.min(Number(base.rest) || 0, Math.max(0, available - base.focus)), style: base.style, available: available, energy: energy };
+    if (STAGES.indexOf(requested) < 0 || requested > available) return base;
+    return { focus: requested, rest: Math.min(Number(base.rest) || 0, Math.max(0, available - requested)), style: "manual", available: available, energy: energy };
+  }
+  function timerPattern(timer, lang) {
+    if (lang === "en") return timer.focus + " min focus" + (timer.rest ? " · then " + timer.rest + " min break" : "");
+    return timer.focus + "′ εστίαση" + (timer.rest ? " · μετά " + timer.rest + "′ παύση" : "");
+  }
+  function manualTimerReason(focus, rest, lang) {
+    if (lang === "en") return "You chose " + focus + " minutes of focus" + (rest ? ". A " + rest + "-minute break is suggested afterward." : ". This uses your full available time.");
+    return "Επέλεξες " + focus + "′ εστίασης" + (rest ? ". Το πλάνο προτείνει μετά παύση " + rest + "′." : "· είναι όλος ο διαθέσιμος χρόνος σου.");
   }
   function recommend(input) {
     var v = normalized(input);
@@ -66,11 +84,11 @@
   }
   function createPlan(input, lang, documentText) {
     var v = normalized(input);
-    var timer = recommend(v);
+    var recommendedTimer = recommend(v);
+    var timer = recommendedTimer;
     var en = lang === "en";
     var topic = v.topic || (en ? "your task" : "την εργασία σου");
     var title = en ? (v.type === "study" ? "Study " + topic : "Task: " + topic) : (v.type === "study" ? "Διάβασμα: " + topic : "Task: " + topic);
-    var pattern = timer.rest ? timer.focus + "/" + timer.rest : String(timer.focus) + " min focus";
     var reason;
     if (timer.style === "gentle") reason = en ? "Low energy is a cue to start gently: use Nepsis's 5-minute stage, then take a short reset." : "Με χαμηλή ενέργεια, ξεκίνα ήπια: βάλε το υπάρχον στάδιο Nepsis των 5 λεπτών και μετά κάνε μικρή παύση.";
     else if (timer.style === "deep") reason = en ? "Your time and focus allow a deep block. Nepsis has a 45-minute stage (not 50), followed by a 10-minute break." : "Ο διαθέσιμος χρόνος και η συγκέντρωσή σου σηκώνουν βαθύτερο κύκλο. Το Nepsis έχει στάδιο 45΄ (όχι 50΄) και μετά 10΄ διάλειμμα.";
@@ -79,6 +97,10 @@
     else if (timer.style === "pomodoro") reason = en ? "A familiar 25-minute focus / 5-minute break cycle fits your available time." : "Ένας γνώριμος κύκλος 25΄ συγκέντρωσης / 5΄ παύσης χωρά στον διαθέσιμο χρόνο σου.";
     else if (timer.style === "warmup") reason = en ? "Start with Nepsis's 10-minute warm-up stage and a 3-minute reset." : "Ξεκίνα με το υπάρχον στάδιο ζεστάματος Nepsis των 10΄ και κάνε παύση 3΄.";
     else reason = en ? "Start with Nepsis's 5-minute stage and take a short pause if you have time." : "Ξεκίνα με το υπάρχον στάδιο Nepsis των 5΄ και κάνε μικρή παύση αν έχεις χρόνο.";
+    var recommendedReason = reason;
+    timer = applyFocusChoice(recommendedTimer, v.focusMinutes, v.available, v.energy);
+    if (timer.style === "manual") reason = manualTimerReason(timer.focus, timer.rest, lang);
+    var pattern = timerPattern(timer, lang);
 
     var tasks;
     var questions;
@@ -130,7 +152,7 @@
       tasks[0] = en ? "Review this extracted point from your file: “" + excerpts[0] + "”" : "Μελέτησε αυτό το σημείο από το αρχείο σου: «" + excerpts[0] + "»";
       questions = excerpts.map(function (part) { return (en ? "Explain in your own words: “" : "Εξήγησε με δικά σου λόγια: «") + part + (en ? "”" : "»"); });
     }
-    return { title: title, topic: topic, type: v.type, timer: timer, pattern: pattern, reason: reason, tasks: tasks, questions: questions, quiz: [] };
+    return { title: title, topic: topic, type: v.type, timer: timer, recommendedTimer: recommendedTimer, pattern: pattern, reason: reason, recommendedReason: recommendedReason, tasks: tasks, questions: questions, quiz: [] };
   }
   function readUsage(now) {
     var today = localDay(now);
@@ -221,6 +243,7 @@
     var type = document.getElementById("taskType");
     var energy = document.getElementById("coachEnergy");
     var minutes = document.getElementById("coachMinutes");
+    var focusDuration = document.getElementById("coachFocusMinutes");
     var energyValue = document.getElementById("coachEnergyValue");
     var message = document.getElementById("coachMessage");
     var usageNote = document.getElementById("coachUsage");
@@ -242,7 +265,7 @@
       if (!plan || !result) return;
       tr(document.getElementById("resultTitle"), plan.title, plan.title);
       var pill = document.getElementById("timerPattern");
-      if (pill) pill.textContent = currentLang === "en" ? "Nepsis " + plan.pattern : "Nepsis " + plan.pattern.replace("/", " / ");
+      if (pill) pill.textContent = "Nepsis · " + plan.pattern;
       tr(document.getElementById("timerWhy"), plan.reason, plan.reason);
       appendItems(document.getElementById("microTasks"), plan.tasks);
       appendItems(document.getElementById("studyQuestions"), plan.questions);
@@ -250,10 +273,32 @@
       if (quizBlock) { appendItems(document.getElementById("recallQuiz"), (plan.quiz || []).map(function (item) { return item.question + " — " + item.answer; })); quizBlock.hidden = !(plan.quiz && plan.quiz.length); }
       if (activeTimerLink) {
         activeTimerLink.href = "practice.html?coachStart=" + encodeURIComponent(plan.timer.focus) + "#stage-" + encodeURIComponent(plan.timer.focus);
-        activeTimerLink.textContent = currentLang === "en" ? "Open and start the Nepsis timer" : "Άνοιξε και ξεκίνα το χρονόμετρο Nepsis";
+        activeTimerLink.textContent = currentLang === "en" ? "Start " + plan.timer.focus + " min on the Nepsis timer" : "Ξεκίνα " + plan.timer.focus + "′ στο χρονόμετρο Nepsis";
       }
       result.hidden = false;
       if (upsell) upsell.hidden = false;
+    }
+    function formValues() {
+      return normalized({ type: type.value, topic: topic.value, energy: energy.value, available: minutes.value, focusMinutes: focusDuration ? focusDuration.value : 0 });
+    }
+    function syncFocusOptions() {
+      if (!focusDuration) return;
+      var available = Number(minutes.value) || 0;
+      Array.prototype.forEach.call(focusDuration.options, function (option) {
+        var value = Number(option.value);
+        if (value) option.disabled = value > available;
+      });
+      if (focusDuration.selectedOptions.length && focusDuration.selectedOptions[0].disabled) focusDuration.value = "0";
+    }
+    function updateFocusChoice() {
+      syncFocusOptions();
+      if (!lastPlan) return;
+      var values = formValues();
+      var baseTimer = lastPlan.recommendedTimer || recommend(values);
+      lastPlan.timer = applyFocusChoice(baseTimer, values.focusMinutes, values.available, values.energy);
+      lastPlan.pattern = timerPattern(lastPlan.timer, currentLang);
+      lastPlan.reason = lastPlan.timer.style === "manual" ? manualTimerReason(lastPlan.timer.focus, lastPlan.timer.rest, currentLang) : (lastPlan.recommendedReason || lastPlan.reason);
+      renderPlan(lastPlan);
     }
     function showUpsellLimit() {
       if (message) {
@@ -281,9 +326,12 @@
       var rest = Number(data.timer.breakMinutes);
       if (!Number.isInteger(rest) || rest < 0 || rest > 15) rest = timer.rest;
       rest = Math.min(rest, Math.max(0, values.available - focus));
+      var recommendedTimer = { focus: focus, rest: rest, style: "ai", available: values.available, energy: values.energy };
+      var selectedTimer = applyFocusChoice(recommendedTimer, values.focusMinutes, values.available, values.energy);
+      var recommendedReason = String(data.timer.why || "").slice(0, 420);
       return { title: currentLang === "en" ? "Study & focus: " + values.topic : "Μελέτη και συγκέντρωση: " + values.topic,
-        topic: values.topic, type: values.type, timer: { focus: focus, rest: rest, style: "ai", available: values.available, energy: values.energy },
-        pattern: rest ? focus + "/" + rest : String(focus) + " min focus", reason: String(data.timer.why || "").slice(0, 420),
+        topic: values.topic, type: values.type, timer: selectedTimer, recommendedTimer: recommendedTimer,
+        pattern: timerPattern(selectedTimer, currentLang), reason: selectedTimer.style === "manual" ? manualTimerReason(selectedTimer.focus, selectedTimer.rest, currentLang) : recommendedReason, recommendedReason: recommendedReason,
         tasks: data.steps.slice(0, 6).map(function (item) { return String(item).slice(0, 420); }),
         questions: data.questions.slice(0, 5).map(function (item) { return String(item).slice(0, 280); }),
         quiz: Array.isArray(data.quiz) ? data.quiz.slice(0, 8).filter(function (item) { return item && item.question && item.answer; }).map(function (item) { return { question: String(item.question).slice(0, 280), answer: String(item.answer).slice(0, 420) }; }) : [] };
@@ -291,7 +339,7 @@
     async function submit(event) {
       event.preventDefault();
       if (message) { message.textContent = ""; message.classList.remove("coach-error"); }
-      var values = normalized({ type: type.value, topic: topic.value, energy: energy.value, available: minutes.value });
+      var values = formValues();
       if (!values.topic) {
         if (message) message.textContent = currentLang === "en" ? "Add a subject or task to build a plan." : "Γράψε ένα μάθημα ή task για να φτιάξουμε πλάνο.";
         topic.focus();
@@ -313,7 +361,7 @@
           var aiPlan = await requestAiPlan(values, extractedDocumentText);
           if (aiPlan.tasks.length) localPlan.tasks = aiPlan.tasks;
           if (aiPlan.questions.length) localPlan.questions = aiPlan.questions;
-          localPlan.timer = aiPlan.timer; localPlan.pattern = aiPlan.pattern; localPlan.reason = aiPlan.reason || localPlan.reason; localPlan.quiz = aiPlan.quiz;
+          localPlan.timer = aiPlan.timer; localPlan.recommendedTimer = aiPlan.recommendedTimer; localPlan.pattern = aiPlan.pattern; localPlan.reason = aiPlan.reason || localPlan.reason; localPlan.recommendedReason = aiPlan.recommendedReason || localPlan.recommendedReason; localPlan.quiz = aiPlan.quiz;
           lastPlan = localPlan;
           if (message) message.textContent = currentLang === "en" ? "Personalized plan generated with Nepsis AI." : "Το εξατομικευμένο πλάνο δημιουργήθηκε από το Nepsis AI.";
         } catch (error) {
@@ -343,9 +391,13 @@
       });
       if (energyValue) energyValue.textContent = energy.value + "/5";
       renderStatus();
-      if (lastPlan && !document.getElementById("aiConsent")?.checked) { lastPlan = createPlan({ type: type.value, topic: topic.value, energy: energy.value, available: minutes.value }, currentLang, extractedDocumentText); renderPlan(lastPlan); }
+      if (lastPlan && !document.getElementById("aiConsent")?.checked) { lastPlan = createPlan({ type: type.value, topic: topic.value, energy: energy.value, available: minutes.value, focusMinutes: focusDuration ? focusDuration.value : 0 }, currentLang, extractedDocumentText); renderPlan(lastPlan); }
     }
     form.addEventListener("submit", submit);
+    if (focusDuration) focusDuration.addEventListener("change", updateFocusChoice);
+    minutes.addEventListener("input", updateFocusChoice);
+    minutes.addEventListener("change", updateFocusChoice);
+    syncFocusOptions();
     energy.addEventListener("input", function () { if (energyValue) energyValue.textContent = energy.value + "/5"; });
     var fileInput = document.getElementById("coachFile");
     var docStatus = document.getElementById("coachDocumentStatus");
@@ -410,6 +462,6 @@
     });
   }
 
-  window.NepsisCoach = Object.freeze({ recommend: recommend, createPlan: createPlan, normalize: normalized, guestLimit: GUEST_LIMIT, readGuestUsage: readUsage, consumeGuestPlan: consumeGuestPlan });
+  window.NepsisCoach = Object.freeze({ recommend: recommend, createPlan: createPlan, normalize: normalized, applyFocusChoice: applyFocusChoice, timerPattern: timerPattern, guestLimit: GUEST_LIMIT, readGuestUsage: readUsage, consumeGuestPlan: consumeGuestPlan });
   if (document && typeof document.getElementById === "function") init();
 })(typeof window === "undefined" ? globalThis : window, typeof document === "undefined" ? null : document);

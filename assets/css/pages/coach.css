@@ -1,95 +1,110 @@
-/* Separate visual scope for the AI Study & Focus Coach MVP. */
-.coach-page{min-height:100vh;background:var(--bg,#fbf8f3);color:var(--fg,#1f2933);font-family:Nunito,system-ui,sans-serif}
-.coach-header{border-bottom:1px solid var(--border,#e5e1da);background:var(--surface,#fff)}
-.coach-header-inner,.coach-wrap{width:min(100% - 32px,920px);margin-inline:auto}
-.coach-header-inner{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.coach-brand{font-weight:900;text-decoration:none;color:inherit;font-size:1.2rem}
-.coach-brand .dot{display:inline-block;width:10px;height:10px;margin-right:8px;border-radius:50%;background:#f0702a}
-.coach-controls{display:flex;align-items:center;gap:12px}
-.coach-controls a{color:inherit}
-.coach-lang{display:flex;gap:4px}
-.coach-lang button{border:1px solid var(--border,#e5e1da);background:transparent;color:inherit;border-radius:8px;padding:7px 9px;font:inherit;cursor:pointer}
-.coach-lang button[aria-pressed=true]{border-color:#f0702a;color:#b84c15;font-weight:800}
-.coach-wrap{padding:42px 0 64px}
-.coach-hero{margin-bottom:22px}
-.coach-kicker{color:#b84c15;font-size:.78rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
-.coach-hero h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.08;margin:.45rem 0 .8rem}
-.coach-hero p{max-width:64ch;color:var(--muted,#626d78);line-height:1.6}
-.coach-card{background:var(--surface,#fff);border:1px solid var(--border,#e5e1da);border-radius:20px;padding:clamp(18px,4vw,30px);box-shadow:0 10px 32px rgba(38,32,22,.06);margin:18px 0}
-.coach-card h2{font-size:1.35rem;margin:0 0 8px}
-.coach-note{color:var(--muted,#626d78);font-size:.94rem;line-height:1.55;margin:.45rem 0 1rem}
-.coach-form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.coach-field{display:flex;flex-direction:column;gap:7px}
-.coach-field-wide{grid-column:1/-1}
-.coach-field label,.coach-label{font-weight:800}
-.coach-field input,.coach-field select{width:100%;min-height:46px;padding:10px 12px;border:1px solid var(--border,#d4d0c8);border-radius:12px;background:var(--surface,#fff);color:inherit;font:inherit}
-.coach-field input:focus,.coach-field select:focus,.coach-lang button:focus-visible,.coach-btn:focus-visible,.coach-link:focus-visible{outline:3px solid rgba(240,112,42,.35);outline-offset:2px}
-.coach-range-row{display:flex;align-items:center;gap:12px}
-.coach-range-row input{padding:0;min-height:34px;accent-color:#f0702a}
-.coach-range-row output{min-width:44px;font-weight:900}
-.coach-form-actions{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.coach-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:12px 18px;background:#f0702a;color:#fff;text-decoration:none;font:inherit;font-weight:900;cursor:pointer;min-height:46px}
-.coach-btn:hover{background:#d85c20}
-.coach-btn-secondary{background:transparent;border:1px solid var(--border,#d4d0c8);color:inherit}
-.coach-btn-secondary:hover{background:rgba(120,120,120,.08)}
-.coach-status{min-height:1.4em;color:var(--muted,#626d78);font-size:.9rem}
-.coach-result[hidden],.coach-upsell[hidden],.coach-disabled[hidden],.coach-app[hidden]{display:none}
-.coach-result-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
-.coach-timer-pill{display:inline-flex;padding:8px 12px;border-radius:999px;background:#fff2e8;color:#9a3e10;font-weight:900}
-.coach-list{padding-left:1.3rem;line-height:1.6}
-.coach-list li{margin:.45rem 0}
-.coach-q-list{display:grid;gap:9px;list-style:none;padding:0}
-.coach-q-list li{padding:11px 13px;border-radius:12px;background:var(--bg,#fbf8f3)}
-.coach-upsell{border-color:#f1d1b8;background:linear-gradient(130deg,#fffaf6,#fff)}
-.coach-upsell p{margin:.4rem 0 1rem;line-height:1.55}
-.coach-privacy{font-size:.86rem;color:var(--muted,#626d78);line-height:1.55}
-.coach-disabled{border-left:4px solid #f0702a}
-.coach-foot{margin-top:24px;color:var(--muted,#626d78);font-size:.86rem;line-height:1.55}
-.coach-error{color:#a52924;font-weight:700}
-.coach-upload-field{margin-top:18px}
-.coach-consent{display:flex;align-items:flex-start;gap:10px;margin-top:16px;line-height:1.5;font-size:.92rem}
-.coach-consent input{width:18px;height:18px;flex:0 0 auto;margin-top:3px;accent-color:#f0702a}
-#coachDocumentStatus{margin:4px 0}
-#saveDocument{align-self:flex-start}
-#quizBlock{margin-top:16px;padding-top:12px;border-top:1px solid var(--border,#e5e1da)}
-@media(max-width:640px){.coach-wrap{padding-top:28px}.coach-form{grid-template-columns:1fr}.coach-field-wide,.coach-form-actions{grid-column:auto}.coach-header-inner{min-height:60px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
-
-
-/* Same look as the rest of Nepsis: site colours, header and menu.
-   Dark mode keeps the colours from theme.css. */
-html:not([data-theme="dark"]) .coach-page{--bg:#FFF8EE;--fg:#3A2418;--card:#FFFDF8;--surface:#FFFDF8;--muted:#7A5F50;--orange:#F0702A;--ember:#D8392B;--border:#EEDCC8}
-html[data-theme="dark"] .coach-page{--surface:var(--card)}
-.coach-page{background:var(--bg);background-image:radial-gradient(48% 40% at 85% 0%,rgba(247,209,90,.16),transparent 70%)}
-.coach-header{position:sticky;top:0;z-index:70;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding-top:env(safe-area-inset-top)}
-.coach-header-inner{min-height:64px}
-.coach-brand{display:flex;align-items:center;gap:10px;font-size:1.3rem;letter-spacing:-.045em;color:var(--fg)}
-.coach-page .coach-brand .dot{width:18px;height:18px;flex:0 0 18px;margin:0;border-radius:50%;background:var(--orange)}
-.coach-controls{gap:10px}
-.coach-lang{border:1.5px solid var(--border);border-radius:999px;padding:2px;gap:2px;background:var(--card)}
-.coach-lang button{border:0;border-radius:999px;padding:6px 11px;font-size:.8rem;font-weight:800}
-.coach-lang button[aria-pressed=true]{background:var(--orange);color:#fff}
-.coach-page .menu-btn{width:42px;height:42px;flex:0 0 42px;padding:0;border-radius:50%;border:1.5px solid var(--border);background:var(--card);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.coach-page .menu-btn span{display:block;width:18px;height:2px;border-radius:2px;background:var(--fg)}
-.coach-page .menu-btn:hover{border-color:var(--orange)}
-.coach-page .drawer{position:fixed;inset:0 0 0 auto;z-index:60;display:flex;flex-direction:column;transform:translateX(110%);visibility:hidden;transition:transform .25s ease,visibility 0s linear .25s}
-.coach-page .drawer.open{transform:none;visibility:visible;transition:transform .25s ease}
-.coach-page .drawer a{text-decoration:none}
-.coach-page .drawer .menu-group summary{position:relative;list-style:none;cursor:pointer}
-.coach-page .drawer .menu-group summary::-webkit-details-marker{display:none}
-.coach-page .drawer .menu-group summary::after{position:absolute;top:50%}
-.coach-page .scrim{position:fixed;inset:0;z-index:55;background:rgba(40,20,10,.35);opacity:0;pointer-events:none;transition:opacity .25s ease}
-.coach-page .scrim.open{opacity:1;pointer-events:auto}
-.coach-kicker{color:var(--ember)}
-.coach-hero h1{font-weight:900;letter-spacing:-.03em;color:var(--fg)}
-.coach-card{background:var(--card);border-color:var(--border);border-radius:24px;box-shadow:0 14px 40px rgba(120,60,30,.08)}
-.coach-btn{border-radius:999px;background:var(--orange)}
-.coach-btn:hover{background:var(--ember)}
-.coach-btn-secondary{background:transparent;color:var(--fg)}
-.coach-btn-secondary:hover{background:color-mix(in srgb,var(--orange) 10%,transparent)}
-.coach-field input,.coach-field select{border-color:var(--border);background:var(--card)}
-.coach-timer-pill{background:color-mix(in srgb,var(--orange) 14%,transparent);color:var(--ember)}
-.coach-status:empty{display:none}
-@media(max-width:430px){.coach-controls{gap:6px}.coach-lang button{padding:5px 8px;font-size:.72rem}.coach-page .menu-btn{width:38px;height:38px;flex-basis:38px}}
-@media(prefers-reduced-motion:reduce){.coach-page .drawer,.coach-page .scrim{transition:none}}
-.coach-page .drawer:focus{outline:none}
+/* Nepsis Coach: quiet surfaces, shared site tokens, and clear focus states. */
+.coach-page {
+  --coach-canvas: var(--np-canvas, #151516);
+  --coach-surface: var(--np-surface, #1d1d20);
+  --coach-raised: var(--np-surface-raised, #252529);
+  --coach-text: var(--np-text, #f5f3f0);
+  --coach-muted: var(--np-muted, #b8b3ae);
+  --coach-border: var(--np-border, rgba(255,255,255,.12));
+  --coach-accent: var(--np-accent, #f19a63);
+  --coach-on-accent: var(--np-on-accent, #1b1715);
+  min-height: 100vh;
+  color: var(--coach-text);
+  background: var(--coach-canvas);
+  background-image: none;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.coach-header {
+  position: sticky;
+  top: 0;
+  z-index: 70;
+  padding-top: env(safe-area-inset-top);
+  border-bottom: 1px solid var(--coach-border);
+  background: var(--np-glass, var(--coach-surface));
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.coach-header-inner,.coach-wrap { width: min(100% - 32px, 860px); margin-inline: auto; }
+.coach-header-inner { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.coach-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--coach-text); font-size: 1.2rem; font-weight: 800; letter-spacing: -.025em; text-decoration: none; }
+.coach-page .coach-brand .dot { width: 10px; height: 10px; flex: 0 0 10px; margin: 0; border-radius: 50%; background: var(--coach-accent); }
+.coach-controls { display: flex; align-items: center; gap: 10px; }
+.coach-controls a { color: inherit; }
+.coach-lang { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--coach-border); border-radius: 999px; background: var(--coach-surface); }
+.coach-lang button { min-height: 36px; padding: 6px 11px; border: 0; border-radius: 999px; color: var(--coach-text); background: transparent; font: inherit; cursor: pointer; }
+.coach-lang button[aria-pressed="true"] { color: var(--coach-on-accent); background: var(--coach-accent); font-weight: 800; }
+.coach-page .menu-btn { width: 42px; height: 42px; flex: 0 0 42px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0; border: 1px solid var(--coach-border); border-radius: 50%; color: var(--coach-text); background: var(--coach-surface); cursor: pointer; }
+.coach-page .menu-btn span { width: 18px; height: 2px; border-radius: 2px; background: currentColor; }
+.coach-page .menu-btn:hover { border-color: var(--coach-accent); }
+.coach-page .drawer { position: fixed; inset: 0 0 0 auto; z-index: 60; display: flex; flex-direction: column; transform: translateX(110%); visibility: hidden; transition: transform .22s ease, visibility 0s linear .22s; }
+.coach-page .drawer.open { transform: none; visibility: visible; transition: transform .22s ease; }
+.coach-page .drawer a { text-decoration: none; }
+.coach-page .drawer .menu-group summary { position: relative; list-style: none; cursor: pointer; }
+.coach-page .drawer .menu-group summary::-webkit-details-marker { display: none; }
+.coach-page .scrim { position: fixed; inset: 0; z-index: 55; background: var(--np-scrim, rgba(0,0,0,.55)); opacity: 0; pointer-events: none; transition: opacity .22s ease; }
+.coach-page .scrim.open { opacity: 1; pointer-events: auto; }
+.coach-wrap { padding: 44px 0 64px; }
+.coach-hero { max-width: 64ch; margin-bottom: 26px; }
+.coach-kicker { color: var(--coach-accent); font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.coach-hero h1 { margin: .45rem 0 .75rem; color: var(--coach-text); font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; letter-spacing: -.04em; line-height: 1.08; }
+.coach-hero p { max-width: 62ch; margin: 0; color: var(--coach-muted); line-height: 1.65; }
+.coach-card { margin: 16px 0; padding: clamp(18px, 3vw, 28px); border: 1px solid var(--coach-border); border-radius: 16px; background: var(--coach-raised); box-shadow: none; }
+.coach-card h2 { margin: 0 0 8px; color: var(--coach-text); font-size: 1.3rem; letter-spacing: -.02em; }
+.coach-card h3 { margin: 22px 0 10px; color: var(--coach-text); font-size: 1.05rem; }
+.coach-note { margin: .45rem 0 1rem; color: var(--coach-muted); font-size: .94rem; line-height: 1.6; }
+.coach-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+.coach-field { min-width: 0; display: flex; flex-direction: column; gap: 7px; }
+.coach-field-wide { grid-column: 1 / -1; }
+.coach-field label,.coach-label { color: var(--coach-text); font-weight: 700; }
+.coach-field input:not([type="range"]):not([type="file"]),.coach-field select { width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid var(--coach-border); border-radius: 10px; color: var(--coach-text); background: var(--coach-surface); font: inherit; }
+.coach-field input[type="file"] { max-width: 100%; min-height: 44px; color: var(--coach-muted); font: inherit; }
+.coach-field input[type="range"] { min-width: 0; min-height: 36px; accent-color: var(--coach-accent); }
+.coach-field select option { color: var(--coach-text); background: var(--coach-surface); }
+.coach-field input:focus-visible,.coach-field select:focus-visible,.coach-lang button:focus-visible,.coach-btn:focus-visible,.coach-link:focus-visible,.coach-page .menu-btn:focus-visible { outline: 3px solid var(--np-focus, var(--coach-accent)); outline-offset: 3px; }
+.coach-range-row { display: flex; align-items: center; gap: 12px; }
+.coach-range-row input { flex: 1; }
+.coach-range-row output { min-width: 48px; color: var(--coach-text); font-weight: 800; }
+.coach-form-actions { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.coach-btn { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 18px; border: 1px solid var(--coach-accent); border-radius: 10px; color: var(--coach-on-accent); background: var(--coach-accent); font: inherit; font-weight: 800; text-align: center; text-decoration: none; cursor: pointer; }
+.coach-btn:hover { filter: brightness(.94); }
+.coach-btn:disabled { opacity: .6; cursor: wait; }
+.coach-btn-secondary { border-color: var(--coach-border); color: var(--coach-text); background: transparent; }
+.coach-btn-secondary:hover { background: var(--np-accent-soft, rgba(241,154,99,.12)); }
+.coach-status { min-height: 1.4em; color: var(--coach-muted); font-size: .9rem; line-height: 1.5; }
+.coach-status:empty { display: none; }
+.coach-error { color: #ff8d84; font-weight: 700; }
+.coach-result[hidden],.coach-upsell[hidden],.coach-disabled[hidden],.coach-app[hidden] { display: none; }
+.coach-result-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.coach-timer-pill { display: inline-flex; align-items: center; min-height: 40px; padding: 8px 12px; border: 1px solid var(--np-accent-border, var(--coach-border)); border-radius: 999px; color: var(--coach-accent); background: var(--np-accent-soft, transparent); font-weight: 800; }
+.coach-list { padding-left: 1.3rem; color: var(--coach-text); line-height: 1.65; }
+.coach-list li { margin: .45rem 0; }
+.coach-q-list { display: grid; gap: 8px; padding: 0; list-style: none; }
+.coach-q-list li { padding: 11px 12px; border: 1px solid var(--coach-border); border-radius: 10px; color: var(--coach-text); background: var(--coach-surface); line-height: 1.5; }
+.coach-upsell { border-color: var(--np-accent-border, var(--coach-border)); background: var(--coach-surface); }
+.coach-upsell p { margin: .4rem 0 1rem; color: var(--coach-muted); line-height: 1.6; }
+.coach-privacy,.coach-foot { color: var(--coach-muted); font-size: .88rem; line-height: 1.55; }
+.coach-disabled { border-left: 3px solid var(--coach-accent); }
+.coach-foot { margin-top: 22px; }
+.coach-upload-field { margin-top: 18px; }
+.coach-consent { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; color: var(--coach-text); font-size: .92rem; line-height: 1.55; }
+.coach-consent input { width: 20px; height: 20px; flex: 0 0 auto; margin: 2px 0 0; accent-color: var(--coach-accent); }
+#coachDocumentStatus { margin: 4px 0; }
+#saveDocument { align-self: flex-start; }
+#quizBlock { margin-top: 18px; padding-top: 8px; border-top: 1px solid var(--coach-border); }
+@media (max-width: 680px) {
+  .coach-wrap { padding-top: 30px; }
+  .coach-form { grid-template-columns: minmax(0, 1fr); }
+  .coach-field-wide,.coach-form-actions { grid-column: auto; }
+  .coach-header-inner { min-height: 60px; }
+}
+@media (max-width: 430px) {
+  .coach-controls { gap: 6px; }
+  .coach-lang button { padding-inline: 9px; }
+  .coach-page .menu-btn { width: 40px; height: 40px; flex-basis: 40px; }
+  .coach-result-top { display: block; }
+  .coach-timer-pill { margin-top: 10px; }
+  .coach-form-actions .coach-btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coach-page *, .coach-page *::before, .coach-page *::after { scroll-behavior: auto !important; transition: none !important; }
+}

@@ -10,11 +10,8 @@
   <link rel="stylesheet" href="assets/css/components.css">
   <link rel="stylesheet" href="assets/css/theme.css">
   <link rel="stylesheet" href="assets/css/pages/coach.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <script>
-    (function(){try{var p=localStorage.getItem('nepsis-theme')||'system';var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='dark'||(p!=='light'&&d)?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}})();
+    (function(){try{var p=localStorage.getItem('nepsis-theme')||'dark';var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='dark'||(p!=='light'&&d)?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}})();
   </script>
 </head>
 <body class="coach-page">
@@ -104,8 +101,21 @@
             <small id="energyHelp" class="coach-privacy" data-el="1 = χαμηλή · 5 = υψηλή" data-en="1 = low · 5 = high">1 = χαμηλή · 5 = υψηλή</small>
           </div>
           <div class="coach-field">
-            <label for="coachMinutes" data-el="Διαθέσιμος χρόνος (λεπτά)" data-en="Available time (minutes)">Διαθέσιμος χρόνος (λεπτά)</label>
-            <input id="coachMinutes" type="number" min="5" max="180" step="5" value="45" required inputmode="numeric">
+            <label for="coachMinutes" data-el="Συνολικός διαθέσιμος χρόνος (λεπτά)" data-en="Total time available (minutes)">Συνολικός διαθέσιμος χρόνος (λεπτά)</label>
+            <input id="coachMinutes" type="number" min="5" max="180" step="5" value="45" required inputmode="numeric" aria-describedby="coachMinutesHelp">
+            <small id="coachMinutesHelp" class="coach-privacy" data-el="Ο χρόνος σου συνολικά, μαζί με τυχόν παύση." data-en="Your total time, including any break.">Ο χρόνος σου συνολικά, μαζί με τυχόν παύση.</small>
+          </div>
+          <div class="coach-field coach-field-wide">
+            <label for="coachFocusMinutes" data-el="Διάρκεια χρονόμετρου" data-en="Timer focus duration">Διάρκεια χρονόμετρου</label>
+            <select id="coachFocusMinutes" aria-describedby="coachFocusHelp">
+              <option value="0" data-el="Αυτόματη πρόταση Coach" data-en="Coach recommendation">Αυτόματη πρόταση Coach</option>
+              <option value="5" data-el="5 λεπτά" data-en="5 minutes">5 λεπτά</option>
+              <option value="10" data-el="10 λεπτά" data-en="10 minutes">10 λεπτά</option>
+              <option value="25" data-el="25 λεπτά" data-en="25 minutes">25 λεπτά</option>
+              <option value="45" data-el="45 λεπτά" data-en="45 minutes">45 λεπτά</option>
+              <option value="60" data-el="60 λεπτά" data-en="60 minutes">60 λεπτά</option>
+            </select>
+            <small id="coachFocusHelp" class="coach-privacy" data-el="Διάλεξε εσύ ή άφησε τον Coach να προτείνει. Διαθέσιμες είναι οι υπάρχουσες διάρκειες του Nepsis μέσα στον χρόνο σου." data-en="Choose a duration or let the Coach recommend one. Only existing Nepsis stages that fit your time are available.">Διάλεξε εσύ ή άφησε τον Coach να προτείνει. Διαθέσιμες είναι οι υπάρχουσες διάρκειες του Nepsis μέσα στον χρόνο σου.</small>
           </div>
           <div class="coach-form-actions">
             <button class="coach-btn" type="submit" data-el="Φτιάξε το πλάνο μου" data-en="Build my plan">Φτιάξε το πλάνο μου</button>
@@ -145,7 +155,7 @@
         </div>
         <div class="coach-form-actions">
           <a id="launchTimer" class="coach-btn" href="practice.html#stageGrid" data-el="Άνοιξε και ξεκίνα το χρονόμετρο Nepsis" data-en="Open and start the Nepsis timer">Άνοιξε και ξεκίνα το χρονόμετρο Nepsis</a>
-          <span class="coach-privacy" data-el="Θα ανοίξει το ήδη υπάρχον χρονόμετρο στην προτεινόμενη διάρκεια." data-en="This opens the existing timer at the recommended duration.">Θα ανοίξει το ήδη υπάρχον χρονόμετρο στην προτεινόμενη διάρκεια.</span>
+          <span class="coach-privacy" data-el="Ξεκινά το υπάρχον χρονόμετρο στη διάρκεια εστίασης που εμφανίζεται παραπάνω." data-en="Starts the existing timer at the focus duration shown above.">Ξεκινά το υπάρχον χρονόμετρο στη διάρκεια εστίασης που εμφανίζεται παραπάνω.</span>
         </div>
       </section>
 
