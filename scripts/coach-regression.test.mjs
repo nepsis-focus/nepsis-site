@@ -96,10 +96,10 @@ test("uploads extract locally, disclose AI forwarding, and save only on explicit
   assert.match(html, /https:\/\/whop\.com\/nepsis-focus/);
 });
 
-test("timer bridge allowlists stages and clicks the existing Start control", () => {
+test("timer bridge bounds custom minutes and clicks the existing Start control", () => {
   assert.match(practiceHtml, /coach-timer-bridge\.js/);
   assert.match(timerBridge, /coachStart/);
-  assert.match(timerBridge, /\[5, 10, 25, 45, 60\]/);
+  assert.match(timerBridge, /minutes < 5 \|\| minutes > 180/);
   assert.match(timerBridge, /card\.querySelector\("\[data-start\]"\)/);
   assert.match(timerBridge, /start\.click\(\)/);
   assert.match(coachSource, /practice\.html\?coachStart=/);
@@ -125,7 +125,7 @@ test("private file policies and Edge quota RPC are owner-restricted", () => {
 });
 
 test("coach files are included in the versioned offline app shell", () => {
-  assert.match(sw, /nepsis-v13/);
+  assert.match(sw, /nepsis-v14/);
   assert.match(sw, /asset\('coach\.html'\)/);
   assert.match(sw, /asset\('assets\/js\/pages\/coach\.js'\)/);
   assert.match(sw, /asset\('assets\/js\/pages\/coach-timer-bridge\.js'\)/);

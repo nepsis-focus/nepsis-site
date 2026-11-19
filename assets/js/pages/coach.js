@@ -28,16 +28,17 @@
     var type = input && input.type === "task" ? "task" : "study";
     var energy = clamp(Math.round(Number(input && input.energy) || 3), 1, 5);
     var available = clamp(Math.round(Number(input && input.available) || 5), 5, 180);
-    var focusMinutes = Math.round(Number(input && input.focusMinutes) || 0);
-    if (STAGES.indexOf(focusMinutes) < 0 || focusMinutes > available) focusMinutes = 0;
+    var focusCandidate = input && input.focusMinutes !== "" ? Number(input.focusMinutes) : 0;
+    var focusMinutes = Number.isInteger(focusCandidate) ? focusCandidate : 0;
+    if (focusMinutes !== 0 && (focusMinutes < 5 || focusMinutes > 180 || focusMinutes > available)) focusMinutes = 0;
     return { topic: topic, type: type, energy: energy, available: available, focusMinutes: focusMinutes };
   }
   function applyFocusChoice(timer, focusMinutes, available, energy) {
-    var requested = Math.round(Number(focusMinutes) || 0);
+    var requested = focusMinutes === "" || focusMinutes == null ? 0 : Number(focusMinutes);
     var base = timer;
     if (!base || base.focus > available) base = recommend({ available: available, energy: energy });
     else base = { focus: base.focus, rest: Math.min(Number(base.rest) || 0, Math.max(0, available - base.focus)), style: base.style, available: available, energy: energy };
-    if (STAGES.indexOf(requested) < 0 || requested > available) return base;
+    if (!Number.isInteger(requested) || requested < 5 || requested > 180 || requested > available) return base;
     return { focus: requested, rest: Math.min(Number(base.rest) || 0, Math.max(0, available - requested)), style: "manual", available: available, energy: energy };
   }
   function timerPattern(timer, lang) {
@@ -251,6 +252,7 @@
     var upsell = document.getElementById("coachUpsell");
     var accountStatus = document.getElementById("coachAccountStatus");
     var activeTimerLink = document.getElementById("launchTimer");
+    var recommendedFocusButton = document.getElementById("coachUseRecommended");
 
     function tr(el, elText, enText) { if (el) el.textContent = currentLang === "en" ? enText : elText; }
     function usage() { return readUsage(); }
@@ -274,6 +276,8 @@
       if (activeTimerLink) {
         activeTimerLink.href = "practice.html?coachStart=" + encodeURIComponent(plan.timer.focus) + "#stage-" + encodeURIComponent(plan.timer.focus);
         activeTimerLink.textContent = currentLang === "en" ? "Start " + plan.timer.focus + " min on the Nepsis timer" : "Ξεκίνα " + plan.timer.focus + "′ στο χρονόμετρο Nepsis";
+        activeTimerLink.setAttribute("aria-disabled", "false");
+        activeTimerLink.classList.remove("is-disabled");
       }
       result.hidden = false;
       if (upsell) upsell.hidden = false;
@@ -281,18 +285,28 @@
     function formValues() {
       return normalized({ type: type.value, topic: topic.value, energy: energy.value, available: minutes.value, focusMinutes: focusDuration ? focusDuration.value : 0 });
     }
-    function syncFocusOptions() {
-      if (!focusDuration) return;
-      var available = Number(minutes.value) || 0;
-      Array.prototype.forEach.call(focusDuration.options, function (option) {
-        var value = Number(option.value);
-        if (value) option.disabled = value > available;
-      });
-      if (focusDuration.selectedOptions.length && focusDuration.selectedOptions[0].disabled) focusDuration.value = "0";
+    function syncDurationField() {
+      if (!focusDuration) return true;
+      var available = Number(minutes.value);
+      var raw = focusDuration.value;
+      var max = Number.isInteger(available) && available >= 5 && available <= 180 ? available : 180;
+      focusDuration.max = String(max);
+      var chosen = raw === "" ? 0 : Number(raw);
+      var invalid = raw !== "" && (!Number.isInteger(chosen) || chosen < 5 || chosen > 180 || chosen > max);
+      focusDuration.setCustomValidity(invalid ? (currentLang === "en" ? "Choose a whole number from 5 minutes up to the time available." : "Διάλεξε ακέραιο αριθμό από 5 λεπτά έως τον διαθέσιμο χρόνο.") : "");
+      focusDuration.setAttribute("aria-invalid", invalid ? "true" : "false");
+      return !invalid && focusDuration.validity.valid && minutes.validity.valid;
+    }
+    function disableTimerLaunch() {
+      if (!activeTimerLink) return;
+      activeTimerLink.removeAttribute("href");
+      activeTimerLink.setAttribute("aria-disabled", "true");
+      activeTimerLink.classList.add("is-disabled");
     }
     function updateFocusChoice() {
-      syncFocusOptions();
+      var durationValid = syncDurationField();
       if (!lastPlan) return;
+      if (!durationValid) { disableTimerLaunch(); return; }
       var values = formValues();
       var baseTimer = lastPlan.recommendedTimer || recommend(values);
       lastPlan.timer = applyFocusChoice(baseTimer, values.focusMinutes, values.available, values.energy);
@@ -339,6 +353,7 @@
     async function submit(event) {
       event.preventDefault();
       if (message) { message.textContent = ""; message.classList.remove("coach-error"); }
+      if (form && !form.reportValidity()) return;
       var values = formValues();
       if (!values.topic) {
         if (message) message.textContent = currentLang === "en" ? "Add a subject or task to build a plan." : "Γράψε ένα μάθημα ή task για να φτιάξουμε πλάνο.";
@@ -392,13 +407,34 @@
       if (energyValue) energyValue.textContent = energy.value + "/5";
       renderStatus();
       if (lastPlan && !document.getElementById("aiConsent")?.checked) { lastPlan = createPlan({ type: type.value, topic: topic.value, energy: energy.value, available: minutes.value, focusMinutes: focusDuration ? focusDuration.value : 0 }, currentLang, extractedDocumentText); renderPlan(lastPlan); }
+      if (!syncDurationField()) disableTimerLaunch();
     }
     form.addEventListener("submit", submit);
-    if (focusDuration) focusDuration.addEventListener("change", updateFocusChoice);
+    if (focusDuration) {
+      focusDuration.addEventListener("input", updateFocusChoice);
+      focusDuration.addEventListener("change", updateFocusChoice);
+    }
+    if (recommendedFocusButton) recommendedFocusButton.addEventListener("click", function () {
+      if (!focusDuration) return;
+      focusDuration.value = "";
+      updateFocusChoice();
+      focusDuration.focus();
+    });
     minutes.addEventListener("input", updateFocusChoice);
     minutes.addEventListener("change", updateFocusChoice);
-    syncFocusOptions();
-    energy.addEventListener("input", function () { if (energyValue) energyValue.textContent = energy.value + "/5"; });
+    syncDurationField();
+    var energyChoices = document.querySelectorAll('input[name="coachEnergyChoice"]');
+    Array.prototype.forEach.call(energyChoices, function (choice) {
+      choice.addEventListener("change", function () {
+        if (!choice.checked) return;
+        energy.value = choice.value;
+        if (energyValue) energyValue.textContent = choice.value + "/5";
+        if (lastPlan && !document.getElementById("aiConsent")?.checked) {
+          lastPlan = createPlan({ type: type.value, topic: topic.value, energy: energy.value, available: minutes.value, focusMinutes: focusDuration ? focusDuration.value : 0 }, currentLang, extractedDocumentText);
+          renderPlan(lastPlan);
+        }
+      });
+    });
     var fileInput = document.getElementById("coachFile");
     var docStatus = document.getElementById("coachDocumentStatus");
     var saveDocumentButton = document.getElementById("saveDocument");

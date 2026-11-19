@@ -1,0 +1,5 @@
+[functions.focus-timer]
+verify_jwt = false
+
+[functions.ai-study-coach]
+verify_jwt = false

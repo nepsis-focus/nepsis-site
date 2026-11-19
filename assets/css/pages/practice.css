@@ -1401,3 +1401,8 @@ body.practice-page .stage :is(button, input, summary):focus-visible { outline-of
   body.practice-page .stage .ring::before, body.practice-page .stage .ring .prog,
   body.practice-page .stage.is-complete .msg, body.practice-page .stage.is-complete .after { animation: none !important; }
 }
+@media (min-width: 1000px) {
+  body.practice-page #stageGrid.has-custom-stage { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+body.practice-page .stage-custom { border-color: rgba(240,160,107,.5); background-image: radial-gradient(120% 90% at 50% 0%, rgba(240,160,107,.14), transparent 58%); }
+body.practice-page .stage-custom .top span:first-child { letter-spacing: .08em; }
