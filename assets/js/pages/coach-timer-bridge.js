@@ -10,7 +10,7 @@
   try { params = new URLSearchParams(window.location.search); } catch (e) { return; }
   var value = params.get("coachStart");
   var minutes = Number(value);
-  if (!value || ![5, 10, 25, 45, 60].includes(minutes)) return;
+  if (!value || !Number.isInteger(minutes) || minutes < 5 || minutes > 180) return;
 
   // Remove the one-shot command before starting so a refresh never starts another timer.
   params.delete("coachStart");

@@ -44,6 +44,9 @@ jobs:
       - name: Run progress synchronization regression tests
         run: node --test scripts/progress-sync-regression.test.mjs
 
+      - name: Run Coach duration regression tests
+        run: node --test scripts/coach-duration.test.mjs
+
   browser-smoke:
     needs: validate
     runs-on: ubuntu-latest

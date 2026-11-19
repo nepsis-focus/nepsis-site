@@ -387,21 +387,43 @@
   else window.addEventListener("load", startGlobeLazy);
 
   // ---------- server-verified focus timers ----------
-  const STAGES = [
+  const STANDARD_STAGE_MINUTES = [5, 10, 25, 45, 60];
+  const DEFAULT_STAGES = [
     { min: 5,  el: "Ξεκίνημα", en: "Start",    d: "Ένα μικρό, εύκολο βήμα για να πάρεις μπρος.", de: "A small, easy step to get you started." },
     { min: 10, el: "Ζέσταμα",  en: "Warm-up",  d: "Μάθε να μένεις σε μία εργασία.", de: "Learn to stay with one task." },
     { min: 25, el: "Ρυθμός",   en: "Rhythm",   d: "Ένας πλήρης κύκλος συγκέντρωσης.", de: "One full cycle of focus." },
     { min: 45, el: "Βάθος",    en: "Depth",    d: "Χώρος για δύσκολη, απαιτητική δουλειά.", de: "Room for demanding, focused work." },
     { min: 60, el: "Ροή",      en: "Flow",     d: "Μία ολόκληρη ώρα χωρίς περισπασμούς.", de: "A full hour without distractions." }
   ];
+  function isValidFocusMinutes(value) { return Number.isInteger(value) && value >= 5 && value <= 180; }
+  const customMinutes = new Set();
+  try {
+    const requested = Number(new URLSearchParams(window.location.search).get("coachStart"));
+    if (isValidFocusMinutes(requested) && STANDARD_STAGE_MINUTES.indexOf(requested) < 0) customMinutes.add(requested);
+  } catch (e) {}
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i), match = /^nepsis-timer-session-([0-9]+)$/.exec(key || "");
+      if (!match) continue;
+      const minutes = Number(match[1]);
+      if (!isValidFocusMinutes(minutes) || STANDARD_STAGE_MINUTES.indexOf(minutes) >= 0) continue;
+      const saved = JSON.parse(localStorage.getItem(key) || "null");
+      if (saved && typeof saved.token === "string" && /^[0-9a-f]{64}$/.test(saved.token) &&
+          typeof saved.session_id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(saved.session_id)) customMinutes.add(minutes);
+    }
+  } catch (e) {}
+  const STAGES = DEFAULT_STAGES.concat(Array.from(customMinutes).sort(function (a, b) { return a - b; }).map(function (min) {
+    return { min: min, el: "Δικός σου χρόνος", en: "Your timer", d: "Η διάρκεια που επέλεξες.", de: "The duration you chose.", custom: true };
+  }));
   const C = 2 * Math.PI * 66;
   const TIMER_STORAGE_PREFIX = "nepsis-timer-session-";
   const grid = $("stageGrid");
   const timers = {};
+  if (grid && STAGES.some(function (stage) { return stage.custom; })) grid.classList.add("has-custom-stage");
 
   STAGES.forEach(function (s, i) {
     const card = document.createElement("div");
-    card.className = "card stage";
+    card.className = s.custom ? "card stage stage-custom" : "card stage";
     card.id = "stage-" + s.min;
     card.innerHTML =
       '<span class="stage-folder-tab" aria-hidden="true"><i></i></span>' +
@@ -1390,7 +1412,9 @@
         : st.running
           ? (currentLang === "el" ? "❚❚ Παύση" : "❚❚ Pause")
           : (currentLang === "el" ? "▷ Έναρξη" : "▷ Start");
-      card.querySelector(".top span").textContent = (currentLang === "el" ? "ΣΤΑΔΙΟ " : "STAGE ") + (i + 1);
+      card.querySelector(".top span").textContent = s.custom
+        ? (currentLang === "el" ? "ΔΙΚΟΣ ΣΟΥ ΧΡΟΝΟΣ" : "YOUR TIMER")
+        : (currentLang === "el" ? "ΣΤΑΔΙΟ " : "STAGE ") + (i + 1);
     });
     syncPipLauncher();
   }
@@ -1538,10 +1562,13 @@
     const box = state.el.querySelector("[data-after]");
     const f = FACTS[state.min];
     const isEl = currentLang === "el";
-    box.innerHTML = finishShareHtml(state.min) +
-      '<div class="fact"><div style="font-weight:800">' + (isEl ? "Γνώση" : "Did you know") + '</div>' +
-      '<div style="margin-top:6px">' + (isEl ? f.el : f.en) + '</div>' +
-      '<div class="src">' + (isEl ? "Πηγή: " : "Source: ") + f.src + '</div></div>' +
+    const factBlock = f
+      ? '<div class="fact"><div style="font-weight:800">' + (isEl ? "Γνώση" : "Did you know") + '</div>' +
+        '<div style="margin-top:6px">' + (isEl ? f.el : f.en) + '</div>' +
+        '<div class="src">' + (isEl ? "Πηγή: " : "Source: ") + f.src + '</div></div>'
+      : '<div class="fact"><div style="font-weight:800">' + (isEl ? "Ο χρόνος που διάλεξες" : "Your chosen focus") + '</div>' +
+        '<div style="margin-top:6px">' + (isEl ? "Ολοκλήρωσες " + state.min + " λεπτά συγκέντρωσης στον δικό σου ρυθμό." : "You completed " + state.min + " minutes of focus at your own pace.") + '</div></div>';
+    box.innerHTML = finishShareHtml(state.min) + factBlock +
       '<div style="font-weight:800;margin-top:14px">' + (isEl ? "Τι σε απέσπασε;" : "What distracted you?") + '</div>' +
       '<div class="chips">' + DISTRACTIONS.map(function (d) {
         return '<button type="button" data-word="' + d[0] + '">' + (isEl ? d[1] : d[2]) + '</button>';
