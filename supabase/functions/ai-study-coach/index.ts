@@ -82,14 +82,14 @@ Deno.serve(async (req: Request) => {
   try {
     const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
     const result = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", { method: "POST", headers: { "content-type": "application/json", "x-goog-api-key": geminiKey }, signal: abort.signal, body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0.25, maxOutputTokens: 1400, responseMimeType: "application/json" } }) });
-    if (!result.ok) return reply(502, { error: "ai_unavailable" }, origin, allowed);
+    if (!result.ok) { console.error("gemini_http_error", result.status, (await result.text()).slice(0, 300)); return reply(502, { error: "ai_unavailable" }, origin, allowed); }
     const raw = await result.json(), text = raw?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text || "").join("") || "";
     let generated: Record<string, unknown>;
-    try { generated = JSON.parse(text); } catch { return reply(502, { error: "invalid_model_output" }, origin, allowed); }
+    try { generated = JSON.parse(text); } catch { console.error("gemini_invalid_json", text.length); return reply(502, { error: "invalid_model_output" }, origin, allowed); }
     const candidate = generated.timer && typeof generated.timer === "object" ? generated.timer as Record<string, unknown> : {};
     const proposed = Number(candidate.focusMinutes), focus = FOCUS.includes(proposed) && proposed <= available ? proposed : fallback.focusMinutes;
     const breakIn = Number(candidate.breakMinutes), breakMinutes = Number.isInteger(breakIn) && breakIn >= 0 && breakIn <= 15 ? Math.min(breakIn, available - focus) : fallback.breakMinutes;
     return reply(200, { timer: { focusMinutes: focus, breakMinutes, protocol: clean(candidate.protocol, 60) || fallback.protocol, why: clean(candidate.why, 420) || "A short focus block fits your time and energy." }, steps: list(generated.steps, 6, 420), questions: list(generated.questions, 5, 280), quiz: documentText ? quiz(generated.quiz) : [], source: "gemini" }, origin, allowed);
-  } catch { return reply(502, { error: "ai_unavailable" }, origin, allowed); }
+  } catch (err) { console.error("gemini_exception", String(err).slice(0, 200)); return reply(502, { error: "ai_unavailable" }, origin, allowed); }
   finally { clearTimeout(timeout); }
 });
