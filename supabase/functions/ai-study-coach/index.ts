@@ -53,6 +53,9 @@ Deno.serve(async (req: Request) => {
   const topic = clean(body.topic, 140), type = body.taskType === "study" || body.taskType === "task" ? body.taskType : "";
   const energy = Number(body.energy), available = Number(body.available), documentText = clean(body.documentText, MAX_DOC);
   if (!topic || !type || !Number.isInteger(energy) || energy < 1 || energy > 5 || !Number.isInteger(available) || available < 5 || available > 180 || (body.documentText !== undefined && typeof body.documentText !== "string")) return reply(400, { error: "invalid_input" }, origin, allowed);
+  // Consent gate: nothing is sent to Gemini unless the user explicitly consented.
+  // Checked before the rate limit so refused requests do not use a daily slot.
+  if (body.consent !== true) return reply(403, { error: "consent_required" }, origin, allowed);
   const geminiKey = Deno.env.get("GEMINI_API_KEY");
   if (!geminiKey) return reply(503, { error: "ai_unavailable" }, origin, allowed);
   const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
