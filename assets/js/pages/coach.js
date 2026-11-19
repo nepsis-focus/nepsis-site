@@ -329,7 +329,7 @@
       var bearer = session && session.access_token ? session.access_token : SUPABASE_KEY;
       var response = await window.fetch(SUPABASE_URL + "/functions/v1/ai-study-coach", {
         method: "POST", headers: { "content-type": "application/json", apikey: SUPABASE_KEY, authorization: "Bearer " + bearer },
-        body: JSON.stringify({ topic: values.topic, taskType: values.type, energy: values.energy, available: values.available, documentText: documentText || "" })
+        body: JSON.stringify({ consent: true, topic: values.topic, taskType: values.type, energy: values.energy, available: values.available, documentText: documentText || "" })
       });
       if (!response.ok) throw new Error(response.status === 429 ? "daily_limit_reached" : "ai_unavailable");
       var data = await response.json();
