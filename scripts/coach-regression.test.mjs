@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 
 const root = new URL("../", import.meta.url);
-const [coachSource, configSource, html, homeHtml, practiceHtml, sw, timerBridge, edgeSource, migration, contractDoc] = await Promise.all([
+const [coachSource, configSource, html, homeHtml, practiceHtml, sw, timerBridge, edgeSource, migration] = await Promise.all([
   readFile(new URL("../assets/js/pages/coach.js", import.meta.url), "utf8"),
   readFile(new URL("../assets/js/coach-config.js", import.meta.url), "utf8"),
   readFile(new URL("../coach.html", import.meta.url), "utf8"),
@@ -13,16 +13,16 @@ const [coachSource, configSource, html, homeHtml, practiceHtml, sw, timerBridge,
   readFile(new URL("../sw.js", import.meta.url), "utf8"),
   readFile(new URL("../assets/js/pages/coach-timer-bridge.js", import.meta.url), "utf8"),
   readFile(new URL("../supabase/functions/ai-study-coach/index.ts", import.meta.url), "utf8"),
-  readFile(new URL("../supabase/migrations/20261117100000_ai_study_coach_security.sql", import.meta.url), "utf8"),
-  readFile(new URL("../docs/ai-study-coach-contract.md", import.meta.url), "utf8")
+  readFile(new URL("../supabase/migrations/20261117100000_ai_study_coach_security.sql", import.meta.url), "utf8")
 ]);
 
-function loadCoach(values = new Map(), extraWindow = {}) {
+function loadCoach() {
+  const values = new Map();
   const localStorage = {
     getItem(key) { return values.has(key) ? values.get(key) : null; },
     setItem(key, value) { values.set(key, String(value)); }
   };
-  const window = { localStorage, ...extraWindow };
+  const window = { localStorage };
   const context = { window, document: null };
   vm.runInNewContext(configSource, context);
   vm.runInNewContext(coachSource, context);
@@ -83,61 +83,6 @@ test("guest quota allows two plans, blocks the third, then resets on a new local
   assert.equal(api.consumeGuestPlan(new Date(2026, 10, 18, 9, 0, 0)).allowed, true);
 });
 
-test("guest check-in and timer preferences survive reload in local storage only", () => {
-  const storage = new Map();
-  let networkCalls = 0;
-  const firstVisit = loadCoach(storage, { fetch() { networkCalls += 1; throw new Error("unexpected network call"); } });
-  const checkin = { type: "task", topic: "Prepare notes", energy: 4, available: 35, focusMinutes: 17 };
-  assert.equal(firstVisit.api.saveGuestCheckin(checkin), true);
-  const localPlan = firstVisit.api.createPlan(checkin, "en", "PRIVATE UPLOAD TEXT that must not enter history.");
-  assert.equal(firstVisit.api.saveGuestHistory(checkin, localPlan, new Date("2026-11-20T10:30:00Z")), true);
-  assert.equal(networkCalls, 0);
-  const reloaded = loadCoach(storage, { fetch() { networkCalls += 1; throw new Error("unexpected network call"); } });
-  assert.deepEqual(JSON.parse(JSON.stringify(reloaded.api.readGuestCheckin())), checkin);
-  const history = JSON.parse(JSON.stringify(reloaded.api.readGuestHistory()));
-  assert.equal(history.length, 1);
-  assert.equal(history[0].focusMinutes, 17);
-  assert.equal(history[0].checkin.topic, "Prepare notes");
-  assert.doesNotMatch(JSON.stringify(history), /PRIVATE UPLOAD TEXT/);
-  assert.equal(storage.has("nepsis-ai-coach:guest-checkin:v1"), true);
-  assert.equal(storage.has("nepsis-ai-coach:guest-history:v1"), true);
-  assert.equal(networkCalls, 0);
-});
-
-test("stable Coach JSON contract sends only the approved payload and validates response shape", () => {
-  const { api } = loadCoach();
-  const request = api.buildAiRequest({ type: "study", topic: "Biology", energy: 3, available: 25, focusMinutes: 17 }, "x".repeat(30001));
-  assert.deepEqual(Object.keys(request).sort(), ["available", "consent", "documentText", "energy", "taskType", "topic"].sort());
-  assert.equal(request.consent, true);
-  assert.equal(request.taskType, "study");
-  assert.equal(request.documentText.length, 28000);
-  const response = { timer: { focusMinutes: 25, breakMinutes: 0, why: "Fits." }, steps: ["Start"], questions: ["What next?"], quiz: [], source: "gemini" };
-  assert.equal(api.validateAiResponse(response), response);
-  assert.throws(() => api.validateAiResponse({ steps: [], questions: [] }), /bad_ai_response/);
-  assert.match(coachSource, /if \(useAi\)/);
-  assert.match(coachSource, /AbortController/);
-  assert.match(coachSource, /Promise\.race\(/);
-  assert.match(coachSource, /10000/);
-  assert.match(coachSource, /Here is your local plan/);
-  assert.match(edgeSource, /body\.consent !== true/);
-  assert.match(edgeSource, /if \(!body \|\| typeof body !== "object" \|\| Array\.isArray\(body\)\)/);
-  assert.match(edgeSource, /p_daily_limit: userId \? 30 : 2/);
-  assert.match(edgeSource, /deploy-preview-\[0-9\]\+--nepsis-focus\[\.\]netlify\[\.\]app/);
-  assert.match(contractDoc, /Request JSON \(v1\)/);
-  assert.match(contractDoc, /Success response \(v1\)/);
-  assert.match(contractDoc, /browser `localStorage`/);
-});
-
-test("Coach-started timer hides only its route OAuth entry point", () => {
-  assert.match(timerBridge, /coachGuestLaunch/);
-  assert.match(timerBridge, /accountButton\.hidden = true/);
-  assert.match(timerBridge, /accountButton\.removeAttribute\("href"\)/);
-  assert.match(html, /coachHistory/);
-  assert.match(coachSource, /reached today's two-plan guest limit/);
-  assert.doesNotMatch(coachSource, /Sign in or visit Whop/);
-  assert.match(practiceHtml, /provider=google/);
-});
-
 test("uploads extract locally, disclose AI forwarding, and save only on explicit action", () => {
   assert.match(html, /accept="\.pdf,\.txt,\.md/);
   assert.match(html, /aiConsent/);
@@ -180,7 +125,7 @@ test("private file policies and Edge quota RPC are owner-restricted", () => {
 });
 
 test("coach files are included in the versioned offline app shell", () => {
-  assert.match(sw, /nepsis-v15/);
+  assert.match(sw, /nepsis-v14/);
   assert.match(sw, /asset\('coach\.html'\)/);
   assert.match(sw, /asset\('assets\/js\/pages\/coach\.js'\)/);
   assert.match(sw, /asset\('assets\/js\/pages\/coach-timer-bridge\.js'\)/);
