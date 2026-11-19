@@ -93,3 +93,40 @@ html[data-theme="dark"] .coach-page{--surface:var(--card)}
 @media(max-width:430px){.coach-controls{gap:6px}.coach-lang button{padding:5px 8px;font-size:.72rem}.coach-page .menu-btn{width:38px;height:38px;flex-basis:38px}}
 @media(prefers-reduced-motion:reduce){.coach-page .drawer,.coach-page .scrim{transition:none}}
 .coach-page .drawer:focus{outline:none}
+
+/* Generated quick-choice controls are the primary mobile input surface. */
+.coach-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.coach-choice {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border, #EEDCC8);
+  border-radius: 12px;
+  background: var(--card, #FFFDF8);
+  color: var(--fg, #3A2418);
+  font: inherit;
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.coach-choice[aria-pressed="true"] {
+  border-color: var(--orange, #F0702A);
+  background: var(--orange, #F0702A);
+  color: #fff;
+}
+.coach-choice:focus-visible {
+  outline: 3px solid rgba(240,112,42,.35);
+  outline-offset: 2px;
+}
+.coach-range-row input[type="range"] {
+  min-height: 40px;
+}
+@media (max-width: 430px) {
+  .coach-choices { gap: 6px; }
+  .coach-choice { min-height: 44px; padding-inline: 10px; }
+}
