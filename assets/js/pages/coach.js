@@ -634,7 +634,8 @@
     loadSupabase().then(function (supabaseLib) {
       if (!supabaseLib || !supabaseLib.createClient) return;
       try {
-        authClient = supabaseLib.createClient(SUPABASE_URL, SUPABASE_KEY);
+        authClient = supabaseLib.createClient(SUPABASE_URL, SUPABASE_KEY, window.NepsisGoogleAuth ? window.NepsisGoogleAuth.clientOptions() : undefined);
+        if (window.NepsisGoogleAuth) window.NepsisGoogleAuth.watchPopupCompletion(authClient);
         authClient.auth.getSession().then(function (result) {
           signedIn = !!(result && !result.error && result.data && result.data.session && result.data.session.user);
           if (saveDocumentButton && selectedFile) saveDocumentButton.hidden = !signedIn;

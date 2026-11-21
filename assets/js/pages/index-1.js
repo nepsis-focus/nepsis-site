@@ -983,7 +983,7 @@ let currentLang = "el";
   // ---------- account (Supabase: email link, no password) ----------
   const SB_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
   const SB_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
-  const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY) : null;
+  const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY, window.NepsisGoogleAuth.clientOptions()) : null;
   let sbUser = null;
   let accReturnFocus = null;
   if (sb && window.NepsisGoogleAuth) window.NepsisGoogleAuth.watchPopupCompletion(sb);

@@ -44,6 +44,9 @@ jobs:
       - name: Run progress synchronization regression tests
         run: node --test scripts/progress-sync-regression.test.mjs
 
+      - name: Run Google sign-in return tests
+        run: node --test scripts/google-oauth-return.test.mjs
+
       - name: Run Coach duration regression tests
         run: node --test scripts/coach-duration.test.mjs
 
@@ -70,6 +73,11 @@ jobs:
 
       - name: Serve the site
         run: python3 -m http.server 4173 >/tmp/nepsis-preview.log 2>&1 &
+
+      - name: Test mobile Google sign-in in a browser
+        env:
+          SITE_URL: http://127.0.0.1:4173
+        run: node scripts/google-oauth-browser.test.mjs
 
       - name: Test this pull request in a browser
         env:
