@@ -480,8 +480,18 @@ html body.home-page .home-product-section header.home-product-heading {
     flex-wrap: nowrap;
     gap: 4px;
   }
-  /* Keep a single compact row: Sign in lives in the drawer on narrow widths. */
-  body.home-page .head-right .acc-btn { display: none !important; }
+  /* Keep Sign in hit-testable (watchdog probes #accBtn first) but compact. */
+  body.home-page .head-right .acc-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 0 !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 11px !important;
+    white-space: nowrap;
+  }
   body.home-page .head-right .lang {
     height: 32px;
     flex: 0 0 auto;
@@ -491,15 +501,15 @@ html body.home-page .home-product-section header.home-product-heading {
     width: auto !important;
     min-height: 32px !important;
     height: 32px !important;
-    padding: 0 7px !important;
+    padding: 0 6px !important;
     font-size: 11px !important;
   }
   body.home-page .head-right .theme-toggle,
   body.home-page .head-right .menu-btn {
-    min-width: 40px !important;
-    width: 40px !important;
-    min-height: 40px !important;
-    height: 40px !important;
+    min-width: 36px !important;
+    width: 36px !important;
+    min-height: 36px !important;
+    height: 36px !important;
   }
   body.home-page #globe .hero-copy { max-width: 100%; }
   body.home-page .trust-chips { display: none; }
@@ -514,13 +524,14 @@ html body.home-page .home-product-section header.home-product-heading {
   .home-product-card { padding: 4px 0 12px; }
 }
 
-/* Floating controls must not cover hero chips/CTAs on phones. */
+/* Floating controls must not cover hero chips/CTAs or the sticky header. */
 @media (max-width: 900px) {
   html body.home-page .nepsis-ambient {
-    top: calc(58px + env(safe-area-inset-top, 0px));
+    top: calc(64px + env(safe-area-inset-top, 0px));
     left: max(8px, env(safe-area-inset-left, 0px));
     right: auto;
     bottom: auto;
+    z-index: 40;
   }
   html body.home-page .nepsis-ambient-toggle {
     width: 36px;
@@ -528,13 +539,22 @@ html body.home-page .home-product-section header.home-product-heading {
   }
   html body.home-page .nepsis-ambient-icon { width: 16px; height: 16px; }
   html body.home-page .nepsis-consent-settings {
-    top: calc(58px + env(safe-area-inset-top, 0px));
+    top: calc(64px + env(safe-area-inset-top, 0px));
     right: max(8px, env(safe-area-inset-right, 0px));
     left: auto;
     bottom: auto;
     min-height: 32px;
     padding: 6px 10px;
     font-size: 11px;
+    z-index: 40;
+  }
+}
+@media (max-width: 360px) {
+  body.home-page header .logo { font-size: 17px; }
+  body.home-page .head-right { gap: 3px; }
+  body.home-page .head-right .acc-btn {
+    padding: 0 6px !important;
+    font-size: 10px !important;
   }
 }
 @media (max-width: 420px) {
