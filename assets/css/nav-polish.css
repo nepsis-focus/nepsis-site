@@ -636,3 +636,100 @@ html:not([data-theme="dark"]) body.my-nepsis-dashboard .intro {
     width: calc(100% - 32px);
   }
 }
+
+/* ------------------------------------------------------------------
+   One unified white top bar on every page (light-only site).
+   - Opaque white, no divider line, no glass: content never shows
+     through or appears to slide over the controls.
+   - Sticky at the very top with a high z-index on every page.
+   - On phones the bar grows by env(safe-area-inset-top) so the logo,
+     account, language, sound and menu controls sit BELOW the iPhone
+     status bar / notch (viewport-fit=cover) and are always tappable.
+     The compact-header rule above matches header.top itself (it has the
+     class "top") and zeroed its padding-block with !important, which
+     pushed the controls under the status bar. This block restores it.
+   ------------------------------------------------------------------ */
+html, html body { background-color: #fff; }
+/* coach.html had the browser's default 8px body margin: a gap above the bar. */
+html body.coach-page { margin: 0; }
+html body :is(header.top, body > header, body > .wrap > header, header.coach-header) {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 900 !important;
+  background: #fff !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+html body :is(header.top, body > header, body > .wrap > header, header.coach-header)::before,
+html body :is(header.top, body > header, body > .wrap > header, header.coach-header)::after {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+@media (max-width: 767px) {
+  html body :is(header.top, body > header, body > .wrap > header, header.coach-header) {
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: auto !important;
+    min-height: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    max-height: none !important;
+    box-sizing: border-box !important;
+  }
+  /* Account lives in the bar on phones as a round icon (tap = account / sign in). */
+  html body header :is(#accBtn, #accountBtn) {
+    display: inline-flex !important;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 50% !important;
+    border: 1px solid rgba(0, 0, 0, .12) !important;
+    background: #fff !important;
+    color: #1d1d1f !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  html body header :is(#accBtn, #accountBtn) > * { display: none !important; }
+  html body header :is(#accBtn, #accountBtn)::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M4 20c1.6-3.6 4.5-5.4 8-5.4s6.4 1.8 8 5.4' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M4 20c1.6-3.6 4.5-5.4 8-5.4s6.4 1.8 8 5.4' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  /* Signed in: a small green check on the icon replaces the wide badge. */
+  html body header :is(#accBtn, #accountBtn)[data-nepsis-signed-in="true"] {
+    border-color: rgba(75, 125, 83, .45) !important;
+    color: #426647 !important;
+  }
+  html body header :is(#accBtn, #accountBtn)[data-nepsis-signed-in="true"]::after {
+    content: "";
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #4f9a5a;
+    box-shadow: 0 0 0 2px #fff;
+  }
+  html body header #nepsis-auth-state { display: none !important; }
+}
+/* The closed menu drawer sits just off-screen to the right, but its wide
+   shadow leaked a faint grey strip down the right edge of the page. */
+html body #drawer:not(.open),
+html body .nepsis-site-drawer:not(.open) {
+  box-shadow: none !important;
+  border-left-color: transparent !important;
+}
