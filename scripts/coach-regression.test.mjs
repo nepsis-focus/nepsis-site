@@ -180,7 +180,7 @@ test("private file policies and Edge quota RPC are owner-restricted", () => {
 });
 
 test("coach files are included in the versioned offline app shell", () => {
-  assert.match(sw, /nepsis-v16/);
+  assert.match(sw, /nepsis-v17/);
   assert.match(sw, /asset\('coach\.html'\)/);
   assert.match(sw, /asset\('assets\/js\/pages\/coach\.js'\)/);
   assert.match(sw, /asset\('assets\/js\/pages\/coach-timer-bridge\.js'\)/);

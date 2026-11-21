@@ -1705,3 +1705,102 @@ body.home-page main .globe-drag-hint {
     cursor: grab;
   }
 }
+
+/* --- Uncropped globe (final overrides) ---
+   Keep the full sphere + atmosphere inside the viewport at every breakpoint.
+   No negative offsets, no overflow clipping on the earth stage. */
+html body.home-page main #globe.hero,
+html body.home-page main .hero {
+  overflow: visible !important;
+}
+html body.home-page main #globe .hero-earth,
+html body.home-page main .hero-earth {
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  max-width: none;
+  aspect-ratio: 1 / 1;
+  isolation: isolate;
+}
+html body.home-page main #globe .hero-earth #globeCanvas,
+html body.home-page main .hero-earth #globeCanvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0;
+  pointer-events: auto;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+/* Desktop / tablet: fully visible on the right, never past the edge. */
+@media (min-width: 701px) {
+  html body.home-page main #globe.hero {
+    position: relative;
+    min-height: clamp(620px, calc(100svh - 56px), 860px);
+    padding: 28px 0 48px;
+  }
+  html body.home-page main #globe .hero-earth {
+    position: absolute;
+    top: 50%;
+    right: max(20px, 3vw);
+    left: auto;
+    bottom: auto;
+    z-index: 0;
+    width: min(68vh, 48vw, 620px);
+    height: min(68vh, 48vw, 620px);
+    margin: 0;
+    transform: translateY(-50%);
+    opacity: 1;
+    filter: drop-shadow(0 22px 40px rgba(35, 74, 104, .16));
+    pointer-events: none;
+  }
+  html body.home-page main #globe .hero-earth #globeCanvas {
+    pointer-events: auto;
+  }
+}
+
+/* Phones: centered square fully inside the content column. */
+@media (max-width: 700px) {
+  html body.home-page main #globe.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    padding: 12px 0 28px;
+    overflow: visible !important;
+  }
+  html body.home-page main #globe .hero-earth {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    z-index: 0;
+    width: min(86vw, 360px) !important;
+    height: min(86vw, 360px) !important;
+    max-width: calc(100vw - 32px) !important;
+    margin: 4px auto 10px !important;
+    transform: none !important;
+    opacity: 1 !important;
+    flex: 0 0 auto;
+    filter: drop-shadow(0 16px 28px rgba(35, 74, 104, .14));
+    pointer-events: none;
+  }
+  html body.home-page main #globe .hero-earth #globeCanvas {
+    pointer-events: auto;
+  }
+  html body.home-page main #globe .hero > .wrap {
+    width: 100%;
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  html body.home-page main #globe .hero-earth {
+    width: min(84vw, 340px) !important;
+    height: min(84vw, 340px) !important;
+  }
+}

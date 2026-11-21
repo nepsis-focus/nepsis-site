@@ -105,7 +105,8 @@ let currentLang = "el";
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100);
-    camera.position.set(0, 0, 5.6);
+    /* Slightly farther so atmosphere (radius * 1.06) stays inside the canvas. */
+    camera.position.set(0, 0, 5.95);
     const isMobile = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
     if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
@@ -324,6 +325,8 @@ let currentLang = "el";
       const rect = stage.getBoundingClientRect();
       const width = Math.max(1, Math.round(rect.width));
       const height = Math.max(1, Math.round(rect.height));
+      const mobileNow = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobileNow ? 1.5 : 2));
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
@@ -334,6 +337,7 @@ let currentLang = "el";
     } else {
       window.addEventListener("resize", resize);
     }
+    window.addEventListener("orientationchange", resize);
     resize();
 
     let animating = true;

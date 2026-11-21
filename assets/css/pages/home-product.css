@@ -40,7 +40,7 @@ html body.home-page header.top {
   backdrop-filter: saturate(180%) blur(20px);
 }
 body.home-page .top-in {
-  width: min(calc(100% - 48px), 1120px);
+  width: min(calc(100% - 40px), 1200px);
   height: 52px;
   margin-inline: auto;
   padding: 0;
@@ -134,12 +134,12 @@ html body.home-page #globe #dailyTip,
 html body.home-page #globe .knowledge-note {
   width: min(100%, 640px);
   margin: 28px 0 0;
-  padding: 22px 24px;
+  padding: 0;
   color: var(--np-home-ink);
-  background: #fff !important;
-  border: 1px solid rgba(0, 0, 0, .08);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .04);
+  background: transparent !important;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 html body.home-page #globe #dailyTip p,
 html body.home-page #globe .knowledge-note p { color: var(--np-home-muted); }
@@ -207,10 +207,10 @@ body.home-page #globe .btn-ghost:hover { border-color: var(--np-home-ink); }
 body.home-page #globe .hero-country {
   color: var(--np-home-ink);
   text-align: left;
-  background: rgba(255, 255, 255, .92);
-  border: 1px solid rgba(0, 0, 0, .08);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .05);
+  background: #f5f5f7;
+  border: 0;
+  border-radius: 26px;
+  box-shadow: none;
 }
 body.home-page #globe .hero-country h2 { color: var(--np-home-ink); }
 body.home-page #globe .hero-country label,
@@ -222,14 +222,14 @@ body.home-page #globe .hero-country select {
 }
 
 .home-product-section {
-  padding: clamp(88px, 12vw, 140px) 24px;
+  padding: clamp(56px, 8vw, 96px) 20px;
   text-align: center;
   scroll-margin-top: 52px;
 }
-.home-product-container { width: min(100%, 980px); margin-inline: auto; }
+.home-product-container { width: min(100%, 1200px); margin-inline: auto; }
 .home-product-light { color: var(--np-home-ink); background: #fff; }
 .home-product-dark { color: var(--np-home-ink); background: var(--np-home-soft); }
-.home-product-heading { max-width: 760px; margin: 0 auto 56px; }
+.home-product-heading { max-width: 760px; margin: 0 auto 36px; }
 .home-product-eyebrow {
   margin: 0 0 14px;
   color: var(--np-home-orange-ink);
@@ -266,18 +266,18 @@ body.home-page #globe .hero-country select {
 }
 .home-product-card {
   min-width: 0;
-  padding: 32px 28px;
+  padding: 8px 4px 16px;
   color: var(--np-home-ink);
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, .08);
-  border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .04);
-  transition: transform .25s cubic-bezier(.2, .65, .3, 1), box-shadow .25s cubic-bezier(.2, .65, .3, 1);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  transition: transform .25s cubic-bezier(.2, .65, .3, 1);
 }
-.home-product-dark .home-product-card { background: #fff; }
+.home-product-dark .home-product-card { background: transparent; }
 .home-product-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, .07);
+  transform: translateY(-2px);
+  box-shadow: none;
 }
 .home-product-card h3 {
   margin: 0 0 8px;
@@ -386,29 +386,34 @@ body.home-page #about .card,
 body.home-page #how .faq-list,
 body.home-page .cmp {
   color: var(--np-home-ink);
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, .08);
-  border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .04);
+  background: transparent;
+  border: 0;
+  border-radius: 26px;
+  box-shadow: none;
+}
+body.home-page #how .faq-list,
+body.home-page .cmp {
+  background: #f5f5f7;
+  padding: 22px 24px;
 }
 body.home-page main .bento-focus {
   color: var(--np-home-ink);
-  background: #fff;
-  border-color: rgba(0, 0, 0, .08);
+  background: transparent;
+  border-color: transparent;
 }
 body.home-page main .bento-focus .bento-kicker,
 body.home-page main .bento-focus p,
 body.home-page main .bento-focus .bento-action::after { color: var(--np-home-muted); }
 body.home-page #bento #dailyTip.home-product-daily-tip {
   display: block;
-  width: min(100%, 980px);
+  width: min(100%, 1200px);
   margin: 24px auto 0;
-  padding: 24px 28px;
+  padding: 8px 0;
   color: var(--np-home-ink);
-  background: #fff !important;
-  border: 1px solid rgba(0, 0, 0, .08);
-  border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .04);
+  background: transparent !important;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 body.home-page #bento #dailyTip.home-product-daily-tip p { color: #6e6e73; }
 body.home-page #bento #dailyTip.home-product-daily-tip .eyebrow,
@@ -419,10 +424,11 @@ body.home-page #discover .why-nepsis-lead { color: var(--np-home-orange-ink); }
 body.home-page #premium .cmp.on,
 body.home-page #premium .cmp.off {
   color: var(--np-home-ink);
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, .08);
+  background: #f5f5f7;
+  border: 0;
+  border-radius: 26px;
 }
-body.home-page #premium .cmp.on { border-color: rgba(240, 112, 42, .45); }
+body.home-page #premium .cmp.on { box-shadow: inset 0 0 0 2px rgba(240, 112, 42, .45); }
 body.home-page > footer {
   margin-top: 0;
   color: var(--np-home-muted);
@@ -451,10 +457,10 @@ html body.home-page .home-product-section header.home-product-heading {
   html body.home-page #globe.hero::after {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 40%, #fff 92%);
   }
-  .home-product-section { padding: 72px 20px; }
-  .home-product-heading { margin-bottom: 32px; }
-  .home-product-grid { gap: 12px; }
-  .home-product-card { padding: 24px 22px; }
+  .home-product-section { padding: 48px 16px; }
+  .home-product-heading { margin-bottom: 24px; }
+  .home-product-grid { gap: 8px; }
+  .home-product-card { padding: 4px 0 12px; }
 }
 @media (max-width: 420px) {
   html body.home-page #globe.hero h1 { font-size: clamp(36px, 11vw, 48px); }
