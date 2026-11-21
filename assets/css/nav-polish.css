@@ -1,5 +1,5 @@
-/* Nepsis menu polish, shared by every page (loaded from site-navigation.js).
-   Scoped to #drawer and .nav-* so page styles stay as they are.
+/* Nepsis header/menu polish, shared by every page (loaded from site-navigation.js).
+   Menu details stay scoped so page-specific layouts remain unchanged.
    Colours come from the theme variables, so dark mode follows automatically. */
 
 /* Back-to-home arrow next to the logo */
@@ -28,6 +28,12 @@
 header a.back { white-space: nowrap; }
 header .logo { flex-shrink: 0; margin-right: 6px; }
 header .controls, header .top-actions { flex-wrap: nowrap; min-width: 0; }
+/* Keep the line below the brand and controls as one continuous header edge. */
+body:not(.coach-page) header.top,
+body:not(.coach-page) > header,
+body:not(.coach-page) > .wrap > header {
+  border-bottom: 1px solid var(--border, rgba(58, 36, 24, .09));
+}
 header .controls .lang, header .top-actions .lang { display: flex; flex-wrap: nowrap; flex-shrink: 0; }
 .nepsis-menu-button.nav-inline-menu { flex: 0 0 auto; margin-left: auto; }
 .controls .nepsis-menu-button.nav-inline-menu, .top-actions .nepsis-menu-button.nav-inline-menu { margin-left: 0; }
@@ -42,9 +48,23 @@ header .controls .lang, header .top-actions .lang { display: flex; flex-wrap: no
   header .controls a.back, header .top-actions a.back { padding: 5px 8px; font-size: .66rem; }
   header .controls .lang button, header .top-actions button[data-lang] { padding: 5px 7px; font-size: .68rem; }
 }
+@media (max-width: 520px) {
+  /* The fallback menu pages use a two-row header on phones. */
+  body:not(.coach-page) #drawer.nepsis-site-drawer {
+    padding-top: calc(104px + env(safe-area-inset-top, 0px));
+  }
+}
 @media (max-width: 380px) {
   .nav-left { gap: 6px; }
   .nav-home-back { width: 36px; height: 36px; }
+  /* The controls wrap on very narrow phones; keep menu content below them. */
+  body:not(.coach-page) #drawer.drawer {
+    padding-top: calc(104px + env(safe-area-inset-top, 0px));
+  }
+  /* Privacy uses longer controls and needs a little more room at 320px. */
+  body.privacy-page #drawer.nepsis-site-drawer {
+    padding-top: calc(140px + env(safe-area-inset-top, 0px));
+  }
 }
 
 /* The menu panel */
@@ -59,6 +79,10 @@ header .controls .lang, header .top-actions .lang { display: flex; flex-wrap: no
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+/* Keep the drawer and its scrim above page content, including stacked cards. */
+body:not(.coach-page) #drawer.drawer { z-index: 1002; }
+body:not(.coach-page) .scrim.open,
+body:not(.coach-page) .nepsis-menu-scrim.open { z-index: 1001; }
 .nav-drawer-head {
   display: flex; align-items: center; justify-content: space-between;
   padding: 4px 4px 14px 8px; margin: 0 0 8px;
