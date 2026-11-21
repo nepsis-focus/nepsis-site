@@ -1,0 +1,11 @@
+# Αρχεία του repo που ΔΕΝ ανεβαίνουν στο Cloudflare.
+.git
+.github
+.assetsignore
+node_modules
+supabase
+scripts
+docs
+wrangler.toml
+netlify.toml
+*.md
