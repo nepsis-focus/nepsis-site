@@ -1744,23 +1744,22 @@ html body.home-page main .hero-earth #globeCanvas {
   cursor: grab;
 }
 
-/* Desktop / tablet: fully visible on the right, never past the edge. */
-@media (min-width: 701px) {
+/* Wide desktop: dominant Earth on the right (~78vh), fully inside the viewport. */
+@media (min-width: 901px) {
   html body.home-page main #globe.hero {
     position: relative;
-    min-height: clamp(580px, calc(100svh - 56px), 820px);
-    padding: 24px 0 40px;
+    min-height: max(720px, calc(100svh - 52px));
+    padding: 16px 0 32px;
   }
   html body.home-page main #globe .hero-earth {
     position: absolute;
     top: 50%;
-    right: max(24px, 3.5vw);
+    right: max(12px, 1.5vw);
     left: auto;
     bottom: auto;
     z-index: 2;
-    /* Leave room for copy + country card; sphere+glow must fit in this square. */
-    width: min(52vh, 38vw, 500px);
-    height: min(52vh, 38vw, 500px);
+    width: min(78vh, 62vw, 900px);
+    height: min(78vh, 62vw, 900px);
     margin: 0;
     transform: translateY(-50%);
     opacity: 1;
@@ -1770,26 +1769,19 @@ html body.home-page main .hero-earth #globeCanvas {
   html body.home-page main #globe .hero-earth #globeCanvas {
     pointer-events: auto;
   }
-}
-@media (min-width: 701px) and (max-width: 1100px) {
-  html body.home-page main #globe .hero-earth {
-    width: min(48vh, 34vw, 420px);
-    height: min(48vh, 34vw, 420px);
-    right: max(16px, 2vw);
-  }
   html body.home-page main #globe .hero-copy {
-    max-width: min(420px, 46vw);
+    max-width: min(440px, 36vw);
   }
 }
 
-/* Phones: Earth first (DOM has copy before earth), fully in the first screen. */
-@media (max-width: 700px) {
+/* Phones + tablet (incl. 768): Earth first, nearly full width / ~70vh+, unclipped. */
+@media (max-width: 900px) {
   html body.home-page main #globe.hero {
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch;
     min-height: 0 !important;
-    padding: 8px 0 24px !important;
+    padding: 4px 0 20px !important;
     overflow: visible !important;
   }
   html body.home-page main #globe .hero-earth {
@@ -1798,16 +1790,16 @@ html body.home-page main .hero-earth #globeCanvas {
     top: auto !important;
     right: auto !important;
     left: auto !important;
-    z-index: 0;
+    z-index: 2;
     order: -1;
-    width: min(78vw, 320px) !important;
-    height: min(78vw, 320px) !important;
-    max-width: calc(100vw - 40px) !important;
-    margin: 8px auto 12px !important;
+    width: min(92vw, 78vh) !important;
+    height: min(92vw, 78vh) !important;
+    max-width: calc(100vw - 16px) !important;
+    margin: 4px auto 10px !important;
     transform: none !important;
     opacity: 1 !important;
     flex: 0 0 auto;
-    filter: drop-shadow(0 14px 24px rgba(35, 74, 104, .12));
+    filter: none;
     pointer-events: none;
     overflow: visible !important;
   }
@@ -1823,7 +1815,8 @@ html body.home-page main .hero-earth #globeCanvas {
 
 @media (max-width: 380px) {
   html body.home-page main #globe .hero-earth {
-    width: min(76vw, 300px) !important;
-    height: min(76vw, 300px) !important;
+    width: 90vw !important;
+    height: 90vw !important;
+    max-width: calc(100vw - 12px) !important;
   }
 }
