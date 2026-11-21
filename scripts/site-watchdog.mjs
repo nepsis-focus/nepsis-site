@@ -95,7 +95,13 @@ try {
             const style = getComputedStyle(el);
             return style.display !== "none" && style.pointerEvents !== "none";
           }).map((el) => el.id || el.className);
-          const button = document.querySelector("#accBtn, #accountBtn, #menuBtn");
+          // Prefer a visible header control — Sign in may be hidden on narrow widths.
+          const button = ["#accBtn", "#accountBtn", "#menuBtn"].map((sel) => document.querySelector(sel)).find((el) => {
+            if (!el) return false;
+            const style = getComputedStyle(el);
+            const rect = el.getBoundingClientRect();
+            return style.display !== "none" && style.visibility !== "hidden" && rect.width > 1 && rect.height > 1;
+          }) || null;
           let hitsControl = true;
           if (button) {
             const rect = button.getBoundingClientRect();

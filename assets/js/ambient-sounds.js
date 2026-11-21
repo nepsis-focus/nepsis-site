@@ -226,7 +226,19 @@
       picks.appendChild(btn);
     });
 
-    document.body.appendChild(root);
+    const host =
+      document.querySelector(".head-right, .coach-controls, .controls, .top-actions") ||
+      document.querySelector("header .lang")?.parentElement ||
+      null;
+    const before =
+      (host && host.querySelector(".menu-btn, .nepsis-menu-button, #menuBtn")) ||
+      null;
+    if (host) {
+      if (before) host.insertBefore(root, before);
+      else host.appendChild(root);
+    } else {
+      document.body.appendChild(root);
+    }
     return root;
   }
 

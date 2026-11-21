@@ -544,7 +544,13 @@
       currentLang = lang === "en" ? "en" : "el";
       document.documentElement.lang = currentLang;
       document.querySelectorAll("[data-el][data-en]").forEach(function (el) {
-        el.textContent = el.getAttribute("data-" + currentLang);
+        const next = el.getAttribute("data-" + currentLang);
+        if (el.tagName === "TITLE") {
+          document.title = next || document.title;
+          el.textContent = next || el.textContent;
+          return;
+        }
+        el.textContent = next;
       });
       document.querySelectorAll("[data-placeholder-el][data-placeholder-en]").forEach(function (el) {
         el.placeholder = el.getAttribute("data-placeholder-" + currentLang);

@@ -25,58 +25,9 @@ body .nepsis-consent-panel {
   }
 }
 
-/* Diary, reset and library have a fallback menu alongside a back link and
-   language/theme controls. On narrow screens the row cannot fit without
-   overlap, so give the brand its own row and retain all the controls below. */
-@media (max-width: 520px) {
-  header:has(> .wrap.top > :is(.controls, .top-actions) > .nepsis-menu-button) {
-    height: auto;
-  }
-  header > .wrap.top:has(> :is(.controls, .top-actions) > .nepsis-menu-button) {
-    height: auto;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 8px 0;
-  }
-  header > .wrap.top:has(> :is(.controls, .top-actions) > .nepsis-menu-button) > :is(.nav-left, .logo) {
-    flex: 0 0 100%;
-  }
-  header .top-actions:has(> .nepsis-menu-button),
-  header .controls:has(> .nepsis-menu-button) {
-    width: 100%;
-    min-width: 0;
-    flex: 0 0 100%;
-    align-items: center;
-  }
-  header .top-actions:has(> .nepsis-menu-button) > a.back,
-  header .controls:has(> .nepsis-menu-button) > a.back {
-    display: flex;
-    flex: 1 1 0;
-    min-width: 0;
-    min-height: 44px;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 6px;
-    line-height: 1.15;
-    text-align: center;
-    white-space: normal;
-  }
-  header .controls:has(> .nepsis-menu-button) > .lang {
-    gap: 4px;
-  }
-  header .top-actions:has(> .nepsis-menu-button) > button[data-lang],
-  header .controls:has(> .nepsis-menu-button) .lang > button[data-lang],
-  header .top-actions:has(> .nepsis-menu-button) > :is(.theme-toggle, .nepsis-menu-button),
-  header .controls:has(> .nepsis-menu-button) > :is(.theme-toggle, .nepsis-menu-button) {
-    box-sizing: border-box;
-    width: 44px;
-    min-width: 44px;
-    height: 44px;
-    min-height: 44px;
-    flex: 0 0 44px;
-    padding: 0;
-  }
-}
+/* Diary / library / reset keep a single header row on phones.
+   Back links hide on narrow widths (nav is in the menu); compact sizing
+   lives in nav-polish.css so every page shares one ~56px bar. */
 
 .nepsis-dialog {
   width: min(92vw, 28rem);
@@ -504,31 +455,31 @@ button.is-oauth-loading > svg,
 @keyframes nepsis-oauth-spin {
   to { transform: rotate(360deg); }
 }
-/* Ambient focus sounds: discreet corner widget, always opt-in.
-   Bottom-left keeps clear of the analytics settings control (bottom-right). */
+/* Ambient focus sounds: inline header control (never a fixed overlay). */
 .nepsis-ambient {
-  position: fixed;
-  z-index: 80;
-  left: max(14px, env(safe-area-inset-left));
+  position: relative;
+  z-index: 40;
+  left: auto;
   right: auto;
-  bottom: max(14px, env(safe-area-inset-bottom));
-  display: flex;
+  bottom: auto;
+  display: inline-flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: stretch;
+  gap: 0;
+  margin: 0;
   font-family: inherit;
   pointer-events: none;
 }
 .nepsis-ambient > * { pointer-events: auto; }
 .nepsis-ambient-toggle {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 1px solid var(--np-border, rgba(53, 43, 37, .12));
   background: var(--np-surface-raised, #fff);
   color: var(--np-text, #27221f);
-  box-shadow: var(--np-shadow, 0 4px 24px -2px rgba(0, 0, 0, .09));
+  box-shadow: none;
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -562,6 +513,11 @@ button.is-oauth-loading > svg,
   animation: nepsis-ambient-pulse 1.8s ease-out infinite;
 }
 .nepsis-ambient-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: auto;
+  z-index: 60;
   width: min(18.5rem, calc(100vw - 28px));
   padding: 14px 14px 12px;
   border-radius: 18px;
@@ -691,9 +647,6 @@ button.is-oauth-loading > svg,
 body.zen-active .nepsis-ambient-panel { display: none; }
 body.zen-active .nepsis-ambient { z-index: 120; }
 @media (max-width: 420px) {
-  .nepsis-ambient {
-    left: max(10px, env(safe-area-inset-left));
-    bottom: max(10px, env(safe-area-inset-bottom));
-  }
-  .nepsis-ambient-toggle { width: 46px; height: 46px; }
+  .nepsis-ambient-toggle { width: 36px; height: 36px; }
+  .nepsis-ambient-icon { width: 16px; height: 16px; }
 }

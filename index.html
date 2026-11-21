@@ -4,15 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>
-/* Warm theme boot — apply before paint to avoid a light flash at night */
+/* Light-only boot — Nepsis is always light/white. */
 (function () {
   try {
-    var p = localStorage.getItem("nepsis-theme") || "system";
-    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", t);
-    document.documentElement.style.colorScheme = t;
+    localStorage.setItem("nepsis-theme", "light");
   } catch (e) {}
+  document.documentElement.setAttribute("data-theme", "light");
+  document.documentElement.style.colorScheme = "light";
 })();
 </script>
 <script>
@@ -388,7 +386,7 @@ if ("serviceWorker" in navigator) {
         <div class="value-item" style="display:flex;gap:14px;align-items:flex-start">
           <span style="color:var(--orange);font-weight:900;font-size:1.2rem">02</span>
           <div>
-            <strong data-el='Οδηγός "Small Steps of Focus"' data-en='"Small Steps of Focus" Guide'>Οδηγός "Small Steps of Focus"</strong>
+            <strong data-el='Οδηγός «Μικρά βήματα συγκέντρωσης»' data-en='"Small Steps of Focus" Guide'>Οδηγός «Μικρά βήματα συγκέντρωσης»</strong>
             <p class="muted" style="margin:4px 0 0" data-el="Δομημένα μαθήματα που ξεκλειδώνουν σταδιακά, χωρίς overwhelm, για να χτίσεις ρυθμό σε 2–3 εβδομάδες." data-en="Structured courses that unlock gradually, without overwhelm, so you can build a rhythm in 2–3 weeks.">Δομημένα μαθήματα που ξεκλειδώνουν σταδιακά, χωρίς overwhelm, για να χτίσεις ρυθμό σε 2–3 εβδομάδες.</p>
           </div>
         </div>

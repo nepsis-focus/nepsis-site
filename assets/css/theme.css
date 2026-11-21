@@ -1,5 +1,8 @@
 /* Nepsis design tokens. Neutral surfaces keep the interface calm while the
-   copper accent carries the warmth of the brand. */
+   copper accent carries the warmth of the brand. Light/white only. */
+html {
+  color-scheme: light !important;
+}
 :root {
   color-scheme: light;
   --np-canvas: #ffffff;
@@ -42,29 +45,10 @@
   --theme-shadow: rgba(0, 0, 0, .18);
 }
 
+/* Dark theme retired — Nepsis is light/white only. Keep the selector so any
+   stale data-theme="dark" still resolves to the light tokens above. */
 html[data-theme="dark"] {
-  color-scheme: dark;
-  --np-canvas: #151516;
-  --np-surface: #1d1d20;
-  --np-surface-raised: #252529;
-  --np-surface-muted: #222224;
-  --np-text: #f5f3f0;
-  --np-muted: #b8b3ae;
-  --np-border: rgba(255, 255, 255, .08);
-  --np-glass: rgba(28, 28, 31, .84);
-  --np-shadow: 0 4px 24px -2px rgba(0, 0, 0, .25);
-  --np-accent: #f19a63;
-  --np-on-accent: #1b1715;
-  --np-accent-soft: rgba(241, 154, 99, .13);
-  --np-accent-border: rgba(241, 154, 99, .4);
-  --np-focus: #ffb47f;
-  --np-scrim: rgba(0, 0, 0, .64);
-  --np-modal-shadow: 0 24px 70px -20px rgba(0, 0, 0, .65);
-  --ember: #f0a080;
-  --sun: #e7c078;
-  --green: #a7c0ac;
-  --grad: linear-gradient(120deg, #e7c078 0%, #f19a63 55%, #df8465 100%);
-  --theme-shadow: rgba(0, 0, 0, .4);
+  color-scheme: light;
 }
 
 /* The coach page historically shadowed the root aliases locally. */
@@ -249,35 +233,12 @@ html[data-theme="dark"] .danger {
   border-color: #68463c;
 }
 
-/* Theme toggle: dimensions and data-mode icon selectors are JS hooks. */
-.theme-toggle {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  border: 1px solid var(--np-border);
-  background: var(--np-surface);
-  color: var(--np-text);
-  cursor: pointer;
-  display: inline-grid;
-  place-items: center;
-  padding: 0;
-  flex: 0 0 auto;
-  transition: border-color .18s ease, background-color .18s ease, color .18s ease;
-}
-.theme-toggle:hover { border-color: var(--np-accent-border); background: var(--np-surface-muted); }
-.theme-toggle svg { width: 18px; height: 18px; display: block; }
-.theme-toggle svg.icon-system,
-.theme-toggle svg.icon-sun,
-.theme-toggle svg.icon-moon { display: none; }
-.theme-toggle[data-mode="system"] svg.icon-system,
-.theme-toggle[data-mode="light"] svg.icon-sun,
-.theme-toggle[data-mode="dark"] svg.icon-moon { display: block; }
+/* Theme toggle removed — site is light/white only. */
+.theme-toggle { display: none !important; }
 
 /* Phone header controls stay at least 44px so a thumb can hit them. */
 @media (max-width: 480px) {
   .head-right, .headright, .controls, .top-actions { gap: 6px !important; }
-  .theme-toggle { width: 44px; height: 44px; border-radius: 12px; }
-  .theme-toggle svg { width: 18px; height: 18px; }
   .menu-btn { width: 44px !important; height: 44px !important; flex: 0 0 44px; }
   .acc-btn, .account-btn { min-height: 44px; padding: 8px 12px !important; font-size: 16px !important; }
   .lang button { min-width: 44px; min-height: 44px; padding: 8px 10px !important; font-size: 16px !important; }

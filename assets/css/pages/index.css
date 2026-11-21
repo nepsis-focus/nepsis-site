@@ -1579,13 +1579,7 @@ body.home-page main .bento-focus h3 { max-width: 13ch; }
   body.home-page main .bento-duration { position: static; align-self: flex-start; margin-top: 4px; }
 }
 
-@media (max-width: 600px) {
-  /* Prefer under-header placement from home-product.css so floats never cover CTAs. */
-  html body.home-page .nepsis-ambient,
-  html body.home-page .nepsis-consent-settings {
-    bottom: auto;
-  }
-}
+/* Ambient/analytics no longer use fixed overlays on the homepage. */
 
 /* Focused restoration: keep the homepage Earth presentation as in the original site. */
 body.home-page main .hero-earth {

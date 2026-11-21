@@ -1171,9 +1171,8 @@
   function applyPipTheme() {
     var win = livePipWindow();
     if (!win) return;
-    var theme = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-    win.document.documentElement.setAttribute("data-theme", theme);
-    win.document.documentElement.style.colorScheme = theme;
+    win.document.documentElement.setAttribute("data-theme", "light");
+    win.document.documentElement.style.colorScheme = "light";
   }
 
   function watchPipTheme() {

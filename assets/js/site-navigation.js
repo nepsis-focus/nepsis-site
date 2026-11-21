@@ -24,28 +24,29 @@
   ];
   let drawer = document.getElementById("drawer");
   let button = document.getElementById("menuBtn");
+  const hadNativeMenu = !!(drawer && button);
 
-  // Pages with their own complete navigation keep it unchanged.
-  // This shared fallback is only for pages that do not already have a menu.
-  if (drawer && button) return;
-
-  if (!drawer) {
-    const host = document.querySelector(".top-actions, .controls, .headright, header") || document.body;
-    button = document.createElement("button");
-    button.type = "button";
-    button.id = "menuBtn";
-    button.className = "nepsis-menu-button";
-    button.setAttribute("aria-label", "Open menu");
-    button.setAttribute("aria-expanded", "false");
-    button.textContent = "☰";
-    host.append(button);
-    drawer = document.createElement("nav");
-    drawer.id = "drawer";
-    drawer.className = "nepsis-site-drawer";
-    drawer.setAttribute("aria-label", "Site navigation");
-    drawer.setAttribute("aria-hidden", "true");
-    document.body.append(drawer);
+  // Shared fallback only for pages that do not already have a menu.
+  if (!hadNativeMenu) {
+    if (!drawer) {
+      const host = document.querySelector(".top-actions, .controls, .headright, header") || document.body;
+      button = document.createElement("button");
+      button.type = "button";
+      button.id = "menuBtn";
+      button.className = "nepsis-menu-button";
+      button.setAttribute("aria-label", "Open menu");
+      button.setAttribute("aria-expanded", "false");
+      button.textContent = "☰";
+      host.append(button);
+      drawer = document.createElement("nav");
+      drawer.id = "drawer";
+      drawer.className = "nepsis-site-drawer";
+      drawer.setAttribute("aria-label", "Site navigation");
+      drawer.setAttribute("aria-hidden", "true");
+      document.body.append(drawer);
+    }
   }
+
   if (drawer && drawer.classList.contains("nepsis-site-drawer") && !drawer.querySelector(".nepsis-drawer-close")) {
     const close = document.createElement("button");
     close.type = "button";
@@ -54,6 +55,7 @@
     close.textContent = "✕";
     drawer.prepend(close);
   }
+
   if (drawer) {
     for (const [href, el, en] of links) {
       if (drawer.querySelector(`a[href="${href}"]`)) continue;
@@ -65,32 +67,69 @@
       drawer.append(a);
     }
   }
-  if (!button || !drawer) return;
-  drawer.inert = true;
-  let scrim = document.getElementById("scrim");
-  if (!scrim) {
-    scrim = document.createElement("button");
-    scrim.type = "button";
-    scrim.className = "nepsis-menu-scrim";
-    scrim.setAttribute("aria-label", "Close menu");
-    document.body.append(scrim);
+
+  function ensureDrawerSignIn(target) {
+    if (!target || target.querySelector("#drawerAccBtn, [data-drawer-signin]")) return;
+    const acc = document.getElementById("accBtn") || document.getElementById("accountBtn");
+    if (!acc) return;
+    const a = document.createElement("a");
+    a.href = "#";
+    a.id = "drawerAccBtn";
+    a.className = "menu-home drawer-signin";
+    a.dataset.drawerSignin = "1";
+    a.dataset.el = "Σύνδεση";
+    a.dataset.en = "Sign in";
+    a.textContent = document.documentElement.lang === "en" ? "Sign in" : "Σύνδεση";
+    a.addEventListener("click", event => {
+      event.preventDefault();
+      const openDrawer = target.classList.contains("open");
+      if (openDrawer) {
+        target.classList.remove("open");
+        const scrimEl = document.getElementById("scrim");
+        if (scrimEl) scrimEl.classList.remove("open");
+        if (button) {
+          button.classList.remove("open");
+          button.setAttribute("aria-expanded", "false");
+        }
+        target.setAttribute("aria-hidden", "true");
+        target.inert = true;
+      }
+      acc.click();
+    });
+    const anchor = target.querySelector("a, details");
+    if (anchor) target.insertBefore(a, anchor);
+    else target.append(a);
   }
-  const setOpen = open => {
-    drawer.classList.toggle("open", open);
-    scrim.classList.toggle("open", open);
-    drawer.setAttribute("aria-hidden", String(!open));
-    drawer.inert = !open;
-    button.classList.toggle("open", open);
-    button.setAttribute("aria-expanded", String(open));
-    if (open) (drawer.querySelector(".nepsis-drawer-close") || drawer.querySelector("a"))?.focus();
-    else button.focus();
-  };
-  button.addEventListener("click", () => setOpen(!drawer.classList.contains("open")));
-  scrim.addEventListener("click", () => setOpen(false));
-  drawer.addEventListener("click", event => {
-    if (event.target.closest("a") || event.target.closest(".nepsis-drawer-close")) setOpen(false);
-  });
-  document.addEventListener("keydown", event => { if (event.key === "Escape" && drawer.classList.contains("open")) setOpen(false); });
+  ensureDrawerSignIn(drawer);
+
+  if (!button || !drawer) return;
+  if (!hadNativeMenu) {
+    drawer.inert = true;
+    let scrim = document.getElementById("scrim");
+    if (!scrim) {
+      scrim = document.createElement("button");
+      scrim.type = "button";
+      scrim.className = "nepsis-menu-scrim";
+      scrim.setAttribute("aria-label", "Close menu");
+      document.body.append(scrim);
+    }
+    const setOpen = open => {
+      drawer.classList.toggle("open", open);
+      scrim.classList.toggle("open", open);
+      drawer.setAttribute("aria-hidden", String(!open));
+      drawer.inert = !open;
+      button.classList.toggle("open", open);
+      button.setAttribute("aria-expanded", String(open));
+      if (open) (drawer.querySelector(".nepsis-drawer-close") || drawer.querySelector("a"))?.focus();
+      else button.focus();
+    };
+    button.addEventListener("click", () => setOpen(!drawer.classList.contains("open")));
+    scrim.addEventListener("click", () => setOpen(false));
+    drawer.addEventListener("click", event => {
+      if (event.target.closest("a") || event.target.closest(".nepsis-drawer-close")) setOpen(false);
+    });
+    document.addEventListener("keydown", event => { if (event.key === "Escape" && drawer.classList.contains("open")) setOpen(false); });
+  }
 })();
 
 /* Load the opt-in homepage demo and landing sections after the existing site scripts. */

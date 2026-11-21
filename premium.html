@@ -4,14 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>
+/* Light-only boot — Nepsis is always light/white. */
 (function () {
   try {
-    var p = localStorage.getItem("nepsis-theme") || "system";
-    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", t);
-    document.documentElement.style.colorScheme = t;
+    localStorage.setItem("nepsis-theme", "light");
   } catch (e) {}
+  document.documentElement.setAttribute("data-theme", "light");
+  document.documentElement.style.colorScheme = "light";
 })();
 </script>
 <title data-el="Nepsis · Nepsis+" data-en="Nepsis · Nepsis+">Nepsis · Nepsis+</title>
@@ -86,7 +85,7 @@ if ("serviceWorker" in navigator) {
         <h3 data-el="Nepsis+ στο Whop" data-en="Nepsis+ on Whop">Nepsis+ στο Whop</h3>
         <ul style="margin:16px 0 0;padding-left:18px;display:grid;gap:10px;color:var(--muted)">
           <li data-el="15+ Εκτυπώσιμα Workbooks & Blueprints (PDF)" data-en="15+ Printable Workbooks & Blueprints (PDF)">15+ Εκτυπώσιμα Workbooks & Blueprints (PDF)</li>
-          <li data-el='Οδηγός "Small Steps of Focus" (step-by-step courses)' data-en='"Small Steps of Focus" guide (step-by-step courses)'>Οδηγός "Small Steps of Focus" (step-by-step courses)</li>
+          <li data-el='Οδηγός «Μικρά βήματα συγκέντρωσης» (μαθήματα βήμα-βήμα)' data-en='"Small Steps of Focus" guide (step-by-step courses)'>Οδηγός «Μικρά βήματα συγκέντρωσης» (μαθήματα βήμα-βήμα)</li>
           <li data-el="Silent Co-Working & εβδομαδιαίος ρυθμός" data-en="Silent Co-Working & weekly rhythm">Silent Co-Working & εβδομαδιαίος ρυθμός</li>
           <li data-el="Πακέτο ήχων χωρίς σύνδεση" data-en="Offline Ambient Audio Pack">Πακέτο ήχων χωρίς σύνδεση</li>
         </ul>
@@ -131,6 +130,7 @@ if ("serviceWorker" in navigator) {
 <script src="assets/js/site-interactions.js"></script>
 <script src="assets/js/site-navigation.js"></script>
 <script src="assets/js/site-preferences.js"></script>
+<script src="assets/js/analytics.js"></script>
 <script src="assets/js/ambient-sounds.js"></script>
 </body>
 </html>

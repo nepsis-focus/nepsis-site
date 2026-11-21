@@ -53,6 +53,17 @@ html[data-theme="dark"] .coach-page {
 }
 .coach-header-inner, .coach-wrap { width: min(100% - 40px, 1160px); margin-inline: auto; }
 .coach-header-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+@media (max-width: 767px) {
+  .coach-header { min-height: 0; }
+  .coach-header-inner {
+    width: 100%;
+    min-height: 56px;
+    height: 56px;
+    gap: 8px;
+    padding-inline: clamp(10px, 3.2vw, 20px);
+    box-sizing: border-box;
+  }
+}
 .coach-brand { display: inline-flex; align-items: center; gap: 11px; color: var(--coach-text); font-size: 1.12rem; font-weight: 780; letter-spacing: -.035em; text-decoration: none; }
 .coach-page .coach-brand .dot { width: 9px; height: 9px; flex: 0 0 9px; margin: 0; border-radius: 50%; background: var(--coach-accent); box-shadow: 0 0 16px rgba(240, 160, 107, .6); }
 .coach-controls { display: flex; align-items: center; gap: 12px; }

@@ -48,23 +48,9 @@ header .controls .lang, header .top-actions .lang { display: flex; flex-wrap: no
   header .controls a.back, header .top-actions a.back { padding: 5px 8px; font-size: .66rem; }
   header .controls .lang button, header .top-actions button[data-lang] { padding: 5px 7px; font-size: .68rem; }
 }
-@media (max-width: 520px) {
-  /* The fallback menu pages use a two-row header on phones. */
-  body:not(.coach-page) #drawer.nepsis-site-drawer {
-    padding-top: calc(104px + env(safe-area-inset-top, 0px));
-  }
-}
 @media (max-width: 380px) {
   .nav-left { gap: 6px; }
   .nav-home-back { width: 36px; height: 36px; }
-  /* The controls wrap on very narrow phones; keep menu content below them. */
-  body:not(.coach-page) #drawer.drawer {
-    padding-top: calc(104px + env(safe-area-inset-top, 0px));
-  }
-  /* Privacy uses longer controls and needs a little more room at 320px. */
-  body.privacy-page #drawer.nepsis-site-drawer {
-    padding-top: calc(140px + env(safe-area-inset-top, 0px));
-  }
 }
 
 /* The menu panel */
@@ -431,13 +417,12 @@ html:not([data-theme="dark"]) :is(a, button, input, textarea, select, summary):f
     padding-top: env(safe-area-inset-top);
   }
   .top-in, header .top, .top {
-    height: auto;
-    min-height: 52px;
-    flex-wrap: wrap;
-    row-gap: 6px;
+    height: 56px;
+    min-height: 56px;
+    flex-wrap: nowrap;
   }
   #drawer.drawer {
-    padding-top: calc(112px + env(safe-area-inset-top, 0px));
+    padding-top: calc(64px + env(safe-area-inset-top, 0px));
     padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   }
   #drawer.drawer .close, #drawer.drawer .nav-drawer-head .close {
@@ -467,21 +452,150 @@ html:not([data-theme="dark"]) :is(a, button, input, textarea, select, summary):f
     max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow: auto;
   }
-  .nepsis-consent-settings {
-    right: max(12px, env(safe-area-inset-right));
-    bottom: calc(12px + env(safe-area-inset-bottom));
-    min-height: 44px;
-  }
-  .nepsis-ambient {
-    left: max(12px, env(safe-area-inset-left));
-    bottom: calc(12px + env(safe-area-inset-bottom));
-  }
+  /* Floating ambient/analytics overlays are retired — keep consent panel only. */
   body.home-page .bento-card,
   body.home-page .bento-focus { overflow: visible; }
   /* Never clip the homepage globe or its atmosphere. */
   body.home-page main .hero,
   body.home-page main #globe.hero { overflow: visible; }
   .wrap, .top-in, header .top { max-width: 100%; }
+}
+
+/* Shared compact header: one ~52–56px row on every page (not just home).
+   Selectors intentionally beat page CSS such as body.home-page .top-in. */
+@media (max-width: 767px) {
+  html body.home-page .top-in,
+  html body.practice-page .top-in,
+  html body.coach-page .coach-header-inner,
+  html body.privacy-page header,
+  html body.my-nepsis-dashboard header .top,
+  html body :is(.top-in, header .top, .top, .coach-header-inner),
+  html body header > .wrap.top,
+  html body .wrap > header,
+  html body header.coach-header {
+    display: flex !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding-block: 0 !important;
+    padding-inline: clamp(10px, 3.2vw, 20px) !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+    align-items: center;
+    overflow: visible;
+  }
+  html body :is(.top-in, header .top, .top, .coach-header-inner) > :is(.nav-left, .logo, .head-right, .controls, .top-actions, .coach-controls),
+  html body header > .wrap.top > :is(.nav-left, .logo, .head-right, .controls, .top-actions),
+  html body .wrap > header > :is(.logo, .lang, .nepsis-ambient, .nepsis-menu-button, #menuBtn) {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+  html body :is(.head-right, .controls, .top-actions, .coach-controls) {
+    margin-left: auto;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+  }
+  /* Sign in, back chips, and home-arrow live in the menu / logo on phones. */
+  html body :is(.acc-btn, .account-btn, #accBtn, #accountBtn),
+  html body header a.back,
+  html body .nav-home-back {
+    display: none !important;
+  }
+  html body :is(.lang, .coach-lang) {
+    height: 32px;
+    flex: 0 0 auto;
+  }
+  html body :is(.lang button, .coach-lang button),
+  html body header .top-actions > button[data-lang] {
+    min-width: 28px !important;
+    width: auto !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 0 6px !important;
+    font-size: 11px !important;
+    flex: 0 0 auto !important;
+  }
+  html body :is(.menu-btn, .nepsis-menu-button, .nepsis-ambient-toggle) {
+    min-width: 36px !important;
+    width: 36px !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    flex: 0 0 36px !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+  html body .theme-toggle { display: none !important; }
+  html body .nepsis-ambient {
+    position: relative !important;
+    inset: auto !important;
+    flex: 0 0 auto !important;
+  }
+  html body header :is(.logo, .coach-brand) {
+    font-size: clamp(16px, 4.6vw, 19px);
+    min-height: 36px;
+    flex-shrink: 0;
+  }
+  #drawer.drawer,
+  #drawer.nepsis-site-drawer,
+  body:not(.coach-page) #drawer.nepsis-site-drawer,
+  body:not(.coach-page) #drawer.drawer,
+  body.privacy-page #drawer.nepsis-site-drawer {
+    padding-top: calc(64px + env(safe-area-inset-top, 0px));
+  }
+}
+@media (max-width: 360px) {
+  html body :is(.head-right, .controls, .top-actions, .coach-controls) { gap: 3px; }
+  html body header :is(.logo, .coach-brand) { font-size: 16px; }
+}
+
+/* Analytics settings is an inline footer/menu control — never a fixed chip. */
+html body .nepsis-consent-settings,
+body .nepsis-consent-settings {
+  position: static !important;
+  display: none !important;
+  inset: auto !important;
+  box-shadow: none !important;
+}
+html body .nepsis-analytics-link,
+body .nepsis-analytics-link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+html body .nepsis-analytics-link[hidden],
+body .nepsis-analytics-link[hidden] {
+  display: none !important;
+}
+#drawer .nepsis-analytics-link,
+.nepsis-site-drawer .nepsis-analytics-link {
+  display: block;
+  padding: .75rem .9rem;
+  border-radius: .65rem;
+  text-decoration: none;
+  font-weight: 650;
+  text-align: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+#drawer .nepsis-analytics-link:hover,
+.nepsis-site-drawer .nepsis-analytics-link:hover {
+  background: var(--np-surface-muted, #f5f5f7);
 }
 
 /* Wider content, less empty gutter — Apple-like density. */

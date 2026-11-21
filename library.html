@@ -4,15 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>
-/* Warm theme boot — apply before paint to avoid a light flash at night */
+/* Light-only boot — Nepsis is always light/white. */
 (function () {
   try {
-    var p = localStorage.getItem("nepsis-theme") || "system";
-    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", t);
-    document.documentElement.style.colorScheme = t;
+    localStorage.setItem("nepsis-theme", "light");
   } catch (e) {}
+  document.documentElement.setAttribute("data-theme", "light");
+  document.documentElement.style.colorScheme = "light";
 })();
 </script>
 <title data-el="Nepsis · Βιβλιοθήκη γνώσης" data-en="Nepsis · Knowledge library">Nepsis · Βιβλιοθήκη γνώσης</title>

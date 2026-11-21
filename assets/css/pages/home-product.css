@@ -48,6 +48,14 @@ body.home-page .top-in {
   box-sizing: border-box;
   gap: 24px;
 }
+@media (max-width: 767px) {
+  /* Shared compact header in nav-polish.css owns phone sizing. */
+  body.home-page .top-in {
+    height: 56px !important;
+    gap: 8px !important;
+    padding-inline: clamp(10px, 3.2vw, 20px) !important;
+  }
+}
 body.home-page header .logo {
   flex: 0 0 auto;
   margin: 0;
@@ -465,52 +473,7 @@ html body.home-page .home-product-section header.home-product-heading {
 }
 
 @media (max-width: 767px) {
-  body.home-page .top-in {
-    width: 100%;
-    max-width: none;
-    height: 52px;
-    min-height: 52px;
-    flex-wrap: nowrap !important;
-    gap: 8px;
-    padding-inline: clamp(16px, 4vw, 28px);
-    padding-bottom: 0;
-  }
-  body.home-page .head-right {
-    margin-left: auto;
-    flex-wrap: nowrap;
-    gap: 4px;
-  }
-  /* Keep Sign in hit-testable (watchdog probes #accBtn first) but compact. */
-  body.home-page .head-right .acc-btn {
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    min-width: 0 !important;
-    min-height: 32px !important;
-    height: 32px !important;
-    padding: 0 8px !important;
-    font-size: 11px !important;
-    white-space: nowrap;
-  }
-  body.home-page .head-right .lang {
-    height: 32px;
-    flex: 0 0 auto;
-  }
-  body.home-page .head-right .lang button {
-    min-width: 28px !important;
-    width: auto !important;
-    min-height: 32px !important;
-    height: 32px !important;
-    padding: 0 6px !important;
-    font-size: 11px !important;
-  }
-  body.home-page .head-right .theme-toggle,
-  body.home-page .head-right .menu-btn {
-    min-width: 36px !important;
-    width: 36px !important;
-    min-height: 36px !important;
-    height: 36px !important;
-  }
+  /* Compact header rules live in nav-polish.css for every page. */
   body.home-page #globe .hero-copy { max-width: 100%; }
   body.home-page .trust-chips { display: none; }
   html body.home-page #globe.hero h1 { font-size: clamp(36px, 11vw, 52px); }
@@ -522,40 +485,6 @@ html body.home-page .home-product-section header.home-product-heading {
   .home-product-heading { margin-bottom: 24px; }
   .home-product-grid { gap: 8px; }
   .home-product-card { padding: 4px 0 12px; }
-}
-
-/* Floating controls must not cover hero chips/CTAs or the sticky header. */
-@media (max-width: 900px) {
-  html body.home-page .nepsis-ambient {
-    top: calc(64px + env(safe-area-inset-top, 0px));
-    left: max(8px, env(safe-area-inset-left, 0px));
-    right: auto;
-    bottom: auto;
-    z-index: 40;
-  }
-  html body.home-page .nepsis-ambient-toggle {
-    width: 36px;
-    height: 36px;
-  }
-  html body.home-page .nepsis-ambient-icon { width: 16px; height: 16px; }
-  html body.home-page .nepsis-consent-settings {
-    top: calc(64px + env(safe-area-inset-top, 0px));
-    right: max(8px, env(safe-area-inset-right, 0px));
-    left: auto;
-    bottom: auto;
-    min-height: 32px;
-    padding: 6px 10px;
-    font-size: 11px;
-    z-index: 40;
-  }
-}
-@media (max-width: 360px) {
-  body.home-page header .logo { font-size: 17px; }
-  body.home-page .head-right { gap: 3px; }
-  body.home-page .head-right .acc-btn {
-    padding: 0 6px !important;
-    font-size: 10px !important;
-  }
 }
 @media (max-width: 420px) {
   html body.home-page #globe.hero h1 { font-size: clamp(36px, 11vw, 48px); }
