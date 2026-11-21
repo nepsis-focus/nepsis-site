@@ -94,9 +94,23 @@ body .nepsis-consent-panel {
 .nepsis-dialog-actions { display: flex; justify-content: flex-end; gap: .65rem; margin-top: 1.1rem; }
 .nepsis-dialog-actions button { min-height: 2.6rem; padding: .5rem .9rem; font: inherit; cursor: pointer; }
 @media (max-width: 390px) { .nepsis-dialog { padding: 1.1rem; } .nepsis-dialog-actions button { flex: 1; } }
-.nepsis-menu-button { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--np-border, rgba(53, 43, 37, .12)); border-radius: 12px; color: var(--np-text, #27221f); background: var(--np-surface, #fff); font: inherit; cursor: pointer; }
-.nepsis-site-drawer { position: fixed; z-index: 1002; inset: 0 0 0 auto; display: flex; flex-direction: column; gap: .2rem; width: min(88vw, 22rem); padding: 5.5rem 1.2rem 1.2rem; overflow-y: auto; background: var(--np-surface-raised, #fff); border-left: 1px solid var(--np-border, rgba(53, 43, 37, .12)); box-shadow: -1rem 0 3rem rgba(40, 28, 20, .14); transform: translateX(105%); transition: transform .24s ease; }
+.nepsis-menu-button { position: relative; z-index: 1003; min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--np-border, rgba(53, 43, 37, .12)); border-radius: 12px; color: var(--np-text, #27221f); background: var(--np-surface, #fff); font: inherit; cursor: pointer; }
+.nepsis-site-drawer { position: fixed; z-index: 1002; inset: 0 0 0 auto; display: flex; flex-direction: column; gap: .2rem; width: min(88vw, 22rem); padding: 1.1rem 1.2rem 1.2rem; overflow-y: auto; background: var(--np-surface-raised, #fff); border-left: 1px solid var(--np-border, rgba(53, 43, 37, .12)); box-shadow: -1rem 0 3rem rgba(40, 28, 20, .14); transform: translateX(105%); transition: transform .24s ease; }
 .nepsis-site-drawer.open { transform: translateX(0); }
+.nepsis-site-drawer .nepsis-drawer-close {
+  align-self: flex-end;
+  width: 44px;
+  height: 44px;
+  margin: 0 0 .4rem;
+  border: 1px solid var(--np-border, rgba(53, 43, 37, .12));
+  border-radius: 12px;
+  background: var(--np-surface, #fff);
+  color: var(--np-text, #27221f);
+  font: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+}
 .nepsis-site-drawer a { display: block; padding: .75rem .9rem; border-radius: .65rem; color: var(--np-text, #27221f); text-decoration: none; font-weight: 650; }
 .nepsis-site-drawer a:hover, .nepsis-site-drawer a:focus-visible { background: var(--np-surface-muted, #f4f2ee); outline-color: var(--np-focus, #a9491c); }
 .nepsis-menu-scrim { position: fixed; z-index: 1001; inset: 0; border: 0; background: var(--np-scrim, rgba(30, 25, 22, .44)); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s ease, visibility .2s ease; }

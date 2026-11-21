@@ -40,10 +40,12 @@ html body.home-page header.top {
   backdrop-filter: saturate(180%) blur(20px);
 }
 body.home-page .top-in {
-  width: min(calc(100% - 40px), 1200px);
+  width: 100% !important;
+  max-width: none !important;
   height: 52px;
-  margin-inline: auto;
-  padding: 0;
+  margin-inline: 0 !important;
+  padding-inline: clamp(20px, 5vw, 64px) !important;
+  box-sizing: border-box;
   gap: 24px;
 }
 body.home-page header .logo {
@@ -110,7 +112,21 @@ html body.home-page #globe.hero {
 }
 html body.home-page #globe.hero::after {
   z-index: 0;
-  background: linear-gradient(90deg, #fff 0%, #fff 32%, rgba(255, 255, 255, .92) 42%, rgba(255, 255, 255, 0) 58%);
+  /* Soft text-side veil only — stop before the Earth so it never reads as a left smudge. */
+  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, .55) 18%, rgba(255, 255, 255, 0) 34%);
+}
+@media (min-width: 901px) {
+  html body.home-page #globe.hero::after {
+    background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, .4) 16%, rgba(255, 255, 255, 0) 30%);
+  }
+}
+html body.home-page main #globe.hero > .wrap,
+html body.home-page main .hero > .wrap {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-inline: clamp(20px, 5vw, 64px) !important;
+  box-sizing: border-box;
 }
 body.home-page #globe .hero-copy {
   align-items: flex-start;
@@ -449,12 +465,46 @@ html body.home-page .home-product-section header.home-product-heading {
 }
 
 @media (max-width: 767px) {
-  body.home-page .top-in { width: calc(100% - 32px); height: auto; min-height: 52px; gap: 12px; padding-bottom: 8px; }
+  body.home-page .top-in {
+    width: 100%;
+    max-width: none;
+    height: 52px;
+    min-height: 52px;
+    flex-wrap: nowrap !important;
+    gap: 8px;
+    padding-inline: clamp(16px, 4vw, 28px);
+    padding-bottom: 0;
+  }
+  body.home-page .head-right {
+    margin-left: auto;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+  /* Keep a single compact row: Sign in lives in the drawer on narrow widths. */
+  body.home-page .head-right .acc-btn { display: none !important; }
+  body.home-page .head-right .lang {
+    height: 32px;
+    flex: 0 0 auto;
+  }
+  body.home-page .head-right .lang button {
+    min-width: 28px !important;
+    width: auto !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 0 7px !important;
+    font-size: 11px !important;
+  }
+  body.home-page .head-right .theme-toggle,
+  body.home-page .head-right .menu-btn {
+    min-width: 40px !important;
+    width: 40px !important;
+    min-height: 40px !important;
+    height: 40px !important;
+  }
   body.home-page #globe .hero-copy { max-width: 100%; }
   body.home-page .trust-chips { display: none; }
   html body.home-page #globe.hero h1 { font-size: clamp(36px, 11vw, 52px); }
   body.home-page .home-product-links { display: none; }
-  body.home-page .head-right { margin-left: auto; }
   html body.home-page #globe.hero::after {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 40%, #fff 92%);
   }
@@ -462,6 +512,30 @@ html body.home-page .home-product-section header.home-product-heading {
   .home-product-heading { margin-bottom: 24px; }
   .home-product-grid { gap: 8px; }
   .home-product-card { padding: 4px 0 12px; }
+}
+
+/* Floating controls must not cover hero chips/CTAs on phones. */
+@media (max-width: 900px) {
+  html body.home-page .nepsis-ambient {
+    top: calc(58px + env(safe-area-inset-top, 0px));
+    left: max(8px, env(safe-area-inset-left, 0px));
+    right: auto;
+    bottom: auto;
+  }
+  html body.home-page .nepsis-ambient-toggle {
+    width: 36px;
+    height: 36px;
+  }
+  html body.home-page .nepsis-ambient-icon { width: 16px; height: 16px; }
+  html body.home-page .nepsis-consent-settings {
+    top: calc(58px + env(safe-area-inset-top, 0px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+    left: auto;
+    bottom: auto;
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
 }
 @media (max-width: 420px) {
   html body.home-page #globe.hero h1 { font-size: clamp(36px, 11vw, 48px); }

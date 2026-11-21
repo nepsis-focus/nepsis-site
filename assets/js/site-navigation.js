@@ -46,6 +46,14 @@
     drawer.setAttribute("aria-hidden", "true");
     document.body.append(drawer);
   }
+  if (drawer && drawer.classList.contains("nepsis-site-drawer") && !drawer.querySelector(".nepsis-drawer-close")) {
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "nepsis-drawer-close";
+    close.setAttribute("aria-label", document.documentElement.lang === "en" ? "Close" : "Κλείσιμο");
+    close.textContent = "✕";
+    drawer.prepend(close);
+  }
   if (drawer) {
     for (const [href, el, en] of links) {
       if (drawer.querySelector(`a[href="${href}"]`)) continue;
@@ -74,11 +82,14 @@
     drawer.inert = !open;
     button.classList.toggle("open", open);
     button.setAttribute("aria-expanded", String(open));
-    if (open) drawer.querySelector("a")?.focus(); else button.focus();
+    if (open) (drawer.querySelector(".nepsis-drawer-close") || drawer.querySelector("a"))?.focus();
+    else button.focus();
   };
   button.addEventListener("click", () => setOpen(!drawer.classList.contains("open")));
   scrim.addEventListener("click", () => setOpen(false));
-  drawer.addEventListener("click", event => { if (event.target.closest("a")) setOpen(false); });
+  drawer.addEventListener("click", event => {
+    if (event.target.closest("a") || event.target.closest(".nepsis-drawer-close")) setOpen(false);
+  });
   document.addEventListener("keydown", event => { if (event.key === "Escape" && drawer.classList.contains("open")) setOpen(false); });
 })();
 

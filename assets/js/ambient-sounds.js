@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "nepsis-ambient-v1";
   const SOUNDS = [
-    { id: "brown", el: "Brown noise", en: "Brown noise" },
+    { id: "brown", el: "Καφέ θόρυβος", en: "Brown noise" },
     { id: "rain", el: "Βροχή", en: "Rain" },
     { id: "cafe", el: "Καφετέρια", en: "Cafe" },
     { id: "binaural", el: "Binaural", en: "Binaural" }

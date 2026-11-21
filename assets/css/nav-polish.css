@@ -214,7 +214,7 @@ html:not([data-theme="dark"]) body:not(.coach-page) :is(header.top, body > heade
   backdrop-filter: saturate(180%) blur(20px);
 }
 html:not([data-theme="dark"]) :is(.logo, header .logo) { color: #1d1d1f; letter-spacing: -.04em; }
-html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .email-submit, .nepsis-consent-actions .primary, .home-product-button, .mobile-start a) {
+html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .email-submit, .nepsis-consent-actions .primary, .home-product-button, .mobile-start a, .exam-actions .btn, .cta .btn, .tip-action .btn, a.btn:not(.btn-ghost):not(.btn-secondary):not(.secondary):not(.acc-google)) {
   background: #F0702A !important;
   border-color: #F0702A !important;
   color: #1d1d1f !important;
@@ -222,7 +222,7 @@ html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-ema
   box-shadow: none;
   font-weight: 600;
 }
-html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .home-product-button, .mobile-start a):hover {
+html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .home-product-button, .mobile-start a, .exam-actions .btn, .cta .btn, .tip-action .btn, a.btn:not(.btn-ghost):not(.btn-secondary):not(.secondary):not(.acc-google)):hover {
   background: #e26520 !important;
   color: #1d1d1f !important;
   filter: none;
@@ -246,13 +246,23 @@ html:not([data-theme="dark"]) body.practice-page .btn.btn-primary {
   border-color: #F0702A !important;
 }
 /* Hamburger → ✕ when the drawer is open. */
+.menu-btn {
+  display: inline-flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
 .menu-btn span,
 .coach-page .menu-btn span {
+  margin: 0 !important;
+  transform-origin: center;
   transition: transform .2s ease, opacity .2s ease;
 }
+/* gap 5px + bar 2px → 7px center-to-center. */
 .menu-btn.open span:nth-child(1),
 .menu-btn[aria-expanded="true"] span:nth-child(1) {
-  transform: translateY(5.5px) rotate(45deg);
+  transform: translateY(7px) rotate(45deg);
 }
 .menu-btn.open span:nth-child(2),
 .menu-btn[aria-expanded="true"] span:nth-child(2) {
@@ -260,6 +270,18 @@ html:not([data-theme="dark"]) body.practice-page .btn.btn-primary {
 }
 .menu-btn.open span:nth-child(3),
 .menu-btn[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+/* Coach uses gap:4px + 1.5px bars → 5.5px center-to-center. */
+.coach-page .menu-btn {
+  gap: 4px;
+}
+.coach-page .menu-btn.open span:nth-child(1),
+.coach-page .menu-btn[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(5.5px) rotate(45deg);
+}
+.coach-page .menu-btn.open span:nth-child(3),
+.coach-page .menu-btn[aria-expanded="true"] span:nth-child(3) {
   transform: translateY(-5.5px) rotate(-45deg);
 }
 .nepsis-menu-button.open,

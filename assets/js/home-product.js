@@ -79,7 +79,7 @@
     <section class="home-product-section home-product-dark" id="local-private" aria-labelledby="local-private-title">
       <div class="home-product-container home-product-privacy">
         <header class="home-product-heading">
-          <p class="home-product-eyebrow" data-el="LOCAL &amp; PRIVATE" data-en="LOCAL &amp; PRIVATE">LOCAL &amp; PRIVATE</p>
+          <p class="home-product-eyebrow" data-el="ΤΟΠΙΚΑ ΚΑΙ ΙΔΙΩΤΙΚΑ" data-en="LOCAL &amp; PRIVATE">ΤΟΠΙΚΑ ΚΑΙ ΙΔΙΩΤΙΚΑ</p>
           <h2 id="local-private-title" data-el="Τα δεδομένα σου μένουν σε εσένα." data-en="Your data stays yours.">Τα δεδομένα σου μένουν σε εσένα.</h2>
           <p class="home-product-copy" data-el="Ως επισκέπτης, η πρόοδός σου αποθηκεύεται στον browser της συσκευής σου. Αν συνδεθείς, μπορεί να συγχρονιστεί ιδιωτικά στον λογαριασμό σου. Το κρυπτογραφημένο ημερολόγιο μένει μόνο στη συσκευή σου, ενώ ο Coach στέλνει κείμενο σε AI μόνο με τη ρητή συγκατάθεσή σου." data-en="As a guest, your progress is stored in your device browser. If you sign in, it can sync privately to your account. Your encrypted diary stays on your device, and the Coach sends text to AI only with your explicit consent.">Ως επισκέπτης, η πρόοδός σου αποθηκεύεται στον browser της συσκευής σου. Αν συνδεθείς, μπορεί να συγχρονιστεί ιδιωτικά στον λογαριασμό σου. Το κρυπτογραφημένο ημερολόγιο μένει μόνο στη συσκευή σου, ενώ ο Coach στέλνει κείμενο σε AI μόνο με τη ρητή συγκατάθεσή σου.</p>
           <a class="home-product-privacy-link" href="privacy.html" data-el="Δες πώς λειτουργεί η ιδιωτικότητα →" data-en="See how privacy works →">Δες πώς λειτουργεί η ιδιωτικότητα →</a>
@@ -90,13 +90,13 @@
     <section class="home-product-section home-product-light" id="why-nepsis" aria-labelledby="why-nepsis-title">
       <div class="home-product-container">
         <header class="home-product-heading">
-          <p class="home-product-eyebrow" data-el="WHY NEPSIS" data-en="WHY NEPSIS">WHY NEPSIS</p>
+          <p class="home-product-eyebrow" data-el="ΓΙΑΤΙ NEPSIS" data-en="WHY NEPSIS">ΓΙΑΤΙ NEPSIS</p>
           <h2 id="why-nepsis-title" data-el="Φτιαγμένο για πραγματική εστίαση." data-en="Made for real focus.">Φτιαγμένο για πραγματική εστίαση.</h2>
           <p class="home-product-copy" data-el="Ένας πιο ήρεμος ψηφιακός χώρος, σχεδιασμένος γύρω από τη δική σου προσοχή." data-en="A calmer digital space, designed around your attention.">Ένας πιο ήρεμος ψηφιακός χώρος, σχεδιασμένος γύρω από τη δική σου προσοχή.</p>
         </header>
         <div class="home-product-grid">
           <article class="home-product-card">
-            <h3 data-el="Ήσυχο design" data-en="Quiet design">Ήσυχο design</h3>
+            <h3 data-el="Ήσυχος σχεδιασμός" data-en="Quiet design">Ήσυχος σχεδιασμός</h3>
             <p data-el="Καθαρή τυπογραφία και γενναιόδωρος χώρος, για να μένεις σε αυτό που κάνεις." data-en="Clear type and generous space help you stay with what you are doing.">Καθαρή τυπογραφία και γενναιόδωρος χώρος, για να μένεις σε αυτό που κάνεις.</p>
           </article>
           <article class="home-product-card">
@@ -114,7 +114,7 @@
     <section class="home-product-section home-product-dark" id="plans" aria-labelledby="plans-title">
       <div class="home-product-container">
         <header class="home-product-heading">
-          <p class="home-product-eyebrow" data-el="PLANS" data-en="PLANS">PLANS</p>
+          <p class="home-product-eyebrow" data-el="ΠΛΑΝΑ" data-en="PLANS">ΠΛΑΝΑ</p>
           <h2 id="plans-title" data-el="Διάλεξε τον ρυθμό σου." data-en="Choose your own pace.">Διάλεξε τον ρυθμό σου.</h2>
           <p class="home-product-copy" data-el="Ξεκίνα δωρεάν με τα στάδια εστίασης ή ζήτησε από τον Coach να σε βοηθήσει να φτιάξεις ένα πλάνο." data-en="Start for free with the focus stages, or ask the Coach to help you build a plan.">Ξεκίνα δωρεάν με τα στάδια εστίασης ή ζήτησε από τον Coach να σε βοηθήσει να φτιάξεις ένα πλάνο.</p>
         </header>
@@ -168,6 +168,9 @@
 
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var revealTargets = sections.querySelectorAll(".home-product-section");
+  var revealAll = function () {
+    revealTargets.forEach(function (section) { section.classList.add("is-visible"); });
+  };
   if (!reducedMotion && "IntersectionObserver" in window) {
     document.documentElement.classList.add("home-product-motion");
     var observer = new IntersectionObserver(function (entries, currentObserver) {
@@ -179,8 +182,10 @@
       });
     }, { threshold: 0.12, rootMargin: "0px 0px -32px 0px" });
     revealTargets.forEach(function (section) { observer.observe(section); });
+    // Fallback: if IO never fires (print, odd scroll containers), show content.
+    window.setTimeout(revealAll, 1500);
   } else {
-    revealTargets.forEach(function (section) { section.classList.add("is-visible"); });
+    revealAll();
   }
 
   // Keep the existing sticky mobile start button, but let the hero buttons

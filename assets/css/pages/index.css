@@ -1580,9 +1580,10 @@ body.home-page main .bento-focus h3 { max-width: 13ch; }
 }
 
 @media (max-width: 600px) {
+  /* Prefer under-header placement from home-product.css so floats never cover CTAs. */
   html body.home-page .nepsis-ambient,
   html body.home-page .nepsis-consent-settings {
-    bottom: calc(82px + env(safe-area-inset-bottom));
+    bottom: auto;
   }
 }
 
@@ -1809,7 +1810,7 @@ html body.home-page main .hero-earth #globeCanvas {
   html body.home-page main #globe .hero > .wrap {
     order: 0;
     width: 100%;
-    padding: 0 16px;
+    padding-inline: clamp(20px, 5vw, 64px);
   }
 }
 

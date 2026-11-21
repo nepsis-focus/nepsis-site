@@ -113,26 +113,29 @@ let currentLang = "el";
     if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.setClearColor(0x000000, 0);
 
-    scene.add(new THREE.AmbientLight(0xb8cbe0, 0.82));
-    const sunlight = new THREE.DirectionalLight(0xffffff, 1.42);
-    sunlight.position.set(-3.8, 2.2, 4.8);
+    scene.add(new THREE.AmbientLight(0xc5d4e4, 0.72));
+    const sunlight = new THREE.DirectionalLight(0xfff1e0, 0.78);
+    sunlight.position.set(0.6, 3.4, 5.6);
     scene.add(sunlight);
-    const fillLight = new THREE.DirectionalLight(0x8bb9e2, 0.42);
-    fillLight.position.set(4, -1.5, -3);
+    const fillLight = new THREE.DirectionalLight(0x9bb8d4, 0.28);
+    fillLight.position.set(3.6, 0.2, 1.8);
     scene.add(fillLight);
+    const rimLight = new THREE.DirectionalLight(0xd8e6f2, 0.18);
+    rimLight.position.set(-3.2, 1.2, -2.4);
+    scene.add(rimLight);
 
     const earthGroup = new THREE.Group();
     scene.add(earthGroup);
     const radius = 2;
     const sphereGeometry = new THREE.SphereGeometry(radius, 96, 96);
     const earthMaterial = new THREE.MeshPhongMaterial({
-      color: 0xffffff, specular: new THREE.Color(0x34495c), shininess: 10
+      color: 0xffffff, specular: new THREE.Color(0x2a3a48), shininess: 5
     });
     const earth = new THREE.Mesh(sphereGeometry, earthMaterial);
     earthGroup.add(earth);
 
-    const cloudMaterial = new THREE.MeshPhongMaterial({
-      color: 0xffffff, transparent: true, opacity: 0.38, depthWrite: false
+    const cloudMaterial = new THREE.MeshLambertMaterial({
+      color: 0xffffff, transparent: true, opacity: 0.22, depthWrite: false
     });
     const clouds = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.009, 96, 96), cloudMaterial);
     earthGroup.add(clouds);
@@ -144,8 +147,8 @@ let currentLang = "el";
         depthWrite: false,
         side: THREE.BackSide,
         uniforms: {
-          uColor: { value: new THREE.Color(0x62aee8) },
-          uIntensity: { value: 0.92 }
+          uColor: { value: new THREE.Color(0x6aa8d4) },
+          uIntensity: { value: 0.55 }
         },
         vertexShader: [
           "varying float vFres;",
@@ -199,7 +202,7 @@ let currentLang = "el";
     );
     loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_normal_2048.jpg", function (texture) {
       earthMaterial.normalMap = texture;
-      earthMaterial.normalScale = new THREE.Vector2(0.42, 0.42);
+      earthMaterial.normalScale = new THREE.Vector2(0.28, 0.28);
       earthMaterial.needsUpdate = true;
     });
     loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_clouds_1024.png", function (texture) {
@@ -1106,6 +1109,22 @@ let currentLang = "el";
   }
   const accBtn = $("accBtn");
   if (accBtn) accBtn.addEventListener("click", function (event) { event.preventDefault(); setAcc(true); });
+  const drawerAccBtn = $("drawerAccBtn");
+  if (drawerAccBtn) {
+    drawerAccBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      const drawer = $("drawer");
+      const scrim = $("scrim");
+      const menuBtn = $("menuBtn");
+      if (drawer) drawer.classList.remove("open");
+      if (scrim) scrim.classList.remove("open");
+      if (menuBtn) {
+        menuBtn.classList.remove("open");
+        menuBtn.setAttribute("aria-expanded", "false");
+      }
+      setAcc(true);
+    });
+  }
   const accClose = $("accClose");
   if (accClose) accClose.addEventListener("click", function () { setAcc(false); });
   const accScrim = $("accScrim");
