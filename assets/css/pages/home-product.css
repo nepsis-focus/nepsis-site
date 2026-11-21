@@ -506,7 +506,15 @@ html body.home-page .home-product-section header.home-product-heading {
     transform: translateY(0);
     pointer-events: auto;
   }
-  body.home-page.home-product-scrolled { padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important; }
+  /* Keep content/footer clear of the fixed CTA; hide the bar when the footer is on screen. */
+  html body.home-page.home-product-scrolled.home-product-footer-near .mobile-start {
+    opacity: 0;
+    transform: translateY(110%);
+    pointer-events: none;
+  }
+  body.home-page.home-product-scrolled {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   html.home-product-motion .home-product-section { opacity: 1; transform: none; transition: none; }

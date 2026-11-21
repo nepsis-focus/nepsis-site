@@ -190,6 +190,7 @@
 
   // Keep the existing sticky mobile start button, but let the hero buttons
   // remain unobstructed until the visitor has scrolled past the hero.
+  // Hide it again when the footer is in view so it never covers analytics/footer links.
   if (window.matchMedia && window.matchMedia("(max-width: 600px)").matches && "IntersectionObserver" in window) {
     var watchHero = function (cta) {
       if (!cta || cta.dataset.homeProductObserved === "true") return false;
@@ -198,6 +199,15 @@
         body.classList.toggle("home-product-scrolled", !entries[0].isIntersecting && window.scrollY > sections.offsetTop);
       }, { threshold: 0.05 });
       heroObserver.observe(sections);
+
+      var footer = document.querySelector("footer");
+      if (footer && cta.dataset.homeProductFooterObserved !== "true") {
+        cta.dataset.homeProductFooterObserved = "true";
+        var footerObserver = new IntersectionObserver(function (entries) {
+          body.classList.toggle("home-product-footer-near", entries.some(function (entry) { return entry.isIntersecting; }));
+        }, { threshold: 0, rootMargin: "0px 0px -8px 0px" });
+        footerObserver.observe(footer);
+      }
       return true;
     };
     if (!watchHero(document.querySelector(".mobile-start"))) {

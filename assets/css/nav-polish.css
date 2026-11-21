@@ -97,6 +97,13 @@ body:not(.coach-page) .nepsis-menu-scrim.open { z-index: 1001; }
   margin: 0; padding: 10px 14px; border-radius: 14px;
   font-size: 1.05rem; font-weight: 800; color: var(--fg, #3A2418);
 }
+/* Sign in in the drawer must meet AA on white (not bright orange #F0702A). */
+#drawer.drawer a.drawer-signin,
+#drawer.drawer #drawerAccBtn,
+body.practice-page #drawer a.drawer-signin,
+body.practice-page #drawer #drawerAccBtn {
+  color: #B8501A !important;
+}
 
 /* Links a page hides on purpose (for example behind a feature switch) stay hidden. */
 #drawer.drawer a[hidden] { display: none; }
