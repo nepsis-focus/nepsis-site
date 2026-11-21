@@ -13,7 +13,7 @@
     document.documentElement.setAttribute("data-theme", "light");
     document.documentElement.style.colorScheme = "light";
     document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
-      meta.setAttribute("content", "#F0702A");
+      meta.setAttribute("content", "#ffffff");
     });
     // Site is light-only: drop any legacy dark/system preference and remove toggles.
     try {
