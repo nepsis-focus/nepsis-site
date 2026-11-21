@@ -89,4 +89,14 @@
   loader.src = new URL("landing-ideas-loader.js", source.src).href;
   loader.defer = true;
   document.body.appendChild(loader);
+
+  // The Apple-inspired product story is isolated to the homepage; core app
+  // pages, navigation behavior, and existing integrations are unchanged.
+  var productStyles = document.createElement("link");
+  productStyles.rel = "stylesheet";
+  productStyles.href = new URL("../css/pages/home-product.css", source.src).href;
+  document.head.appendChild(productStyles);
+  var productScript = document.createElement("script");
+  productScript.src = new URL("home-product.js", source.src).href;
+  document.body.appendChild(productScript);
 })();
