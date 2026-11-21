@@ -23,6 +23,21 @@ async function dismissConsent(context) {
   });
 }
 
+/** Narrow headers hide #accBtn; Sign in lives in the menu as #drawerAccBtn. */
+async function openAccountEntry(page) {
+  const headerSignIn = page.locator("#accBtn, #accountBtn");
+  if (await headerSignIn.first().isVisible().catch(() => false)) {
+    await headerSignIn.first().click();
+    return;
+  }
+  const menu = page.locator("#menuBtn");
+  await menu.waitFor({ state: "visible", timeout: 10000 });
+  await menu.click();
+  const drawerSignIn = page.locator("#drawerAccBtn, [data-drawer-signin]");
+  await drawerSignIn.first().waitFor({ state: "visible", timeout: 10000 });
+  await drawerSignIn.first().click();
+}
+
 const browser = await chromium.launch({ headless: true });
 
 try {
@@ -50,7 +65,7 @@ try {
   const authorize = phone.waitForRequest((request) => request.url().includes("/auth/v1/authorize"), { timeout: 15000 });
   authorize.catch(() => {});
   await phone.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
-  await phone.locator("#accBtn").click();
+  await openAccountEntry(phone);
   await phone.locator("#accModal.open, #accGoogle").first().waitFor({ state: "visible", timeout: 10000 });
   await phone.screenshot({ path: artifacts + "/google-signin-mobile-account.png" });
   await phone.locator("#accGoogle").click({ timeout: 10000 });
@@ -77,7 +92,7 @@ try {
   const practiceAuthorize = inApp.waitForRequest((request) => request.url().includes("/auth/v1/authorize"), { timeout: 15000 });
   practiceAuthorize.catch(() => {});
   await inApp.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
-  await inApp.locator("#accBtn").click();
+  await openAccountEntry(inApp);
   check(inApp.url().includes("practice.html"), "practice Sign in left the page before Google was chosen: " + inApp.url());
   await inApp.locator("#accGoogle").click({ timeout: 10000 });
   const practiceRequest = await practiceAuthorize;
@@ -110,7 +125,7 @@ try {
   await desk.goto(base + "/", { waitUntil: "domcontentloaded", timeout: 30000 });
   await settle(desk);
   check(await desk.evaluate(() => window.NepsisGoogleAuth.prefersFullPageRedirect() === false), "desktop UA unexpectedly used the mobile redirect");
-  await desk.locator("#accBtn").click();
+  await openAccountEntry(desk);
   await desk.locator("#accGoogle").click({ timeout: 10000 });
   await desk.waitForFunction(() => window.__oauthOpens[0] && window.__oauthOpens[0].assigned, null, { timeout: 10000 });
   const popupTarget = new URL(await desk.evaluate(() => window.__oauthOpens[0].assigned));
@@ -129,7 +144,7 @@ try {
   const blockedAuthorize = blockedPage.waitForRequest((request) => request.url().includes("/auth/v1/authorize"), { timeout: 15000 });
   blockedAuthorize.catch(() => {});
   await blockedPage.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
-  await blockedPage.locator("#accBtn").click();
+  await openAccountEntry(blockedPage);
   await blockedPage.locator("#accGoogle").click({ timeout: 10000 });
   const blockedRequest = await blockedAuthorize;
   const blockedTarget = new URL(blockedRequest.url());
