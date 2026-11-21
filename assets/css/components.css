@@ -13,6 +13,17 @@ body .nepsis-consent-panel {
   max-height: calc(100dvh - 20px);
   overflow-y: auto;
 }
+@media (max-width: 520px) {
+  html body .nepsis-consent-panel,
+  body .nepsis-consent-panel {
+    left: max(12px, env(safe-area-inset-left, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-width: none;
+    transform: none;
+  }
+}
 
 /* Diary, reset and library have a fallback menu alongside a back link and
    language/theme controls. On narrow screens the row cannot fit without

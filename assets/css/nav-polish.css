@@ -214,18 +214,65 @@ html:not([data-theme="dark"]) body:not(.coach-page) :is(header.top, body > heade
   backdrop-filter: saturate(180%) blur(20px);
 }
 html:not([data-theme="dark"]) :is(.logo, header .logo) { color: #1d1d1f; letter-spacing: -.04em; }
-html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .email-submit, .nepsis-consent-actions .primary) {
-  background: #F0702A;
-  border-color: #F0702A;
-  color: #1d1d1f;
+html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .email-submit, .nepsis-consent-actions .primary, .home-product-button, .mobile-start a) {
+  background: #F0702A !important;
+  border-color: #F0702A !important;
+  color: #1d1d1f !important;
   border-radius: 980px;
   box-shadow: none;
   font-weight: 600;
 }
-html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send):hover {
-  background: #e26520;
-  color: #1d1d1f;
+html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .home-product-button, .mobile-start a):hover {
+  background: #e26520 !important;
+  color: #1d1d1f !important;
   filter: none;
+}
+/* Text/links on orange need AA — use darker ink, not #F0702A fill as text. */
+html:not([data-theme="dark"]) {
+  --np-accent-ink: #B8501A;
+  --ember: #B8501A;
+}
+html:not([data-theme="dark"]) :is(.eyebrow, .section-kicker, .home-product-eyebrow, .home-product-more, .home-product-privacy-link, .home-link-arrow) {
+  color: #B8501A !important;
+}
+html:not([data-theme="dark"]) main a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.primary):not(.secondary):not(.logo):not(.back):not(.filter):not(.home-link):not(.nav-home-back):not(.home-product-button):not(.home-product-links a):not(.acc-btn):not(.account-btn) {
+  color: #B8501A;
+}
+html:not([data-theme="dark"]) body.practice-page .btn-primary,
+html:not([data-theme="dark"]) body.practice-page .stage .start.btn-primary,
+html:not([data-theme="dark"]) body.practice-page .btn.btn-primary {
+  color: #1d1d1f !important;
+  background: #F0702A !important;
+  border-color: #F0702A !important;
+}
+/* Hamburger → ✕ when the drawer is open. */
+.menu-btn span,
+.coach-page .menu-btn span {
+  transition: transform .2s ease, opacity .2s ease;
+}
+.menu-btn.open span:nth-child(1),
+.menu-btn[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(5.5px) rotate(45deg);
+}
+.menu-btn.open span:nth-child(2),
+.menu-btn[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.menu-btn.open span:nth-child(3),
+.menu-btn[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-5.5px) rotate(-45deg);
+}
+.nepsis-menu-button.open,
+.nepsis-menu-button[aria-expanded="true"] {
+  font-size: 0;
+  line-height: 0;
+}
+.nepsis-menu-button.open::before,
+.nepsis-menu-button[aria-expanded="true"]::before {
+  content: "✕";
+  font-size: 1.15rem;
+  line-height: 1;
+  color: inherit;
 }
 html:not([data-theme="dark"]) :is(.btn-ghost, .secondary, .acc-google, .account-card .google, a.back, .filter, .nav-home-back) {
   background: #fff;
@@ -385,12 +432,15 @@ html:not([data-theme="dark"]) :is(a, button, input, textarea, select, summary):f
     max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);
     overflow: auto;
   }
-  .nepsis-consent-panel {
-    left: max(12px, env(safe-area-inset-left));
-    right: max(12px, env(safe-area-inset-right));
-    width: auto;
-    transform: none;
-    bottom: calc(12px + env(safe-area-inset-bottom));
+  /* Beat `body .nepsis-consent-panel` and the analytics.js injected sheet. */
+  html body .nepsis-consent-panel,
+  body .nepsis-consent-panel {
+    left: max(12px, env(safe-area-inset-left, 0px)) !important;
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
     max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     overflow: auto;
   }

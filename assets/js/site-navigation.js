@@ -72,6 +72,7 @@
     scrim.classList.toggle("open", open);
     drawer.setAttribute("aria-hidden", String(!open));
     drawer.inert = !open;
+    button.classList.toggle("open", open);
     button.setAttribute("aria-expanded", String(open));
     if (open) drawer.querySelector("a")?.focus(); else button.focus();
   };

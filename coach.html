@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="assets/css/theme.css">
   <link rel="stylesheet" href="assets/css/pages/coach.css">
   <script>
-    (function(){try{var p=localStorage.getItem('nepsis-theme')||'dark';var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='dark'||(p!=='light'&&d)?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}})();
+    (function(){try{var p=localStorage.getItem('nepsis-theme')||'light';var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='dark'?'dark':(p==='system'?(d?'dark':'light'):'light');document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.dataset.theme='light';}})();
   </script>
 </head>
 <body class="coach-page">

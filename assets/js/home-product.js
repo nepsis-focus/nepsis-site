@@ -55,7 +55,7 @@
     <section class="home-product-section home-product-light" id="zero-friction" aria-labelledby="zero-friction-title">
       <div class="home-product-container">
         <header class="home-product-heading">
-          <p class="home-product-eyebrow" data-el="ZERO FRICTION" data-en="ZERO FRICTION">ZERO FRICTION</p>
+          <p class="home-product-eyebrow" data-el="ΧΩΡΙΣ ΤΡΙΒΗ" data-en="ZERO FRICTION">ΧΩΡΙΣ ΤΡΙΒΗ</p>
           <h2 id="zero-friction-title" data-el="Απλό από την πρώτη στιγμή." data-en="Simple from the first moment.">Απλό από την πρώτη στιγμή.</h2>
           <p class="home-product-copy" data-el="Λιγότερα βήματα ανάμεσα σε εσένα και σε αυτό που έχει σημασία." data-en="Fewer steps between you and what matters.">Λιγότερα βήματα ανάμεσα σε εσένα και σε αυτό που έχει σημασία.</p>
         </header>
