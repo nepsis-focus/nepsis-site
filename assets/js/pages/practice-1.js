@@ -246,16 +246,33 @@
     }
     function clearCountry() { marker.visible = false; }
 
+    let dragOriginX = 0;
+    let dragOriginY = 0;
+    let dragAxis = "";
     function onPointerDown(event) {
       dragging = true;
+      dragAxis = event.pointerType === "touch" ? "" : "x";
       focusAnimation = null;
       velocityX = 0; velocityY = 0;
-      lastX = event.clientX; lastY = event.clientY;
+      dragOriginX = lastX = event.clientX;
+      dragOriginY = lastY = event.clientY;
       canvas.style.cursor = "grabbing";
-      if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+      if (dragAxis && canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
     }
     function onPointerMove(event) {
       if (!dragging) return;
+      if (!dragAxis) {
+        const adx = Math.abs(event.clientX - dragOriginX);
+        const ady = Math.abs(event.clientY - dragOriginY);
+        if (adx < 10 && ady < 10) return;
+        if (ady >= adx) {
+          dragging = false;
+          canvas.style.cursor = "grab";
+          return;
+        }
+        dragAxis = "x";
+        if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+      }
       const dx = event.clientX - lastX;
       const dy = event.clientY - lastY;
       lastX = event.clientX; lastY = event.clientY;

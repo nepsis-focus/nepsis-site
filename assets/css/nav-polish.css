@@ -167,3 +167,228 @@ body:not(.coach-page) .nepsis-menu-scrim.open { z-index: 1001; }
   #drawer.drawer .menu-group, #drawer.drawer .menu-group summary::after,
   #drawer.drawer .nav-drawer-head .close { transition: none; }
 }
+
+/* Light Apple-style surface. Dark mode keeps its own tokens.
+   Colour, type, radius and shadow only — no layout or behaviour hooks. */
+html:not([data-theme="dark"]) {
+  --bg: #ffffff;
+  --fg: #1d1d1f;
+  --card: #ffffff;
+  --muted: #6e6e73;
+  --border: rgba(0, 0, 0, .08);
+  --orange: #F0702A;
+  --ember: #9A3F14;
+  --paper: #ffffff;
+  --ink: #1d1d1f;
+}
+html:not([data-theme="dark"]) body {
+  background: #fff;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif;
+  letter-spacing: -.011em;
+}
+html:not([data-theme="dark"]) :is(h1, .page-heading h1, .intro h1, .hero h1) {
+  color: #1d1d1f;
+  font-weight: 640;
+  letter-spacing: -.035em;
+  line-height: 1.05;
+}
+html:not([data-theme="dark"]) :is(h2, .section-title) {
+  color: #1d1d1f;
+  font-weight: 640;
+  letter-spacing: -.028em;
+}
+html:not([data-theme="dark"]) :is(h1 em, .hero h1 em, .intro h1 em) {
+  color: #9A3F14;
+  -webkit-text-fill-color: #9A3F14;
+  background: none;
+}
+html:not([data-theme="dark"]) :is(.muted, .page-heading p, .intro p, .hero p.lead, .head p, footer) {
+  color: #6e6e73;
+}
+html:not([data-theme="dark"]) :is(.eyebrow, .section-kicker) { color: #9A3F14; }
+html:not([data-theme="dark"]) body:not(.coach-page) :is(header.top, body > header, body > .wrap > header) {
+  background: rgba(255, 255, 255, .84);
+  border-bottom: 1px solid rgba(0, 0, 0, .08);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+html:not([data-theme="dark"]) :is(.logo, header .logo) { color: #1d1d1f; letter-spacing: -.04em; }
+html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .email-submit, .nepsis-consent-actions .primary) {
+  background: #F0702A;
+  border-color: #F0702A;
+  color: #1d1d1f;
+  border-radius: 980px;
+  box-shadow: none;
+  font-weight: 600;
+}
+html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send):hover {
+  background: #e26520;
+  color: #1d1d1f;
+  filter: none;
+}
+html:not([data-theme="dark"]) :is(.btn-ghost, .secondary, .acc-google, .account-card .google, a.back, .filter, .nav-home-back) {
+  background: #fff;
+  color: #1d1d1f;
+  border: 1px solid rgba(0, 0, 0, .12);
+  border-radius: 980px;
+  box-shadow: none;
+}
+html:not([data-theme="dark"]) .lang button.active,
+html:not([data-theme="dark"]) header button.active:not(.menu-btn):not(.theme-toggle):not(.close) {
+  background: #F0702A;
+  color: #1d1d1f;
+  border-color: #F0702A;
+}
+html:not([data-theme="dark"]) :is(.card, .panel, .stat, .info-card, .step-card, .tool-panel, .entry, .room, .tip, .welcome, .account-card, .acc-card, .cmp, .bento-card, .inside-nepsis-card) {
+  background: #fff;
+  color: #1d1d1f;
+  border-color: rgba(0, 0, 0, .08);
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .045);
+}
+html:not([data-theme="dark"]) .cmp.on { border-color: rgba(240, 112, 42, .45); }
+html:not([data-theme="dark"]) :is(.goal-row, .history-row, .routine-row, .diary-row, .week-metric, .award, .research-panel) {
+  background: #fff;
+  border-color: rgba(0, 0, 0, .08);
+}
+html:not([data-theme="dark"]) :is(.result, .next, .privacy, .welcome) {
+  background: #f5f5f7;
+  color: #1d1d1f;
+}
+html:not([data-theme="dark"]) .next p,
+html:not([data-theme="dark"]) .next .eyebrow { color: #6e6e73; }
+html:not([data-theme="dark"]) .result .big { color: #1d1d1f; }
+html:not([data-theme="dark"]) #drawer.drawer {
+  background: #fff;
+  color: #1d1d1f;
+  box-shadow: -24px 0 64px rgba(0, 0, 0, .08);
+}
+html:not([data-theme="dark"]) :is(input, textarea, select, .tool-input, .tool-textarea, .acc-email) {
+  background: #fff;
+  color: #1d1d1f;
+  border-color: rgba(0, 0, 0, .12);
+}
+html:not([data-theme="dark"]) .nepsis-consent-panel,
+html:not([data-theme="dark"]) .nepsis-consent-settings {
+  background: #fff;
+  color: #1d1d1f;
+  border-color: rgba(0, 0, 0, .08);
+}
+html:not([data-theme="dark"]) body.practice-page,
+html:not([data-theme="dark"]) body.my-nepsis-dashboard,
+html:not([data-theme="dark"]) body.home-page {
+  background: #fff;
+  color: #1d1d1f;
+}
+html:not([data-theme="dark"]) body.practice-page .stage,
+html:not([data-theme="dark"]) body.practice-page .daily-challenge,
+html:not([data-theme="dark"]) body.practice-page .knowledge-note {
+  background: #fff;
+  border-color: rgba(0, 0, 0, .08);
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .045);
+}
+html:not([data-theme="dark"]) body.practice-page .btn { border-radius: 980px; }
+html:not([data-theme="dark"]) body.practice-page .btn-primary {
+  background: #F0702A;
+  color: #1d1d1f;
+  border-color: #F0702A;
+}
+html:not([data-theme="dark"]) .calendar :is(span, .day):not(.active):not(.strong):not(.lvl1):not(.lvl2):not(.lvl3):not(.lvl4) {
+  background: #f5f5f7;
+  color: #6e6e73;
+}
+html:not([data-theme="dark"]) .calendar .strong { background: #F0702A; color: #1d1d1f; }
+html:not([data-theme="dark"]) :is(a, button, input, textarea, select, summary):focus-visible {
+  outline-color: #9A3F14;
+}
+
+/* Phone layout: readable type, 44px targets, safe areas, no sideways scroll. */
+@media (max-width: 430px) {
+  html { overflow-x: clip; }
+  body {
+    font-size: 16px;
+    overflow-x: clip;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+  html body :is(p, li, label, button, .btn, .primary, .secondary, .filter, .tool-button, .mini-button, .acc-btn, .account-btn, .nepsis-consent-actions button, .nepsis-consent-panel p) {
+    font-size: 16px;
+  }
+  html body :is(input, textarea, select, .tool-input, .tool-textarea, .acc-email) {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+  html body :is(button, .btn, .primary, .secondary, .filter, .tool-button, .mini-button, .menu-btn, .theme-toggle, .lang button, .coach-lang button, .drawer .close, a.back, .acc-btn, .account-btn, .nepsis-consent-actions button) {
+    min-height: 44px;
+  }
+  html body :is(.menu-btn, .theme-toggle, .lang button, .coach-lang button, .drawer .close, #drawer .close) {
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+  }
+  html body header :is(.logo, .coach-brand) { min-height: 44px; align-items: center; }
+  html body.coach-page :is(.menu-btn, .coach-lang button, .coach-text-button, .coach-btn) {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 16px;
+  }
+  html body.coach-page .menu-btn { width: 44px; height: 44px; }
+  html body .home-product-privacy-link, html body .home-product-more { min-height: 44px; display: inline-flex; align-items: center; }
+  body.home-page .bento-orbit { right: 8px; width: 120px; height: 120px; }
+  textarea { min-height: 120px; }
+  :is(.menu-btn, .theme-toggle, .nepsis-menu-button, .lang button, .drawer .close, #drawer .close, .acc-btn, .account-btn, a.back, .nav-home-back) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  header.top, body > header, body > .wrap > header {
+    padding-top: env(safe-area-inset-top);
+  }
+  .top-in, header .top, .top {
+    height: auto;
+    min-height: 52px;
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  #drawer.drawer {
+    padding-top: calc(112px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  #drawer.drawer .close, #drawer.drawer .nav-drawer-head .close {
+    width: 44px;
+    height: 44px;
+  }
+  :is(section, [id]) { scroll-margin-top: calc(72px + env(safe-area-inset-top)); }
+  :is(.acc-modal, .account, .sub-modal, .nepsis-dialog) {
+    max-height: 100dvh;
+    padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+    overflow: auto;
+  }
+  :is(.acc-card, .account-card, .sub-card, .nepsis-dialog) {
+    width: min(100%, 28rem);
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);
+    overflow: auto;
+  }
+  .nepsis-consent-panel {
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    width: auto;
+    transform: none;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow: auto;
+  }
+  .nepsis-consent-settings {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    min-height: 44px;
+  }
+  .nepsis-ambient {
+    left: max(12px, env(safe-area-inset-left));
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  body.home-page .bento-card,
+  body.home-page .bento-focus { overflow: hidden; }
+  body.home-page main .hero { overflow: hidden; }
+  .wrap, .top-in, header .top { max-width: 100%; }
+}

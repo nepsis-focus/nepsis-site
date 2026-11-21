@@ -86,7 +86,7 @@
     transform: translateY(-50%); pointer-events: none;
     filter: drop-shadow(0 28px 48px rgba(35,74,104,.20));
   }
-  #globeCanvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; pointer-events: none; outline: none; }
+  #globeCanvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; pointer-events: none; outline: none; }
   #globeCanvas:active { cursor: grabbing; }
   .globe-drag-hint {
     position: absolute; left: 31%; bottom: 7%; z-index: 2; color: var(--muted);
@@ -1400,6 +1400,82 @@ body.practice-page .stage :is(button, input, summary):focus-visible { outline-of
   body.practice-page .focus-nudge, body.practice-page .welcome-back { transition: none !important; }
   body.practice-page .stage .ring::before, body.practice-page .stage .ring .prog,
   body.practice-page .stage.is-complete .msg, body.practice-page .stage.is-complete .after { animation: none !important; }
+}
+
+/* Phones: the first timer's ring and start control fit in the portrait viewport. */
+@media (max-width: 430px) {
+  body.practice-page { font-size: 16px; }
+  body.practice-page header.top { padding-top: env(safe-area-inset-top); }
+  body.practice-page main { display: flex; flex-direction: column; }
+  body.practice-page main > #stages { order: -1; padding-top: 8px; }
+  body.practice-page main > .hero { order: 0; }
+  body.practice-page main > .hero {
+    min-height: 0 !important;
+    padding: 8px 0 4px !important;
+    overflow: hidden;
+  }
+  body.practice-page .hero .btns .btn-ghost { display: none; }
+  body.practice-page .hero .wrap { padding-top: 0; margin-top: 0; }
+  body.practice-page .hero-copy { padding-top: 0 !important; }
+  body.practice-page .hero-earth {
+    position: absolute;
+    width: 42vw;
+    height: 42vw;
+    top: 8px;
+    right: 0;
+    left: auto;
+    opacity: .16;
+    pointer-events: none;
+    transform: none;
+  }
+  body.practice-page .globe-drag-hint { display: none; }
+  body.practice-page .hero .badge { display: none; }
+  body.practice-page .hero h1 {
+    margin-top: 0;
+    font-size: 1.65rem;
+    line-height: 1.1;
+    max-width: 16ch;
+  }
+  body.practice-page .hero p.lead { display: none; }
+  body.practice-page .hero .btns { margin-top: 8px; }
+  body.practice-page .hero .btn { min-height: 44px; font-size: 16px; }
+  body.practice-page .hero-country {
+    width: auto;
+    max-width: none;
+    margin: 8px 16px 0;
+    padding: 8px 10px;
+  }
+  body.practice-page .hero-country h2,
+  body.practice-page .hero-country .eyebrow { display: none; }
+  body.practice-page .hero-country label { margin-top: 0; font-size: 16px; }
+  body.practice-page .hero-country select { min-height: 44px; font-size: 16px; }
+  body.practice-page #stages { padding: 12px 0 48px; }
+  body.practice-page #stages > .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+  }
+  body.practice-page #stages > .wrap > * { width: 100%; min-width: 0; }
+  body.practice-page #stages > .wrap > .head { order: -2; margin: 0; }
+  body.practice-page #stages .head h2 { font-size: 1.35rem; margin: 0; }
+  body.practice-page #stages .head p { display: none; }
+  body.practice-page #stages > .wrap > #stageGrid {
+    order: -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+  body.practice-page #stages > .wrap > #challenge { order: 2; }
+  body.practice-page .stage { width: 100%; padding: 14px 14px 12px; }
+  body.practice-page .stage .start { width: 100%; min-height: 44px; }
+  body.practice-page .stage h3,
+  body.practice-page .stage .desc { min-height: 0; }
+  body.practice-page .stage .desc { font-size: 16px; min-height: 0; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  body.practice-page .stage .ring { width: min(120px, 38vw); margin: 6px auto; }
+  body.practice-page .stage .start { min-height: 44px; font-size: 16px; }
+  body.practice-page #globeCanvas { pointer-events: auto; touch-action: pan-y; }
 }
 @media (min-width: 1000px) {
   body.practice-page #stageGrid.has-custom-stage { grid-template-columns: repeat(3, minmax(0, 1fr)); }
