@@ -44,7 +44,7 @@
   chips.setAttribute("aria-label", t("Με μια ματιά", "At a glance"));
   chips.innerHTML = [
     t("Δωρεάν", "Free"), t("Χωρίς εγγραφή", "No sign-up"),
-    t("Ξεκινάς σε 5″", "Start in 5 sec"), t("Τα δεδομένα μένουν στη συσκευή σου", "Your data stays on your device")
+    t("Ξεκινάς σε 5″", "Start in 5 sec"), t("Η πρόοδος μένει τοπικά ως επισκέπτης", "Progress stays local as a guest")
   ].map(label => `<li>${label}</li>`).join("");
   const lead = hero.querySelector(".lead");
   if (lead) lead.after(chips); else hero.append(chips);
