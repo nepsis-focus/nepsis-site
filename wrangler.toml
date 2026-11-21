@@ -1,0 +1,9 @@
+# Cloudflare Workers: ανέβασμα του στατικού site (HTML/CSS/JS) χωρίς build.
+name = "nepsis-site"
+compatibility_date = "2024-11-01"
+
+[assets]
+# Τα αρχεία του site βρίσκονται στον κεντρικό φάκελο του repo.
+directory = "."
+# Η σελίδα 404.html εμφανίζεται για διευθύνσεις που δεν υπάρχουν.
+not_found_handling = "404-page"
