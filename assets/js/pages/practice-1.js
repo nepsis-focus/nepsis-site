@@ -740,7 +740,8 @@
     if (!window.supabase || !window.supabase.createClient) return null;
     focusSupabaseClientInstance = window.supabase.createClient(
       "https://emhukqvetlhjgadgskbl.supabase.co",
-      "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl"
+      "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl",
+      window.NepsisGoogleAuth.clientOptions()
     );
     return focusSupabaseClientInstance;
   }
@@ -1919,7 +1920,7 @@
   // ---------- account (Supabase: email link, no password) ----------
   const SB_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
   const SB_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
-  const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY) : null;
+  const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SB_URL, SB_KEY, window.NepsisGoogleAuth.clientOptions()) : null;
   if (sb && window.NepsisGoogleAuth) window.NepsisGoogleAuth.watchPopupCompletion(sb);
   let sbUser = null;
   let authGeneration = 0;
@@ -2054,9 +2055,10 @@
     if (open) renderAcc("");
   }
   $("accBtn").addEventListener("click", function (event) {
-    if (sbUser) { event.preventDefault(); setAcc(true); return; }
-    if ($("accBtn").tagName === "A" && $("accBtn").getAttribute("href")) return;
-    setAcc(true);
+    if (sb || window.NepsisGoogleAuth || sbUser || !($("accBtn").tagName === "A" && $("accBtn").getAttribute("href"))) {
+      event.preventDefault();
+      setAcc(true);
+    }
   });
   $("accClose").addEventListener("click", function () { setAcc(false); });
   $("accScrim").addEventListener("click", function () { setAcc(false); });
