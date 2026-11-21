@@ -282,10 +282,11 @@ html:not([data-theme="dark"]) :is(.btn-ghost, .secondary, .acc-google, .account-
   box-shadow: none;
 }
 html:not([data-theme="dark"]) .lang button.active,
-html:not([data-theme="dark"]) header button.active:not(.menu-btn):not(.theme-toggle):not(.close) {
-  background: #F0702A;
-  color: #1d1d1f;
-  border-color: #F0702A;
+html:not([data-theme="dark"]) header button.active:not(.menu-btn):not(.theme-toggle):not(.close),
+html:not([data-theme="dark"]) .coach-lang button[aria-pressed="true"] {
+  background: #F0702A !important;
+  color: #1d1d1f !important;
+  border-color: #F0702A !important;
 }
 html:not([data-theme="dark"]) :is(.card, .panel, .stat, .info-card, .step-card, .tool-panel, .entry, .room, .tip, .welcome, .account-card, .acc-card, .cmp, .bento-card, .inside-nepsis-card) {
   background: #fff;

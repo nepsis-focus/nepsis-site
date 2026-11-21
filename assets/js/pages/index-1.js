@@ -107,7 +107,7 @@ let currentLang = "el";
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100);
     /* Far enough that atmosphere (radius * 1.06) and glow stay inside the canvas. */
-    camera.position.set(0, 0, 6.45);
+    camera.position.set(0, 0, 7.15);
     const isMobile = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
     if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;

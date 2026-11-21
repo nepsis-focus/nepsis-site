@@ -1773,14 +1773,14 @@ html body.home-page main .hero-earth #globeCanvas {
   }
 }
 
-/* Phones: centered square fully inside the content column. */
+/* Phones: Earth first (DOM has copy before earth), fully in the first screen. */
 @media (max-width: 700px) {
   html body.home-page main #globe.hero {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
     align-items: stretch;
-    min-height: 0;
-    padding: 12px 0 28px;
+    min-height: 0 !important;
+    padding: 8px 0 24px !important;
     overflow: visible !important;
   }
   html body.home-page main #globe .hero-earth {
@@ -1790,20 +1790,23 @@ html body.home-page main .hero-earth #globeCanvas {
     right: auto !important;
     left: auto !important;
     z-index: 0;
-    width: min(86vw, 360px) !important;
-    height: min(86vw, 360px) !important;
-    max-width: calc(100vw - 32px) !important;
-    margin: 4px auto 10px !important;
+    order: -1;
+    width: min(78vw, 320px) !important;
+    height: min(78vw, 320px) !important;
+    max-width: calc(100vw - 40px) !important;
+    margin: 8px auto 12px !important;
     transform: none !important;
     opacity: 1 !important;
     flex: 0 0 auto;
-    filter: drop-shadow(0 16px 28px rgba(35, 74, 104, .14));
+    filter: drop-shadow(0 14px 24px rgba(35, 74, 104, .12));
     pointer-events: none;
+    overflow: visible !important;
   }
   html body.home-page main #globe .hero-earth #globeCanvas {
     pointer-events: auto;
   }
   html body.home-page main #globe .hero > .wrap {
+    order: 0;
     width: 100%;
     padding: 0 16px;
   }
@@ -1811,7 +1814,7 @@ html body.home-page main .hero-earth #globeCanvas {
 
 @media (max-width: 380px) {
   html body.home-page main #globe .hero-earth {
-    width: min(84vw, 340px) !important;
-    height: min(84vw, 340px) !important;
+    width: min(76vw, 300px) !important;
+    height: min(76vw, 300px) !important;
   }
 }
