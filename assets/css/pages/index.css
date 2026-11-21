@@ -1713,6 +1713,11 @@ html body.home-page main #globe.hero,
 html body.home-page main .hero {
   overflow: visible !important;
 }
+/* Keep the veil under the Earth so it does not flat-cut the atmosphere glow. */
+html body.home-page main #globe.hero::after,
+html body.home-page main .hero::after {
+  z-index: 0 !important;
+}
 html body.home-page main #globe .hero-earth,
 html body.home-page main .hero-earth {
   overflow: visible !important;
@@ -1723,6 +1728,10 @@ html body.home-page main .hero-earth {
   max-width: none;
   aspect-ratio: 1 / 1;
   isolation: isolate;
+  z-index: 2 !important;
+}
+html body.home-page main #globe .hero > .wrap {
+  z-index: 3;
 }
 html body.home-page main #globe .hero-earth #globeCanvas,
 html body.home-page main .hero-earth #globeCanvas {

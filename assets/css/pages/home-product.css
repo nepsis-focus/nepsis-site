@@ -109,7 +109,8 @@ html body.home-page #globe.hero {
     #fff;
 }
 html body.home-page #globe.hero::after {
-  background: linear-gradient(90deg, #fff 0%, #fff 36%, rgba(255, 255, 255, .98) 46%, rgba(255, 255, 255, 0) 62%);
+  z-index: 0;
+  background: linear-gradient(90deg, #fff 0%, #fff 32%, rgba(255, 255, 255, .92) 42%, rgba(255, 255, 255, 0) 58%);
 }
 body.home-page #globe .hero-copy {
   align-items: flex-start;
