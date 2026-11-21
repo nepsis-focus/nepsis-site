@@ -2,7 +2,7 @@
 "use strict";
 const SB_URL="https://emhukqvetlhjgadgskbl.supabase.co";
 const SB_KEY="sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
-const sb=window.supabase&&window.supabase.createClient?window.supabase.createClient(SB_URL,SB_KEY):null;
+const sb=window.supabase&&window.supabase.createClient?window.supabase.createClient(SB_URL,SB_KEY,window.NepsisGoogleAuth.clientOptions()):null;
 if(sb&&window.NepsisGoogleAuth)window.NepsisGoogleAuth.watchPopupCompletion(sb);
 const $=id=>document.getElementById(id);let user=null,authGeneration=0,lang="el",progress={days:{},distractions:{}},userSpace=readLocalSpace(),diaryEntries=[],editingDiaryId=null,focusStats=null,focusSessions=[],focusSessionsLoaded=false,accountReturnFocus=null;
 function isCurrentAuth(expectedUser,expectedGeneration){return !!expectedUser&&!!user&&user.id===expectedUser.id&&authGeneration===expectedGeneration}
