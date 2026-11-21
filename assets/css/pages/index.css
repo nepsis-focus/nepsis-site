@@ -1757,14 +1757,14 @@ html body.home-page main .hero-earth #globeCanvas {
     right: max(24px, 3.5vw);
     left: auto;
     bottom: auto;
-    z-index: 0;
+    z-index: 2;
     /* Leave room for copy + country card; sphere+glow must fit in this square. */
-    width: min(56vh, 40vw, 520px);
-    height: min(56vh, 40vw, 520px);
+    width: min(52vh, 38vw, 500px);
+    height: min(52vh, 38vw, 500px);
     margin: 0;
     transform: translateY(-50%);
     opacity: 1;
-    filter: drop-shadow(0 18px 34px rgba(35, 74, 104, .14));
+    filter: none;
     pointer-events: none;
   }
   html body.home-page main #globe .hero-earth #globeCanvas {
