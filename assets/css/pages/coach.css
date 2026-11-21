@@ -21,25 +21,7 @@
   line-height: 1.55;
   color-scheme: light;
 }
-html[data-theme="dark"] .coach-page {
-  --coach-canvas: #101214;
-  --coach-surface: #171a1d;
-  --coach-raised: #1d2125;
-  --coach-panel: #23282d;
-  --coach-text: #f4f1ed;
-  --coach-muted: #b5b0aa;
-  --coach-border: rgba(237, 231, 224, .12);
-  --coach-border-strong: rgba(237, 231, 224, .2);
-  --coach-accent: #f0a06b;
-  --coach-on-accent: #201713;
-  --coach-glow: rgba(240, 160, 107, .13);
-  --coach-shadow: 0 24px 70px rgba(0, 0, 0, .24);
-  color: var(--coach-text);
-  background-color: var(--coach-canvas);
-  background-image: radial-gradient(55rem 34rem at 72% -10%, rgba(240, 160, 107, .105), transparent 66%),
-                    radial-gradient(42rem 30rem at -16% 48%, rgba(134, 154, 157, .055), transparent 70%);
-  color-scheme: dark;
-}
+/* Dark coach palette removed — site is light/white only. */
 .coach-page *, .coach-page *::before, .coach-page *::after { box-sizing: border-box; }
 .coach-header {
   position: sticky;
@@ -262,18 +244,17 @@ html[data-theme="dark"] .coach-page {
   .coach-page *, .coach-page *::before, .coach-page *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
 
-html:not([data-theme="dark"]) .coach-header { background: rgba(255, 255, 255, .84); }
-html[data-theme="dark"] .coach-header { background: rgba(16, 18, 20, .82); }
-html:not([data-theme="dark"]) .coach-lang,
-html:not([data-theme="dark"]) .coach-energy-card,
-html:not([data-theme="dark"]) .coach-text-button,
-html:not([data-theme="dark"]) .coach-history-item,
-html:not([data-theme="dark"]) .coach-q-list li,
-html:not([data-theme="dark"]) .coach-context,
-html:not([data-theme="dark"]) .coach-side-privacy,
-html:not([data-theme="dark"]) .coach-field input[type="file"] { background: #f5f5f7; }
-html:not([data-theme="dark"]) .coach-card,
-html:not([data-theme="dark"]) .coach-side-card { background: #fff; }
-html:not([data-theme="dark"]) .coach-hero h1 { letter-spacing: -.035em; font-weight: 640; }
-html:not([data-theme="dark"]) .coach-btn { border-radius: 980px; }
-html:not([data-theme="dark"]) .coach-error { color: #9f2d2d; }
+.coach-header { background: rgba(255, 255, 255, .84); }
+.coach-lang,
+.coach-energy-card,
+.coach-text-button,
+.coach-history-item,
+.coach-q-list li,
+.coach-context,
+.coach-side-privacy,
+.coach-field input[type="file"] { background: #f5f5f7; }
+.coach-card,
+.coach-side-card { background: #fff; }
+.coach-hero h1 { letter-spacing: -.035em; font-weight: 640; }
+.coach-btn { border-radius: 980px; }
+.coach-error { color: #9f2d2d; }

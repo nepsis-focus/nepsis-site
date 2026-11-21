@@ -2,7 +2,7 @@
  let lang='el',active='all',saved=new Set();
  try{const stored=JSON.parse(localStorage.getItem('nepsis-saved-knowledge')||'[]');if(Array.isArray(stored))saved=new Set(stored.filter(x=>typeof x==='string'));}catch(e){}
  const WHOP_URL='https://whop.com/nepsis-focus';
- const WHOP_EL='Θέλεις το πλήρες εγχειρίδιο και τα εκτυπώσιμα workbooks; Δες το course στο Whop →';
+ const WHOP_EL='Θέλεις το πλήρες εγχειρίδιο και τα εκτυπώσιμα τετράδια εργασίας; Δες τα μαθήματα στο Whop →';
  const WHOP_EN='Want the full handbook and printable workbooks? See the course on Whop →';
  const cards=[...document.querySelectorAll('.card')],search=document.getElementById('search'),empty=document.getElementById('empty');
  function updateSaveButton(card,button){const isSaved=saved.has(card.dataset.saveId);button.textContent=isSaved?(lang==='el'?'Αποθηκεύτηκε ★':'Saved ★'):(lang==='el'?'Αποθήκευση ☆':'Save ☆');button.setAttribute('aria-pressed',String(isSaved));button.setAttribute('aria-label',isSaved?(lang==='el'?'Αφαίρεση από τα αποθηκευμένα':'Remove from saved'):(lang==='el'?'Αποθήκευση άρθρου':'Save article'));}
