@@ -18,6 +18,7 @@ const admin = createClient(PROJECT_URL, ADMIN_KEY, {
 const ALLOWED_ORIGINS = new Set([
   "https://nepsis-focus.github.io",
   "https://nepsis-focus.netlify.app",
+  "https://nepsis-site.nepsis-corp.workers.dev",
 ]);
 
 function isAllowedOrigin(origin: string | null): boolean {
@@ -25,7 +26,7 @@ function isAllowedOrigin(origin: string | null): boolean {
   if (ALLOWED_ORIGINS.has(origin)) return true;
   try {
     const { protocol, hostname } = new URL(origin);
-    return protocol === "https:" && hostname.endsWith("--nepsis-focus.netlify.app");
+    return protocol === "https:" && (hostname.endsWith("--nepsis-focus.netlify.app") || hostname.endsWith("-nepsis-site.nepsis-corp.workers.dev"));
   } catch {
     return false;
   }
