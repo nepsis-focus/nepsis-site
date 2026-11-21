@@ -218,8 +218,9 @@ try {
   const successText = await successToast.innerText();
   check(successText.includes("Συνδέθηκες επιτυχώς"), "return with a stored session did not confirm sign-in: " + successText);
   check(successText.includes("owner@example.com"), "return toast omitted the account email: " + successText);
-  await signedPage.locator("#nepsis-auth-state").waitFor({ state: "visible", timeout: 5000 });
-  const badge = await signedPage.locator("#nepsis-auth-state").innerText();
+  // On phones the wide badge is replaced by a green dot on the account icon, so only require it in the DOM.
+  await signedPage.locator("#nepsis-auth-state").waitFor({ state: "attached", timeout: 5000 });
+  const badge = (await signedPage.locator("#nepsis-auth-state").textContent()) || "";
   check(badge.includes("Συνδεδεμένος"), "signed-in badge missing: " + badge);
   await signedPage.screenshot({ path: artifacts + "/google-signin-return-success.png", timeout: 10000 });
   await signedIn.close();
