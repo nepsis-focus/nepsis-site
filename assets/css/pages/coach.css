@@ -1,25 +1,43 @@
-/* Nepsis Coach — quiet dark workspace, warm accent, and deliberate focus states. */
+/* Nepsis Coach — light workspace by default, warm accent used sparingly. */
 .coach-page {
-  --coach-canvas: var(--np-canvas, #101214);
+  --coach-canvas: var(--np-canvas, #ffffff);
+  --coach-surface: #ffffff;
+  --coach-raised: #f5f5f7;
+  --coach-panel: #f5f5f7;
+  --coach-text: #1d1d1f;
+  --coach-muted: #6e6e73;
+  --coach-border: rgba(0, 0, 0, .08);
+  --coach-border-strong: rgba(0, 0, 0, .14);
+  --coach-accent: #F0702A;
+  --coach-on-accent: #1d1d1f;
+  --coach-glow: rgba(240, 112, 42, .12);
+  --coach-shadow: 0 12px 40px rgba(0, 0, 0, .06);
+  min-height: 100vh;
+  color: var(--coach-text);
+  background-color: var(--coach-canvas);
+  background-image: none;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  color-scheme: light;
+}
+html[data-theme="dark"] .coach-page {
+  --coach-canvas: #101214;
   --coach-surface: #171a1d;
   --coach-raised: #1d2125;
   --coach-panel: #23282d;
-  --coach-text: var(--np-text, #f4f1ed);
-  --coach-muted: var(--np-muted, #b5b0aa);
+  --coach-text: #f4f1ed;
+  --coach-muted: #b5b0aa;
   --coach-border: rgba(237, 231, 224, .12);
   --coach-border-strong: rgba(237, 231, 224, .2);
-  --coach-accent: var(--np-accent, #f0a06b);
-  --coach-on-accent: var(--np-on-accent, #201713);
+  --coach-accent: #f0a06b;
+  --coach-on-accent: #201713;
   --coach-glow: rgba(240, 160, 107, .13);
   --coach-shadow: 0 24px 70px rgba(0, 0, 0, .24);
-  min-height: 100vh;
   color: var(--coach-text);
   background-color: var(--coach-canvas);
   background-image: radial-gradient(55rem 34rem at 72% -10%, rgba(240, 160, 107, .105), transparent 66%),
                     radial-gradient(42rem 30rem at -16% 48%, rgba(134, 154, 157, .055), transparent 70%);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  font-size: 16px;
-  line-height: 1.55;
   color-scheme: dark;
 }
 .coach-page *, .coach-page *::before, .coach-page *::after { box-sizing: border-box; }
@@ -29,12 +47,23 @@
   z-index: 70;
   padding-top: env(safe-area-inset-top);
   border-bottom: 1px solid var(--coach-border);
-  background: rgba(16, 18, 20, .82);
+  background: rgba(255, 255, 255, .84);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
 }
 .coach-header-inner, .coach-wrap { width: min(100% - 40px, 1160px); margin-inline: auto; }
 .coach-header-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+@media (max-width: 767px) {
+  .coach-header { min-height: 0; }
+  .coach-header-inner {
+    width: 100%;
+    min-height: 56px;
+    height: 56px;
+    gap: 8px;
+    padding-inline: clamp(10px, 3.2vw, 20px);
+    box-sizing: border-box;
+  }
+}
 .coach-brand { display: inline-flex; align-items: center; gap: 11px; color: var(--coach-text); font-size: 1.12rem; font-weight: 780; letter-spacing: -.035em; text-decoration: none; }
 .coach-page .coach-brand .dot { width: 9px; height: 9px; flex: 0 0 9px; margin: 0; border-radius: 50%; background: var(--coach-accent); box-shadow: 0 0 16px rgba(240, 160, 107, .6); }
 .coach-controls { display: flex; align-items: center; gap: 12px; }
@@ -74,9 +103,9 @@
 .coach-field-wide { grid-column: 1 / -1; }
 .coach-field label, .coach-field legend, .coach-label { padding: 0; color: var(--coach-text); font-size: .9rem; font-weight: 700; }
 .coach-field input:not([type="range"]):not([type="file"]):not([type="radio"]):not([type="hidden"]), .coach-field select {
-  width: 100%; min-height: 50px; padding: 11px 14px; border: 1px solid var(--coach-border-strong); border-radius: 13px; color: var(--coach-text); background: #121517; font: inherit; font-size: .96rem; transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+  width: 100%; min-height: 50px; padding: 11px 14px; border: 1px solid var(--coach-border-strong); border-radius: 13px; color: var(--coach-text); background: var(--coach-surface); font: inherit; font-size: .96rem; transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
 }
-.coach-field input::placeholder { color: #817e7a; opacity: 1; }
+.coach-field input::placeholder { color: var(--coach-muted); opacity: 1; }
 .coach-field input:hover, .coach-field select:hover { border-color: rgba(240,160,107,.45); }
 .coach-field input[aria-invalid="true"] { border-color: #ff8d84 !important; box-shadow: 0 0 0 3px rgba(255,141,132,.14); }
 .coach-field input[type="file"] { width: 100%; min-height: 48px; padding: 8px; border: 1px dashed var(--coach-border-strong); border-radius: 13px; color: var(--coach-muted); background: rgba(8,10,12,.2); font: inherit; }
@@ -102,12 +131,12 @@
 .coach-duration-field { padding: 18px; border: 1px solid rgba(240,160,107,.22); border-radius: 17px; background: linear-gradient(110deg, rgba(240,160,107,.07), transparent 82%); }
 .coach-duration-row { display: flex; align-items: center; gap: 14px; }
 .coach-number-control-focus { width: min(100%, 260px); }
-.coach-number-control-focus input { min-height: 54px !important; border-color: rgba(240,160,107,.38) !important; background: #111416 !important; font-size: 1.05rem !important; font-weight: 700; }
+.coach-number-control-focus input { min-height: 54px !important; border-color: rgba(240,112,42,.38) !important; background: var(--coach-surface) !important; font-size: 1.05rem !important; font-weight: 700; }
 .coach-text-button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border: 1px solid var(--coach-border); border-radius: 11px; color: var(--coach-text); background: rgba(255,255,255,.04); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer; }
 .coach-text-button:hover { border-color: var(--coach-accent); background: var(--coach-glow); }
 .coach-privacy, .coach-foot { color: var(--coach-muted); font-size: .8rem; line-height: 1.6; }
 .coach-form-actions { grid-column: 1 / -1; display: flex; align-items: center; gap: 13px; flex-wrap: wrap; margin-top: 2px; }
-.coach-btn { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 12px 18px; border: 1px solid var(--coach-accent); border-radius: 13px; color: var(--coach-on-accent); background: var(--coach-accent); font: inherit; font-weight: 800; letter-spacing: -.01em; text-align: center; text-decoration: none; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, opacity .18s ease; }
+.coach-btn { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 12px 18px; border: 1px solid var(--coach-accent); border-radius: 980px; color: var(--coach-on-accent); background: var(--coach-accent); font: inherit; font-weight: 650; letter-spacing: -.01em; text-align: center; text-decoration: none; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, filter .18s ease, opacity .18s ease; }
 .coach-btn::after { content: "↗"; font-size: 1.08em; }
 .coach-btn:hover { filter: brightness(1.035); transform: translateY(-1px); box-shadow: 0 10px 22px rgba(240,160,107,.16); }
 .coach-btn:disabled { opacity: .58; cursor: wait; transform: none; box-shadow: none; }
@@ -232,3 +261,19 @@
 @media (prefers-reduced-motion: reduce) {
   .coach-page *, .coach-page *::before, .coach-page *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+
+html:not([data-theme="dark"]) .coach-header { background: rgba(255, 255, 255, .84); }
+html[data-theme="dark"] .coach-header { background: rgba(16, 18, 20, .82); }
+html:not([data-theme="dark"]) .coach-lang,
+html:not([data-theme="dark"]) .coach-energy-card,
+html:not([data-theme="dark"]) .coach-text-button,
+html:not([data-theme="dark"]) .coach-history-item,
+html:not([data-theme="dark"]) .coach-q-list li,
+html:not([data-theme="dark"]) .coach-context,
+html:not([data-theme="dark"]) .coach-side-privacy,
+html:not([data-theme="dark"]) .coach-field input[type="file"] { background: #f5f5f7; }
+html:not([data-theme="dark"]) .coach-card,
+html:not([data-theme="dark"]) .coach-side-card { background: #fff; }
+html:not([data-theme="dark"]) .coach-hero h1 { letter-spacing: -.035em; font-weight: 640; }
+html:not([data-theme="dark"]) .coach-btn { border-radius: 980px; }
+html:not([data-theme="dark"]) .coach-error { color: #9f2d2d; }

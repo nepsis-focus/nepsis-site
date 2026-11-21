@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#F0702A">
   <!-- TODO: remove noindex once the Coach is ready for search indexing (owner decision). -->
   <meta name="robots" content="noindex, nofollow">
-  <title>Nepsis · AI Study &amp; Focus Coach</title>
+  <title data-el="Nepsis · AI Προπονητής Μελέτης &amp; Συγκέντρωσης" data-en="Nepsis · AI Study &amp; Focus Coach">Nepsis · AI Προπονητής Μελέτης &amp; Συγκέντρωσης</title>
   <link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="assets/css/theme.css">
   <link rel="stylesheet" href="assets/css/pages/coach.css">
   <script>
-    (function(){try{var p=localStorage.getItem('nepsis-theme')||'dark';var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='dark'||(p!=='light'&&d)?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t;}catch(e){}})();
+    (function(){try{localStorage.setItem('nepsis-theme','light');}catch(e){}document.documentElement.setAttribute('data-theme','light');document.documentElement.style.colorScheme='light';})();
   </script>
 </head>
 <body class="coach-page">
@@ -82,7 +82,7 @@
         <div class="coach-card-heading">
           <span class="coach-step-number" aria-hidden="true">01</span>
           <div><div class="coach-kicker" data-el="Πριν ξεκινήσεις" data-en="Before you begin">Πριν ξεκινήσεις</div>
-          <h2 id="checkinTitle" data-el="Σύντομο check-in" data-en="Quick check-in">Σύντομο check-in</h2></div>
+          <h2 id="checkinTitle" data-el="Σύντομος έλεγχος" data-en="Quick check-in">Σύντομος έλεγχος</h2></div>
         </div>
         <p class="coach-note" data-el="Χωρίς συγκατάθεση, το πλάνο μένει τοπικό. Με συγκατάθεση, οι απαντήσεις και το κείμενο που εξήχθη στέλνονται στο Nepsis AI· αν είναι ρυθμισμένο, προωθούνται στο Google Gemini." data-en="Without consent, the plan stays local. With consent, your answers and extracted text are sent to Nepsis AI; if configured, they are forwarded to Google Gemini.">Χωρίς συγκατάθεση, το πλάνο μένει τοπικό. Με συγκατάθεση, οι απαντήσεις και το κείμενο που εξήχθη στέλνονται στο Nepsis AI· αν είναι ρυθμισμένο, προωθούνται στο Google Gemini.</p>
         <form id="coachForm" class="coach-form" autocomplete="off">
@@ -90,11 +90,11 @@
             <label for="taskType" data-el="Τι έχεις να κάνεις;" data-en="What are you working on?">Τι έχεις να κάνεις;</label>
             <select id="taskType" required>
               <option value="study" data-el="Διάβασμα / μάθημα" data-en="Studying / a subject">Διάβασμα / μάθημα</option>
-              <option value="task" data-el="Γενική εργασία / task" data-en="General task">Γενική εργασία / task</option>
+              <option value="task" data-el="Γενική εργασία" data-en="General task">Γενική εργασία</option>
             </select>
           </div>
           <div class="coach-field">
-            <label for="coachTopic" data-el="Μάθημα ή task" data-en="Subject or task">Μάθημα ή task</label>
+            <label for="coachTopic" data-el="Μάθημα ή εργασία" data-en="Subject or task">Μάθημα ή εργασία</label>
             <input id="coachTopic" type="text" maxlength="140" required placeholder="π.χ. Βιολογία: κύτταρο" data-placeholder-el="π.χ. Βιολογία: κύτταρο" data-placeholder-en="e.g. Biology: the cell">
           </div>
           <fieldset class="coach-field coach-energy-field" aria-describedby="energyHelp">
@@ -127,7 +127,7 @@
             <span id="coachUsage" class="coach-privacy" aria-live="polite"></span>
           </div>
         </form>
-        <p id="coachStorageStatus" class="coach-privacy" role="status" aria-live="polite" data-el="Τα check-in και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται." data-en="Check-ins and recent history are stored only in this browser; they are never synced.">Τα check-in και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται.</p>
+        <p id="coachStorageStatus" class="coach-privacy" role="status" aria-live="polite" data-el="Οι έλεγχοι και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται." data-en="Check-ins and recent history are stored only in this browser; they are never synced.">Οι έλεγχοι και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται.</p>
         <p id="coachMessage" class="coach-status" role="status" aria-live="polite"></p>
         <div class="coach-context">
           <div class="coach-context-heading"><span class="coach-step-number" aria-hidden="true">02</span><div><div class="coach-kicker" data-el="Προαιρετικά" data-en="Optional">Προαιρετικά</div><h3 data-el="Πρόσθεσε υλικό ή κράτησέ το ιδιωτικό" data-en="Add material or keep it private">Πρόσθεσε υλικό ή κράτησέ το ιδιωτικό</h3></div></div>
@@ -170,7 +170,7 @@
       <section id="coachHistory" class="coach-card coach-history" aria-labelledby="coachHistoryTitle" hidden>
         <div class="coach-history-heading">
           <div class="coach-kicker" data-el="Μόνο σε αυτή τη συσκευή" data-en="This device only">Μόνο σε αυτή τη συσκευή</div>
-          <h2 id="coachHistoryTitle" data-el="Πρόσφατα check-in" data-en="Recent check-ins">Πρόσφατα check-in</h2>
+          <h2 id="coachHistoryTitle" data-el="Πρόσφατοι έλεγχοι" data-en="Recent check-ins">Πρόσφατοι έλεγχοι</h2>
         </div>
         <p class="coach-privacy" data-el="Το ιστορικό κρατά μόνο το θέμα και τις επιλογές χρόνου· αρχεία και εξαγμένο κείμενο δεν αποθηκεύονται εδώ." data-en="History stores only the topic and time choices; files and extracted text are never stored here.">Το ιστορικό κρατά μόνο το θέμα και τις επιλογές χρόνου· αρχεία και εξαγμένο κείμενο δεν αποθηκεύονται εδώ.</p>
         <ol id="coachHistoryList" class="coach-history-list" aria-label="Recent check-ins"></ol>
@@ -182,7 +182,7 @@
           <div class="coach-side-top"><span class="coach-side-orbit" aria-hidden="true">✳</span><span class="coach-kicker" data-el="Ο ρυθμός σου" data-en="Your rhythm">Ο ρυθμός σου</span></div>
           <h2 id="coachSideTitle" data-el="Μικρό, σαφές, δικό σου." data-en="Small, clear, yours.">Μικρό, σαφές, δικό σου.</h2>
           <ol class="coach-side-steps">
-            <li><span>01</span><div><strong data-el="Διάλεξε ένα πράγμα" data-en="Choose one thing">Διάλεξε ένα πράγμα</strong><p data-el="Ένα task είναι αρκετό για να ξεκινήσεις." data-en="One task is enough to begin.">Ένα task είναι αρκετό για να ξεκινήσεις.</p></div></li>
+            <li><span>01</span><div><strong data-el="Διάλεξε ένα πράγμα" data-en="Choose one thing">Διάλεξε ένα πράγμα</strong><p data-el="Μία εργασία είναι αρκετή για να ξεκινήσεις." data-en="One task is enough to begin.">Μία εργασία είναι αρκετή για να ξεκινήσεις.</p></div></li>
             <li><span>02</span><div><strong data-el="Βάλε τον χρόνο σου" data-en="Set your time">Βάλε τον χρόνο σου</strong><p data-el="Το χρονόμετρο δέχεται δικά σου λεπτά." data-en="The timer accepts your own duration.">Το χρονόμετρο δέχεται δικά σου λεπτά.</p></div></li>
             <li><span>03</span><div><strong data-el="Ξεκίνα χωρίς πίεση" data-en="Start without pressure">Ξεκίνα χωρίς πίεση</strong><p data-el="Μπορείς να αλλάξεις το πλάνο πριν ξεκινήσει." data-en="You can adjust your plan before it starts.">Μπορείς να αλλάξεις το πλάνο πριν ξεκινήσει.</p></div></li>
           </ol>
@@ -202,6 +202,10 @@
   <script src="assets/js/google-oauth.js"></script>
   <script src="assets/js/pages/coach.js"></script>
   <script src="assets/js/pages/coach-nav.js"></script>
+  <script src="assets/js/dialogs.js"></script>
+  <script src="assets/js/analytics.js"></script>
   <script src="assets/js/site-navigation.js"></script>
+  <script src="assets/js/site-preferences.js"></script>
+  <script src="assets/js/ambient-sounds.js"></script>
 </body>
 </html>

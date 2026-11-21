@@ -13,59 +13,21 @@ body .nepsis-consent-panel {
   max-height: calc(100dvh - 20px);
   overflow-y: auto;
 }
-
-/* Diary, reset and library have a fallback menu alongside a back link and
-   language/theme controls. On narrow screens the row cannot fit without
-   overlap, so give the brand its own row and retain all the controls below. */
 @media (max-width: 520px) {
-  header:has(> .wrap.top > :is(.controls, .top-actions) > .nepsis-menu-button) {
-    height: auto;
-  }
-  header > .wrap.top:has(> :is(.controls, .top-actions) > .nepsis-menu-button) {
-    height: auto;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 8px 0;
-  }
-  header > .wrap.top:has(> :is(.controls, .top-actions) > .nepsis-menu-button) > :is(.nav-left, .logo) {
-    flex: 0 0 100%;
-  }
-  header .top-actions:has(> .nepsis-menu-button),
-  header .controls:has(> .nepsis-menu-button) {
-    width: 100%;
-    min-width: 0;
-    flex: 0 0 100%;
-    align-items: center;
-  }
-  header .top-actions:has(> .nepsis-menu-button) > a.back,
-  header .controls:has(> .nepsis-menu-button) > a.back {
-    display: flex;
-    flex: 1 1 0;
-    min-width: 0;
-    min-height: 44px;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 6px;
-    line-height: 1.15;
-    text-align: center;
-    white-space: normal;
-  }
-  header .controls:has(> .nepsis-menu-button) > .lang {
-    gap: 4px;
-  }
-  header .top-actions:has(> .nepsis-menu-button) > button[data-lang],
-  header .controls:has(> .nepsis-menu-button) .lang > button[data-lang],
-  header .top-actions:has(> .nepsis-menu-button) > :is(.theme-toggle, .nepsis-menu-button),
-  header .controls:has(> .nepsis-menu-button) > :is(.theme-toggle, .nepsis-menu-button) {
-    box-sizing: border-box;
-    width: 44px;
-    min-width: 44px;
-    height: 44px;
-    min-height: 44px;
-    flex: 0 0 44px;
-    padding: 0;
+  html body .nepsis-consent-panel,
+  body .nepsis-consent-panel {
+    left: max(12px, env(safe-area-inset-left, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-width: none;
+    transform: none;
   }
 }
+
+/* Diary / library / reset keep a single header row on phones.
+   Back links hide on narrow widths (nav is in the menu); compact sizing
+   lives in nav-polish.css so every page shares one ~56px bar. */
 
 .nepsis-dialog {
   width: min(92vw, 28rem);
@@ -83,9 +45,23 @@ body .nepsis-consent-panel {
 .nepsis-dialog-actions { display: flex; justify-content: flex-end; gap: .65rem; margin-top: 1.1rem; }
 .nepsis-dialog-actions button { min-height: 2.6rem; padding: .5rem .9rem; font: inherit; cursor: pointer; }
 @media (max-width: 390px) { .nepsis-dialog { padding: 1.1rem; } .nepsis-dialog-actions button { flex: 1; } }
-.nepsis-menu-button { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--np-border, rgba(53, 43, 37, .12)); border-radius: 12px; color: var(--np-text, #27221f); background: var(--np-surface, #fff); font: inherit; cursor: pointer; }
-.nepsis-site-drawer { position: fixed; z-index: 1002; inset: 0 0 0 auto; display: flex; flex-direction: column; gap: .2rem; width: min(88vw, 22rem); padding: 5.5rem 1.2rem 1.2rem; overflow-y: auto; background: var(--np-surface-raised, #fff); border-left: 1px solid var(--np-border, rgba(53, 43, 37, .12)); box-shadow: -1rem 0 3rem rgba(40, 28, 20, .14); transform: translateX(105%); transition: transform .24s ease; }
+.nepsis-menu-button { position: relative; z-index: 1003; min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--np-border, rgba(53, 43, 37, .12)); border-radius: 12px; color: var(--np-text, #27221f); background: var(--np-surface, #fff); font: inherit; cursor: pointer; }
+.nepsis-site-drawer { position: fixed; z-index: 1002; inset: 0 0 0 auto; display: flex; flex-direction: column; gap: .2rem; width: min(88vw, 22rem); padding: 1.1rem 1.2rem 1.2rem; overflow-y: auto; background: var(--np-surface-raised, #fff); border-left: 1px solid var(--np-border, rgba(53, 43, 37, .12)); box-shadow: -1rem 0 3rem rgba(40, 28, 20, .14); transform: translateX(105%); transition: transform .24s ease; }
 .nepsis-site-drawer.open { transform: translateX(0); }
+.nepsis-site-drawer .nepsis-drawer-close {
+  align-self: flex-end;
+  width: 44px;
+  height: 44px;
+  margin: 0 0 .4rem;
+  border: 1px solid var(--np-border, rgba(53, 43, 37, .12));
+  border-radius: 12px;
+  background: var(--np-surface, #fff);
+  color: var(--np-text, #27221f);
+  font: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+}
 .nepsis-site-drawer a { display: block; padding: .75rem .9rem; border-radius: .65rem; color: var(--np-text, #27221f); text-decoration: none; font-weight: 650; }
 .nepsis-site-drawer a:hover, .nepsis-site-drawer a:focus-visible { background: var(--np-surface-muted, #f4f2ee); outline-color: var(--np-focus, #a9491c); }
 .nepsis-menu-scrim { position: fixed; z-index: 1001; inset: 0; border: 0; background: var(--np-scrim, rgba(30, 25, 22, .44)); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s ease, visibility .2s ease; }
@@ -479,31 +455,31 @@ button.is-oauth-loading > svg,
 @keyframes nepsis-oauth-spin {
   to { transform: rotate(360deg); }
 }
-/* Ambient focus sounds: discreet corner widget, always opt-in.
-   Bottom-left keeps clear of the analytics settings control (bottom-right). */
+/* Ambient focus sounds: inline header control (never a fixed overlay). */
 .nepsis-ambient {
-  position: fixed;
-  z-index: 80;
-  left: max(14px, env(safe-area-inset-left));
+  position: relative;
+  z-index: 40;
+  left: auto;
   right: auto;
-  bottom: max(14px, env(safe-area-inset-bottom));
-  display: flex;
+  bottom: auto;
+  display: inline-flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: stretch;
+  gap: 0;
+  margin: 0;
   font-family: inherit;
   pointer-events: none;
 }
 .nepsis-ambient > * { pointer-events: auto; }
 .nepsis-ambient-toggle {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 1px solid var(--np-border, rgba(53, 43, 37, .12));
   background: var(--np-surface-raised, #fff);
   color: var(--np-text, #27221f);
-  box-shadow: var(--np-shadow, 0 4px 24px -2px rgba(0, 0, 0, .09));
+  box-shadow: none;
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -537,6 +513,11 @@ button.is-oauth-loading > svg,
   animation: nepsis-ambient-pulse 1.8s ease-out infinite;
 }
 .nepsis-ambient-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: auto;
+  z-index: 60;
   width: min(18.5rem, calc(100vw - 28px));
   padding: 14px 14px 12px;
   border-radius: 18px;
@@ -666,9 +647,6 @@ button.is-oauth-loading > svg,
 body.zen-active .nepsis-ambient-panel { display: none; }
 body.zen-active .nepsis-ambient { z-index: 120; }
 @media (max-width: 420px) {
-  .nepsis-ambient {
-    left: max(10px, env(safe-area-inset-left));
-    bottom: max(10px, env(safe-area-inset-bottom));
-  }
-  .nepsis-ambient-toggle { width: 46px; height: 46px; }
+  .nepsis-ambient-toggle { width: 36px; height: 36px; }
+  .nepsis-ambient-icon { width: 16px; height: 16px; }
 }

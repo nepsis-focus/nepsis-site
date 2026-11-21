@@ -244,12 +244,30 @@
     .nepsis-consent-panel p{margin:0;font-size:.9rem;line-height:1.55}
     .nepsis-consent-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:15px}
     .nepsis-consent-actions button,.nepsis-consent-settings{min-height:40px;padding:9px 15px;border:1px solid var(--border,#eadccb);border-radius:999px;background:transparent;color:inherit;font:inherit;font-size:.88rem;font-weight:700;cursor:pointer}
-    .nepsis-consent-actions .primary{background:var(--orange,#d95732);border-color:var(--orange,#d95732);color:#fff}
-    .nepsis-consent-actions a{margin-left:auto;color:inherit;font-size:.85rem;text-underline-offset:3px}
-    .nepsis-consent-actions button:focus-visible,.nepsis-consent-settings:focus-visible,.nepsis-consent-actions a:focus-visible{outline:3px solid var(--orange,#d95732);outline-offset:3px}
-    .nepsis-consent-settings{position:fixed;z-index:11999;right:16px;bottom:14px;background:var(--card,#fffaf3);box-shadow:0 5px 22px rgba(40,28,20,.12)}
-    @media(max-width:520px){.nepsis-consent-panel{bottom:10px;padding:17px}.nepsis-consent-actions a{margin-left:0;width:100%}.nepsis-consent-settings{right:10px;bottom:10px}}
-    @media(prefers-reduced-motion:no-preference){.nepsis-consent-panel{animation:nepsis-consent-in .25s ease-out both}@keyframes nepsis-consent-in{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}}
+    .nepsis-consent-actions .primary{background:#F0702A;border-color:#F0702A;color:#1d1d1f}
+    .nepsis-consent-actions a{margin-left:auto;color:#B8501A;font-size:.85rem;text-underline-offset:3px}
+    .nepsis-consent-actions button:focus-visible,.nepsis-consent-settings:focus-visible,.nepsis-consent-actions a:focus-visible,.nepsis-analytics-link:focus-visible{outline:3px solid #9A3F14;outline-offset:3px}
+    .nepsis-consent-settings{display:none!important}
+    @media(max-width:520px){
+      .nepsis-consent-panel{
+        left:max(12px,env(safe-area-inset-left,0px));
+        right:max(12px,env(safe-area-inset-right,0px));
+        bottom:calc(12px + env(safe-area-inset-bottom,0px));
+        width:auto;
+        max-width:none;
+        transform:none;
+        padding:16px;
+      }
+      .nepsis-consent-actions a{margin-left:0;width:100%}
+    }
+    @media(prefers-reduced-motion:no-preference){
+      .nepsis-consent-panel{animation:nepsis-consent-in .25s ease-out both}
+      @keyframes nepsis-consent-in{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+    }
+    @media(max-width:520px) and (prefers-reduced-motion:no-preference){
+      .nepsis-consent-panel{animation:nepsis-consent-in-mobile .25s ease-out both}
+      @keyframes nepsis-consent-in-mobile{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    }
   `;
   document.head.appendChild(style);
 
@@ -266,13 +284,48 @@
   const settings=document.createElement("button");settings.type="button";settings.className="nepsis-consent-settings";settings.hidden=true;settings.setAttribute("aria-haspopup","dialog");
   document.body.append(panel,settings);
 
+  function makeAnalyticsLink() {
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="nepsis-analytics-link";
+    button.hidden=true;
+    button.setAttribute("aria-haspopup","dialog");
+    button.dataset.nepsisAnalyticsSettings="1";
+    button.addEventListener("click",showPanel);
+    return button;
+  }
+  function ensureAltTriggers() {
+    const drawer=document.getElementById("drawer");
+    if(drawer && !drawer.querySelector("[data-nepsis-analytics-settings]")) {
+      const close=drawer.querySelector(".close, .nepsis-drawer-close");
+      const link=makeAnalyticsLink();
+      if(close && close.nextSibling) drawer.insertBefore(link, close.nextSibling);
+      else drawer.append(link);
+    }
+    const footHosts=document.querySelectorAll("footer .foot > span:last-child, footer .foot, footer");
+    const foot=footHosts[0];
+    if(foot && !foot.querySelector("[data-nepsis-analytics-settings]")) {
+      const link=makeAnalyticsLink();
+      if(foot.childNodes.length) foot.append(document.createTextNode(" · "), link);
+      else foot.append(link);
+    }
+  }
+  function syncAltTriggers(visible) {
+    ensureAltTriggers();
+    const text=copy[language()].manage;
+    document.querySelectorAll("[data-nepsis-analytics-settings]").forEach(el=>{
+      el.hidden=!visible;
+      el.textContent=text;
+    });
+  }
   function renderLanguage() {
     const text=copy[language()];
     heading.textContent=text.title;paragraph.textContent=text.body;accept.textContent=text.accept;reject.textContent=text.reject;
     privacy.textContent=text.privacy;settings.textContent=text.manage;
+    document.querySelectorAll("[data-nepsis-analytics-settings]").forEach(el=>{ el.textContent=text.manage; });
   }
-  function showPanel() { renderLanguage();panel.hidden=false;settings.hidden=true;accept.focus(); }
-  function hidePanel() { panel.hidden=true;settings.hidden=false; }
+  function showPanel() { renderLanguage();panel.hidden=false;settings.hidden=true;syncAltTriggers(false);accept.focus(); }
+  function hidePanel() { panel.hidden=true;settings.hidden=true;syncAltTriggers(true); }
   function choose(value) {
     const previous=readConsent();
     if(!saveConsent(value)) {
@@ -290,15 +343,23 @@
   accept.addEventListener("click",()=>choose("granted"));
   reject.addEventListener("click",()=>choose("denied"));
   settings.addEventListener("click",showPanel);
-  document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>window.setTimeout(renderLanguage,0)));
+  document.querySelectorAll("[data-lang], [data-set-lang]").forEach(button=>button.addEventListener("click",()=>window.setTimeout(renderLanguage,0)));
   document.addEventListener("click",event=>{
-    if(event.target.closest("#accBtn, #accountBtn, #googleSignIn")) window.nepsisAnalytics.track("login_started",{section:pageSection()});
+    if(event.target.closest("#accBtn, #accountBtn, #googleSignIn, #drawerAccBtn")) window.nepsisAnalytics.track("login_started",{section:pageSection()});
     const whop=event.target.closest("[data-whop-upsell]");
     if(whop) window.nepsisAnalytics.track("whop_upsell_clicked",{section:pageSection(),item_id:whop.getAttribute("data-whop-upsell")||"whop"});
   });
 
+  function refreshTriggers() {
+    const value=readConsent();
+    if(value==="granted"||value==="denied") syncAltTriggers(true);
+    else syncAltTriggers(false);
+  }
+  ensureAltTriggers();
   const consent=readConsent();
-  if(consent==="granted"){settings.hidden=false;renderLanguage();startAnalytics();}
-  else if(consent==="denied"){settings.hidden=false;renderLanguage();}
-  else showPanel();
+  if(consent==="granted"){settings.hidden=true;renderLanguage();syncAltTriggers(true);startAnalytics();}
+  else if(consent==="denied"){settings.hidden=true;renderLanguage();syncAltTriggers(true);}
+  else { syncAltTriggers(false); showPanel(); }
+  // Drawer/footer may mount after this script — refresh a few times.
+  [50, 250, 1000].forEach(function(ms){ window.setTimeout(refreshTriggers, ms); });
 })();

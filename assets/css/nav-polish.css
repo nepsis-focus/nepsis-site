@@ -48,23 +48,9 @@ header .controls .lang, header .top-actions .lang { display: flex; flex-wrap: no
   header .controls a.back, header .top-actions a.back { padding: 5px 8px; font-size: .66rem; }
   header .controls .lang button, header .top-actions button[data-lang] { padding: 5px 7px; font-size: .68rem; }
 }
-@media (max-width: 520px) {
-  /* The fallback menu pages use a two-row header on phones. */
-  body:not(.coach-page) #drawer.nepsis-site-drawer {
-    padding-top: calc(104px + env(safe-area-inset-top, 0px));
-  }
-}
 @media (max-width: 380px) {
   .nav-left { gap: 6px; }
   .nav-home-back { width: 36px; height: 36px; }
-  /* The controls wrap on very narrow phones; keep menu content below them. */
-  body:not(.coach-page) #drawer.drawer {
-    padding-top: calc(104px + env(safe-area-inset-top, 0px));
-  }
-  /* Privacy uses longer controls and needs a little more room at 320px. */
-  body.privacy-page #drawer.nepsis-site-drawer {
-    padding-top: calc(140px + env(safe-area-inset-top, 0px));
-  }
 }
 
 /* The menu panel */
@@ -166,4 +152,480 @@ body:not(.coach-page) .nepsis-menu-scrim.open { z-index: 1001; }
   .nav-home-back, .nav-home-back svg,
   #drawer.drawer .menu-group, #drawer.drawer .menu-group summary::after,
   #drawer.drawer .nav-drawer-head .close { transition: none; }
+}
+
+/* Light Apple-style surface. Dark mode keeps its own tokens.
+   Colour, type, radius and shadow only — no layout or behaviour hooks. */
+html:not([data-theme="dark"]) {
+  --bg: #ffffff;
+  --fg: #1d1d1f;
+  --card: #ffffff;
+  --muted: #6e6e73;
+  --border: rgba(0, 0, 0, .08);
+  --orange: #F0702A;
+  --ember: #9A3F14;
+  --paper: #ffffff;
+  --ink: #1d1d1f;
+}
+html:not([data-theme="dark"]) body {
+  background: #fff;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif;
+  letter-spacing: -.011em;
+}
+html:not([data-theme="dark"]) :is(h1, .page-heading h1, .intro h1, .hero h1) {
+  color: #1d1d1f;
+  font-weight: 640;
+  letter-spacing: -.035em;
+  line-height: 1.05;
+}
+html:not([data-theme="dark"]) :is(h2, .section-title) {
+  color: #1d1d1f;
+  font-weight: 640;
+  letter-spacing: -.028em;
+}
+html:not([data-theme="dark"]) :is(h1 em, .hero h1 em, .intro h1 em) {
+  color: #9A3F14;
+  -webkit-text-fill-color: #9A3F14;
+  background: none;
+}
+html:not([data-theme="dark"]) :is(.muted, .page-heading p, .intro p, .hero p.lead, .head p, footer) {
+  color: #6e6e73;
+}
+html:not([data-theme="dark"]) :is(.eyebrow, .section-kicker) { color: #9A3F14; }
+html:not([data-theme="dark"]) body:not(.coach-page) :is(header.top, body > header, body > .wrap > header) {
+  background: rgba(255, 255, 255, .84);
+  border-bottom: 1px solid rgba(0, 0, 0, .08);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+html:not([data-theme="dark"]) :is(.logo, header .logo) { color: #1d1d1f; letter-spacing: -.04em; }
+html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .email-submit, .nepsis-consent-actions .primary, .home-product-button, .mobile-start a, .exam-actions .btn, .cta .btn, .tip-action .btn, a.btn:not(.btn-ghost):not(.btn-secondary):not(.secondary):not(.acc-google)) {
+  background: #F0702A !important;
+  border-color: #F0702A !important;
+  color: #1d1d1f !important;
+  border-radius: 980px;
+  box-shadow: none;
+  font-weight: 600;
+}
+html:not([data-theme="dark"]) :is(.btn-primary, .primary, .tool-button, .acc-email-send, .home-product-button, .mobile-start a, .exam-actions .btn, .cta .btn, .tip-action .btn, a.btn:not(.btn-ghost):not(.btn-secondary):not(.secondary):not(.acc-google)):hover {
+  background: #e26520 !important;
+  color: #1d1d1f !important;
+  filter: none;
+}
+/* Text/links on orange need AA — use darker ink, not #F0702A fill as text. */
+html:not([data-theme="dark"]) {
+  --np-accent-ink: #B8501A;
+  --ember: #B8501A;
+}
+html:not([data-theme="dark"]) :is(.eyebrow, .section-kicker, .home-product-eyebrow, .home-product-more, .home-product-privacy-link, .home-link-arrow) {
+  color: #B8501A !important;
+}
+html:not([data-theme="dark"]) main a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.primary):not(.secondary):not(.logo):not(.back):not(.filter):not(.home-link):not(.nav-home-back):not(.home-product-button):not(.home-product-links a):not(.acc-btn):not(.account-btn) {
+  color: #B8501A;
+}
+html:not([data-theme="dark"]) body.practice-page .btn-primary,
+html:not([data-theme="dark"]) body.practice-page .stage .start.btn-primary,
+html:not([data-theme="dark"]) body.practice-page .btn.btn-primary {
+  color: #1d1d1f !important;
+  background: #F0702A !important;
+  border-color: #F0702A !important;
+}
+/* Hamburger → ✕ when the drawer is open. */
+.menu-btn {
+  display: inline-flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.menu-btn span,
+.coach-page .menu-btn span {
+  margin: 0 !important;
+  transform-origin: center;
+  transition: transform .2s ease, opacity .2s ease;
+}
+/* gap 5px + bar 2px → 7px center-to-center. */
+.menu-btn.open span:nth-child(1),
+.menu-btn[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.menu-btn.open span:nth-child(2),
+.menu-btn[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.menu-btn.open span:nth-child(3),
+.menu-btn[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+/* Coach uses gap:4px + 1.5px bars → 5.5px center-to-center. */
+.coach-page .menu-btn {
+  gap: 4px;
+}
+.coach-page .menu-btn.open span:nth-child(1),
+.coach-page .menu-btn[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(5.5px) rotate(45deg);
+}
+.coach-page .menu-btn.open span:nth-child(3),
+.coach-page .menu-btn[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-5.5px) rotate(-45deg);
+}
+.nepsis-menu-button.open,
+.nepsis-menu-button[aria-expanded="true"] {
+  font-size: 0;
+  line-height: 0;
+}
+.nepsis-menu-button.open::before,
+.nepsis-menu-button[aria-expanded="true"]::before {
+  content: "✕";
+  font-size: 1.15rem;
+  line-height: 1;
+  color: inherit;
+}
+html:not([data-theme="dark"]) :is(.btn-ghost, .secondary, .acc-google, .account-card .google, a.back, .filter, .nav-home-back) {
+  background: #fff;
+  color: #1d1d1f;
+  border: 1px solid rgba(0, 0, 0, .12);
+  border-radius: 980px;
+  box-shadow: none;
+}
+html:not([data-theme="dark"]) .lang button.active,
+html:not([data-theme="dark"]) header button.active:not(.menu-btn):not(.theme-toggle):not(.close),
+html:not([data-theme="dark"]) .coach-lang button[aria-pressed="true"] {
+  background: #F0702A !important;
+  color: #1d1d1f !important;
+  border-color: #F0702A !important;
+}
+html:not([data-theme="dark"]) :is(.card, .panel, .stat, .info-card, .step-card, .tool-panel, .entry, .room, .tip, .welcome, .account-card, .acc-card, .cmp, .bento-card, .inside-nepsis-card) {
+  background: #fff;
+  color: #1d1d1f;
+  border-color: transparent;
+  border-radius: 26px;
+  box-shadow: none;
+}
+/* Interactive surfaces keep a soft frame; marketing blocks sit on the page. */
+html:not([data-theme="dark"]) :is(.account-card, .acc-card, .tool-panel, .sub-card, .nepsis-consent-panel) {
+  border-color: rgba(0, 0, 0, .08);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .05);
+}
+html:not([data-theme="dark"]) :is(.stat, .panel, .welcome, .bento-card, .inside-nepsis-card, .cmp, .info-card, .step-card, .tip, .entry, .room) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  padding-inline: 0;
+}
+html:not([data-theme="dark"]) :is(.stat, .panel, .welcome, .tool-panel) {
+  background: #f5f5f7;
+  border-radius: 26px;
+  padding: 22px 24px;
+}
+html:not([data-theme="dark"]) .cmp.on { border-color: rgba(240, 112, 42, .45); }
+html:not([data-theme="dark"]) :is(.goal-row, .history-row, .routine-row, .diary-row, .week-metric, .award, .research-panel) {
+  background: #fff;
+  border-color: rgba(0, 0, 0, .08);
+}
+html:not([data-theme="dark"]) :is(.result, .next, .privacy, .welcome) {
+  background: #f5f5f7;
+  color: #1d1d1f;
+}
+html:not([data-theme="dark"]) .next p,
+html:not([data-theme="dark"]) .next .eyebrow { color: #6e6e73; }
+html:not([data-theme="dark"]) .result .big { color: #1d1d1f; }
+html:not([data-theme="dark"]) #drawer.drawer {
+  background: #fff;
+  color: #1d1d1f;
+  box-shadow: -24px 0 64px rgba(0, 0, 0, .08);
+}
+html:not([data-theme="dark"]) :is(input, textarea, select, .tool-input, .tool-textarea, .acc-email) {
+  background: #fff;
+  color: #1d1d1f;
+  border-color: rgba(0, 0, 0, .12);
+}
+html:not([data-theme="dark"]) .nepsis-consent-panel,
+html:not([data-theme="dark"]) .nepsis-consent-settings {
+  background: #fff;
+  color: #1d1d1f;
+  border-color: rgba(0, 0, 0, .08);
+}
+html:not([data-theme="dark"]) body.practice-page,
+html:not([data-theme="dark"]) body.my-nepsis-dashboard,
+html:not([data-theme="dark"]) body.home-page {
+  background: #fff;
+  color: #1d1d1f;
+}
+html:not([data-theme="dark"]) body.practice-page .stage,
+html:not([data-theme="dark"]) body.practice-page .daily-challenge,
+html:not([data-theme="dark"]) body.practice-page .knowledge-note {
+  background: #f5f5f7;
+  border-color: transparent;
+  border-radius: 26px;
+  box-shadow: none;
+}
+html:not([data-theme="dark"]) body.practice-page .btn { border-radius: 980px; }
+html:not([data-theme="dark"]) body.practice-page .btn-primary {
+  background: #F0702A;
+  color: #1d1d1f;
+  border-color: #F0702A;
+}
+html:not([data-theme="dark"]) .calendar :is(span, .day):not(.active):not(.strong):not(.lvl1):not(.lvl2):not(.lvl3):not(.lvl4) {
+  background: #f5f5f7;
+  color: #6e6e73;
+}
+html:not([data-theme="dark"]) .calendar .strong { background: #F0702A; color: #1d1d1f; }
+html:not([data-theme="dark"]) :is(a, button, input, textarea, select, summary):focus-visible {
+  outline-color: #9A3F14;
+}
+
+/* Phone layout: readable type, 44px targets, safe areas, no sideways scroll. */
+@media (max-width: 430px) {
+  html { overflow-x: clip; }
+  body {
+    font-size: 16px;
+    overflow-x: clip;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+  html body :is(p, li, label, button, .btn, .primary, .secondary, .filter, .tool-button, .mini-button, .acc-btn, .account-btn, .nepsis-consent-actions button, .nepsis-consent-panel p) {
+    font-size: 16px;
+  }
+  html body :is(input, textarea, select, .tool-input, .tool-textarea, .acc-email) {
+    font-size: 16px !important;
+    min-height: 44px;
+  }
+  html body :is(button, .btn, .primary, .secondary, .filter, .tool-button, .mini-button, .menu-btn, .theme-toggle, .lang button, .coach-lang button, .drawer .close, a.back, .acc-btn, .account-btn, .nepsis-consent-actions button) {
+    min-height: 44px;
+  }
+  html body :is(.menu-btn, .theme-toggle, .lang button, .coach-lang button, .drawer .close, #drawer .close) {
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+  }
+  html body header :is(.logo, .coach-brand) { min-height: 44px; align-items: center; }
+  html body.coach-page :is(.menu-btn, .coach-lang button, .coach-text-button, .coach-btn) {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 16px;
+  }
+  html body.coach-page .menu-btn { width: 44px; height: 44px; }
+  html body .home-product-privacy-link, html body .home-product-more { min-height: 44px; display: inline-flex; align-items: center; }
+  body.home-page .bento-orbit { right: 8px; width: 120px; height: 120px; }
+  textarea { min-height: 120px; }
+  :is(.menu-btn, .theme-toggle, .nepsis-menu-button, .lang button, .drawer .close, #drawer .close, .acc-btn, .account-btn, a.back, .nav-home-back) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  header.top, body > header, body > .wrap > header {
+    padding-top: env(safe-area-inset-top);
+  }
+  .top-in, header .top, .top {
+    height: 56px;
+    min-height: 56px;
+    flex-wrap: nowrap;
+  }
+  #drawer.drawer {
+    padding-top: calc(64px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  #drawer.drawer .close, #drawer.drawer .nav-drawer-head .close {
+    width: 44px;
+    height: 44px;
+  }
+  :is(section, [id]) { scroll-margin-top: calc(72px + env(safe-area-inset-top)); }
+  :is(.acc-modal, .account, .sub-modal, .nepsis-dialog) {
+    max-height: 100dvh;
+    padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+    overflow: auto;
+  }
+  :is(.acc-card, .account-card, .sub-card, .nepsis-dialog) {
+    width: min(100%, 28rem);
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);
+    overflow: auto;
+  }
+  /* Beat `body .nepsis-consent-panel` and the analytics.js injected sheet. */
+  html body .nepsis-consent-panel,
+  body .nepsis-consent-panel {
+    left: max(12px, env(safe-area-inset-left, 0px)) !important;
+    right: max(12px, env(safe-area-inset-right, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow: auto;
+  }
+  /* Floating ambient/analytics overlays are retired — keep consent panel only. */
+  body.home-page .bento-card,
+  body.home-page .bento-focus { overflow: visible; }
+  /* Never clip the homepage globe or its atmosphere. */
+  body.home-page main .hero,
+  body.home-page main #globe.hero { overflow: visible; }
+  .wrap, .top-in, header .top { max-width: 100%; }
+}
+
+/* Shared compact header: one ~52–56px row on every page (not just home).
+   Selectors intentionally beat page CSS such as body.home-page .top-in. */
+@media (max-width: 767px) {
+  html body.home-page .top-in,
+  html body.practice-page .top-in,
+  html body.coach-page .coach-header-inner,
+  html body.privacy-page header,
+  html body.my-nepsis-dashboard header .top,
+  html body :is(.top-in, header .top, .top, .coach-header-inner),
+  html body header > .wrap.top,
+  html body .wrap > header,
+  html body header.coach-header {
+    display: flex !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding-block: 0 !important;
+    padding-inline: clamp(10px, 3.2vw, 20px) !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+    align-items: center;
+    overflow: visible;
+  }
+  html body :is(.top-in, header .top, .top, .coach-header-inner) > :is(.nav-left, .logo, .head-right, .controls, .top-actions, .coach-controls),
+  html body header > .wrap.top > :is(.nav-left, .logo, .head-right, .controls, .top-actions),
+  html body .wrap > header > :is(.logo, .lang, .nepsis-ambient, .nepsis-menu-button, #menuBtn) {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+  html body :is(.head-right, .controls, .top-actions, .coach-controls) {
+    margin-left: auto;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+  }
+  /* Sign in, back chips, and home-arrow live in the menu / logo on phones. */
+  html body :is(.acc-btn, .account-btn, #accBtn, #accountBtn),
+  html body header a.back,
+  html body .nav-home-back {
+    display: none !important;
+  }
+  html body :is(.lang, .coach-lang) {
+    height: 32px;
+    flex: 0 0 auto;
+  }
+  html body :is(.lang button, .coach-lang button),
+  html body header .top-actions > button[data-lang] {
+    min-width: 28px !important;
+    width: auto !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 0 6px !important;
+    font-size: 11px !important;
+    flex: 0 0 auto !important;
+  }
+  html body :is(.menu-btn, .nepsis-menu-button, .nepsis-ambient-toggle) {
+    min-width: 36px !important;
+    width: 36px !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    flex: 0 0 36px !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+  html body .theme-toggle { display: none !important; }
+  html body .nepsis-ambient {
+    position: relative !important;
+    inset: auto !important;
+    flex: 0 0 auto !important;
+  }
+  html body header :is(.logo, .coach-brand) {
+    font-size: clamp(16px, 4.6vw, 19px);
+    min-height: 36px;
+    flex-shrink: 0;
+  }
+  #drawer.drawer,
+  #drawer.nepsis-site-drawer,
+  body:not(.coach-page) #drawer.nepsis-site-drawer,
+  body:not(.coach-page) #drawer.drawer,
+  body.privacy-page #drawer.nepsis-site-drawer {
+    padding-top: calc(64px + env(safe-area-inset-top, 0px));
+  }
+}
+@media (max-width: 360px) {
+  html body :is(.head-right, .controls, .top-actions, .coach-controls) { gap: 3px; }
+  html body header :is(.logo, .coach-brand) { font-size: 16px; }
+}
+
+/* Analytics settings is an inline footer/menu control — never a fixed chip. */
+html body .nepsis-consent-settings,
+body .nepsis-consent-settings {
+  position: static !important;
+  display: none !important;
+  inset: auto !important;
+  box-shadow: none !important;
+}
+html body .nepsis-analytics-link,
+body .nepsis-analytics-link {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+html body .nepsis-analytics-link[hidden],
+body .nepsis-analytics-link[hidden] {
+  display: none !important;
+}
+#drawer .nepsis-analytics-link,
+.nepsis-site-drawer .nepsis-analytics-link {
+  display: block;
+  padding: .75rem .9rem;
+  border-radius: .65rem;
+  text-decoration: none;
+  font-weight: 650;
+  text-align: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+#drawer .nepsis-analytics-link:hover,
+.nepsis-site-drawer .nepsis-analytics-link:hover {
+  background: var(--np-surface-muted, #f5f5f7);
+}
+
+/* Wider content, less empty gutter — Apple-like density. */
+html:not([data-theme="dark"]) :is(.wrap, .top-in) {
+  width: min(1200px, calc(100% - 40px));
+  max-width: 1200px;
+}
+html:not([data-theme="dark"]) body.my-nepsis-dashboard .wrap {
+  width: min(1200px, calc(100% - 32px));
+}
+html:not([data-theme="dark"]) body.my-nepsis-dashboard main {
+  padding-top: 28px;
+  padding-bottom: 56px;
+}
+html:not([data-theme="dark"]) body.my-nepsis-dashboard .intro {
+  margin-bottom: 22px;
+}
+html:not([data-theme="dark"]) body.my-nepsis-dashboard main .page-heading,
+html:not([data-theme="dark"]) body.my-nepsis-dashboard main > .wrap > .page-heading,
+html:not([data-theme="dark"]) body.my-nepsis-dashboard .intro {
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+@media (max-width: 430px) {
+  html:not([data-theme="dark"]) :is(.wrap, .top-in) {
+    width: calc(100% - 32px);
+    padding-left: 0;
+    padding-right: 0;
+  }
+  html:not([data-theme="dark"]) body.my-nepsis-dashboard .wrap {
+    width: calc(100% - 32px);
+  }
 }

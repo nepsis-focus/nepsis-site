@@ -4,15 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>
-/* Warm theme boot — apply before paint to avoid a light flash at night */
+/* Light-only boot — Nepsis is always light/white. */
 (function () {
   try {
-    var p = localStorage.getItem("nepsis-theme") || "system";
-    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", t);
-    document.documentElement.style.colorScheme = t;
+    localStorage.setItem("nepsis-theme", "light");
   } catch (e) {}
+  document.documentElement.setAttribute("data-theme", "light");
+  document.documentElement.style.colorScheme = "light";
 })();
 </script>
 <title data-el="Nepsis · Εξάσκηση και πρόοδος" data-en="Nepsis · Practice and progress">Nepsis · Εξάσκηση και πρόοδος</title>
@@ -86,7 +84,7 @@ if ("serviceWorker" in navigator) {
 <nav class="drawer" id="drawer" aria-label="Menu">
   <button type="button" class="close" id="closeBtn" aria-label="Close">✕</button>
   <a class="menu-home" href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
-  <a href="coach.html" data-coach-nav hidden data-el="AI Study Coach" data-en="AI Study Coach">AI Study Coach</a>
+  <a href="coach.html" data-coach-nav hidden data-el="AI Προπονητής Μελέτης" data-en="AI Study Coach">AI Προπονητής Μελέτης</a>
   <details class="menu-group">
     <summary data-el="Ξεκίνα τη συγκέντρωση" data-en="Start focusing">Ξεκίνα τη συγκέντρωση</summary>
     <a href="practice.html#challenge" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</a>

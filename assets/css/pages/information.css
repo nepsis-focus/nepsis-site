@@ -51,8 +51,11 @@ h1 { max-width:18ch; font-size:clamp(2.4rem,5.6vw,4.4rem); line-height:1.05; let
 .cta { display:flex; align-items:center; justify-content:space-between; gap:22px; margin:8px 0 58px; padding:25px 27px; border:1px solid var(--border); border-radius:18px; background:var(--card); }
 .cta h2 { font-size:1.35rem; }
 .cta p { margin-top:4px; color:var(--muted); }
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:0 0 auto; padding:12px 20px; border:0; border-radius:999px; background:var(--orange); color:white; font:inherit; font-weight:900; text-decoration:none; transition:transform .15s ease,background .15s ease; }
-.btn:hover { transform:translateY(-2px); background:var(--ember); }
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; flex:0 0 auto; padding:12px 20px; border:0; border-radius:999px; background:var(--orange); color:#1d1d1f; font:inherit; font-weight:900; text-decoration:none; transition:transform .15s ease,background .15s ease; }
+.btn:hover { transform:translateY(-2px); background:var(--ember); color:#1d1d1f; }
+.exam-actions .btn,
+.cta .btn,
+.tip-action .btn { color:#1d1d1f; }
 .steps { counter-reset:step; }
 .step-card { position:relative; }
 .step-card .info-number { width:38px; height:38px; }

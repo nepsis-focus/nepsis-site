@@ -1,24 +1,28 @@
 /* Nepsis design tokens. Neutral surfaces keep the interface calm while the
-   copper accent carries the warmth of the brand. */
+   copper accent carries the warmth of the brand. Light/white only. */
+html {
+  color-scheme: light !important;
+}
 :root {
   color-scheme: light;
-  --np-canvas: #f8f7f4;
-  --np-surface: #fff;
-  --np-surface-raised: #fff;
-  --np-surface-muted: #f4f2ee;
-  --np-text: #27221f;
-  --np-muted: #6f6861;
-  --np-border: rgba(53, 43, 37, .12);
-  --np-glass: rgba(255, 255, 255, .85);
-  --np-shadow: 0 4px 24px -2px rgba(0, 0, 0, .09);
-  /* Slightly deeper than the nominal brand copper for white-text contrast. */
-  --np-accent: #b85222;
-  --np-on-accent: #fff;
-  --np-accent-soft: rgba(184, 82, 34, .10);
-  --np-accent-border: rgba(184, 82, 34, .38);
-  --np-focus: #a9491c;
-  --np-scrim: rgba(30, 25, 22, .44);
-  --np-modal-shadow: 0 24px 70px -20px rgba(30, 25, 22, .28);
+  --np-canvas: #ffffff;
+  --np-surface: #ffffff;
+  --np-surface-raised: #ffffff;
+  --np-surface-muted: #f5f5f7;
+  --np-text: #1d1d1f;
+  --np-muted: #6e6e73;
+  --np-border: rgba(0, 0, 0, .08);
+  --np-glass: rgba(255, 255, 255, .82);
+  --np-shadow: 0 10px 30px rgba(0, 0, 0, .05);
+  /* Brand fill. Pair it with near-black text; the bright orange misses AA under white type. */
+  --np-accent: #F0702A;
+  --np-on-accent: #1d1d1f;
+  --np-accent-ink: #9A3F14;
+  --np-accent-soft: rgba(240, 112, 42, .10);
+  --np-accent-border: rgba(240, 112, 42, .40);
+  --np-focus: #9A3F14;
+  --np-scrim: rgba(0, 0, 0, .42);
+  --np-modal-shadow: 0 24px 70px -28px rgba(0, 0, 0, .28);
 
   /* Compatibility aliases for all existing page styles. */
   --bg: var(--np-canvas);
@@ -41,29 +45,10 @@
   --theme-shadow: rgba(0, 0, 0, .18);
 }
 
+/* Dark theme retired — Nepsis is light/white only. Keep the selector so any
+   stale data-theme="dark" still resolves to the light tokens above. */
 html[data-theme="dark"] {
-  color-scheme: dark;
-  --np-canvas: #151516;
-  --np-surface: #1d1d20;
-  --np-surface-raised: #252529;
-  --np-surface-muted: #222224;
-  --np-text: #f5f3f0;
-  --np-muted: #b8b3ae;
-  --np-border: rgba(255, 255, 255, .08);
-  --np-glass: rgba(28, 28, 31, .84);
-  --np-shadow: 0 4px 24px -2px rgba(0, 0, 0, .25);
-  --np-accent: #f19a63;
-  --np-on-accent: #1b1715;
-  --np-accent-soft: rgba(241, 154, 99, .13);
-  --np-accent-border: rgba(241, 154, 99, .4);
-  --np-focus: #ffb47f;
-  --np-scrim: rgba(0, 0, 0, .64);
-  --np-modal-shadow: 0 24px 70px -20px rgba(0, 0, 0, .65);
-  --ember: #f0a080;
-  --sun: #e7c078;
-  --green: #a7c0ac;
-  --grad: linear-gradient(120deg, #e7c078 0%, #f19a63 55%, #df8465 100%);
-  --theme-shadow: rgba(0, 0, 0, .4);
+  color-scheme: light;
 }
 
 /* The coach page historically shadowed the root aliases locally. */
@@ -82,7 +67,7 @@ html[data-theme="dark"] .coach-page { --surface: var(--np-surface); }
 body {
   color: var(--np-text);
   background-color: var(--np-canvas);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Inter, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -248,43 +233,15 @@ html[data-theme="dark"] .danger {
   border-color: #68463c;
 }
 
-/* Theme toggle: dimensions and data-mode icon selectors are JS hooks. */
-.theme-toggle {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  border: 1px solid var(--np-border);
-  background: var(--np-surface);
-  color: var(--np-text);
-  cursor: pointer;
-  display: inline-grid;
-  place-items: center;
-  padding: 0;
-  flex: 0 0 auto;
-  transition: border-color .18s ease, background-color .18s ease, color .18s ease;
-}
-.theme-toggle:hover { border-color: var(--np-accent-border); background: var(--np-surface-muted); }
-.theme-toggle svg { width: 18px; height: 18px; display: block; }
-.theme-toggle svg.icon-system,
-.theme-toggle svg.icon-sun,
-.theme-toggle svg.icon-moon { display: none; }
-.theme-toggle[data-mode="system"] svg.icon-system,
-.theme-toggle[data-mode="light"] svg.icon-sun,
-.theme-toggle[data-mode="dark"] svg.icon-moon { display: block; }
+/* Theme toggle removed — site is light/white only. */
+.theme-toggle { display: none !important; }
 
-/* Keep the header controls on one line on small screens. */
+/* Phone header controls stay at least 44px so a thumb can hit them. */
 @media (max-width: 480px) {
-  .head-right, .headright, .controls, .top-actions { gap: 5px !important; }
-  .theme-toggle { width: 34px; height: 34px; border-radius: 10px; }
-  .theme-toggle svg { width: 15px; height: 15px; }
-  .menu-btn { width: 36px !important; height: 36px !important; flex: 0 0 36px; }
-  .acc-btn, .account-btn { padding: 6px 8px !important; font-size: .74rem !important; }
-  .lang button { padding: 5px 7px !important; font-size: .72rem !important; }
-}
-@media (max-width: 360px) {
-  .theme-toggle { width: 32px; height: 32px; }
-  .logo { font-size: 1.05rem !important; gap: 6px !important; }
-  .acc-btn, .account-btn { padding: 5px 6px !important; font-size: .7rem !important; }
+  .head-right, .headright, .controls, .top-actions { gap: 6px !important; }
+  .menu-btn { width: 44px !important; height: 44px !important; flex: 0 0 44px; }
+  .acc-btn, .account-btn { min-height: 44px; padding: 8px 12px !important; font-size: 16px !important; }
+  .lang button { min-width: 44px; min-height: 44px; padding: 8px 10px !important; font-size: 16px !important; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

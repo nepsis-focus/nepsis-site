@@ -813,8 +813,6 @@ html[data-theme="dark"] body.my-nepsis-dashboard .headright .lang button:not(.ac
   body.my-nepsis-dashboard .headright { gap: 4px !important; }
 }
 @media (max-width: 350px) {
-  body.my-nepsis-dashboard header .top { height: auto; min-height: 66px; padding: 8px 0; flex-wrap: wrap; row-gap: 8px; }
-  body.my-nepsis-dashboard header .top .nav-left,
-  body.my-nepsis-dashboard header .top .headright { flex: 1 1 100%; }
+  /* Compact single-row header is enforced by nav-polish.css. */
   body.my-nepsis-dashboard header .top .headright { justify-content: flex-end; }
 }

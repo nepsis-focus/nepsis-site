@@ -22,6 +22,7 @@ let currentLang = "el";
   function setMenu(open) {
     $("drawer").classList.toggle("open", open);
     $("scrim").classList.toggle("open", open);
+    $("menuBtn").classList.toggle("open", open);
     $("menuBtn").setAttribute("aria-expanded", open ? "true" : "false");
   }
   $("menuBtn").addEventListener("click", function () { setMenu(!$("drawer").classList.contains("open")); });
@@ -105,32 +106,36 @@ let currentLang = "el";
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 100);
-    camera.position.set(0, 0, 5.6);
+    /* Close enough to fill the large canvas; far enough that atmosphere stays inside. */
+    camera.position.set(0, 0, 6.15);
     const isMobile = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
     if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.setClearColor(0x000000, 0);
 
-    scene.add(new THREE.AmbientLight(0xb8cbe0, 0.82));
-    const sunlight = new THREE.DirectionalLight(0xffffff, 1.42);
-    sunlight.position.set(-3.8, 2.2, 4.8);
+    scene.add(new THREE.AmbientLight(0xc5d4e4, 0.72));
+    const sunlight = new THREE.DirectionalLight(0xfff1e0, 0.78);
+    sunlight.position.set(0.6, 3.4, 5.6);
     scene.add(sunlight);
-    const fillLight = new THREE.DirectionalLight(0x8bb9e2, 0.42);
-    fillLight.position.set(4, -1.5, -3);
+    const fillLight = new THREE.DirectionalLight(0x9bb8d4, 0.28);
+    fillLight.position.set(3.6, 0.2, 1.8);
     scene.add(fillLight);
+    const rimLight = new THREE.DirectionalLight(0xd8e6f2, 0.18);
+    rimLight.position.set(-3.2, 1.2, -2.4);
+    scene.add(rimLight);
 
     const earthGroup = new THREE.Group();
     scene.add(earthGroup);
     const radius = 2;
     const sphereGeometry = new THREE.SphereGeometry(radius, 96, 96);
     const earthMaterial = new THREE.MeshPhongMaterial({
-      color: 0xffffff, specular: new THREE.Color(0x34495c), shininess: 10
+      color: 0xffffff, specular: new THREE.Color(0x2a3a48), shininess: 5
     });
     const earth = new THREE.Mesh(sphereGeometry, earthMaterial);
     earthGroup.add(earth);
 
-    const cloudMaterial = new THREE.MeshPhongMaterial({
-      color: 0xffffff, transparent: true, opacity: 0.38, depthWrite: false
+    const cloudMaterial = new THREE.MeshLambertMaterial({
+      color: 0xffffff, transparent: true, opacity: 0.22, depthWrite: false
     });
     const clouds = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.009, 96, 96), cloudMaterial);
     earthGroup.add(clouds);
@@ -142,8 +147,8 @@ let currentLang = "el";
         depthWrite: false,
         side: THREE.BackSide,
         uniforms: {
-          uColor: { value: new THREE.Color(0x62aee8) },
-          uIntensity: { value: 0.92 }
+          uColor: { value: new THREE.Color(0x6aa8d4) },
+          uIntensity: { value: 0.55 }
         },
         vertexShader: [
           "varying float vFres;",
@@ -197,7 +202,7 @@ let currentLang = "el";
     );
     loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_normal_2048.jpg", function (texture) {
       earthMaterial.normalMap = texture;
-      earthMaterial.normalScale = new THREE.Vector2(0.42, 0.42);
+      earthMaterial.normalScale = new THREE.Vector2(0.28, 0.28);
       earthMaterial.needsUpdate = true;
     });
     loader.load("https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_clouds_1024.png", function (texture) {
@@ -274,16 +279,33 @@ let currentLang = "el";
     }
     function clearCountry() { marker.visible = false; }
 
+    let dragOriginX = 0;
+    let dragOriginY = 0;
+    let dragAxis = "";
     function onPointerDown(event) {
       dragging = true;
+      dragAxis = event.pointerType === "touch" ? "" : "x";
       focusAnimation = null;
       velocityX = 0; velocityY = 0;
-      lastX = event.clientX; lastY = event.clientY;
+      dragOriginX = lastX = event.clientX;
+      dragOriginY = lastY = event.clientY;
       canvas.style.cursor = "grabbing";
-      if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+      if (dragAxis && canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
     }
     function onPointerMove(event) {
       if (!dragging) return;
+      if (!dragAxis) {
+        const adx = Math.abs(event.clientX - dragOriginX);
+        const ady = Math.abs(event.clientY - dragOriginY);
+        if (adx < 10 && ady < 10) return;
+        if (ady >= adx) {
+          dragging = false;
+          canvas.style.cursor = "grab";
+          return;
+        }
+        dragAxis = "x";
+        if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+      }
       const dx = event.clientX - lastX;
       const dy = event.clientY - lastY;
       lastX = event.clientX; lastY = event.clientY;
@@ -307,6 +329,8 @@ let currentLang = "el";
       const rect = stage.getBoundingClientRect();
       const width = Math.max(1, Math.round(rect.width));
       const height = Math.max(1, Math.round(rect.height));
+      const mobileNow = window.matchMedia && window.matchMedia("(max-width: 820px)").matches;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobileNow ? 1.5 : 2));
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
@@ -317,6 +341,7 @@ let currentLang = "el";
     } else {
       window.addEventListener("resize", resize);
     }
+    window.addEventListener("orientationchange", resize);
     resize();
 
     let animating = true;
@@ -1084,6 +1109,22 @@ let currentLang = "el";
   }
   const accBtn = $("accBtn");
   if (accBtn) accBtn.addEventListener("click", function (event) { event.preventDefault(); setAcc(true); });
+  const drawerAccBtn = $("drawerAccBtn");
+  if (drawerAccBtn) {
+    drawerAccBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      const drawer = $("drawer");
+      const scrim = $("scrim");
+      const menuBtn = $("menuBtn");
+      if (drawer) drawer.classList.remove("open");
+      if (scrim) scrim.classList.remove("open");
+      if (menuBtn) {
+        menuBtn.classList.remove("open");
+        menuBtn.setAttribute("aria-expanded", "false");
+      }
+      setAcc(true);
+    });
+  }
   const accClose = $("accClose");
   if (accClose) accClose.addEventListener("click", function () { setAcc(false); });
   const accScrim = $("accScrim");

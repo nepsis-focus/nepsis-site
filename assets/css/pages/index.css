@@ -86,7 +86,7 @@
     transform: translateY(-50%); pointer-events: none;
     filter: drop-shadow(0 28px 48px rgba(35,74,104,.20));
   }
-  #globeCanvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; pointer-events: none; outline: none; }
+  #globeCanvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; pointer-events: none; outline: none; }
   #globeCanvas:active { cursor: grabbing; }
   .globe-drag-hint {
     position: absolute; left: 31%; bottom: 7%; z-index: 2; color: var(--muted);
@@ -1260,7 +1260,7 @@ body.home-page main .hero-earth #globeCanvas {
   height: 100%;
   cursor: grab;
   pointer-events: auto;
-  touch-action: none;
+  touch-action: pan-y;
   outline: none;
 }
 body.home-page main .hero-earth #globeCanvas:active { cursor: grabbing; }
@@ -1579,12 +1579,7 @@ body.home-page main .bento-focus h3 { max-width: 13ch; }
   body.home-page main .bento-duration { position: static; align-self: flex-start; margin-top: 4px; }
 }
 
-@media (max-width: 600px) {
-  html body.home-page .nepsis-ambient,
-  html body.home-page .nepsis-consent-settings {
-    bottom: calc(82px + env(safe-area-inset-bottom));
-  }
-}
+/* Ambient/analytics no longer use fixed overlays on the homepage. */
 
 /* Focused restoration: keep the homepage Earth presentation as in the original site. */
 body.home-page main .hero-earth {
@@ -1671,4 +1666,152 @@ body.home-page main .globe-drag-hint {
   body.home-page main .hero-earth { width: 88vw; height: 88vw; }
   body.home-page main .hero > .wrap { padding-left: 18px; padding-right: 18px; }
   body.home-page main .hero-country { width: calc(100% - 36px); }
+}
+
+/* Phone globe: a 92vw square in normal flow. Later rules used a lower
+   width; this selector wins so the earth stays large and draggable. */
+@media (max-width: 600px) {
+  body.home-page main #globe .hero-earth {
+    position: relative;
+    inset: auto;
+    top: auto;
+    right: auto;
+    left: auto;
+    z-index: 0;
+    width: 92vw;
+    height: 92vw;
+    max-width: 100%;
+    margin: 0 auto 12px;
+    transform: none;
+    opacity: 1;
+    flex: 0 0 auto;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    filter: drop-shadow(0 18px 32px rgba(35, 74, 104, .16));
+    pointer-events: none;
+  }
+  body.home-page main #globe .hero-earth #globeCanvas {
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+}
+
+/* --- Uncropped globe (final overrides) ---
+   Keep the full sphere + atmosphere inside the viewport at every breakpoint.
+   No negative offsets, no overflow clipping on the earth stage. */
+html body.home-page main #globe.hero,
+html body.home-page main .hero {
+  overflow: visible !important;
+}
+/* Keep the veil under the Earth so it does not flat-cut the atmosphere glow. */
+html body.home-page main #globe.hero::after,
+html body.home-page main .hero::after {
+  z-index: 0 !important;
+}
+html body.home-page main #globe .hero-earth,
+html body.home-page main .hero-earth {
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  max-width: none;
+  aspect-ratio: 1 / 1;
+  isolation: isolate;
+  z-index: 2 !important;
+}
+html body.home-page main #globe .hero > .wrap {
+  z-index: 3;
+}
+html body.home-page main #globe .hero-earth #globeCanvas,
+html body.home-page main .hero-earth #globeCanvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0;
+  pointer-events: auto;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+/* Wide desktop: dominant Earth on the right (~78vh), fully inside the viewport. */
+@media (min-width: 901px) {
+  html body.home-page main #globe.hero {
+    position: relative;
+    min-height: max(720px, calc(100svh - 52px));
+    padding: 16px 0 32px;
+  }
+  html body.home-page main #globe .hero-earth {
+    position: absolute;
+    top: 50%;
+    right: max(12px, 1.5vw);
+    left: auto;
+    bottom: auto;
+    z-index: 2;
+    width: min(78vh, 62vw, 900px);
+    height: min(78vh, 62vw, 900px);
+    margin: 0;
+    transform: translateY(-50%);
+    opacity: 1;
+    filter: none;
+    pointer-events: none;
+  }
+  html body.home-page main #globe .hero-earth #globeCanvas {
+    pointer-events: auto;
+  }
+  html body.home-page main #globe .hero-copy {
+    max-width: min(440px, 36vw);
+  }
+}
+
+/* Phones + tablet (incl. 768): Earth first, nearly full width / ~70vh+, unclipped. */
+@media (max-width: 900px) {
+  html body.home-page main #globe.hero {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch;
+    min-height: 0 !important;
+    padding: 4px 0 20px !important;
+    overflow: visible !important;
+  }
+  html body.home-page main #globe .hero-earth {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    z-index: 2;
+    order: -1;
+    width: min(92vw, 78vh) !important;
+    height: min(92vw, 78vh) !important;
+    max-width: calc(100vw - 16px) !important;
+    margin: 4px auto 10px !important;
+    transform: none !important;
+    opacity: 1 !important;
+    flex: 0 0 auto;
+    filter: none;
+    pointer-events: none;
+    overflow: visible !important;
+  }
+  html body.home-page main #globe .hero-earth #globeCanvas {
+    pointer-events: auto;
+  }
+  html body.home-page main #globe .hero > .wrap {
+    order: 0;
+    width: 100%;
+    padding-inline: clamp(20px, 5vw, 64px);
+  }
+}
+
+@media (max-width: 380px) {
+  html body.home-page main #globe .hero-earth {
+    width: 90vw !important;
+    height: 90vw !important;
+    max-width: calc(100vw - 12px) !important;
+  }
 }

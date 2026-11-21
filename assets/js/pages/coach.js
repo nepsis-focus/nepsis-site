@@ -94,7 +94,7 @@
     var timer = recommendedTimer;
     var en = lang === "en";
     var topic = v.topic || (en ? "your task" : "την εργασία σου");
-    var title = en ? (v.type === "study" ? "Study " + topic : "Task: " + topic) : (v.type === "study" ? "Διάβασμα: " + topic : "Task: " + topic);
+    var title = en ? (v.type === "study" ? "Study " + topic : "Task: " + topic) : (v.type === "study" ? "Διάβασμα: " + topic : "Εργασία: " + topic);
     var reason;
     if (timer.style === "gentle") reason = en ? "Low energy is a cue to start gently: use Nepsis's 5-minute stage, then take a short reset." : "Με χαμηλή ενέργεια, ξεκίνα ήπια: βάλε το υπάρχον στάδιο Nepsis των 5 λεπτών και μετά κάνε μικρή παύση.";
     else if (timer.style === "deep") reason = en ? "Your time and focus allow a deep block. Nepsis has a 45-minute stage (not 50), followed by a 10-minute break." : "Ο διαθέσιμος χρόνος και η συγκέντρωσή σου σηκώνουν βαθύτερο κύκλο. Το Nepsis έχει στάδιο 45΄ (όχι 50΄) και μετά 10΄ διάλειμμα.";
@@ -140,7 +140,7 @@
       ] : [
         "Όρισε με μία πρόταση πώς θα φαίνεται ολοκληρωμένο το " + topic + ".",
         "Διάλεξε το μικρότερο επόμενο βήμα που γίνεται σε δύο λεπτά ή λιγότερο και ξεκίνα.",
-        "Δούλεψε μόνο ένα κομμάτι· σημείωσε τις άσχετες σκέψεις αντί να αλλάξεις task.",
+        "Δούλεψε μόνο ένα κομμάτι· σημείωσε τις άσχετες σκέψεις αντί να αλλάξεις εργασία.",
         "Κράτησε τα τελευταία λεπτά για έλεγχο και γράψε το επόμενο συγκεκριμένο βήμα."
       ];
       questions = en ? [
@@ -333,10 +333,10 @@
       if (!signedIn && usageNote) {
         var left = Math.max(0, GUEST_LIMIT - usage().used);
         usageNote.textContent = currentLang === "en" ? left + " of 2 guest plans left today · history stays on this device" : "Απομένουν " + left + " από 2 πλάνα επισκέπτη · το ιστορικό μένει σε αυτή τη συσκευή";
-      } else if (usageNote) usageNote.textContent = currentLang === "en" ? "AI requests remain subject to service limits · check-ins stay on this device" : "Τα αιτήματα AI έχουν όριο υπηρεσίας · τα check-in μένουν σε αυτή τη συσκευή";
+      } else if (usageNote) usageNote.textContent = currentLang === "en" ? "AI requests remain subject to service limits · check-ins stay on this device" : "Τα αιτήματα AI έχουν όριο υπηρεσίας · οι έλεγχοι μένουν σε αυτή τη συσκευή";
       if (storageStatus) {
         var persistent = usage().persistent;
-        storageStatus.textContent = persistent ? (currentLang === "en" ? "Check-ins and recent history are stored only in this browser; they are never synced." : "Τα check-in και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται.") : (currentLang === "en" ? "This browser blocks local storage; saved check-ins may not survive closing this tab." : "Ο browser μπλοκάρει την τοπική αποθήκευση· τα check-in ίσως χαθούν όταν κλείσει η καρτέλα.");
+        storageStatus.textContent = persistent ? (currentLang === "en" ? "Check-ins and recent history are stored only in this browser; they are never synced." : "Οι έλεγχοι και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται.") : (currentLang === "en" ? "This browser blocks local storage; saved check-ins may not survive closing this tab." : "Ο browser μπλοκάρει την τοπική αποθήκευση· οι έλεγχοι ίσως χαθούν όταν κλείσει η καρτέλα.");
       }
     }
     function renderPlan(plan) {
@@ -383,7 +383,7 @@
         button.type = "button";
         button.className = "coach-history-load";
         button.textContent = currentLang === "en" ? "Load check-in" : "Φόρτωσε";
-        button.setAttribute("aria-label", (currentLang === "en" ? "Load saved check-in: " : "Φόρτωσε το αποθηκευμένο check-in: ") + entry.checkin.topic);
+        button.setAttribute("aria-label", (currentLang === "en" ? "Load saved check-in: " : "Φόρτωσε τον αποθηκευμένο έλεγχο: ") + entry.checkin.topic);
         button.addEventListener("click", function () { restoreHistoryEntry(entry); });
         item.appendChild(copy);
         item.appendChild(button);
@@ -501,7 +501,7 @@
       if (form && !form.reportValidity()) return;
       var values = formValues();
       if (!values.topic) {
-        if (message) message.textContent = currentLang === "en" ? "Add a subject or task to build a plan." : "Γράψε ένα μάθημα ή task για να φτιάξουμε πλάνο.";
+        if (message) message.textContent = currentLang === "en" ? "Add a subject or task to build a plan." : "Γράψε ένα μάθημα ή εργασία για να φτιάξουμε πλάνο.";
         topic.focus();
         return;
       }
@@ -544,7 +544,13 @@
       currentLang = lang === "en" ? "en" : "el";
       document.documentElement.lang = currentLang;
       document.querySelectorAll("[data-el][data-en]").forEach(function (el) {
-        el.textContent = el.getAttribute("data-" + currentLang);
+        const next = el.getAttribute("data-" + currentLang);
+        if (el.tagName === "TITLE") {
+          document.title = next || document.title;
+          el.textContent = next || el.textContent;
+          return;
+        }
+        el.textContent = next;
       });
       document.querySelectorAll("[data-placeholder-el][data-placeholder-en]").forEach(function (el) {
         el.placeholder = el.getAttribute("data-placeholder-" + currentLang);

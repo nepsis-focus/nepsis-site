@@ -4,15 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>
-/* Warm theme boot — apply before paint to avoid a light flash at night */
+/* Light-only boot — Nepsis is always light/white. */
 (function () {
   try {
-    var p = localStorage.getItem("nepsis-theme") || "system";
-    var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var t = p === "dark" || (p !== "light" && dark) ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", t);
-    document.documentElement.style.colorScheme = t;
+    localStorage.setItem("nepsis-theme", "light");
   } catch (e) {}
+  document.documentElement.setAttribute("data-theme", "light");
+  document.documentElement.style.colorScheme = "light";
 })();
 </script>
 <script>
@@ -103,6 +101,7 @@ if ("serviceWorker" in navigator) {
 
 <nav class="drawer" id="drawer" aria-label="Menu">
   <button type="button" class="close" id="closeBtn" aria-label="Close">✕</button>
+  <a class="menu-home drawer-signin" href="#accModal" id="drawerAccBtn" data-el="Σύνδεση" data-en="Sign in">Σύνδεση</a>
   <a class="menu-home" href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
   <a class="menu-home" href="premium.html" data-el="Nepsis+" data-en="Nepsis+">Nepsis+</a>
   <details class="menu-group">
@@ -229,19 +228,19 @@ if ("serviceWorker" in navigator) {
       <div class="why-nepsis-grid">
         <article class="why-nepsis-item">
           <span class="why-nepsis-index" aria-hidden="true">01</span>
-          <h3 data-el="Zero Friction" data-en="Zero Friction">Zero Friction</h3>
+          <h3 data-el="Χωρίς εμπόδια" data-en="Zero Friction">Χωρίς εμπόδια</h3>
           <p class="why-nepsis-lead" data-el="Ξεκίνα σε 5 δευτερόλεπτα" data-en="Start in 5 seconds">Ξεκίνα σε 5 δευτερόλεπτα</p>
           <p data-el="Χωρίς κλειδώματα εφαρμογών και χωρίς εγγραφή. Άνοιξε, διάλεξε διάρκεια και ξεκίνα." data-en="No app locks and no sign-up. Open, pick a duration, and begin.">Χωρίς κλειδώματα εφαρμογών και χωρίς εγγραφή. Άνοιξε, διάλεξε διάρκεια και ξεκίνα.</p>
         </article>
         <article class="why-nepsis-item">
           <span class="why-nepsis-index" aria-hidden="true">02</span>
-          <h3 data-el="Local &amp; Private" data-en="Local &amp; Private">Local &amp; Private</h3>
+          <h3 data-el="Τοπικά και ιδιωτικά" data-en="Local &amp; Private">Τοπικά και ιδιωτικά</h3>
           <p class="why-nepsis-lead" data-el="Η πρόοδός σου μένει στη συσκευή σου, μέχρι να συνδεθείς" data-en="Your progress stays on your device until you sign in">Η πρόοδός σου μένει στη συσκευή σου, μέχρι να συνδεθείς</p>
           <p data-el="Η πρόοδος μένει στη συσκευή σου, εκτός αν συνδεθείς. Το κρυπτογραφημένο ημερολόγιο μένει πάντα στη συσκευή σου. Ο AI Coach στέλνει κείμενο μόνο αν το επιτρέψεις." data-en="Progress stays on your device unless you sign in. Your diary is encrypted and stays on your device. The AI Coach sends text only if you give consent.">Η πρόοδος μένει στη συσκευή σου, εκτός αν συνδεθείς. Το κρυπτογραφημένο ημερολόγιο μένει πάντα στη συσκευή σου. Ο AI Coach στέλνει κείμενο μόνο αν το επιτρέψεις.</p>
         </article>
         <article class="why-nepsis-item">
           <span class="why-nepsis-index" aria-hidden="true">03</span>
-          <h3 data-el="Small Steps" data-en="Small Steps">Small Steps</h3>
+          <h3 data-el="Μικρά βήματα" data-en="Small Steps">Μικρά βήματα</h3>
           <p class="why-nepsis-lead" data-el="Χτίσε συνήθεια χωρίς burnout" data-en="Build a habit without burnout">Χτίσε συνήθεια χωρίς burnout</p>
           <p data-el="Από 5 λεπτά και πάνω. Βιώσιμα βήματα που χτίζουν συγκέντρωση, μία μέρα τη φορά." data-en="From 5 minutes up. Sustainable steps that build focus, one day at a time.">Από 5 λεπτά και πάνω. Βιώσιμα βήματα που χτίζουν συγκέντρωση, μία μέρα τη φορά.</p>
         </article>
@@ -264,7 +263,7 @@ if ("serviceWorker" in navigator) {
         </a>
         <a class="inside-nepsis-card" href="coach.html">
           <span class="inside-nepsis-index" aria-hidden="true">02</span>
-          <h3 data-el="AI Study &amp; Focus Coach" data-en="AI Study &amp; Focus Coach">AI Study &amp; Focus Coach</h3>
+          <h3 data-el="AI Προπονητής Μελέτης &amp; Συγκέντρωσης" data-en="AI Study &amp; Focus Coach">AI Προπονητής Μελέτης &amp; Συγκέντρωσης</h3>
           <p data-el="Πες τι έχεις μπροστά σου και πόσο χρόνο έχεις. Παίρνεις ένα εφαρμόσιμο πλάνο και το κατάλληλο στάδιο." data-en="Tell it what is ahead and how much time you have. Get a doable plan and the right stage.">Πες τι έχεις μπροστά σου και πόσο χρόνο έχεις. Παίρνεις ένα εφαρμόσιμο πλάνο και το κατάλληλο στάδιο.</p>
         </a>
         <a class="inside-nepsis-card" href="diary.html">
@@ -387,7 +386,7 @@ if ("serviceWorker" in navigator) {
         <div class="value-item" style="display:flex;gap:14px;align-items:flex-start">
           <span style="color:var(--orange);font-weight:900;font-size:1.2rem">02</span>
           <div>
-            <strong data-el='Οδηγός "Small Steps of Focus"' data-en='"Small Steps of Focus" Guide'>Οδηγός "Small Steps of Focus"</strong>
+            <strong data-el='Οδηγός «Μικρά βήματα συγκέντρωσης»' data-en='"Small Steps of Focus" Guide'>Οδηγός «Μικρά βήματα συγκέντρωσης»</strong>
             <p class="muted" style="margin:4px 0 0" data-el="Δομημένα μαθήματα που ξεκλειδώνουν σταδιακά, χωρίς overwhelm, για να χτίσεις ρυθμό σε 2–3 εβδομάδες." data-en="Structured courses that unlock gradually, without overwhelm, so you can build a rhythm in 2–3 weeks.">Δομημένα μαθήματα που ξεκλειδώνουν σταδιακά, χωρίς overwhelm, για να χτίσεις ρυθμό σε 2–3 εβδομάδες.</p>
           </div>
         </div>
@@ -395,13 +394,13 @@ if ("serviceWorker" in navigator) {
           <span style="color:var(--orange);font-weight:900;font-size:1.2rem">03</span>
           <div>
             <strong data-el="Silent Co-Working & Εβδομαδιαίος Ρυθμός" data-en="Silent Co-Working & Weekly Rhythm">Silent Co-Working & Εβδομαδιαίος Ρυθμός</strong>
-            <p class="muted" style="margin:4px 0 0" data-el="Κοινότητα συγκέντρωσης χωρίς θόρυβο και εβδομαδιαίο check-in προτεραιοτήτων." data-en="A quiet focus community and a weekly priority check-in.">Κοινότητα συγκέντρωσης χωρίς θόρυβο και εβδομαδιαίο check-in προτεραιοτήτων.</p>
+            <p class="muted" style="margin:4px 0 0" data-el="Κοινότητα συγκέντρωσης χωρίς θόρυβο και εβδομαδιαίο έλεγχο προτεραιοτήτων." data-en="A quiet focus community and a weekly priority check-in.">Κοινότητα συγκέντρωσης χωρίς θόρυβο και εβδομαδιαίο έλεγχο προτεραιοτήτων.</p>
           </div>
         </div>
         <div class="value-item" style="display:flex;gap:14px;align-items:flex-start">
           <span style="color:var(--orange);font-weight:900;font-size:1.2rem">04</span>
           <div>
-            <strong data-el="Offline Ambient Audio Pack" data-en="Offline Ambient Audio Pack">Offline Ambient Audio Pack</strong>
+            <strong data-el="Πακέτο ήχων χωρίς σύνδεση" data-en="Offline Ambient Audio Pack">Πακέτο ήχων χωρίς σύνδεση</strong>
             <p class="muted" style="margin:4px 0 0" data-el="Ήχοι συγκέντρωσης για κατέβασμα σε κινητό ή υπολογιστή." data-en="Focus sounds to download on phone or computer.">Ήχοι συγκέντρωσης για κατέβασμα σε κινητό ή υπολογιστή.</p>
           </div>
         </div>
@@ -409,7 +408,7 @@ if ("serviceWorker" in navigator) {
 
       <div class="compare premium-choices" style="margin-top:10px">
         <article class="cmp on">
-          <h3 data-el="Free Web Space" data-en="Free Web Space">Free Web Space</h3>
+          <h3 data-el="Δωρεάν στο web" data-en="Free Web Space">Δωρεάν στο web</h3>
           <p class="choice-copy" data-el="€0 · Χρονόμετρο 5–60 λεπτών, Zen Mode, κρυπτογραφημένο τοπικό ημερολόγιο, κάρτες συγκέντρωσης." data-en="€0 · 5–60 min timer, Zen Mode, encrypted local diary, focus cards.">€0 · Χρονόμετρο 5–60 λεπτών, Zen Mode, κρυπτογραφημένο τοπικό ημερολόγιο, κάρτες συγκέντρωσης.</p>
         </article>
         <article class="cmp off">
