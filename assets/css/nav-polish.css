@@ -228,7 +228,7 @@ html:not([data-theme="dark"]) {
 html:not([data-theme="dark"]) :is(.eyebrow, .section-kicker, .home-product-eyebrow, .home-product-more, .home-product-privacy-link, .home-link-arrow) {
   color: #B8501A !important;
 }
-html:not([data-theme="dark"]) main a:not(.btn):not(.btn-primary):not(.btn-ghost):not(.primary):not(.secondary):not(.logo):not(.back):not(.filter):not(.home-link):not(.nav-home-back):not(.home-product-button):not(.home-product-links a):not(.acc-btn):not(.account-btn) {
+html:not([data-theme="dark"]) main a:not(.btn):not(.coach-btn):not(.btn-primary):not(.btn-ghost):not(.primary):not(.secondary):not(.logo):not(.back):not(.filter):not(.home-link):not(.nav-home-back):not(.home-product-button):not(.home-product-links a):not(.acc-btn):not(.account-btn) {
   color: #B8501A;
 }
 html:not([data-theme="dark"]) body.practice-page .btn-primary,

@@ -339,7 +339,7 @@
         var left = null;
         if (!signedIn) left = Math.max(0, GUEST_LIMIT - usage().used);
         else if (serverUsage && Number.isFinite(serverUsage.remaining)) left = clamp(Math.floor(serverUsage.remaining), 0, limit);
-        if (left !== null) usageNote.textContent = en ? left + " of " + limit + " AI plans left this month · local plans are always free" : left + " από " + limit + " πλάνα AI απομένουν αυτόν τον μήνα · τα τοπικά πλάνα είναι πάντα δωρεάν";
+        if (left !== null) usageNote.textContent = en ? left + " of " + limit + " AI plans left this month · local plans are always free" : "Απομένουν " + left + " από " + limit + " πλάνα AI αυτόν τον μήνα · τα τοπικά πλάνα είναι πάντα δωρεάν";
         else usageNote.textContent = en ? limit + " AI plans a month · local plans are always free" : limit + " πλάνα AI τον μήνα · τα τοπικά πλάνα είναι πάντα δωρεάν";
       }
       if (storageStatus) {
