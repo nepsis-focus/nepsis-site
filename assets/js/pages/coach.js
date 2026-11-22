@@ -1,10 +1,11 @@
 /* Nepsis Coach MVP: local-first planner, existing timer handoff, read-only auth. */
 (function (window, document) {
   "use strict";
-  var GUEST_LIMIT = 2;
+  var GUEST_LIMIT = 5;
+  var PREMIUM_LIMIT = 50;
   var MAX_FILE_BYTES = 8 * 1024 * 1024;
   var MAX_DOCUMENT_CHARS = 28000;
-  var USAGE_KEY = "nepsis-ai-coach:guest-usage:v1";
+  var USAGE_KEY = "nepsis-ai-coach:guest-usage:v2";
   var CHECKIN_KEY = "nepsis-ai-coach:guest-checkin:v1";
   var HISTORY_KEY = "nepsis-ai-coach:guest-history:v1";
   var HISTORY_LIMIT = 8;
@@ -17,6 +18,7 @@
   var signedIn = false;
   var authClient = null;
   var memoryGuestCount = 0;
+  var serverUsage = null;
   var memoryCheckin = null;
   var memoryHistory = [];
   var selectedFile = null;
@@ -24,9 +26,9 @@
   var extractionPromise = Promise.resolve("");
 
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
-  function localDay(now) {
+  function localMonth(now) {
     var d = now || new Date();
-    return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
   }
   function normalized(input) {
     var topic = String(input && input.topic || "").trim().slice(0, 140);
@@ -161,18 +163,18 @@
     return { title: title, topic: topic, type: v.type, timer: timer, recommendedTimer: recommendedTimer, pattern: pattern, reason: reason, recommendedReason: recommendedReason, tasks: tasks, questions: questions, quiz: [] };
   }
   function readUsage(now) {
-    var today = localDay(now);
+    var month = localMonth(now);
     try {
       var data = JSON.parse(window.localStorage.getItem(USAGE_KEY) || "null");
-      if (!data || data.day !== today || !Number.isFinite(data.used)) return { day: today, used: 0, persistent: true };
-      return { day: today, used: clamp(Math.floor(data.used), 0, GUEST_LIMIT), persistent: true };
+      if (!data || data.month !== month || !Number.isFinite(data.used)) return { month: month, used: 0, persistent: true };
+      return { month: month, used: clamp(Math.floor(data.used), 0, GUEST_LIMIT), persistent: true };
     } catch (e) {
-      return { day: today, used: memoryGuestCount, persistent: false };
+      return { month: month, used: memoryGuestCount, persistent: false };
     }
   }
   function writeUsage(value) {
     memoryGuestCount = clamp(value.used, 0, GUEST_LIMIT);
-    try { window.localStorage.setItem(USAGE_KEY, JSON.stringify({ day: value.day, used: memoryGuestCount })); } catch (e) { /* keep this-tab limit in memory if storage is blocked */ }
+    try { window.localStorage.setItem(USAGE_KEY, JSON.stringify({ month: value.month, used: memoryGuestCount })); } catch (e) { /* keep this-tab limit in memory if storage is blocked */ }
   }
   function consumeGuestPlan(now) {
     var count = readUsage(now);
@@ -329,11 +331,17 @@
     function tr(el, elText, enText) { if (el) el.textContent = currentLang === "en" ? enText : elText; }
     function usage() { return readUsage(); }
     function renderStatus() {
-      if (accountStatus) accountStatus.textContent = signedIn ? (currentLang === "en" ? "Signed in · unlimited plans" : "Συνδεδεμένος · απεριόριστα πλάνα") : (currentLang === "en" ? "Guest · 2 free plans/day" : "Επισκέπτης · 2 δωρεάν πλάνα/ημέρα");
-      if (!signedIn && usageNote) {
-        var left = Math.max(0, GUEST_LIMIT - usage().used);
-        usageNote.textContent = currentLang === "en" ? left + " of 2 guest plans left today · history stays on this device" : "Απομένουν " + left + " από 2 πλάνα επισκέπτη · το ιστορικό μένει σε αυτή τη συσκευή";
-      } else if (usageNote) usageNote.textContent = currentLang === "en" ? "AI requests remain subject to service limits · check-ins stay on this device" : "Τα αιτήματα AI έχουν όριο υπηρεσίας · οι έλεγχοι μένουν σε αυτή τη συσκευή";
+      var en = currentLang === "en";
+      var premium = signedIn && serverUsage && serverUsage.plan === "premium";
+      var limit = premium ? PREMIUM_LIMIT : GUEST_LIMIT;
+      if (accountStatus) accountStatus.textContent = premium ? (en ? "Premium · " + limit + " AI plans a month" : "Premium · " + limit + " πλάνα AI τον μήνα") : signedIn ? (en ? "Signed in · " + limit + " free AI plans a month" : "Συνδεδεμένος · " + limit + " δωρεάν πλάνα AI τον μήνα") : (en ? "Guest · " + limit + " free AI plans a month" : "Επισκέπτης · " + limit + " δωρεάν πλάνα AI τον μήνα");
+      if (usageNote) {
+        var left = null;
+        if (!signedIn) left = Math.max(0, GUEST_LIMIT - usage().used);
+        else if (serverUsage && Number.isFinite(serverUsage.remaining)) left = clamp(Math.floor(serverUsage.remaining), 0, limit);
+        if (left !== null) usageNote.textContent = en ? left + " of " + limit + " AI plans left this month · local plans are always free" : left + " από " + limit + " πλάνα AI απομένουν αυτόν τον μήνα · τα τοπικά πλάνα είναι πάντα δωρεάν";
+        else usageNote.textContent = en ? limit + " AI plans a month · local plans are always free" : limit + " πλάνα AI τον μήνα · τα τοπικά πλάνα είναι πάντα δωρεάν";
+      }
       if (storageStatus) {
         var persistent = usage().persistent;
         storageStatus.textContent = persistent ? (currentLang === "en" ? "Check-ins and recent history are stored only in this browser; they are never synced." : "Οι έλεγχοι και το πρόσφατο ιστορικό αποθηκεύονται μόνο σε αυτόν τον browser· δεν συγχρονίζονται.") : (currentLang === "en" ? "This browser blocks local storage; saved check-ins may not survive closing this tab." : "Ο browser μπλοκάρει την τοπική αποθήκευση· οι έλεγχοι ίσως χαθούν όταν κλείσει η καρτέλα.");
@@ -439,22 +447,41 @@
       renderPlan(lastPlan);
     }
     function showUpsellLimit() {
+      var premium = signedIn && serverUsage && serverUsage.plan === "premium";
+      var limit = premium ? PREMIUM_LIMIT : GUEST_LIMIT;
       if (message) {
-        message.classList.add("coach-error");
-        message.textContent = currentLang === "en" ? "You've reached today's two-plan guest limit. Optional access is available through Whop." : "Έφτασες το ημερήσιο όριο των δύο πλάνων επισκέπτη. Υπάρχει προαιρετική πρόσβαση μέσω Whop.";
+        message.textContent = premium
+          ? (currentLang === "en" ? "You've used this month's " + limit + " AI plans. They renew at the start of next month; local plans stay available." : "Χρησιμοποίησες τα " + limit + " πλάνα AI του μήνα. Ανανεώνονται στην αρχή του επόμενου μήνα· τα τοπικά πλάνα μένουν διαθέσιμα.")
+          : (currentLang === "en" ? "You've used this month's " + limit + " free AI plans. Here is a local plan; AI plans renew next month." : "Χρησιμοποίησες τα " + limit + " δωρεάν πλάνα AI του μήνα. Ορίστε ένα τοπικό πλάνο· τα πλάνα AI ανανεώνονται τον επόμενο μήνα.");
       }
-      if (upsell) upsell.hidden = false;
-      if (result) result.hidden = true;
+      if (upsell) upsell.hidden = premium;
+    }
+    function rememberServerUsage(value) {
+      if (!value || typeof value !== "object") return;
+      var limit = Number(value.limit), remaining = Number(value.remaining);
+      if (!Number.isFinite(limit)) return;
+      serverUsage = { plan: value.plan === "premium" ? "premium" : "free", limit: limit, remaining: Number.isFinite(remaining) && value.remaining !== null ? remaining : null };
+    }
+    async function accessToken() {
+      if (!signedIn || !authClient || !authClient.auth) return null;
+      try {
+        var sessionResult = await authClient.auth.getSession();
+        var session = sessionResult && sessionResult.data && sessionResult.data.session;
+        return session && session.access_token ? session.access_token : null;
+      } catch (e) { return null; }
+    }
+    async function refreshServerUsage() {
+      var token = await accessToken();
+      if (!token) { serverUsage = null; renderStatus(); return; }
+      try {
+        var response = await window.fetch(SUPABASE_URL + "/functions/v1/ai-study-coach", { method: "POST", headers: { "content-type": "application/json", apikey: SUPABASE_KEY, authorization: "Bearer " + token }, body: JSON.stringify({ action: "usage" }) });
+        if (response.ok) { var data = await response.json(); rememberServerUsage(data && data.usage); }
+      } catch (e) { /* usage display is optional; the server still enforces limits */ }
+      renderStatus();
     }
     async function requestAiPlan(values, documentText) {
-      var session = null;
-      if (signedIn && authClient && authClient.auth) {
-        try {
-          var sessionResult = await authClient.auth.getSession();
-          session = sessionResult && sessionResult.data && sessionResult.data.session;
-        } catch (e) { /* expired account sessions fall back to the guest request path */ }
-      }
-      var bearer = session && session.access_token ? session.access_token : SUPABASE_KEY;
+      // Expired account sessions fall back to the guest request path.
+      var bearer = (await accessToken()) || SUPABASE_KEY;
       var controller = typeof window.AbortController === "function" ? new window.AbortController() : null;
       var timeout = null;
       var request = {
@@ -468,8 +495,14 @@
         data = await Promise.race([
           (async function () {
             var response = await window.fetch(SUPABASE_URL + "/functions/v1/ai-study-coach", request);
-            if (!response.ok) throw new Error(response.status === 429 ? "daily_limit_reached" : "ai_unavailable");
-            return validateAiResponse(await response.json());
+            if (response.status === 429) {
+              try { var limited = await response.json(); rememberServerUsage(limited && limited.usage); } catch (e) { /* body is optional */ }
+              throw new Error("monthly_limit_reached");
+            }
+            if (!response.ok) throw new Error("ai_unavailable");
+            var payload = validateAiResponse(await response.json());
+            rememberServerUsage(payload.usage);
+            return payload;
           })(),
           new Promise(function (_resolve, reject) {
             timeout = window.setTimeout(function () {
@@ -509,13 +542,19 @@
         if (message) message.textContent = currentLang === "en" ? "Wait for the file to finish extracting, or remove it to continue." : "Περίμενε να ολοκληρωθεί η εξαγωγή ή αφαίρεσε το αρχείο για να συνεχίσεις.";
         return;
       }
-      if (!signedIn && !consumeGuestPlan().allowed) { showUpsellLimit(); return; }
       var submitButton = form.querySelector('[type="submit"]');
       if (submitButton) submitButton.disabled = true;
       var localPlan = createPlan(values, currentLang, extractedDocumentText);
       var aiConsent = document.getElementById("aiConsent");
       var useAi = !!(aiConsent && aiConsent.checked);
-      if (useAi) {
+      var limitReached = false;
+      if (upsell) upsell.hidden = true;
+      // Only AI plans count toward the monthly limit; local plans never leave the device.
+      if (useAi && !signedIn && !consumeGuestPlan().allowed) { useAi = false; limitReached = true; }
+      if (limitReached) {
+        lastPlan = localPlan;
+        showUpsellLimit();
+      } else if (useAi) {
         if (message) message.textContent = currentLang === "en" ? "Generating a plan… Your check-in and extracted text are being sent to Nepsis AI." : "Δημιουργείται πλάνο… Οι απαντήσεις και το εξαγμένο κείμενο στέλνονται στο Nepsis AI.";
         try {
           var aiPlan = await requestAiPlan(values, extractedDocumentText);
@@ -526,7 +565,8 @@
           if (message) message.textContent = currentLang === "en" ? "Personalized plan generated with Nepsis AI." : "Το εξατομικευμένο πλάνο δημιουργήθηκε από το Nepsis AI.";
         } catch (error) {
           lastPlan = localPlan;
-          if (message) message.textContent = currentLang === "en" ? "AI is unavailable, slow, or at its daily limit. Here is your local plan; your file was not saved." : "Το AI δεν είναι διαθέσιμο, καθυστερεί ή έφτασε το ημερήσιο όριο. Ορίστε το τοπικό πλάνο· το αρχείο δεν αποθηκεύτηκε.";
+          if (error && error.message === "monthly_limit_reached") showUpsellLimit();
+          else if (message) message.textContent = currentLang === "en" ? "AI is unavailable or slow right now. Here is your local plan; your file was not saved." : "Το AI δεν είναι διαθέσιμο ή καθυστερεί. Ορίστε το τοπικό πλάνο· το αρχείο δεν αποθηκεύτηκε.";
         }
       } else {
         lastPlan = localPlan;
@@ -646,16 +686,20 @@
           signedIn = !!(result && !result.error && result.data && result.data.session && result.data.session.user);
           if (saveDocumentButton && selectedFile) saveDocumentButton.hidden = !signedIn;
           renderStatus();
+          if (signedIn) refreshServerUsage();
         }).catch(function () { signedIn = false; renderStatus(); });
         authClient.auth.onAuthStateChange(function (_event, session) {
+          var wasSignedIn = signedIn;
           signedIn = !!(session && session.user);
           if (saveDocumentButton && selectedFile) saveDocumentButton.hidden = !signedIn;
+          if (!signedIn) serverUsage = null;
           renderStatus();
+          if (signedIn && !wasSignedIn) refreshServerUsage();
         });
       } catch (e) { signedIn = false; renderStatus(); }
     });
   }
 
-  window.NepsisCoach = Object.freeze({ recommend: recommend, createPlan: createPlan, normalize: normalized, applyFocusChoice: applyFocusChoice, timerPattern: timerPattern, guestLimit: GUEST_LIMIT, readGuestUsage: readUsage, consumeGuestPlan: consumeGuestPlan, readGuestCheckin: readGuestCheckin, saveGuestCheckin: saveGuestCheckin, readGuestHistory: readGuestHistory, saveGuestHistory: saveGuestHistory, buildAiRequest: buildAiRequest, validateAiResponse: validateAiResponse });
+  window.NepsisCoach = Object.freeze({ recommend: recommend, createPlan: createPlan, normalize: normalized, applyFocusChoice: applyFocusChoice, timerPattern: timerPattern, guestLimit: GUEST_LIMIT, premiumLimit: PREMIUM_LIMIT, readGuestUsage: readUsage, consumeGuestPlan: consumeGuestPlan, readGuestCheckin: readGuestCheckin, saveGuestCheckin: saveGuestCheckin, readGuestHistory: readGuestHistory, saveGuestHistory: saveGuestHistory, buildAiRequest: buildAiRequest, validateAiResponse: validateAiResponse });
   if (document && typeof document.getElementById === "function") init();
 })(typeof window === "undefined" ? globalThis : window, typeof document === "undefined" ? null : document);

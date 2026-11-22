@@ -186,6 +186,7 @@
 .coach-side-privacy p { margin: 0; color: var(--coach-muted); font-size: .77rem; line-height: 1.55; }
 .coach-upsell { border-color: rgba(240,160,107,.28); background: var(--coach-raised); }
 .coach-upsell p { margin: .65rem 0 1rem; color: var(--coach-muted); line-height: 1.6; }
+.coach-upsell p.coach-upsell-price { margin-top: -.35rem; color: var(--coach-text, inherit); font-weight: 650; }
 .coach-disabled { border-left: 3px solid var(--coach-accent); }
 .coach-foot { grid-column: 1 / -1; max-width: 96ch; margin: 4px 0 0; }
 @media (max-width: 920px) {
