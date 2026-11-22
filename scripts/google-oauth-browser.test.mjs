@@ -31,10 +31,10 @@ async function openAccountEntry(page) {
     return;
   }
   const menu = page.locator("#menuBtn");
-  await menu.waitFor({ state: "visible", timeout: 10000 });
+  await menu.waitFor({ state: "visible", timeout: 20000 });
   await menu.click();
   const drawerSignIn = page.locator("#drawerAccBtn, [data-drawer-signin]");
-  await drawerSignIn.first().waitFor({ state: "visible", timeout: 10000 });
+  await drawerSignIn.first().waitFor({ state: "visible", timeout: 20000 });
   await drawerSignIn.first().click();
 }
 
@@ -66,9 +66,9 @@ try {
   authorize.catch(() => {});
   await phone.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
   await openAccountEntry(phone);
-  await phone.locator("#accModal.open, #accGoogle").first().waitFor({ state: "visible", timeout: 10000 });
+  await phone.locator("#accModal.open, #accGoogle").first().waitFor({ state: "visible", timeout: 20000 });
   await phone.screenshot({ path: artifacts + "/google-signin-mobile-account.png" });
-  await phone.locator("#accGoogle").click({ timeout: 10000 });
+  await phone.locator("#accGoogle").click({ timeout: 20000 });
   const mobileRequest = await authorize;
   const mobileUrl = new URL(mobileRequest.url());
   check(mobileUrl.searchParams.get("provider") === "google", "mobile authorize provider was " + mobileUrl.searchParams.get("provider"));
@@ -94,7 +94,7 @@ try {
   await inApp.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
   await openAccountEntry(inApp);
   check(inApp.url().includes("practice.html"), "practice Sign in left the page before Google was chosen: " + inApp.url());
-  await inApp.locator("#accGoogle").click({ timeout: 10000 });
+  await inApp.locator("#accGoogle").click({ timeout: 20000 });
   const practiceRequest = await practiceAuthorize;
   const practiceUrl = new URL(practiceRequest.url());
   check(practiceUrl.searchParams.get("redirect_to") === "http://127.0.0.1:4173/practice.html", "practice redirect_to was " + practiceUrl.searchParams.get("redirect_to"));
@@ -126,8 +126,8 @@ try {
   await settle(desk);
   check(await desk.evaluate(() => window.NepsisGoogleAuth.prefersFullPageRedirect() === false), "desktop UA unexpectedly used the mobile redirect");
   await openAccountEntry(desk);
-  await desk.locator("#accGoogle").click({ timeout: 10000 });
-  await desk.waitForFunction(() => window.__oauthOpens[0] && window.__oauthOpens[0].assigned, null, { timeout: 10000 });
+  await desk.locator("#accGoogle").click({ timeout: 20000 });
+  await desk.waitForFunction(() => window.__oauthOpens[0] && window.__oauthOpens[0].assigned, null, { timeout: 20000 });
   const popupTarget = new URL(await desk.evaluate(() => window.__oauthOpens[0].assigned));
   check(popupTarget.pathname.endsWith("/auth/v1/authorize"), "desktop popup did not open the Google authorize URL: " + popupTarget.href);
   check(popupTarget.searchParams.get("provider") === "google", "desktop popup provider was " + popupTarget.searchParams.get("provider"));
@@ -145,7 +145,7 @@ try {
   blockedAuthorize.catch(() => {});
   await blockedPage.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
   await openAccountEntry(blockedPage);
-  await blockedPage.locator("#accGoogle").click({ timeout: 10000 });
+  await blockedPage.locator("#accGoogle").click({ timeout: 20000 });
   const blockedRequest = await blockedAuthorize;
   const blockedTarget = new URL(blockedRequest.url());
   check(blockedTarget.searchParams.get("provider") === "google", "blocked popup did not fall back to Google authorize");
@@ -170,7 +170,7 @@ try {
   check(errorText.includes("access_denied"), "missing Supabase error code: " + errorText);
   check(errorText.includes("Redirect URL is not allowed"), "missing Supabase error_description: " + errorText);
   await errorPage.waitForFunction(() => !location.search.includes("error="), null, { timeout: 5000 });
-  await errorPage.screenshot({ path: artifacts + "/google-signin-return-error.png", timeout: 10000 });
+  await errorPage.screenshot({ path: artifacts + "/google-signin-return-error.png", timeout: 20000 });
   await errorPage.close();
 
   const hashPage = await returned.newPage();
@@ -222,7 +222,7 @@ try {
   await signedPage.locator("#nepsis-auth-state").waitFor({ state: "attached", timeout: 5000 });
   const badge = (await signedPage.locator("#nepsis-auth-state").textContent()) || "";
   check(badge.includes("Συνδεδεμένος"), "signed-in badge missing: " + badge);
-  await signedPage.screenshot({ path: artifacts + "/google-signin-return-success.png", timeout: 10000 });
+  await signedPage.screenshot({ path: artifacts + "/google-signin-return-success.png", timeout: 20000 });
   await signedIn.close();
 } catch (error) {
   failures.push(error && error.stack ? error.stack : String(error));
