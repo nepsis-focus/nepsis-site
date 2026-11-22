@@ -1815,3 +1815,172 @@ html body.home-page main .hero-earth #globeCanvas {
     max-width: calc(100vw - 12px) !important;
   }
 }
+
+/* Nepsis 2.0 Premium Redesign additions */
+.section-head {
+  max-width: 720px;
+  margin: 0 auto clamp(40px, 5vw, 64px);
+  text-align: center;
+}
+.section-head h2 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 12px 0 16px;
+}
+.section-head p {
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 52ch;
+  margin: 0 auto;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--np-shadow);
+}
+.feature-preview {
+  height: 120px;
+  border-radius: 12px;
+  background: var(--np-surface-muted);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--orange);
+}
+.timer-preview { font-size: 2.5rem; }
+.calendar-preview::before { content: "● ● ● ● ●"; letter-spacing: 4px; }
+.cards-preview::before { content: "📚"; font-size: 2rem; }
+.badges-preview::before { content: "🏆"; font-size: 2rem; }
+.diary-preview::before { content: "🔒"; font-size: 2rem; }
+.coach-preview::before { content: "✨"; font-size: 2rem; }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 32px;
+}
+.step {
+  text-align: center;
+}
+.step-num {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.step h3 {
+  font-size: 1.4rem;
+  margin: 0 0 8px;
+}
+.step p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.approach-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.approach-grid p {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+@media (max-width: 768px) {
+  .approach-grid { grid-template-columns: 1fr; gap: 24px; }
+}
+
+.progress-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.progress-card {
+  background: var(--np-surface-muted);
+  border-radius: 16px;
+  padding: 24px;
+}
+.note {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto 24px;
+}
+.price-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 24px;
+  background: var(--card);
+}
+.price-card.plus {
+  border-color: var(--np-accent-border);
+  background: var(--np-accent-soft);
+}
+@media (max-width: 768px) {
+  .pricing-grid { grid-template-columns: 1fr; }
+}
+
+.final-cta {
+  text-align: center;
+  padding: clamp(80px, 10vw, 120px) 0;
+  background: var(--np-surface-muted);
+}
+.final-cta h2 {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  margin: 0 0 32px;
+  max-width: 16ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.btn-large {
+  padding: 16px 32px;
+  font-size: 1.1rem;
+}
+
+/* Hero enhancements */
+.hero h1 {
+  font-size: clamp(2.8rem, 6.5vw, 4.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+.hero .lead {
+  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+  max-width: 38ch;
+  margin: 20px 0 28px;
+}
+.hero .btns .btn-primary {
+  background: var(--orange);
+  color: #fff;
+  font-weight: 600;
+}

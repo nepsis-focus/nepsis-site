@@ -143,11 +143,11 @@ if ("serviceWorker" in navigator) {
     <div class="wrap">
       <div class="hero-copy">
         <span class="badge"><span class="dot" style="width:8px;height:8px"></span>NEPSIS</span>
-        <h1 data-el="<span class='hero-kicker'>Η&nbsp;συγκέντρωσή&nbsp;σου,</span> <em>μία μέρα τη φορά.</em>" data-en="<span class='hero-kicker'>Your&nbsp;focus,</span> <em>one day at a time.</em>"><span class="hero-kicker">Η&nbsp;συγκέντρωσή&nbsp;σου,</span> <em>μία μέρα τη φορά.</em></h1>
-        <p class="lead" data-el="Δωρεάν εφαρμογή εστίασης για διάβασμα και δουλειά. Χωρίς κλειδώματα εφαρμογών, χωρίς εγγραφή — ξεκίνα σε 5 δευτερόλεπτα." data-en="A free focus app for studying and work. No app-blocking, no sign-up — start in 5 seconds.">Δωρεάν εφαρμογή εστίασης για διάβασμα και δουλειά. Χωρίς κλειδώματα εφαρμογών, χωρίς εγγραφή — ξεκίνα σε 5 δευτερόλεπτα.</p>
+        <h1 data-el="<span class='hero-kicker'>Η συγκέντρωσή σου,</span> <em>μία μέρα τη φορά.</em>" data-en="<span class='hero-kicker'>Your focus,</span> <em>one day at a time.</em>"><span class="hero-kicker">Η συγκέντρωσή σου,</span> <em>μία μέρα τη φορά.</em></h1>
+        <p class="lead" data-el="Το Nepsis σε βοηθά να χτίσεις καλύτερη συγκέντρωση με μικρά, βιώσιμα βήματα — από 5 λεπτά. Χωρίς κλειδώματα εφαρμογών, χωρίς υποχρεωτική εγγραφή." data-en="Nepsis helps you build better focus with small, sustainable steps — starting from 5 minutes. No app-blocking, no required sign-up.">Το Nepsis σε βοηθά να χτίσεις καλύτερη συγκέντρωση με μικρά, βιώσιμα βήματα — από 5 λεπτά. Χωρίς κλειδώματα εφαρμογών, χωρίς υποχρεωτική εγγραφή.</p>
         <div class="btns">
-          <a class="btn btn-primary" href="practice.html#stageGrid" id="subBtn" data-el="Ξεκίνα" data-en="Start">Ξεκίνα</a>
-          <a class="btn btn-ghost" href="coach.html" data-el="Δοκίμασε τον AI Coach" data-en="Try the AI Coach">Δοκίμασε τον AI Coach</a>
+          <a class="btn btn-primary" href="practice.html#stageGrid" id="subBtn" data-el="Ξεκίνα δωρεάν — χωρίς εγγραφή" data-en="Start focusing — It's free">Ξεκίνα δωρεάν — χωρίς εγγραφή</a>
+          <a class="btn btn-ghost" href="#inside" data-el="Δες τι μπορείς να κάνεις" data-en="See what's inside">Δες τι μπορείς να κάνεις</a>
         </div>
         <aside class="knowledge-note" id="dailyTip" hidden>
           <span class="eyebrow" data-el="Συμβουλή" data-en="Tip">Συμβουλή</span>
@@ -175,256 +175,159 @@ if ("serviceWorker" in navigator) {
     </div>
   </section>
 
-  <!-- BENTO: the Nepsis experience in four small windows -->
-  <section class="bento-home" id="bento" aria-labelledby="bentoTitle">
-    <div class="wrap">
-      <div class="bento-head">
-        <div>
-          <span class="eyebrow" data-el="Μικρά βήματα, καθαρή εικόνα" data-en="Small steps, a clearer picture">Μικρά βήματα, καθαρή εικόνα</span>
-          <h2 id="bentoTitle" data-el="Ένας πιο ήρεμος τρόπος να εστιάσεις." data-en="A calmer way to find your focus.">Ένας πιο ήρεμος τρόπος να εστιάσεις.</h2>
-        </div>
-        <p data-el="Ξεκίνα όπου βρίσκεσαι — η πρόοδος έρχεται από μικρές επιστροφές, όχι από τελειότητα." data-en="Begin where you are — progress comes from small returns, not perfection.">Ξεκίνα όπου βρίσκεσαι — η πρόοδος έρχεται από μικρές επιστροφές, όχι από τελειότητα.</p>
-      </div>
-      <div class="bento-grid">
-        <a class="bento-card bento-focus" href="practice.html#stageGrid">
-          <div class="bento-card-top"><span class="bento-kicker" data-el="01 / ΕΞΑΣΚΗΣΗ" data-en="01 / PRACTICE">01 / ΕΞΑΣΚΗΣΗ</span><span class="bento-orbit" aria-hidden="true"><i></i></span></div>
-          <div class="bento-copy">
-            <h3 data-el="Μία στιγμή. Ένας στόχος." data-en="One moment. One intention.">Μία στιγμή. Ένας στόχος.</h3>
-            <p data-el="Διάλεξε ένα στάδιο και δώσε χώρο σε αυτό που έχει σημασία τώρα." data-en="Choose a stage and make room for what matters right now.">Διάλεξε ένα στάδιο και δώσε χώρο σε αυτό που έχει σημασία τώρα.</p>
-            <span class="bento-action" data-el="Ξεκίνα μια συνεδρία" data-en="Start a session">Ξεκίνα μια συνεδρία</span>
-          </div>
-          <span class="bento-duration" aria-hidden="true">5 — 60′</span>
-        </a>
-        <a class="bento-card bento-week" href="my-nepsis.html">
-          <div class="bento-card-top"><span class="bento-kicker" data-el="02 / Η ΔΙΑΔΡΟΜΗ ΣΟΥ" data-en="02 / YOUR JOURNEY">02 / Η ΔΙΑΔΡΟΜΗ ΣΟΥ</span><span class="bento-arrow" aria-hidden="true">↗</span></div>
-          <div class="bento-mini-chart" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <h3 data-el="Δες την εβδομάδα σου." data-en="See your week take shape.">Δες την εβδομάδα σου.</h3>
-          <p data-el="Λεπτά, συνέπεια και μικρές νίκες — χωρίς πίεση για τέλειο σερί." data-en="Minutes, consistency, and small wins — without pressure to be perfect.">Λεπτά, συνέπεια και μικρές νίκες — χωρίς πίεση για τέλειο σερί.</p>
-        </a>
-        <a class="bento-card bento-privacy" href="diary.html">
-          <div class="bento-card-top"><span class="bento-kicker" data-el="03 / ΙΔΙΩΤΙΚΟΤΗΤΑ" data-en="03 / PRIVACY">03 / ΙΔΙΩΤΙΚΟΤΗΤΑ</span><span class="bento-lock" aria-hidden="true">⌑</span></div>
-          <h3 data-el="Ο δικός σου χώρος, δικοί σου οι κανόνες." data-en="Your space. Your rules.">Ο δικός σου χώρος, δικοί σου οι κανόνες.</h3>
-          <p data-el="Κράτησε τις σκέψεις σου ιδιωτικές στο κρυπτογραφημένο ημερολόγιό σου." data-en="Keep your thoughts private in your encrypted diary.">Κράτησε τις σκέψεις σου ιδιωτικές στο κρυπτογραφημένο ημερολόγιό σου.</p>
-          <span class="bento-action" data-el="Άνοιξε το ημερολόγιο" data-en="Open your diary">Άνοιξε το ημερολόγιο</span>
-        </a>
-        <a class="bento-card bento-next" href="practice.html#challenge">
-          <div class="bento-card-top"><span class="bento-kicker" data-el="04 / ΓΙΑ ΣΗΜΕΡΑ" data-en="04 / FOR TODAY">04 / ΓΙΑ ΣΗΜΕΡΑ</span><span class="bento-sun" aria-hidden="true">✳</span></div>
-          <h3 data-el="Αρκεί ένα μικρό βήμα." data-en="One small step is enough.">Αρκεί ένα μικρό βήμα.</h3>
-          <p data-el="Συνέχισε με τον δικό σου ρυθμό. Πέντε λεπτά είναι μια αρχή." data-en="Keep your own pace. Five minutes is a beginning.">Συνέχισε με τον δικό σου ρυθμό. Πέντε λεπτά είναι μια αρχή.</p>
-          <span class="bento-action" data-el="Δες τη σημερινή πρόκληση" data-en="See today's challenge">Δες τη σημερινή πρόκληση</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHY NEPSIS / HOW IT WORKS -->
-  <section class="why-nepsis" id="discover" aria-labelledby="whyNepsisTitle">
-    <div class="wrap">
-      <div class="why-nepsis-head">
-        <span class="eyebrow" data-el="Γιατί Nepsis" data-en="Why Nepsis">Γιατί Nepsis</span>
-        <h2 id="whyNepsisTitle" data-el="Χωρίς καταναγκασμό. Με σεβασμό στην ιδιωτικότητά σου." data-en="Without force. With respect for your privacy.">Χωρίς καταναγκασμό. Με σεβασμό στην ιδιωτικότητά σου.</h2>
-        <p data-el="Όχι άλλο χρονόμετρο με κλειδώματα εφαρμογών. Μικρά, βιώσιμα βήματα — η πρόοδός σου μένει στη συσκευή σου, μέχρι να συνδεθείς." data-en="Not another timer with forced app locks. Small, sustainable steps — your progress stays on your device until you sign in.">Όχι άλλο χρονόμετρο με κλειδώματα εφαρμογών. Μικρά, βιώσιμα βήματα — η πρόοδός σου μένει στη συσκευή σου, μέχρι να συνδεθείς.</p>
-      </div>
-      <div class="why-nepsis-grid">
-        <article class="why-nepsis-item">
-          <span class="why-nepsis-index" aria-hidden="true">01</span>
-          <h3 data-el="Χωρίς εμπόδια" data-en="Zero Friction">Χωρίς εμπόδια</h3>
-          <p class="why-nepsis-lead" data-el="Ξεκίνα σε 5 δευτερόλεπτα" data-en="Start in 5 seconds">Ξεκίνα σε 5 δευτερόλεπτα</p>
-          <p data-el="Χωρίς κλειδώματα εφαρμογών και χωρίς εγγραφή. Άνοιξε, διάλεξε διάρκεια και ξεκίνα." data-en="No app locks and no sign-up. Open, pick a duration, and begin.">Χωρίς κλειδώματα εφαρμογών και χωρίς εγγραφή. Άνοιξε, διάλεξε διάρκεια και ξεκίνα.</p>
-        </article>
-        <article class="why-nepsis-item">
-          <span class="why-nepsis-index" aria-hidden="true">02</span>
-          <h3 data-el="Τοπικά και ιδιωτικά" data-en="Local &amp; Private">Τοπικά και ιδιωτικά</h3>
-          <p class="why-nepsis-lead" data-el="Η πρόοδός σου μένει στη συσκευή σου, μέχρι να συνδεθείς" data-en="Your progress stays on your device until you sign in">Η πρόοδός σου μένει στη συσκευή σου, μέχρι να συνδεθείς</p>
-          <p data-el="Η πρόοδος μένει στη συσκευή σου, εκτός αν συνδεθείς. Το κρυπτογραφημένο ημερολόγιο μένει πάντα στη συσκευή σου. Ο AI Coach στέλνει κείμενο μόνο αν το επιτρέψεις." data-en="Progress stays on your device unless you sign in. Your diary is encrypted and stays on your device. The AI Coach sends text only if you give consent.">Η πρόοδος μένει στη συσκευή σου, εκτός αν συνδεθείς. Το κρυπτογραφημένο ημερολόγιο μένει πάντα στη συσκευή σου. Ο AI Coach στέλνει κείμενο μόνο αν το επιτρέψεις.</p>
-        </article>
-        <article class="why-nepsis-item">
-          <span class="why-nepsis-index" aria-hidden="true">03</span>
-          <h3 data-el="Μικρά βήματα" data-en="Small Steps">Μικρά βήματα</h3>
-          <p class="why-nepsis-lead" data-el="Χτίσε συνήθεια χωρίς burnout" data-en="Build a habit without burnout">Χτίσε συνήθεια χωρίς burnout</p>
-          <p data-el="Από 5 λεπτά και πάνω. Βιώσιμα βήματα που χτίζουν συγκέντρωση, μία μέρα τη φορά." data-en="From 5 minutes up. Sustainable steps that build focus, one day at a time.">Από 5 λεπτά και πάνω. Βιώσιμα βήματα που χτίζουν συγκέντρωση, μία μέρα τη φορά.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- INSIDE: everything the free app includes, each card links to its page -->
+  <!-- INSIDE NEPSIS -->
   <section class="inside-nepsis" id="inside" aria-labelledby="insideTitle">
     <div class="wrap">
-      <div class="inside-nepsis-head">
-        <span class="eyebrow" data-el="Τι έχει μέσα" data-en="What&#39;s inside">Τι έχει μέσα</span>
-        <h2 id="insideTitle" data-el="Ό,τι χρειάζεσαι για να εστιάσεις, δωρεάν." data-en="Everything you need to focus, for free.">Ό,τι χρειάζεσαι για να εστιάσεις, δωρεάν.</h2>
+      <div class="section-head">
+        <span class="eyebrow" data-el="Inside Nepsis" data-en="Inside Nepsis">Inside Nepsis</span>
+        <h2 id="insideTitle" data-el="Δες το σε δράση" data-en="See it in action">Δες το σε δράση</h2>
+        <p data-el="Πραγματικές λειτουργίες που χρησιμοποιείς κάθε μέρα — χρονόμετρο, πρόοδος, γνώση και ημερολόγιο." data-en="Real features you use every day — timer, progress, knowledge and diary.">Πραγματικές λειτουργίες που χρησιμοποιείς κάθε μέρα — χρονόμετρο, πρόοδος, γνώση και ημερολόγιο.</p>
       </div>
-      <div class="inside-nepsis-grid">
-        <a class="inside-nepsis-card" href="practice.html#stageGrid">
-          <span class="inside-nepsis-index" aria-hidden="true">01</span>
-          <h3 data-el="Πέντε στάδια εστίασης" data-en="Five focus stages">Πέντε στάδια εστίασης</h3>
-          <p data-el="Από 5 έως 60 λεπτά. Ανεβαίνεις όταν το τρέχον στάδιο σου φαίνεται φυσικό." data-en="From 5 to 60 minutes. Move up when your current stage feels natural.">Από 5 έως 60 λεπτά. Ανεβαίνεις όταν το τρέχον στάδιο σου φαίνεται φυσικό.</p>
+      <div class="feature-grid">
+        <a class="feature-card" href="practice.html#stageGrid">
+          <div class="feature-preview timer-preview" aria-hidden="true"><span>25:00</span></div>
+          <h3 data-el="Focus Timer & Στάδια" data-en="Focus Timer & Stages">Focus Timer & Στάδια</h3>
+          <p data-el="Πέντε στάδια από 5 έως 60 λεπτά. Διάλεξε και ξεκίνα χωρίς περισπασμούς." data-en="Five stages from 5 to 60 minutes. Choose and start without distractions.">Πέντε στάδια από 5 έως 60 λεπτά. Διάλεξε και ξεκίνα χωρίς περισπασμούς.</p>
         </a>
-        <a class="inside-nepsis-card" href="coach.html">
-          <span class="inside-nepsis-index" aria-hidden="true">02</span>
-          <h3 data-el="AI Προπονητής Μελέτης &amp; Συγκέντρωσης" data-en="AI Study &amp; Focus Coach">AI Προπονητής Μελέτης &amp; Συγκέντρωσης</h3>
-          <p data-el="Πες τι έχεις μπροστά σου και πόσο χρόνο έχεις. Παίρνεις ένα εφαρμόσιμο πλάνο και το κατάλληλο στάδιο." data-en="Tell it what is ahead and how much time you have. Get a doable plan and the right stage.">Πες τι έχεις μπροστά σου και πόσο χρόνο έχεις. Παίρνεις ένα εφαρμόσιμο πλάνο και το κατάλληλο στάδιο.</p>
+        <a class="feature-card" href="my-nepsis.html">
+          <div class="feature-preview calendar-preview" aria-hidden="true"></div>
+          <h3 data-el="Progress Calendar" data-en="Progress Calendar">Progress Calendar</h3>
+          <p data-el="Δες τα λεπτά, τα σερί και την πρόοδό σου με καθαρό τρόπο." data-en="See your minutes, streaks and progress clearly.">Δες τα λεπτά, τα σερί και την πρόοδό σου με καθαρό τρόπο.</p>
         </a>
-        <a class="inside-nepsis-card" href="diary.html">
-          <span class="inside-nepsis-index" aria-hidden="true">03</span>
-          <h3 data-el="Κρυπτογραφημένο ημερολόγιο" data-en="Encrypted diary">Κρυπτογραφημένο ημερολόγιο</h3>
-          <p data-el="Οι σκέψεις σου κλειδώνουν με τη δική σου φράση πρόσβασης και μένουν στη συσκευή σου." data-en="Your notes are locked with your own passphrase and stay on your device.">Οι σκέψεις σου κλειδώνουν με τη δική σου φράση πρόσβασης και μένουν στη συσκευή σου.</p>
+        <a class="feature-card" href="library.html">
+          <div class="feature-preview cards-preview" aria-hidden="true"></div>
+          <h3 data-el="Knowledge Cards & Quiz" data-en="Knowledge Cards & Quiz">Knowledge Cards & Quiz</h3>
+          <p data-el="Σύντομες ιδέες και ερωτήσεις για να μάθεις κάτι μετά κάθε στάδιο." data-en="Short ideas and questions to learn something after each stage.">Σύντομες ιδέες και ερωτήσεις για να μάθεις κάτι μετά κάθε στάδιο.</p>
         </a>
-        <a class="inside-nepsis-card" href="my-nepsis.html#badgeGrid">
-          <span class="inside-nepsis-index" aria-hidden="true">04</span>
-          <h3 data-el="Επιτεύγματα χωρίς πίεση" data-en="Achievements without pressure">Επιτεύγματα χωρίς πίεση</h3>
-          <p data-el="Badges που προσαρμόζονται στον ρυθμό σου και επιβραβεύουν την επιστροφή, όχι το τέλειο σερί." data-en="Badges that adapt to your pace and reward coming back, not a perfect streak.">Badges που προσαρμόζονται στον ρυθμό σου και επιβραβεύουν την επιστροφή, όχι το τέλειο σερί.</p>
+        <a class="feature-card" href="my-nepsis.html#badgeGrid">
+          <div class="feature-preview badges-preview" aria-hidden="true"></div>
+          <h3 data-el="Achievements & Streaks" data-en="Achievements & Streaks">Achievements & Streaks</h3>
+          <p data-el="Επιβραβεύουν την επιστροφή, όχι την τελειότητα." data-en="Reward the return, not perfection.">Επιβραβεύουν την επιστροφή, όχι την τελειότητα.</p>
         </a>
-        <a class="inside-nepsis-card" href="library.html">
-          <span class="inside-nepsis-index" aria-hidden="true">05</span>
-          <h3 data-el="Δίγλωσσες κάρτες γνώσης" data-en="Bilingual knowledge cards">Δίγλωσσες κάρτες γνώσης</h3>
-          <p data-el="Σύντομες ιδέες για μάθηση και συνήθειες, στα Ελληνικά και στα Αγγλικά, με αξιόπιστες πηγές." data-en="Short ideas on learning and habits, in Greek and English, with trusted sources.">Σύντομες ιδέες για μάθηση και συνήθειες, στα Ελληνικά και στα Αγγλικά, με αξιόπιστες πηγές.</p>
+        <a class="feature-card" href="diary.html">
+          <div class="feature-preview diary-preview" aria-hidden="true"></div>
+          <h3 data-el="Private Diary" data-en="Private Diary">Private Diary</h3>
+          <p data-el="Κρυπτογραφημένο ημερολόγιο που μένει στη συσκευή σου." data-en="Encrypted diary that stays on your device.">Κρυπτογραφημένο ημερολόγιο που μένει στη συσκευή σου.</p>
         </a>
-        <a class="inside-nepsis-card" href="practice.html#stageGrid">
-          <span class="inside-nepsis-index" aria-hidden="true">06</span>
-          <h3 data-el="Ήχοι για συγκέντρωση" data-en="Ambient sounds">Ήχοι για συγκέντρωση</h3>
-          <p data-el="Ήπιοι ήχοι υποβάθρου για να μπεις πιο εύκολα σε ρυθμό." data-en="Calm background sounds that help you settle into a session.">Ήπιοι ήχοι υποβάθρου για να μπεις πιο εύκολα σε ρυθμό.</p>
+        <a class="feature-card" href="coach.html">
+          <div class="feature-preview coach-preview" aria-hidden="true"></div>
+          <h3 data-el="AI Study Coach" data-en="AI Study Coach">AI Study Coach</h3>
+          <p data-el="Πες τι έχεις μπροστά σου και πάρε ένα εφαρμόσιμο πλάνο." data-en="Tell it what is ahead and get a doable plan.">Πες τι έχεις μπροστά σου και πάρε ένα εφαρμόσιμο πλάνο.</p>
         </a>
-      </div>
-      <div class="btns" style="margin-top:28px;align-items:center">
-        <button type="button" class="btn btn-primary" id="shareBtn" data-el="Μοιράσου το Nepsis" data-en="Share Nepsis">Μοιράσου το Nepsis</button>
-        <p class="muted" id="shareMsg" aria-live="polite" style="margin:0"></p>
       </div>
     </div>
   </section>
 
-  <!-- ABOUT + CALCULATOR -->
-  <section class="block" id="about">
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works" id="how">
     <div class="wrap">
-      <div class="head">
-        <span class="eyebrow" data-el="Τι είναι" data-en="What it is">Τι είναι</span>
-        <h2 data-el="Λεπτά από το κινητό, ώρες συγκέντρωσης." data-en="Minutes from the phone, hours of focus.">Λεπτά από το κινητό, ώρες συγκέντρωσης.</h2>
-        <p data-el="Το Nepsis σε βοηθά να μετατρέπεις λίγο χρόνο οθόνης κάθε μέρα σε χρόνο πραγματικής συγκέντρωσης." data-en="Nepsis helps you turn a little screen time every day into real focus time.">Το Nepsis σε βοηθά να μετατρέπεις λίγο χρόνο οθόνης κάθε μέρα σε χρόνο πραγματικής συγκέντρωσης.</p>
-      </div>
-      <div class="card calc">
-        <div>
-          <span class="pill" style="background:var(--sun);color:var(--fg);margin:0 0 14px" data-el="✦ Παράδειγμα" data-en="✦ Example">✦ Παράδειγμα</span>
-          <p class="lbl" data-el="Λεπτά την ημέρα που μετατρέπεις από το κινητό" data-en="Minutes a day you turn from the phone">Λεπτά την ημέρα που μετατρέπεις από το κινητό</p>
-          <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
-            <div id="calcBox" style="font-size:1.8rem;font-weight:800;border:1.5px solid var(--border);border-radius:14px;padding:6px 16px;background:#fff">5</div>
-            <span data-el="λεπτά" data-en="minutes">λεπτά</span>
-          </div>
-          <input id="calcMin" type="range" min="5" max="120" step="5" value="5">
-          <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)"><span>5</span><span>120</span></div>
-        </div>
-        <div class="result">
-          <div style="font-size:.85rem;color:var(--muted)" data-el="Κερδίζεις περίπου" data-en="You gain about">Κερδίζεις περίπου</div>
-          <div class="big" id="calcOut">2,5</div>
-          <div style="font-weight:800" data-el="ώρες συγκέντρωσης τον μήνα" data-en="hours of focus a month">ώρες συγκέντρωσης τον μήνα</div>
-          <div class="formula" id="calcFormula"></div>
-        </div>
-      </div>
-      <p class="note" data-el="Ενδεικτικός υπολογισμός για μήνα 30 ημερών. Δεν είναι υπόσχεση αποτελέσματος." data-en="An estimate for a 30-day month. It is not a promise of results.">Ενδεικτικός υπολογισμός για μήνα 30 ημερών. Δεν είναι υπόσχεση αποτελέσματος.</p>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS / COMPARE -->
-  <section class="block" id="how">
-    <div class="wrap">
-      <div class="head">
+      <div class="section-head">
         <span class="eyebrow" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</span>
-        <h2 data-el="Το ίδιο βράδυ, δύο εκδοχές." data-en="The same evening, two ways.">Το ίδιο βράδυ, δύο εκδοχές.</h2>
+        <h2 data-el="Τρία απλά βήματα" data-en="Three simple steps">Τρία απλά βήματα</h2>
       </div>
-      <div class="compare">
-        <div class="cmp off">
-          <h3 data-el="Χωρίς Nepsis" data-en="Without Nepsis">Χωρίς Nepsis</h3>
-          <ul>
-            <li><time>21:00</time><span data-el="«Μόνο ένα βίντεο και ξεκινάω.»" data-en="“Just one video, then I'll start.”">«Μόνο ένα βίντεο και ξεκινάω.»</span></li>
-            <li><time>21:40</time><span data-el="Ειδοποιήσεις, scroll, άλλη μία εφαρμογή." data-en="Notifications, scrolling, another app.">Ειδοποιήσεις, scroll, άλλη μία εφαρμογή.</span></li>
-            <li><time>23:15</time><span data-el="Το διάβασμα είναι ακόμα στη σελίδα 1." data-en="The reading is still on page 1.">Το διάβασμα είναι ακόμα στη σελίδα 1.</span></li>
-            <li><time>00:30</time><span data-el="Κούραση — και η ώρα χάθηκε κάπου." data-en="Tiredness — and the hours disappeared.">Κούραση — και η ώρα χάθηκε κάπου.</span></li>
-          </ul>
-          <span class="pill" data-el="0 λεπτά συγκέντρωσης" data-en="0 minutes of focus">0 λεπτά συγκέντρωσης</span>
+      <div class="steps-grid">
+        <div class="step">
+          <span class="step-num">01</span>
+          <h3 data-el="Διάλεξε το στάδιο" data-en="Choose your focus stage">Διάλεξε το στάδιο</h3>
+          <p data-el="Από 5 λεπτά και πάνω. Ξεκίνα από εκεί που είσαι." data-en="From 5 minutes up. Start where you are.">Από 5 λεπτά και πάνω. Ξεκίνα από εκεί που είσαι.</p>
         </div>
-        <div class="cmp on">
-          <h3 data-el="Με Nepsis" data-en="With Nepsis">Με Nepsis</h3>
-          <ul>
-            <li><time>21:00</time><span data-el="Ανοίγεις το Nepsis και διαλέγεις στάδιο 25 λεπτών." data-en="You open Nepsis and choose the 25-minute stage.">Ανοίγεις το Nepsis και διαλέγεις στάδιο 25 λεπτών.</span></li>
-            <li><time>21:25</time><span data-el="Ένα κεφάλαιο τελείωσε. Σύντομο διάλειμμα." data-en="One chapter done. A short break.">Ένα κεφάλαιο τελείωσε. Σύντομο διάλειμμα.</span></li>
-            <li><time>21:35</time><span data-el="Άλλο ένα στάδιο, αν το θέλεις." data-en="Another stage, if you want.">Άλλο ένα στάδιο, αν το θέλεις.</span></li>
-            <li><time>23:00</time><span data-el="Κλείνεις τη μέρα με κάτι ολοκληρωμένο." data-en="You close the day with something finished.">Κλείνεις τη μέρα με κάτι ολοκληρωμένο.</span></li>
-          </ul>
-          <span class="pill" data-el="50 λεπτά συγκέντρωσης" data-en="50 minutes of focus">50 λεπτά συγκέντρωσης</span>
+        <div class="step">
+          <span class="step-num">02</span>
+          <h3 data-el="Εστίασε χωρίς περισπασμούς" data-en="Focus without distractions">Εστίασε χωρίς περισπασμούς</h3>
+          <p data-el="Το χρονόμετρο τρέχει. Εσύ κάνεις αυτό που έχει σημασία." data-en="The timer runs. You do what matters.">Το χρονόμετρο τρέχει. Εσύ κάνεις αυτό που έχει σημασία.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <h3 data-el="Μάθε, καταγράψε και βελτιώσου" data-en="Learn, track and improve">Μάθε, καταγράψε και βελτιώσου</h3>
+          <p data-el="Κάρτες γνώσης, πρόοδος και ημερολόγιο για να χτίσεις συνήθεια." data-en="Knowledge cards, progress and diary to build the habit.">Κάρτες γνώσης, πρόοδος και ημερολόγιο για να χτίσεις συνήθεια.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- STAGES -->
-  <section class="block" id="stages">
+  <!-- THE NEPSIS APPROACH -->
+  <section class="approach" id="approach">
     <div class="wrap">
-      <div class="head">
-        <span class="eyebrow" data-el="Στάδια" data-en="Stages">Στάδια</span>
-        <h2 data-el="Πέντε στάδια, με τον δικό σου ρυθμό." data-en="Five stages, at your own pace.">Πέντε στάδια, με τον δικό σου ρυθμό.</h2>
-        <p data-el="Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη." data-en="Start with 5 minutes and move up when you feel ready.">Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη.</p>
+      <div class="section-head">
+        <span class="eyebrow" data-el="Η φιλοσοφία" data-en="The philosophy">Η φιλοσοφία</span>
+        <h2 data-el="Focus isn't something you force.<br>It's something you practice." data-en="Focus isn't something you force.<br>It's something you practice.">Focus isn't something you force.<br>It's something you practice.</h2>
+      </div>
+      <div class="approach-grid">
+        <div>
+          <p data-el="Δεν χρειάζεται να ξεκινήσεις με μία ώρα. Μπορείς να ξεκινήσεις με πέντε λεπτά." data-en="You don't need to start with an hour. You can start with five minutes.">Δεν χρειάζεται να ξεκινήσεις με μία ώρα. Μπορείς να ξεκινήσεις με πέντε λεπτά.</p>
+          <p data-el="Δεν χρειάζεται να μπλοκάρεις εφαρμογές ή να αλλάξεις όλη σου τη ζωή." data-en="You don't need to block apps or change your whole life.">Δεν χρειάζεται να μπλοκάρεις εφαρμογές ή να αλλάξεις όλη σου τη ζωή.</p>
+          <p data-el="Η συνέπεια είναι σημαντικότερη από την τελειότητα." data-en="Consistency matters more than perfection.">Η συνέπεια είναι σημαντικότερη από την τελειότητα.</p>
+        </div>
+        <div>
+          <p data-el="Το Nepsis δημιουργήθηκε για να βοηθήσει τους ανθρώπους να αναπτύξουν καλύτερη συγκέντρωση και σταθερές συνήθειες, με σεβασμό στον χρόνο και την ιδιωτικότητά τους." data-en="Nepsis was created to help people develop better focus and steady habits, with respect for their time and privacy.">Το Nepsis δημιουργήθηκε για να βοηθήσει τους ανθρώπους να αναπτύξουν καλύτερη συγκέντρωση και σταθερές συνήθειες, με σεβασμό στον χρόνο και την ιδιωτικότητά τους.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="block" id="premium">
+  <!-- YOUR PROGRESS -->
+  <section class="progress-section" id="progress">
     <div class="wrap">
-      <div class="head">
-        <span class="eyebrow" data-el="Nepsis Community" data-en="Nepsis Community">Nepsis Community</span>
-        <h2 data-el="Η εξάσκηση μένει δωρεάν." data-en="Practice stays free.">Η εξάσκηση μένει δωρεάν.</h2>
-        <p data-el="Αν θέλεις περισσότερη δομή και υλικό, το Nepsis+ στο Whop ξεκλειδώνει αυτά τα τέσσερα." data-en="If you want more structure and material, Nepsis+ on Whop unlocks these four things.">Αν θέλεις περισσότερη δομή και υλικό, το Nepsis+ στο Whop ξεκλειδώνει αυτά τα τέσσερα.</p>
+      <div class="section-head">
+        <span class="eyebrow" data-el="Η πρόοδός σου" data-en="Your progress">Η πρόοδός σου</span>
+        <h2 data-el="Δες πώς χτίζεις τη συνήθεια" data-en="See how you build the habit">Δες πώς χτίζεις τη συνήθεια</h2>
       </div>
-
-      <div class="value-list" style="display:grid;gap:16px;margin:28px 0 36px">
-        <div class="value-item" style="display:flex;gap:14px;align-items:flex-start">
-          <span style="color:var(--orange);font-weight:900;font-size:1.2rem">01</span>
-          <div>
-            <strong data-el="15+ Εκτυπώσιμα τετράδια εργασίας &amp; blueprints (PDF)" data-en="15+ Printable Workbooks & Blueprints (PDF)">15+ Εκτυπώσιμα τετράδια εργασίας &amp; blueprints (PDF)</strong>
-            <p class="muted" style="margin:4px 0 0" data-el="Πρακτικά φύλλα εργασίας για κάθε στάδιο: Weekly Blueprint, Notification Audit, 2-Sentence Diary, Pre-Flight Checklists." data-en="Practical worksheets for every stage: Weekly Blueprint, Notification Audit, 2-Sentence Diary, Pre-Flight Checklists.">Πρακτικά φύλλα εργασίας για κάθε στάδιο: Weekly Blueprint, Notification Audit, 2-Sentence Diary, Pre-Flight Checklists.</p>
-          </div>
+      <div class="progress-cards">
+        <div class="progress-card">
+          <h3 data-el="Calendar & Streaks" data-en="Calendar & Streaks">Calendar & Streaks</h3>
+          <p data-el="Παράδειγμα: 5 μέρες σερί, 75 λεπτά αυτή την εβδομάδα." data-en="Example: 5-day streak, 75 minutes this week.">Παράδειγμα: 5 μέρες σερί, 75 λεπτά αυτή την εβδομάδα.</p>
         </div>
-        <div class="value-item" style="display:flex;gap:14px;align-items:flex-start">
-          <span style="color:var(--orange);font-weight:900;font-size:1.2rem">02</span>
-          <div>
-            <strong data-el='Οδηγός «Μικρά βήματα συγκέντρωσης»' data-en='"Small Steps of Focus" Guide'>Οδηγός «Μικρά βήματα συγκέντρωσης»</strong>
-            <p class="muted" style="margin:4px 0 0" data-el="Δομημένα μαθήματα που ξεκλειδώνουν σταδιακά, χωρίς overwhelm, για να χτίσεις ρυθμό σε 2–3 εβδομάδες." data-en="Structured courses that unlock gradually, without overwhelm, so you can build a rhythm in 2–3 weeks.">Δομημένα μαθήματα που ξεκλειδώνουν σταδιακά, χωρίς overwhelm, για να χτίσεις ρυθμό σε 2–3 εβδομάδες.</p>
-          </div>
-        </div>
-        <div class="value-item" style="display:flex;gap:14px;align-items:flex-start">
-          <span style="color:var(--orange);font-weight:900;font-size:1.2rem">03</span>
-          <div>
-            <strong data-el="Silent Co-Working & Εβδομαδιαίος Ρυθμός" data-en="Silent Co-Working & Weekly Rhythm">Silent Co-Working & Εβδομαδιαίος Ρυθμός</strong>
-            <p class="muted" style="margin:4px 0 0" data-el="Κοινότητα συγκέντρωσης χωρίς θόρυβο και εβδομαδιαίο έλεγχο προτεραιοτήτων." data-en="A quiet focus community and a weekly priority check-in.">Κοινότητα συγκέντρωσης χωρίς θόρυβο και εβδομαδιαίο έλεγχο προτεραιοτήτων.</p>
-          </div>
-        </div>
-        <div class="value-item" style="display:flex;gap:14px;align-items:flex-start">
-          <span style="color:var(--orange);font-weight:900;font-size:1.2rem">04</span>
-          <div>
-            <strong data-el="Πακέτο ήχων χωρίς σύνδεση" data-en="Offline Ambient Audio Pack">Πακέτο ήχων χωρίς σύνδεση</strong>
-            <p class="muted" style="margin:4px 0 0" data-el="Ήχοι συγκέντρωσης για κατέβασμα σε κινητό ή υπολογιστή." data-en="Focus sounds to download on phone or computer.">Ήχοι συγκέντρωσης για κατέβασμα σε κινητό ή υπολογιστή.</p>
-          </div>
+        <div class="progress-card">
+          <h3 data-el="Achievements" data-en="Achievements">Achievements</h3>
+          <p data-el="Badges που προσαρμόζονται στον ρυθμό σου." data-en="Badges that adapt to your pace.">Badges που προσαρμόζονται στον ρυθμό σου.</p>
         </div>
       </div>
-
-      <div class="compare premium-choices" style="margin-top:10px">
-        <article class="cmp on">
-          <h3 data-el="Nepsis Δωρεάν" data-en="Nepsis Free">Nepsis Δωρεάν</h3>
-          <p class="choice-copy" data-el="€0 · Χρονόμετρο 5–60 λεπτών, Zen Mode, κρυπτογραφημένο τοπικό ημερολόγιο, κάρτες συγκέντρωσης." data-en="€0 · 5–60 min timer, Zen Mode, encrypted local diary, focus cards.">€0 · Χρονόμετρο 5–60 λεπτών, Zen Mode, κρυπτογραφημένο τοπικό ημερολόγιο, κάρτες συγκέντρωσης.</p>
-        </article>
-        <article class="cmp off">
-          <h3 data-el="Nepsis+ στο Whop" data-en="Nepsis+ on Whop">Nepsis+ στο Whop</h3>
-          <p class="choice-copy" data-el="€3,99/μήνα ή €29,99/έτος · Όλα τα μαθήματα, τα 15+ PDF τετράδια εργασίας, το weekly accountability forum και τα co-working sessions." data-en="€3.99/month or €29.99/year · All courses, 15+ PDF workbooks, weekly accountability forum and co-working sessions.">€3,99/μήνα ή €29,99/έτος · Όλα τα μαθήματα, τα 15+ PDF τετράδια εργασίας, το weekly accountability forum και τα co-working sessions.</p>
-          <div class="btns" style="margin-top:16px">
-            <a class="btn btn-primary" href="https://whop.com/nepsis-focus" target="_blank" rel="noopener noreferrer" data-el="Δες το πρόγραμμα &amp; τα τετράδια εργασίας στο Whop →" data-en="Explore Courses & Workbooks on Whop →">Δες το πρόγραμμα &amp; τα τετράδια εργασίας στο Whop →</a>
-          </div>
-        </article>
-      </div>
-
-      <p class="premium-note" style="margin-top:22px" data-el="Οι πληρωμές γίνονται μέσω Whop. Μπορείς να ακυρώσεις όποτε θέλεις. Η βασική εξάσκηση μένει πάντα δωρεάν." data-en="Payments go through Whop. You can cancel anytime. Core practice stays free.">Οι πληρωμές γίνονται μέσω Whop. Μπορείς να ακυρώσεις όποτε θέλεις. Η βασική εξάσκηση μένει πάντα δωρεάν.</p>
+      <p class="note" data-el="Τα παραπάνω είναι ενδεικτικά παραδείγματα. Η πραγματική πρόοδός σου αποθηκεύεται τοπικά." data-en="The above are illustrative examples. Your real progress is stored locally.">Τα παραπάνω είναι ενδεικτικά παραδείγματα. Η πραγματική πρόοδός σου αποθηκεύεται τοπικά.</p>
     </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- COMMUNITY -->
+  <section class="community" id="community">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-el="Η κοινότητα" data-en="The community">Η κοινότητα</span>
+        <h2 data-el="Μικρά βήματα, μαζί" data-en="Small steps, together">Μικρά βήματα, μαζί</h2>
+      </div>
+      <p data-el="Το Nepsis είναι για ανθρώπους που θέλουν να χτίσουν συγκέντρωση χωρίς πίεση. Η κοινότητα μεγαλώνει — σύντομα εδώ θα δεις πραγματικές ιστορίες χρηστών." data-en="Nepsis is for people who want to build focus without pressure. The community is growing — real user stories will appear here soon.">Το Nepsis είναι για ανθρώπους που θέλουν να χτίσουν συγκέντρωση χωρίς πίεση. Η κοινότητα μεγαλώνει — σύντομα εδώ θα δεις πραγματικές ιστορίες χρηστών.</p>
+    </div>
+  </section>
+
+  <!-- FREE & NEPSIS+ -->
+  <section class="pricing" id="premium">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow" data-el="Δωρεάν & Nepsis+" data-en="Free & Nepsis+">Δωρεάν & Nepsis+</span>
+        <h2 data-el="Η εξάσκηση μένει δωρεάν" data-en="Practice stays free">Η εξάσκηση μένει δωρεάν</h2>
+      </div>
+      <div class="pricing-grid">
+        <article class="price-card free">
+          <h3 data-el="Nepsis Free" data-en="Nepsis Free">Nepsis Free</h3>
+          <p data-el="€0 · Χρονόμετρο 5–60 λεπτών, Zen Mode, κρυπτογραφημένο τοπικό ημερολόγιο, κάρτες συγκέντρωσης, AI Coach (περιορισμένα)." data-en="€0 · 5–60 min timer, Zen Mode, encrypted local diary, focus cards, AI Coach (limited).">€0 · Χρονόμετρο 5–60 λεπτών, Zen Mode, κρυπτογραφημένο τοπικό ημερολόγιο, κάρτες συγκέντρωσης, AI Coach (περιορισμένα).</p>
+        </article>
+        <article class="price-card plus">
+          <h3 data-el="Nepsis+" data-en="Nepsis+">Nepsis+</h3>
+          <p data-el="€3,99/μήνα ή €29,99/έτος · Μαθήματα, 15+ PDF τετράδια εργασίας, weekly forum, co-working sessions." data-en="€3.99/month or €29.99/year · Courses, 15+ PDF workbooks, weekly forum, co-working sessions.">€3,99/μήνα ή €29,99/έτος · Μαθήματα, 15+ PDF τετράδια εργασίας, weekly forum, co-working sessions.</p>
+          <a class="btn btn-primary" href="https://whop.com/nepsis-focus" target="_blank" rel="noopener noreferrer" data-el="Δες στο Whop →" data-en="See on Whop →">Δες στο Whop →</a>
+        </article>
+      </div>
+      <p class="premium-note" data-el="Οι πληρωμές γίνονται μέσω Whop. Μπορείς να ακυρώσεις όποτε θέλεις. Η βασική εξάσκηση μένει πάντα δωρεάν." data-en="Payments go through Whop. You can cancel anytime. Core practice stays free.">Οι πληρωμές γίνονται μέσω Whop. Μπορείς να ακυρώσεις όποτε θέλεις. Η βασική εξάσκηση μένει πάντα δωρεάν.</p>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="wrap">
+      <h2 data-el="Τα επόμενα πέντε λεπτά μπορούν να ξεκινήσουν εδώ." data-en="Your next five minutes can start here.">Τα επόμενα πέντε λεπτά μπορούν να ξεκινήσουν εδώ.</h2>
+      <a class="btn btn-primary btn-large" href="practice.html#stageGrid" data-el="Ξεκίνα δωρεάν — χωρίς εγγραφή" data-en="Start focusing — It's free">Ξεκίνα δωρεάν — χωρίς εγγραφή</a>
+    </div>
+  </section>
+
+<!-- FAQ -->
   <section class="block" id="faq">
     <div class="wrap faq">
       <div>
