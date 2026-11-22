@@ -4,7 +4,9 @@
   var btn = document.getElementById("shareBtn");
   if (!btn) return;
   var msg = document.getElementById("shareMsg");
-  var url = "https://nepsis-focus.github.io/nepsis-site/?utm_source=share";
+  // Always share the canonical GitHub Pages URL (not the Cloudflare mirror).
+  var base = (window.NepsisSite && window.NepsisSite.PUBLIC_BASE) || "https://nepsis-focus.github.io/nepsis-site/";
+  var url = base.replace(/\/?$/, "/") + "?utm_source=share";
   function isEn() {
     try { if (localStorage.getItem("nepsis-lang") === "en") return true; } catch (e) {}
     return document.documentElement.lang === "en";

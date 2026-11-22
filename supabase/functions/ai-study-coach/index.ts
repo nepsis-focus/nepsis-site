@@ -1,8 +1,14 @@
 const FOCUS = [5, 10, 25, 45, 60];
 const MAX_BODY = 120000;
 const MAX_DOC = 28000;
-const DEFAULT_ORIGINS = ["https://nepsis-focus.github.io", "http://localhost:4173", "http://127.0.0.1:4173"];
+const DEFAULT_ORIGINS = [
+  "https://nepsis-focus.github.io",
+  "https://nepsis-site.nepsis-corp.workers.dev",
+  "http://localhost:4173",
+  "http://127.0.0.1:4173",
+];
 const NETLIFY_PREVIEW_ORIGIN = new RegExp("^https://deploy-preview-[0-9]+--nepsis-focus[.]netlify[.]app$");
+const WORKERS_PREVIEW_ORIGIN = new RegExp("^https://[a-z0-9-]+-nepsis-site[.]nepsis-corp[.]workers[.]dev$");
 function clean(value: unknown, max: number): string {
   return typeof value === "string" ? value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, " ").trim().slice(0, max) : "";
 }
@@ -40,7 +46,7 @@ async function digest(secret: string, value: string) {
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin");
   const extra = (Deno.env.get("COACH_ALLOWED_ORIGINS") || "").split(",").map((x) => x.trim()).filter(Boolean);
-  const allowed = !origin || DEFAULT_ORIGINS.includes(origin) || extra.includes(origin) || NETLIFY_PREVIEW_ORIGIN.test(origin);
+  const allowed = !origin || DEFAULT_ORIGINS.includes(origin) || extra.includes(origin) || NETLIFY_PREVIEW_ORIGIN.test(origin) || WORKERS_PREVIEW_ORIGIN.test(origin);
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: allowed && origin ? { "access-control-allow-origin": origin, "access-control-allow-headers": "authorization, apikey, content-type, x-client-info", "access-control-allow-methods": "POST, OPTIONS", "access-control-max-age": "600", vary: "Origin" } : { vary: "Origin" } });
   if (!allowed) return reply(403, { error: "origin_not_allowed" }, origin, false);
   if (req.method !== "POST") return reply(405, { error: "method_not_allowed" }, origin, allowed);

@@ -35,12 +35,29 @@ jobs:
           npm install --no-save playwright
           npx playwright install --with-deps chromium
 
+      # Primary public URL (canonical / SEO / share): GitHub Pages.
+      # Cloudflare Workers is a live mirror; we only smoke-check it below.
       - name: Test the live website
         id: health
         continue-on-error: true
         env:
           SITE_URL: https://nepsis-focus.github.io/nepsis-site/
         run: node scripts/site-watchdog.mjs
+
+      - name: Smoke-check Cloudflare mirror
+        id: mirror
+        continue-on-error: true
+        run: |
+          code=$(curl -sS -o /tmp/nepsis-mirror.html -w "%{http_code}" --max-time 30 "https://nepsis-site.nepsis-corp.workers.dev/")
+          echo "mirror_http=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" != "200" ]; then
+            echo "Cloudflare mirror returned HTTP $code" >&2
+            exit 1
+          fi
+          if ! grep -qi "nepsis" /tmp/nepsis-mirror.html; then
+            echo "Cloudflare mirror response did not look like Nepsis HTML" >&2
+            exit 1
+          fi
 
       - name: Create fallback report if the browser check could not finish
         if: always() && hashFiles('nepsis-watchdog-report.json') == ''
@@ -49,7 +66,7 @@ jobs:
 
       - name: Open or update a GitHub issue if checks fail
         id: report_issue
-        if: steps.health.outcome == 'failure'
+        if: steps.health.outcome == 'failure' || steps.mirror.outcome == 'failure'
         uses: actions/github-script@v7
         with:
           script: |
@@ -94,7 +111,7 @@ jobs:
             core.setOutput("issue_number", String(issueNumber));
 
       - name: Email notification when the site recovers
-        if: steps.health.outcome == 'success'
+        if: steps.health.outcome == 'success' && steps.mirror.outcome == 'success'
         uses: actions/github-script@v7
         with:
           script: |
@@ -141,7 +158,7 @@ jobs:
           if-no-files-found: error
 
       - name: Fail the workflow when the site is unhealthy
-        if: steps.health.outcome == 'failure'
+        if: steps.health.outcome == 'failure' || steps.mirror.outcome == 'failure'
         run: exit 1
 
   ai-agent:
