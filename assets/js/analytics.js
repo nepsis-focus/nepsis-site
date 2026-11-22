@@ -7,7 +7,10 @@
   const UMAMI_WEBSITE_ID = "93c6f050-e568-4aba-940d-8fa16c80cdcc";
   const host = window.location.hostname.toLowerCase();
   const isPreviewHost = /^deploy-preview-\d+--nepsis-focus\.netlify\.app$/.test(host);
-  const isProductionHost = host === "nepsis-focus.github.io";
+  // Primary = github.io; Cloudflare Workers is a live mirror of the same site.
+  const isProductionHost = (window.NepsisSite && typeof window.NepsisSite.isProductionHost === "function")
+    ? window.NepsisSite.isProductionHost(host)
+    : (host === "nepsis-focus.github.io" || host === "nepsis-site.nepsis-corp.workers.dev");
   let umamiScript = null;
 
   // ===== ΝΕΟ: Telemetry constants =====

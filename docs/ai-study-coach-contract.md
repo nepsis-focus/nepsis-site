@@ -58,7 +58,7 @@ The client always emits these six keys; `documentText: ""` means no file. Auth i
 
 Known error shapes are `{ "error": "..." }`: `origin_not_allowed`, `method_not_allowed`, `request_too_large`, `invalid_json`, `invalid_input`, `consent_required`, `service_unavailable`, `daily_limit_reached`, `ai_unavailable`, and `invalid_model_output`. Preserve server-side body/input validation, IP/user-hash rate limiting, Gemini timeout/output validation, and spend controls even though browser state is local and editable.
 
-CORS permits the production site, configured exact `COACH_ALLOWED_ORIGINS`, local development origins, and only exact Netlify deployment hosts matching `https://deploy-preview-<digits>--nepsis-focus.netlify.app` (no wildcard subdomains).
+CORS permits the production GitHub Pages origin, the Cloudflare Workers mirror (`nepsis-site.nepsis-corp.workers.dev` and `*-nepsis-site.nepsis-corp.workers.dev` previews), configured exact `COACH_ALLOWED_ORIGINS`, local development origins, and only exact Netlify deployment hosts matching `https://deploy-preview-<digits>--nepsis-focus.netlify.app` (no wildcard subdomains).
 
 ## Change policy
 

@@ -179,7 +179,7 @@
   const graph = [{
     "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Nepsis",
     applicationCategory: "ProductivityApplication", operatingSystem: "Web browser",
-    url: "https://nepsis-focus.github.io/nepsis-site/",
+    url: (window.NepsisSite && window.NepsisSite.PUBLIC_BASE) || "https://nepsis-focus.github.io/nepsis-site/",
     description: t("Δωρεάν εφαρμογή εστίασης για διάβασμα και δουλειά. Χωρίς εγγραφή.", "A free focus app for study and work. No sign-up required."),
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }
   }];

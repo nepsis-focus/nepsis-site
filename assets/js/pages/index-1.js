@@ -592,6 +592,61 @@ let currentLang = "el";
     state.endAt = null;
   }
 
+  function playStageChime() {
+    try {
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      const now = ctx.currentTime;
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+      master.connect(ctx.destination);
+      [523.25, 659.25, 783.99].forEach(function (freq, i) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.5, now + 0.03 + i * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35 + i * 0.08);
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(now + i * 0.06);
+        osc.stop(now + 0.75);
+      });
+      setTimeout(function () { try { ctx.close(); } catch (e) {} }, 900);
+    } catch (e) { /* audio may be blocked until a gesture */ }
+  }
+  function showStageDoneToast(min) {
+    let toast = document.getElementById("stageDoneToast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "stageDoneToast";
+      toast.setAttribute("role", "status");
+      toast.setAttribute("aria-live", "polite");
+      toast.style.cssText = "position:fixed;z-index:70;left:50%;bottom:22px;transform:translate(-50%,8px);opacity:0;transition:opacity .6s ease,transform .6s ease;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 32px);padding:12px 18px;border-radius:99px;background:#FFF8EE;border:1px solid rgba(240,138,36,.3);box-shadow:0 14px 34px -24px rgba(58,36,24,.45);font:700 .92rem/1.35 Nunito,system-ui,sans-serif;color:#3A2418;pointer-events:none";
+      toast.innerHTML = '<span aria-hidden="true" style="width:10px;height:10px;border-radius:50%;background:#F0702A;flex:0 0 auto"></span><span data-toast-text></span>';
+      document.body.appendChild(toast);
+    }
+    const label = toast.querySelector("[data-toast-text]");
+    if (label) {
+      label.textContent = currentLang === "el"
+        ? "Ολοκλήρωσες το στάδιο των " + min + " λεπτών."
+        : "You finished the " + min + "-minute stage.";
+    }
+    requestAnimationFrame(function () {
+      toast.style.opacity = "1";
+      toast.style.transform = "translate(-50%,0)";
+    });
+    clearTimeout(showStageDoneToast._timer);
+    showStageDoneToast._timer = setTimeout(function () {
+      toast.style.opacity = "0";
+      toast.style.transform = "translate(-50%,8px)";
+    }, 4500);
+  }
   function finishTimer(state) {
     stopTimerLocally(state);
     if (window.nepsisAnalytics) window.nepsisAnalytics.track("session_completed", { stage: state.min, duration: state.min, result: "completed" });
@@ -601,6 +656,8 @@ let currentLang = "el";
     clearTimerCredentials(state);
     draw(state);
     markStage(state.min);
+    playStageChime();
+    showStageDoneToast(state.min);
     showAfter(state);
     state.el.querySelector("[data-msg]").textContent = currentLang === "el"
       ? "Ολοκληρώθηκε! Ο χρόνος επιβεβαιώθηκε."

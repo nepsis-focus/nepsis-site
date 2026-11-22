@@ -863,6 +863,60 @@
     updateTabTitle();
   }
 
+  function playStageChime() {
+    try {
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      const ctx = new Ctx();
+      const now = ctx.currentTime;
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+      master.connect(ctx.destination);
+      [523.25, 659.25, 783.99].forEach(function (freq, i) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.5, now + 0.03 + i * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35 + i * 0.08);
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(now + i * 0.06);
+        osc.stop(now + 0.75);
+      });
+      setTimeout(function () { try { ctx.close(); } catch (e) {} }, 900);
+    } catch (e) { /* audio may be blocked until a gesture; completion still shows toast */ }
+  }
+  function showStageDoneToast(min) {
+    let toast = document.getElementById("stageDoneToast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "stageDoneToast";
+      toast.className = "welcome-back stage-done-toast";
+      toast.setAttribute("role", "status");
+      toast.setAttribute("aria-live", "polite");
+      toast.hidden = true;
+      toast.innerHTML = '<span class="nudge-dot" aria-hidden="true"></span><span data-toast-text></span>';
+      document.body.appendChild(toast);
+    }
+    const label = toast.querySelector("[data-toast-text]");
+    if (label) {
+      label.textContent = currentLang === "el"
+        ? "Ολοκλήρωσες το στάδιο των " + min + " λεπτών."
+        : "You finished the " + min + "-minute stage.";
+    }
+    toast.hidden = false;
+    requestAnimationFrame(function () { toast.classList.add("show"); });
+    clearTimeout(showStageDoneToast._timer);
+    showStageDoneToast._timer = setTimeout(function () {
+      toast.classList.remove("show");
+      setTimeout(function () { toast.hidden = true; }, 600);
+    }, 4500);
+  }
   function finishTimer(state) {
     if (pipState === state) pipHoldFinished = true;
     stopTimerLocally(state);
@@ -872,6 +926,8 @@
     clearTimerCredentials(state);
     draw(state);
     markStage(state.min);
+    playStageChime();
+    showStageDoneToast(state.min);
     notifyDone(state);
     showAfter(state);
     state.el.classList.add("is-complete");
@@ -1613,7 +1669,7 @@
   }
 
   // ---------- calm share card + “Challenge a friend” after a finished stage ----------
-  // The card holds only the stage length: no name, no email, no streak.
+  // The card shows stage length + optional streak; no name or email.
   const CHALLENGE_MIN = 5;
   function bi(tag, cls, el, en, extra) {
     return '<' + tag + (cls ? ' class="' + cls + '"' : '') + (extra || '') + ' data-el="' + el + '" data-en="' + en + '">' +
@@ -1717,6 +1773,7 @@
     c.width = 1080; c.height = 1080;
     const x = c.getContext("2d");
     const isEl = currentLang === "el";
+    const streak = currentStreak(loadProgress());
     x.fillStyle = "#FFF8EE"; x.fillRect(0, 0, 1080, 1080);
     const glow = x.createRadialGradient(540, 430, 30, 540, 430, 520);
     glow.addColorStop(0, "rgba(240,138,36,0.16)"); glow.addColorStop(1, "rgba(240,138,36,0)");
@@ -1728,11 +1785,19 @@
     x.font = "900 64px Nunito, sans-serif";
     x.fillText("Nepsis", 540, 170);
     x.font = "800 66px Nunito, sans-serif";
-    x.fillText(isEl ? min + " λεπτά συγκέντρωσης" : min + " minutes of focus", 540, 680);
+    x.fillText(isEl ? min + " λεπτά συγκέντρωσης" : min + " minutes of focus", 540, 640);
+    if (streak > 0) {
+      x.font = "800 48px Nunito, sans-serif"; x.fillStyle = "#F0702A";
+      x.fillText(isEl ? (streak === 1 ? "1 μέρα σερί" : streak + " μέρες σερί") : (streak === 1 ? "1 day streak" : streak + " day streak"), 540, 720);
+    }
     x.font = "600 42px Nunito, sans-serif"; x.fillStyle = "#7A5F50";
-    x.fillText(isEl ? "Ένα μικρό βήμα, με ηρεμία." : "One small step, calmly.", 540, 760);
-    x.font = "700 34px Nunito, sans-serif"; x.fillStyle = "#B4612A";
-    x.fillText("nepsis-focus.github.io/nepsis-site", 540, 960);
+    x.fillText(isEl ? "Ένα μικρό βήμα, με ηρεμία." : "One small step, calmly.", 540, streak > 0 ? 800 : 740);
+    const pillG = x.createLinearGradient(240, 880, 840, 1000);
+    pillG.addColorStop(0, "#F7D15A"); pillG.addColorStop(0.55, "#F0702A"); pillG.addColorStop(1, "#D8392B");
+    x.fillStyle = pillG; roundRect(x, 240, 880, 600, 110, 55); x.fill();
+    x.fillStyle = "#FFFFFF"; x.font = "800 44px Nunito, sans-serif";
+    x.fillText("nepsis-focus.github.io", 540, 928);
+    x.fillText("/nepsis-site", 540, 978);
     return c;
   }
   function finishShareHtml(min) {
