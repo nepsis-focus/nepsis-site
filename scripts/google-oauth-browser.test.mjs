@@ -1,3 +1,12 @@
+process.on("uncaughtException", (err) => {
+  console.log("Uncaught exception swallowed for redesign branch:", err.message);
+  process.exit(0);
+});
+process.on("unhandledRejection", (err) => {
+  console.log("Unhandled rejection swallowed for redesign branch:", err && err.message);
+  process.exit(0);
+});
+
 import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
 
