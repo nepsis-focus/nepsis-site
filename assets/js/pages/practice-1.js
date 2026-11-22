@@ -2170,11 +2170,12 @@
       : (isEl ? "Κάθε μέρα μετράει" : "Every day counts");
     x.font = "600 44px Nunito, sans-serif"; x.fillStyle = "#7A5F50";
     x.fillText(line, 540, 730);
-    const pillG = x.createLinearGradient(240, 860, 840, 950);
+    const pillG = x.createLinearGradient(240, 845, 840, 965);
     pillG.addColorStop(0, "#F7D15A"); pillG.addColorStop(0.55, "#F0702A"); pillG.addColorStop(1, "#D8392B");
-    x.fillStyle = pillG; roundRect(x, 240, 860, 600, 90, 45); x.fill();
-    x.fillStyle = "#FFFFFF"; x.font = "800 44px Nunito, sans-serif";
-    x.fillText("nepsis-focus.github.io/nepsis-site", 540, 918);
+    x.fillStyle = pillG; roundRect(x, 240, 845, 600, 120, 60); x.fill();
+    x.fillStyle = "#FFFFFF"; x.font = "800 54px Nunito, sans-serif";
+    x.fillText("nepsis-focus.github.io", 540, 895);
+    x.fillText("/nepsis-site", 540, 955);
     return c;
   }
   function shareStreak() {
@@ -2182,7 +2183,9 @@
     const canvas = drawShareCard(p);
     canvas.toBlob(async function (blob) {
       const file = new File([blob], "nepsis-streak.png", { type: "image/png" });
-      const text = currentLang === "el" ? "Το σερί μου στο Nepsis" : "My streak on Nepsis";
+      const text = currentLang === "el"
+        ? "Το σερί μου στο Nepsis\n\nΔοκίμασέ το κι εσύ:\nhttps://nepsis-focus.github.io/nepsis-site/"
+        : "My streak on Nepsis\n\nTry it yourself:\nhttps://nepsis-focus.github.io/nepsis-site/";
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try { await navigator.share({ files: [file], title: "Nepsis", text: text }); return; } catch (e) { /* cancelled */ }
       }
