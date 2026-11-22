@@ -25,9 +25,9 @@ let currentLang = "el";
     $("menuBtn").classList.toggle("open", open);
     $("menuBtn").setAttribute("aria-expanded", open ? "true" : "false");
   }
-  $("menuBtn").addEventListener("click", function () { setMenu(!$("drawer").classList.contains("open")); });
-  $("closeBtn").addEventListener("click", function () { setMenu(false); });
-  $("scrim").addEventListener("click", function () { setMenu(false); });
+  const menuBtn = $("menuBtn"); if (menuBtn) menuBtn.addEventListener("click", function () { setMenu(!$("drawer").classList.contains("open")); });
+  const closeBtn = $("closeBtn"); if (closeBtn) closeBtn.addEventListener("click", function () { setMenu(false); });
+  const scrim = $("scrim"); if (scrim) scrim.addEventListener("click", function () { setMenu(false); });
   $("drawer").querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
 
   // ---------- calculator (illustrative) ----------
@@ -60,8 +60,8 @@ let currentLang = "el";
     { id: "JP", el: "Ιαπωνία", en: "Japan", lat: 36, lon: 138 },
     { id: "AU", el: "Αυστραλία", en: "Australia", lat: -25, lon: 133 }
   ];
-  const GLOBE_KEY = "nepsis-country";
   let globeApp = null;
+  const GLOBE_KEY = "nepsis-country";
 
   function selectedCountry() {
     const id = localStorage.getItem(GLOBE_KEY);
