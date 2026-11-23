@@ -53,6 +53,9 @@ jobs:
       - name: Run Coach guest and API contract regression tests
         run: node --test scripts/coach-regression.test.mjs scripts/focus-timer-custom-duration.test.mjs
 
+      - name: Check that PostHog is the only analytics platform
+        run: node --test scripts/analytics-posthog-only.test.mjs
+
   browser-smoke:
     needs: validate
     runs-on: ubuntu-latest
