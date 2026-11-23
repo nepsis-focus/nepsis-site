@@ -31,6 +31,11 @@ try {
       isMobile: viewport.isMobile,
       hasTouch: viewport.hasTouch
     });
+    // Treat the checks as a returning visitor who has already answered the analytics prompt.
+    // The first-visit consent panel covers the bottom of narrow screens and is not part of the guest-flow check.
+    await context.addInitScript(() => {
+      try { localStorage.setItem("nepsis-analytics-consent-v1", "denied"); } catch (error) {}
+    });
 
     for (const route of routes) {
       const url = base + route;
@@ -161,6 +166,29 @@ try {
           }
           if (JSON.stringify(stageTimes) !== JSON.stringify(expectedTimes)) {
             failures.push(viewport.name + ": unexpected practice stage times " + JSON.stringify(stageTimes));
+          }
+
+          // Functional smoke checks for the guest flow (no account needed).
+          const quizText = (await page.locator("#quiz").innerText()).trim();
+          if (quizText.length < 20) failures.push(`${viewport.name}: quiz rendered no content`);
+          const calendarText = (await page.locator("#calendar").innerText()).trim();
+          if (calendarText.length < 20) failures.push(`${viewport.name}: calendar rendered no content`);
+
+          // Mock the server timer so the check exercises the page wiring only and writes nothing to the database.
+          await page.route("**/functions/v1/focus-timer", (route) => route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify({ ok: true, active: true, remaining_seconds: 300, session_id: "00000000-0000-4000-8000-000000000001", token: "watchdog-mock", state: "running" })
+          }));
+          const firstTime = page.locator("#stageGrid .stage [data-time]").first();
+          const timeBefore = (await firstTime.textContent())?.trim();
+          try {
+            await page.locator("#stageGrid .stage [data-start]").first().click({ timeout: 5000 });
+            await page.waitForTimeout(2500);
+            const timeAfter = (await firstTime.textContent())?.trim();
+            if (timeAfter === timeBefore) failures.push(`${viewport.name}: focus timer did not count after Start (still ${timeAfter})`);
+          } catch (clickError) {
+            failures.push(`${viewport.name}: focus timer Start could not be used: ${clickError.message.split("\n")[0]}`);
           }
         }
 
