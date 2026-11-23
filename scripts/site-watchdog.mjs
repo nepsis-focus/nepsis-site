@@ -14,8 +14,14 @@ const viewports = [
   { name: "mobile-320", width: 320, height: 740, isMobile: true, hasTouch: true }
 ];
 const failures = [];
+const warnings = [];
 const results = [];
 const checkedLinks = new Set();
+const siteOrigin = new URL(base).origin;
+function isCrossOrigin(url) {
+  if (!url) return false;
+  try { return new URL(url).origin !== siteOrigin; } catch { return false; }
+}
 const browser = await chromium.launch({ headless: true });
 
 try {
@@ -34,7 +40,7 @@ try {
 
       page.on("pageerror", error => pageErrors.push(error.message));
       page.on("console", message => {
-        if (message.type() === "error") consoleErrors.push(message.text());
+        if (message.type() === "error") consoleErrors.push({ text: message.text(), url: message.location()?.url || "" });
       });
 
       let status = null;
@@ -117,10 +123,15 @@ try {
           failures.push(`${viewport.name} ${route}: header control is covered by another layer`);
         }
 
-                for (const message of pageErrors) failures.push(`${viewport.name} ${route}: JavaScript exception: ${message}`);
-        for (const message of consoleErrors) {
-          if (!/favicon|third.party|third-party/i.test(message)) {
-            failures.push(`${viewport.name} ${route}: console error: ${message}`);
+        for (const message of pageErrors) failures.push(`${viewport.name} ${route}: JavaScript exception: ${message}`);
+        for (const item of consoleErrors) {
+          if (/favicon/i.test(item.text)) continue;
+          // Resources served by another origin (CDNs, analytics) can be blocked or down without the
+          // Nepsis site being broken. They are reported as warnings; same-origin errors fail the check.
+          if (isCrossOrigin(item.url)) {
+            warnings.push(`${viewport.name} ${route}: external resource error: ${item.text} (${item.url})`);
+          } else {
+            failures.push(`${viewport.name} ${route}: console error: ${item.text}${item.url ? " (" + item.url + ")" : ""}`);
           }
         }
 
@@ -178,7 +189,8 @@ const report = {
   viewports: viewports.map(({ name, width, height }) => ({ name, width, height })),
   pagesChecked: results.length,
   pages: results,
-  failures
+  failures,
+  warnings
 };
 await writeFile("nepsis-watchdog-report.json", JSON.stringify(report, null, 2), "utf8");
 
@@ -186,8 +198,10 @@ console.log("NEPSIS RESPONSIVE HEALTH REPORT");
 console.log(JSON.stringify(report, null, 2));
 
 if (failures.length) {
-console.log("Site watchdog completed (failures treated as non-blocking for redesign branch).");
-process.exitCode = 0;
+  console.error("Site watchdog FAILED with " + failures.length + " problem(s):");
+  for (const failure of failures) console.error(" - " + failure);
+  process.exitCode = 1;
 } else {
   console.log("\nAll " + routes.length + " site pages passed desktop, 390px, and 320px browser health checks.");
 }
+if (warnings.length) console.warn(warnings.length + " external resource warning(s); not counted as failures.");
