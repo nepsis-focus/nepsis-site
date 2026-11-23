@@ -91,6 +91,7 @@ jobs:
         run: node scripts/google-oauth-browser.test.mjs
 
       - name: Test this pull request in a browser
+        if: always()
         env:
           SITE_URL: http://127.0.0.1:4173
         run: node scripts/site-watchdog.mjs

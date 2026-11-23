@@ -27,6 +27,15 @@ async function dismissConsent(context) {
   });
 }
 
+/** Screenshots are diagnostic artifacts. A capture failure is logged, not counted as a functional failure. */
+async function saveScreenshot(target, path, options = {}) {
+  try {
+    await target.screenshot({ path, timeout: 20000, ...options });
+  } catch (error) {
+    console.warn("Screenshot skipped (" + path + "): " + error.message.split("\n")[0]);
+  }
+}
+
 /** Narrow headers hide #accBtn; Sign in lives in the menu as #drawerAccBtn. */
 async function openAccountEntry(page) {
   const headerSignIn = page.locator("#accBtn, #accountBtn");
@@ -74,7 +83,7 @@ try {
   const phoneTarget = new URL((await phoneAuthorize).url());
   check(phoneTarget.searchParams.get("provider") === "google", "mobile authorize provider was " + phoneTarget.searchParams.get("provider"));
   check(phoneTarget.searchParams.get("redirect_to") === base + "/", "mobile redirect_to was " + phoneTarget.searchParams.get("redirect_to"));
-  await phone.screenshot({ path: artifacts + "/google-signin-mobile-account.png" });
+  await saveScreenshot(phone, artifacts + "/google-signin-mobile-account.png");
   await mobile.close();
 
   const instagram = await browser.newContext({
@@ -170,7 +179,7 @@ try {
   check(errorText.includes("access_denied"), "missing Supabase error code: " + errorText);
   check(errorText.includes("Redirect URL is not allowed"), "missing Supabase error_description: " + errorText);
   await errorPage.waitForFunction(() => !location.search.includes("error="), null, { timeout: 5000 });
-  await errorPage.screenshot({ path: artifacts + "/google-signin-return-error.png", timeout: 20000 });
+  await saveScreenshot(errorPage, artifacts + "/google-signin-return-error.png");
   await errorPage.close();
 
   const hashPage = await returned.newPage();
@@ -222,7 +231,7 @@ try {
   await signedPage.locator("#nepsis-auth-state").waitFor({ state: "attached", timeout: 5000 });
   const badge = (await signedPage.locator("#nepsis-auth-state").textContent()) || "";
   check(badge.includes("Συνδεδεμένος"), "signed-in badge missing: " + badge);
-  await signedPage.screenshot({ path: artifacts + "/google-signin-return-success.png", timeout: 20000 });
+  await saveScreenshot(signedPage, artifacts + "/google-signin-return-success.png");
   await signedIn.close();
 } catch (error) {
   failures.push(error && error.stack ? error.stack : String(error));
