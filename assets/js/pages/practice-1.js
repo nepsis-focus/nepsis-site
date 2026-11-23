@@ -32,6 +32,8 @@
 
   // ---------- calculator (illustrative) ----------
   function renderCalc() {
+    // The calculator is optional on some page layouts; without its inputs there is nothing to render.
+    if (!$("calcMin")) return;
     const min = Number($("calcMin").value);
     const hours = min * 30 / 60;
     $("calcBox").textContent = String(min);
@@ -40,7 +42,7 @@
       ? min + " λεπτά × 30 ημέρες ÷ 60 = " + hours.toString().replace(".", ",") + " ώρες"
       : min + " min × 30 days ÷ 60 = " + hours + " hours";
   }
-  $("calcMin").addEventListener("input", renderCalc);
+  if ($("calcMin")) $("calcMin").addEventListener("input", renderCalc);
 
   // ---------- interactive 3D Earth ----------
   const COUNTRIES = [
