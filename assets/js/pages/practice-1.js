@@ -928,6 +928,7 @@
     clearTimerCredentials(state);
     draw(state);
     markStage(state.min);
+    window.dispatchEvent(new CustomEvent("nepsis:session-completed", { detail: { minutes: state.min } }));
     playStageChime();
     showStageDoneToast(state.min);
     notifyDone(state);
