@@ -41,6 +41,9 @@ jobs:
             node --check "$file"
           done
 
+      - name: Check static links and asset paths
+        run: node --test scripts/static-link-audit.test.mjs
+
       - name: Run progress synchronization regression tests
         run: node --test scripts/progress-sync-regression.test.mjs
 
@@ -52,6 +55,9 @@ jobs:
 
       - name: Run Coach guest and API contract regression tests
         run: node --test scripts/coach-regression.test.mjs scripts/focus-timer-custom-duration.test.mjs
+
+      - name: Check that PostHog is the only analytics platform
+        run: node --test scripts/analytics-posthog-only.test.mjs
 
   browser-smoke:
     needs: validate
@@ -72,7 +78,15 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Serve the site
-        run: python3 -m http.server 4173 >/tmp/nepsis-preview.log 2>&1 &
+        run: |
+          python3 -m http.server 4173 >/tmp/nepsis-preview.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          echo "Local preview server did not start" >&2
+          cat /tmp/nepsis-preview.log >&2
+          exit 1
 
       - name: Test mobile Google sign-in in a browser
         env:
@@ -80,6 +94,7 @@ jobs:
         run: node scripts/google-oauth-browser.test.mjs
 
       - name: Test this pull request in a browser
+        if: always()
         env:
           SITE_URL: http://127.0.0.1:4173
         run: node scripts/site-watchdog.mjs

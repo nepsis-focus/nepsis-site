@@ -1,17 +1,12 @@
-process.on("uncaughtException", (err) => {
-  console.log("Uncaught exception swallowed for redesign branch:", err.message);
-  process.exit(0);
-});
-process.on("unhandledRejection", (err) => {
-  console.log("Unhandled rejection swallowed for redesign branch:", err && err.message);
-  process.exit(0);
-});
+// Uncaught exceptions and unhandled rejections are NOT swallowed: Node exits non-zero for them.
 
 import { chromium } from "playwright";
 import { mkdir, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 const base = (process.env.SITE_URL || "http://127.0.0.1:4173").replace(/\/$/, "");
-const artifacts = "/opt/cursor/artifacts";
+const artifacts = process.env.ARTIFACTS_DIR || join(tmpdir(), "nepsis-oauth-artifacts");
 const desktopUa = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 const iphoneUa = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1";
 const instagramUa = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 320.0.0.0.0";
@@ -30,6 +25,15 @@ async function dismissConsent(context) {
   await context.addInitScript(() => {
     try { localStorage.setItem("nepsis-analytics-consent-v1", "denied"); } catch (error) {}
   });
+}
+
+/** Screenshots are diagnostic artifacts. A capture failure is logged, not counted as a functional failure. */
+async function saveScreenshot(target, path, options = {}) {
+  try {
+    await target.screenshot({ path, timeout: 20000, ...options });
+  } catch (error) {
+    console.warn("Screenshot skipped (" + path + "): " + error.message.split("\n")[0]);
+  }
 }
 
 /** Narrow headers hide #accBtn; Sign in lives in the menu as #drawerAccBtn. */
@@ -71,9 +75,15 @@ try {
   await phone.goto(base + "/", { waitUntil: "domcontentloaded", timeout: 30000 });
   await settle(phone);
   check(await phone.evaluate(() => window.NepsisGoogleAuth.prefersFullPageRedirect() === true), "iPhone UA did not select the same-tab redirect");
-  console.log("Skipping full mobile homepage Google sign-in interaction (CI timing on redesigned page); other cases still run.");
-  await phone.screenshot({ path: artifacts + "/google-signin-mobile-account.png" });
-  // mobile authorize checks skipped for this redesign branch
+  await phone.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
+  const phoneAuthorize = phone.waitForRequest((request) => request.url().includes("/auth/v1/authorize"), { timeout: 15000 });
+  phoneAuthorize.catch(() => {});
+  await openAccountEntry(phone);
+  await phone.locator("#accGoogle").click({ timeout: 10000 });
+  const phoneTarget = new URL((await phoneAuthorize).url());
+  check(phoneTarget.searchParams.get("provider") === "google", "mobile authorize provider was " + phoneTarget.searchParams.get("provider"));
+  check(phoneTarget.searchParams.get("redirect_to") === base + "/", "mobile redirect_to was " + phoneTarget.searchParams.get("redirect_to"));
+  await saveScreenshot(phone, artifacts + "/google-signin-mobile-account.png");
   await mobile.close();
 
   const instagram = await browser.newContext({
@@ -93,11 +103,7 @@ try {
   await inApp.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
   await openAccountEntry(inApp);
   check(inApp.url().includes("practice.html"), "practice Sign in left the page before Google was chosen: " + inApp.url());
-  try {
-    await inApp.locator("#accGoogle").click({ timeout: 10000 });
-  } catch (e) {
-    console.log("Practice page Google click timed out, continuing");
-  }
+  await inApp.locator("#accGoogle").click({ timeout: 10000 });
   const practiceRequest = await practiceAuthorize;
   const practiceUrl = new URL(practiceRequest.url());
   check(practiceUrl.searchParams.get("redirect_to") === "http://127.0.0.1:4173/practice.html", "practice redirect_to was " + practiceUrl.searchParams.get("redirect_to"));
@@ -129,11 +135,7 @@ try {
   await settle(desk);
   check(await desk.evaluate(() => window.NepsisGoogleAuth.prefersFullPageRedirect() === false), "desktop UA unexpectedly used the mobile redirect");
   await openAccountEntry(desk);
-  try {
-    await desk.locator("#accGoogle").click({ timeout: 8000 });
-  } catch (e) {
-    console.log("accGoogle click timed out on page, continuing");
-  }
+  await desk.locator("#accGoogle").click({ timeout: 8000 });
   await desk.waitForFunction(() => window.__oauthOpens[0] && window.__oauthOpens[0].assigned, null, { timeout: 20000 });
   const popupTarget = new URL(await desk.evaluate(() => window.__oauthOpens[0].assigned));
   check(popupTarget.pathname.endsWith("/auth/v1/authorize"), "desktop popup did not open the Google authorize URL: " + popupTarget.href);
@@ -152,11 +154,7 @@ try {
   blockedAuthorize.catch(() => {});
   await blockedPage.route("https://emhukqvetlhjgadgskbl.supabase.co/**", (route) => route.abort());
   await openAccountEntry(blockedPage);
-  try {
-    await blockedPage.locator("#accGoogle").click({ timeout: 8000 });
-  } catch (e) {
-    console.log("accGoogle click timed out on page, continuing");
-  }
+  await blockedPage.locator("#accGoogle").click({ timeout: 8000 });
   const blockedRequest = await blockedAuthorize;
   const blockedTarget = new URL(blockedRequest.url());
   check(blockedTarget.searchParams.get("provider") === "google", "blocked popup did not fall back to Google authorize");
@@ -181,7 +179,7 @@ try {
   check(errorText.includes("access_denied"), "missing Supabase error code: " + errorText);
   check(errorText.includes("Redirect URL is not allowed"), "missing Supabase error_description: " + errorText);
   await errorPage.waitForFunction(() => !location.search.includes("error="), null, { timeout: 5000 });
-  await errorPage.screenshot({ path: artifacts + "/google-signin-return-error.png", timeout: 20000 });
+  await saveScreenshot(errorPage, artifacts + "/google-signin-return-error.png");
   await errorPage.close();
 
   const hashPage = await returned.newPage();
@@ -233,7 +231,7 @@ try {
   await signedPage.locator("#nepsis-auth-state").waitFor({ state: "attached", timeout: 5000 });
   const badge = (await signedPage.locator("#nepsis-auth-state").textContent()) || "";
   check(badge.includes("Συνδεδεμένος"), "signed-in badge missing: " + badge);
-  await signedPage.screenshot({ path: artifacts + "/google-signin-return-success.png", timeout: 20000 });
+  await saveScreenshot(signedPage, artifacts + "/google-signin-return-success.png");
   await signedIn.close();
 } catch (error) {
   failures.push(error && error.stack ? error.stack : String(error));
@@ -244,5 +242,9 @@ try {
 const report = { checkedAt: new Date().toISOString(), base, failures };
 await writeFile("nepsis-google-oauth-browser-report.json", JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
-console.log("Browser smoke test completed (failures treated as non-blocking for redesign branch).");
-process.exitCode = 0;
+if (failures.length) {
+  console.error("Google sign-in browser checks FAILED with " + failures.length + " problem(s).");
+  process.exitCode = 1;
+} else {
+  console.log("Google sign-in browser checks passed.");
+}
