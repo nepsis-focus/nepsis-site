@@ -1,6 +1,6 @@
 # Auth audit: Google-only sign-in
 
-Status: **audit only. No code was removed.** The email magic-link removal needs a decision from the owner first (see section 4).
+Status: **audit only. No code was removed.** Decision: **Option C** (keep both email forms). Options A and B are left for later, see section 4.
 
 ## 1. What the code does today
 
@@ -36,7 +36,16 @@ Options:
 - **B:** remove both forms now. Do this only after confirming in the Supabase dashboard that accounts with email identities can link Google with the same email, and after telling affected users.
 - **C:** keep both forms. Google stays the default and is shown first.
 
-Please choose A, B or C. I will not change Supabase dashboard settings, providers, redirect URLs or secrets without your explicit approval.
+### Decision: C (keep both forms)
+
+Chosen because it changes nothing that existing users depend on:
+
+- Option A as written does not work. A signed-out email-only user would not see the form, because the form would be hidden from everyone who is not already signed in, and the client cannot know that someone is email-only before they sign in.
+- Option B needs the Supabase identity-linking behaviour verified first, and users would need to be told.
+
+Revisit A or B only after: (1) `auth.identities` is checked in the Supabase dashboard for this project, (2) identity auto-linking by email is confirmed, and (3) the owner approves the user communication.
+
+I will not change Supabase dashboard settings, providers, redirect URLs or secrets without explicit approval.
 
 ## 5. Not verified in this pass
 
