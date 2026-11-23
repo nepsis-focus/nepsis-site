@@ -436,11 +436,18 @@ let currentLang = "el";
   renderGlobeMsg();
   // Lazy start globe after load so FCP/LCP are not blocked
   function startGlobeLazy() {
-    if (window.requestIdleCallback) {
-      requestIdleCallback(function () { initGlobe(); }, { timeout: 2000 });
-    } else {
-      setTimeout(initGlobe, 500);
+    function tryInit() {
+      if (window.THREE) {
+        if (window.requestIdleCallback) {
+          requestIdleCallback(function () { initGlobe(); }, { timeout: 2000 });
+        } else {
+          setTimeout(initGlobe, 100);
+        }
+      } else {
+        setTimeout(tryInit, 200);
+      }
     }
+    tryInit();
   }
   if (document.readyState === "complete") startGlobeLazy();
   else window.addEventListener("load", startGlobeLazy);
