@@ -4,160 +4,13 @@
   const CONSENT_KEY = "nepsis-analytics-consent-v1";
   const POSTHOG_PROJECT_TOKEN = "phc_wSd6sLNCj3UjGVo82Ti8rWCdt4CS7T755jm3TKus7VKt"; // Add the public phc_ project token for the staging project. Never use a personal API key.
   const POSTHOG_API_HOST = "https://eu.i.posthog.com";
-  const UMAMI_WEBSITE_ID = "93c6f050-e568-4aba-940d-8fa16c80cdcc";
   const host = window.location.hostname.toLowerCase();
   const isPreviewHost = /^deploy-preview-\d+--nepsis-focus\.netlify\.app$/.test(host);
   // Primary = github.io; Cloudflare Workers is a live mirror of the same site.
   const isProductionHost = (window.NepsisSite && typeof window.NepsisSite.isProductionHost === "function")
     ? window.NepsisSite.isProductionHost(host)
     : (host === "nepsis-focus.github.io" || host === "nepsis-site.nepsis-corp.workers.dev");
-  let umamiScript = null;
-
-  // ===== ΝΕΟ: Telemetry constants =====
-  const SUPABASE_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
-  const ANON_ID_KEY = "nepsis-anon-id";
-  const SESSION_ID_KEY = "nepsis-session-id";
-
-  // Κατάσταση tracking (μόνο στη μνήμη)
-  const telemetryState = {
-    startTime: Date.now(), maxScroll: 0, lastSection: "", lastClick: "",
-    sessionId: null, anonId: null, userId: null, accessToken: null,
-    identityLinkPending: false, trackingStarted: false
-  };
-
-  function getOrCreateId(key, storage) {
-    try {
-      let id = storage.getItem(key);
-      if (!id) {
-        id = crypto.randomUUID();
-        storage.setItem(key, id);
-      }
-      return id;
-    } catch (_) {
-      return "fallback-" + Math.random().toString(36).slice(2);
-    }
-  }
-
-  function initTelemetryIds() {
-    telemetryState.anonId = getOrCreateId(ANON_ID_KEY, localStorage);
-    telemetryState.sessionId = getOrCreateId(SESSION_ID_KEY, sessionStorage);
-  }
-
-  function updateScrollDepth() {
-    const scrolled = window.scrollY + window.innerHeight;
-    const total = Math.max(document.documentElement.scrollHeight, 1);
-    const percent = Math.min(100, Math.round((scrolled / total) * 100));
-    if (percent > telemetryState.maxScroll) telemetryState.maxScroll = percent;
-  }
-
-  function updateLastSection() {
-    const sections = document.querySelectorAll("section[id], main > section, [data-section]");
-    let best = "";
-    let bestRatio = 0;
-    sections.forEach(sec => {
-      const rect = sec.getBoundingClientRect();
-      const visible = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
-      const ratio = visible / Math.max(rect.height, 1);
-      if (ratio > bestRatio && ratio > 0.3) {
-        bestRatio = ratio;
-        best = sec.id || sec.getAttribute("data-section") || sec.tagName.toLowerCase();
-      }
-    });
-    if (best) telemetryState.lastSection = best;
-  }
-
-  function updateLastClick(target) {
-    if (!target || typeof target.closest !== "function") return;
-    const el = target.closest("a, button, [data-telemetry-label], [data-whop-upsell]") || target;
-    const info = el.id || el.getAttribute("data-telemetry-label") || el.getAttribute("data-whop-upsell") || el.tagName;
-    telemetryState.lastClick = String(info || "control").replace(/[^a-zA-Z0-9_.:-]/g, "").slice(0, 80);
-  }
-
-  function buildPayload(eventType) {
-    const timeOnPage = Math.round((Date.now() - telemetryState.startTime) / 1000);
-    return {
-      anon_id: telemetryState.anonId,
-      session_id: telemetryState.sessionId,
-      event_type: eventType,
-      page: location.pathname,
-      section: telemetryState.lastSection || pageSection(),
-      scroll_depth: telemetryState.maxScroll,
-      time_on_page: timeOnPage,
-      last_click: telemetryState.lastClick,
-      properties: { host: host }
-    };
-  }
-
-  function flushIdentityLink() {
-    if (!telemetryState.identityLinkPending || !telemetryState.userId || !telemetryState.anonId || readConsent() !== "granted") return;
-    telemetryState.identityLinkPending = false;
-    sendTelemetry("identity_linked");
-  }
-
-  function setIdentity(userId, accessToken) {
-    const nextUserId = typeof userId === "string" ? userId.trim() : "";
-    if (!nextUserId) return clearIdentity();
-    if (telemetryState.userId !== nextUserId) telemetryState.identityLinkPending = true;
-    telemetryState.userId = nextUserId;
-    if (typeof accessToken === "string" && accessToken) telemetryState.accessToken = accessToken;
-    flushIdentityLink();
-    return true;
-  }
-
-  function clearIdentity() {
-    telemetryState.userId = null;
-    telemetryState.accessToken = null;
-    telemetryState.identityLinkPending = false;
-    return true;
-  }
-
-  function sendTelemetry(eventType, useKeepalive = false) {
-    if (readConsent() !== "granted" || !telemetryState.anonId) return;
-    const payload = buildPayload(eventType);
-    if (telemetryState.userId) payload.user_id = telemetryState.userId;
-    const body = JSON.stringify(payload);
-    if (body.length > 60000) return;
-    const headers = {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: "Bearer " + (telemetryState.accessToken || SUPABASE_ANON_KEY),
-      "Content-Type": "application/json",
-      Prefer: "return=minimal"
-    };
-    try { fetch(SUPABASE_URL + "/rest/v1/site_telemetry", { method: "POST", headers, body, keepalive: useKeepalive }).catch(() => {}); }
-    catch (_) {}
-  }
-
-  function setupTelemetryTracking() {
-    if (telemetryState.trackingStarted) return;
-    telemetryState.trackingStarted = true;
-    initTelemetryIds();
-    updateScrollDepth();
-    updateLastSection();
-    flushIdentityLink();
-    let scrollTimer;
-    window.addEventListener("scroll", () => {
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => { updateScrollDepth(); updateLastSection(); }, 150);
-    }, { passive: true });
-    document.addEventListener("click", e => updateLastClick(e.target), true);
-    let exitSentForVisibilityCycle = false;
-    const sendExit = () => {
-      if (exitSentForVisibilityCycle) return;
-      exitSentForVisibilityCycle = true;
-      clearTimeout(scrollTimer);
-      updateScrollDepth();
-      updateLastSection();
-      sendTelemetry("exit", true);
-    };
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "hidden") sendExit();
-      else exitSentForVisibilityCycle = false;
-    });
-    window.addEventListener("pagehide", sendExit);
-    sendTelemetry("page_enter");
-  }
-
+  let posthogStarted = false;
 
   function readConsent() {
     try { const value=localStorage.getItem(CONSENT_KEY); return value==="granted"||value==="denied"?value:null; }
@@ -182,21 +35,14 @@
     }
     return safe;
   }
-  function loadUmami() {
-    if(umamiScript||document.querySelector('script[data-nepsis-provider="umami"]')) return;
-    umamiScript=document.createElement("script");
-    umamiScript.defer=true;
-    umamiScript.src="https://cloud.umami.is/script.js";
-    umamiScript.dataset.websiteId=UMAMI_WEBSITE_ID;
-    umamiScript.dataset.nepsisProvider="umami";
-    document.head.appendChild(umamiScript);
-  }
   function installPostHogStub() {
     if(window.posthog&&window.posthog.__SV) return;
     !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],Object.defineProperty(u,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e}}),Object.defineProperty(u.people,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(){return u.toString(1)+".people (stub)"}}),o="capture opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing identify reset register register_once unregister get_distinct_id get_session_id get_session_replay_url startSessionRecording stopSessionRecording sessionRecordingStarted on setPersonProperties setPersonPropertiesForFlags resetPersonPropertiesForFlags group resetGroups getGroups debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
   }
   function loadPostHog() {
+    if(posthogStarted) return true;
     if(!POSTHOG_PROJECT_TOKEN||!POSTHOG_PROJECT_TOKEN.startsWith("phc_")) return false;
+    posthogStarted=true;
     installPostHogStub();
     window.posthog.init(POSTHOG_PROJECT_TOKEN,{
       api_host:POSTHOG_API_HOST,defaults:"2026-08-30",capture_pageview:false,autocapture:false,
@@ -205,34 +51,33 @@
     window.posthog.opt_in_capturing({captureEventName:false});
     return true;
   }
+  // Production PostHog is OFF until a separate approval (see ANALYTICS-STAGING.md).
+  const POSTHOG_PRODUCTION_ENABLED = false;
+  function canLoadPostHog() {
+    return isPreviewHost || (isProductionHost && POSTHOG_PRODUCTION_ENABLED);
+  }
   function startAnalytics() {
-    if(readConsent()!=="granted") return;
-    if(isPreviewHost) { if(loadPostHog()) window.nepsisAnalytics.track("page_view",{section:pageSection()}); }
-    else if(isProductionHost) loadUmami();
-    // Νέο: ξεκίνα και το telemetry
-    setupTelemetryTracking();
+    if(readConsent()!=="granted"||posthogStarted||!canLoadPostHog()) return;
+    if(loadPostHog()) window.nepsisAnalytics.track("page_view",{section:pageSection()});
   }
 
   window.nepsisAnalytics=Object.freeze({
     events:Object.freeze([...EVENTS]),
-    setIdentity(userId, accessToken) { return setIdentity(userId, accessToken); },
-    clearIdentity() { return clearIdentity(); },
+    // Account identity is intentionally not sent to analytics. Kept as no-ops so existing callers keep working.
+    setIdentity() { return true; },
+    clearIdentity() { return true; },
     track(name,properties={}) {
       if(!EVENTS.has(name)) return false;
       const safe=safeProperties(properties);
       window.dispatchEvent(new CustomEvent("nepsis:analytics",{detail:{name,properties:safe}}));
-      if(readConsent()==="granted"&&isPreviewHost&&window.posthog&&typeof window.posthog.capture==="function") window.posthog.capture(name,safe);
-      // Νέο: στείλε και στο Supabase αν είναι βασικό event
-      if (readConsent() === "granted" && (name === "page_view" || name === "session_completed")) {
-        sendTelemetry(name);
-      }
+      if(readConsent()==="granted"&&posthogStarted&&window.posthog&&typeof window.posthog.capture==="function") window.posthog.capture(name,safe);
       return true;
     }
   });
 
   const copy={
-    el:{title:"Προαιρετικά στατιστικά χρήσης",body:"Με τη συγκατάθεσή σου, καταγράφουμε ένα τυχαίο αναγνωριστικό επισκέπτη, τις σελίδες, το μέγιστο βάθος κύλισης, την τελευταία ενότητα και το τελευταίο κουμπί. Αν συνδεθείς, συνδέουμε αυτά τα στατιστικά με το user ID του λογαριασμού σου στο Supabase. Δεν στέλνουμε email, περιεχόμενο ημερολογίου ή κείμενο αναζήτησης. Η καταγραφή συνεδριών είναι απενεργοποιημένη· μπορείς να αλλάξεις την επιλογή σου οποτεδήποτε.",accept:"Αποδοχή",reject:"Απόρριψη",manage:"Ρυθμίσεις analytics",privacy:"Πολιτική απορρήτου"},
-    en:{title:"Optional usage analytics",body:"With your consent, we record a random visitor ID, pages, maximum scroll depth, the last section and the last button. If you sign in, we link these analytics to your Supabase account user ID. We do not send your email, diary content or search text. Session recording is disabled; you can change your choice at any time.",accept:"Allow analytics",reject:"Reject",manage:"Analytics settings",privacy:"Privacy policy"}
+    el:{title:"Προαιρετικά στατιστικά χρήσης",body:"Με τη συγκατάθεσή σου, στέλνουμε ανώνυμα συμβάντα χρήσης στο PostHog (προβολή σελίδας, χρονόμετρο, συνεδρίες). Δεν στέλνουμε email, περιεχόμενο ημερολογίου ή κείμενο αναζήτησης και δεν συνδέουμε τα στατιστικά με τον λογαριασμό σου. Η καταγραφή συνεδριών είναι απενεργοποιημένη· μπορείς να αλλάξεις την επιλογή σου οποτεδήποτε.",accept:"Αποδοχή",reject:"Απόρριψη",manage:"Ρυθμίσεις analytics",privacy:"Πολιτική απορρήτου"},
+    en:{title:"Optional usage analytics",body:"With your consent, we send anonymous usage events to PostHog (page views, timer, sessions). We do not send your email, diary content or search text, and analytics are not linked to your account. Session recording is disabled; you can change your choice at any time.",accept:"Allow analytics",reject:"Reject",manage:"Analytics settings",privacy:"Privacy policy"}
   };
   function language() {
     try { if(localStorage.getItem("nepsis-lang")==="en") return "en"; } catch (_) {}
@@ -338,7 +183,6 @@
     }
     if(value==="denied") {
       if(window.posthog&&typeof window.posthog.opt_out_capturing==="function") window.posthog.opt_out_capturing();
-      const loadedUmami=document.querySelector('script[data-nepsis-provider="umami"]');if(loadedUmami)loadedUmami.remove();
       hidePanel();if(previous==="granted")window.location.reload();return;
     }
     hidePanel();startAnalytics();
