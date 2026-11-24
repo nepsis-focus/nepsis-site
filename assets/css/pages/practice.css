@@ -1544,3 +1544,24 @@ html body.practice-page #globeCanvas {
     opacity: .35 !important;
   }
 }
+
+/* Custom focus stage — matches Nepsis cards and pill controls */
+.custom-stage-builder{display:grid;gap:12px;margin:22px 0;padding:24px}
+.custom-stage-builder h3{font-size:1.5rem;font-weight:900}
+.custom-stage-builder>p{color:var(--muted);margin:0}
+.custom-stage-builder>label{font-weight:800;margin-top:4px}
+.custom-stage-input-row{display:flex;align-items:center;gap:12px}
+.custom-stage-input-row input{width:min(180px,55vw);padding:12px 15px;border:1.5px solid var(--border);border-radius:14px;font:inherit;font-weight:900;font-size:1.2rem;color:var(--fg);background:#fff}
+.custom-stage-input-row span{font-weight:800;color:var(--muted)}
+.custom-stage-patterns{display:flex;flex-wrap:wrap;gap:8px}
+.custom-stage-patterns .pill{margin:0;border:1px solid var(--border);background:#fff;color:var(--fg);cursor:pointer}
+.custom-stage-patterns .pill.active{background:var(--sun);border-color:var(--orange)}
+.custom-stage-plan{padding:14px 16px;border-radius:16px;background:rgba(255,248,238,.8);border:1px solid var(--border)}
+.custom-stage-plan p{margin:6px 0 0;font-weight:900;line-height:1.6}
+.custom-session-overlay{position:fixed;inset:0;z-index:10050;background:rgba(45,27,19,.58);display:grid;place-items:center;padding:20px}
+.custom-session-overlay[hidden]{display:none}
+.custom-session-card{width:min(560px,100%);padding:clamp(24px,5vw,42px);border-radius:26px;background:var(--card,#fff);border:1px solid var(--border);box-shadow:0 24px 80px rgba(40,20,10,.24);display:grid;gap:16px;text-align:center}
+.custom-session-card h2{font-size:clamp(1.8rem,5vw,2.5rem);font-weight:900}
+.custom-session-card p{color:var(--muted);line-height:1.6}
+.custom-break-count{font-size:clamp(2.5rem,10vw,4rem);font-variant-numeric:tabular-nums}
+.custom-session-card .btn{justify-content:center}
