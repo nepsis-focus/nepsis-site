@@ -11,6 +11,7 @@
   function isClearlyOffTopic(value) { return OFF_TOPIC.test(String(value || "")); }
   function isValidLibraryId(value) { return LIBRARY_IDS.indexOf(String(value || "")) !== -1; }
   function isWithinInputLimit(value) { return Array.from(String(value || "")).length <= 1000; }
+  function isWithinInputLimit(value) { return Array.from(String(value || "")).length <= 1000; }
   function buildBlocks(totalMinutes, blockMinutes, breakMinutes) {
     const total = Number(totalMinutes), block = Number(blockMinutes), rest = Number(breakMinutes);
     if (!Number.isInteger(total) || total < 5 || total > 180) throw new RangeError("invalid_total_minutes");
