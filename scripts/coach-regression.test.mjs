@@ -4,13 +4,13 @@ import { readFile } from "node:fs/promises";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
-const [coach, html, core, edge, legacyEdge, timer, migration, library, reset, sw, home, scenarios, practice, customStage, customReset, practiceJs, libraryJs] = await Promise.all([
+const [coach, html, core, edge, legacyEdge, timer, migration, library, reset, sw, home, scenarios, practice, customStage, customReset, practiceJs, libraryJs, googleOauth] = await Promise.all([
   read("assets/js/pages/coach.js"), read("coach.html"), read("assets/js/coach-core.js"),
   read("supabase/functions/ai-study-coach-v2/index.ts"), read("supabase/functions/ai-study-coach/index.ts"), read("supabase/functions/focus-timer/index.ts"),
   read("supabase/migrations/20261124130000_coach_ip_rate_limit_and_custom_stage.sql"),
   read("library.html"), read("reset.html"), read("sw.js"), read("index.html"), read("tests/coach-scenarios.md"),
   read("practice.html"), read("assets/js/pages/custom-stage.js"), read("assets/js/pages/custom-reset.js"),
-  read("assets/js/pages/practice-1.js"), read("assets/js/pages/library-1.js")
+  read("assets/js/pages/practice-1.js"), read("assets/js/pages/library-1.js"), read("assets/js/google-oauth.js")
 ]);
 
 test("Coach is enabled and reachable from the existing Nepsis navigation", () => {
@@ -36,7 +36,7 @@ test("the page identifies AI and requires consent before sending answers", () =>
 });
 
 test("client code contains no Gemini provider key or endpoint", () => {
-  const clientFiles = [coach, html, core, library, reset, practice, customStage, customReset, practiceJs, libraryJs];
+  const clientFiles = [coach, html, core, library, reset, practice, customStage, customReset, practiceJs, libraryJs, googleOauth, sw];
   for (const source of clientFiles) {
     assert.ok(!source.includes("GEMINI_API_KEY"));
     assert.ok(!source.includes("AIza"));
