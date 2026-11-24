@@ -265,7 +265,7 @@ if ("serviceWorker" in navigator) {
     <div class="wrap">
       <div class="head">
         <span class="eyebrow" data-el="Στάδια" data-en="Stages">Στάδια</span>
-        <h2 data-el="Πέντε στάδια, με τον δικό σου ρυθμό." data-en="Five stages, at your own pace.">Πέντε στάδια, με τον δικό σου ρυθμό.</h2>
+        <h2 data-el="Πέντε στάδια και ένα δικό σου." data-en="Five stages, plus one of your own.">Πέντε στάδια, με τον δικό σου ρυθμό.</h2>
         <p data-el="Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη." data-en="Start with 5 minutes and move up when you feel ready.">Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη.</p>
       </div>
       <div class="daily-challenge" id="challenge">
@@ -291,6 +291,9 @@ if ("serviceWorker" in navigator) {
         <button type="button" class="btn btn-primary" id="inviteStart" data-el="▷ Ξεκίνα τα 5 λεπτά" data-en="▷ Start the 5 minutes">▷ Ξεκίνα τα 5 λεπτά</button>
       </div>
       
+      
+
+      <div class="stages" id="stageGrid"></div>
       <section class="card custom-stage-builder" id="customStage">
         <span class="eyebrow" data-el="Προσαρμοσμένο στάδιο" data-en="Custom stage">Προσαρμοσμένο στάδιο</span>
         <h3 data-el="Το δικό μου" data-en="My own">Το δικό μου</h3>
@@ -307,8 +310,6 @@ if ("serviceWorker" in navigator) {
         </div>
         <button type="button" id="customStart" class="btn btn-primary" data-el="Ξεκίνα το δικό μου στάδιο" data-en="Start my own stage">Ξεκίνα το δικό μου στάδιο</button>
       </section>
-
-      <div class="stages" id="stageGrid"></div>
       <p id="liveFocusCount" class="live-focus-count" aria-live="polite"></p>
       <div class="card progress-card" id="progress" style="margin-bottom:22px"></div>
       <div class="card progress-card" id="calendar" style="margin-bottom:26px"></div>
