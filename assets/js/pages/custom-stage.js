@@ -7,6 +7,7 @@
   const customMode = params.get("custom") === "1";
   const el = (elText, enText) => document.documentElement.lang === "en" ? enText : elText;
   function initBuilder() {
+    if (customMode && $("customStage")) $("customStage").hidden = true;
     const minutes = $("customMinutes"), patternButtons = Array.from(document.querySelectorAll("[data-custom-pattern]"));
     const preview = $("customPlanPreview"), start = $("customStart");
     if (!minutes || !preview || !start) return;
