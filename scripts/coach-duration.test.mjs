@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import core from "../assets/js/coach-core.js";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const core = require("../assets/js/coach-core.js");
 
 const [practiceHtml, coachJs, customJs, practiceJs] = await Promise.all([
   readFile(new URL("../practice.html", import.meta.url), "utf8"),
