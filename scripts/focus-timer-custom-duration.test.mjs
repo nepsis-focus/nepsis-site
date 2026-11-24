@@ -2,8 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [migration, edge, practice, bridge] = await Promise.all([
+const [migration, customMigration, edge, practice, bridge] = await Promise.all([
   readFile(new URL("../supabase/migrations/20261119195000_support_custom_focus_timer_durations.sql", import.meta.url), "utf8"),
+  readFile(new URL("../supabase/migrations/20261124130000_coach_ip_rate_limit_and_custom_stage.sql", import.meta.url), "utf8"),
   readFile(new URL("../supabase/functions/focus-timer/index.ts", import.meta.url), "utf8"),
   readFile(new URL("../assets/js/pages/practice-1.js", import.meta.url), "utf8"),
   readFile(new URL("../assets/js/pages/coach-timer-bridge.js", import.meta.url), "utf8")
