@@ -243,8 +243,8 @@ Deno.serve(async (req: Request) => {
     const breakMinutes = blockMinutes === 50 ? 10 : 5;
     const libraryId = LIBRARY_IDS.includes(String(generated.libraryId)) ? String(generated.libraryId) : null;
     const researchReason = language === "en"
-      ? "A 2025 study with 253 university students linked frequent micro-breaks with more consistent attention and performance across a class than traditional longer break schedules."
-      : "Μελέτη του 2025 σε 253 φοιτητές συνέδεσε τα συχνά μικρά διαλείμματα με πιο σταθερή προσοχή και απόδοση κατά τη διάρκεια του μαθήματος, σε σύγκριση με τα παραδοσιακά μεγαλύτερα διαλείμματα.";
+      ? "A 2025 classroom study of 253 undergraduates found more consistent quiz performance with frequent 90-second micro-breaks than with one 10-minute break, suggesting that shorter, frequent pauses may help sustain attention."
+      : "Μελέτη του 2025 σε 253 προπτυχιακούς φοιτητές βρήκε πιο σταθερή επίδοση στα quiz με συχνά διαλείμματα 90 δευτερολέπτων απ’ ό,τι με ένα διάλειμμα 10 λεπτών, ένδειξη ότι οι σύντομες, συχνές παύσεις μπορεί να βοηθούν στη διατήρηση της προσοχής.";
     const adjustOffer = language === "en" ? "You can ask me to adjust the plan before you start." : "Μπορείς να μου ζητήσεις να προσαρμόσω το πλάνο πριν ξεκινήσεις.";
     return reply(200, {
       offTopic: false,
