@@ -18,6 +18,7 @@
     <div class="coach-header-inner">
       <a class="coach-brand logo" href="index.html"><span class="dot" aria-hidden="true"></span>Nepsis</a>
       <div class="coach-controls">
+        <span id="coachAccountStatus" class="coach-account-status" aria-live="polite"></span>
         <div class="coach-lang" role="group" aria-label="Language">
           <button type="button" data-set-lang="el" aria-pressed="true">ΕΛ</button>
           <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
@@ -87,6 +88,7 @@
           </div>
         </form>
         <p id="coachStatus" class="coach-status" role="status" aria-live="polite"></p>
+        <p id="coachUsage" class="coach-privacy" aria-live="polite"></p>
       </section>
 
       <section id="coachPlan" class="coach-card coach-result coach-plan-card" hidden aria-live="polite">
@@ -123,6 +125,12 @@
         <a href="https://www.klimaka.org.gr/kentro-imeras-gia-tin-prolipsi-tis-autoktonias/" target="_blank" rel="noopener noreferrer" data-el="Πληροφορίες για τη γραμμή 1018" data-en="Information about the 1018 line">Πληροφορίες για τη γραμμή 1018</a>
       </section>
 
+      <section id="coachUpsell" class="coach-card coach-upsell" hidden>
+        <div class="coach-kicker" data-el="Προαιρετικό" data-en="Optional">Προαιρετικό</div>
+        <h2 data-el="Το μηνιαίο όριο AI ολοκληρώθηκε" data-en="Your monthly AI limit has been reached">Το μηνιαίο όριο AI ολοκληρώθηκε</h2>
+        <p data-el="Τα πλάνα και το χρονόμετρο παραμένουν διαθέσιμα. Το Nepsis Premium περιλαμβάνει περισσότερα πλάνα AI." data-en="Plans and the timer remain available. Nepsis Premium includes more AI plans.">Τα πλάνα και το χρονόμετρο παραμένουν διαθέσιμα. Το Nepsis Premium περιλαμβάνει περισσότερα πλάνα AI.</p>
+        <a class="coach-btn coach-link" href="https://whop.com/nepsis-focus" target="_blank" rel="noopener noreferrer" data-el="Δες το Nepsis Premium" data-en="See Nepsis Premium">Δες το Nepsis Premium</a>
+      </section>
       <section id="coachOffTopic" class="coach-card" hidden>
         <p id="coachOffTopicText"></p>
         <button type="button" id="coachRestart" class="coach-btn" data-el="Ξεκίνα ξανά" data-en="Start again">Ξεκίνα ξανά</button>
@@ -144,6 +152,7 @@
   </main>
 
   <script src="assets/js/coach-config.js"></script>
+  <script src="assets/js/google-oauth.js"></script>
   <script src="assets/js/coach-core.js"></script>
   <script src="assets/js/pages/coach.js"></script>
   <script src="assets/js/pages/coach-nav.js"></script>
