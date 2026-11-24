@@ -112,6 +112,15 @@ Deno.serve(async (req: Request) => {
       console.error("Timer RPC failed:", error.message);
       return reply({ ok: false, error: "timer_service_error" }, 500, origin);
     }
+    if (action === "start" && body.stage_type === "custom") {
+      const sessionId = data && typeof data === "object" ? (data as Record<string, unknown>).session_id : null;
+      if (typeof sessionId !== "string") return reply({ ok: false, error: "custom_stage_mark_failed" }, 500, origin);
+      const marked = await admin.rpc("nepsis_timer_mark_custom", { p_session_id: sessionId, p_token_hash: tokenHash });
+      if (marked.error || marked.data !== true) {
+        console.error("Custom timer mark failed:", marked.error?.message || "not_marked");
+        return reply({ ok: false, error: "custom_stage_mark_failed" }, 500, origin);
+      }
+    }
     return reply(data as Record<string, unknown>, 200, origin);
   } catch (error) {
     console.error("Timer request failed:", error);
