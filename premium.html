@@ -44,6 +44,13 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+<style>
+body{background-color:#fbfaf7;background-image:radial-gradient(rgba(92,72,57,.14) .8px,transparent .8px);background-size:24px 24px}
+.nepsis-feature-list{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:12px}
+.nepsis-feature-list li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 15px;border:1px solid var(--border,#e7dfd6);border-radius:16px;background:var(--card,#fff)}
+.nepsis-status{flex:0 0 auto;padding:5px 11px;border:1px solid #e7dfd6;border-radius:999px;background:#f6eee7;color:#8e461f;font-size:.78rem;font-weight:800}
+.nepsis-feature-note{margin:14px 0 0;color:var(--muted);font-size:.9rem}
+</style>
 </head>
 <body>
 <header class="top">
@@ -83,22 +90,32 @@ if ("serviceWorker" in navigator) {
     <div class="content-grid" style="grid-template-columns:1fr">
       <article class="info-card">
         <h3 data-el="Nepsis+ στο Whop" data-en="Nepsis+ on Whop">Nepsis+ στο Whop</h3>
-        <ul style="margin:16px 0 0;padding-left:18px;display:grid;gap:10px;color:var(--muted)">
-          <li data-el="15+ Εκτυπώσιμα Workbooks & Blueprints (PDF)" data-en="15+ Printable Workbooks & Blueprints (PDF)">15+ Εκτυπώσιμα Workbooks & Blueprints (PDF)</li>
-          <li data-el='Οδηγός «Μικρά βήματα συγκέντρωσης» (μαθήματα βήμα-βήμα)' data-en='"Small Steps of Focus" guide (step-by-step courses)'>Οδηγός «Μικρά βήματα συγκέντρωσης» (μαθήματα βήμα-βήμα)</li>
-          <li data-el="Silent Co-Working & εβδομαδιαίος ρυθμός" data-en="Silent Co-Working & weekly rhythm">Silent Co-Working & εβδομαδιαίος ρυθμός</li>
-          <li data-el="Πακέτο ήχων χωρίς σύνδεση" data-en="Offline Ambient Audio Pack">Πακέτο ήχων χωρίς σύνδεση</li>
-          <li data-el="AI Coach: 50 πλάνα AI τον μήνα (αντί για 5 δωρεάν)" data-en="AI Coach: 50 AI plans a month (instead of 5 free)">AI Coach: 50 πλάνα AI τον μήνα (αντί για 5 δωρεάν)</li>
-        </ul>
+        <ul class="nepsis-feature-list">
+  <li><span data-el="Μαθήματα" data-en="Courses">Μαθήματα</span><span class="nepsis-status" data-el="Σύντομα" data-en="Coming soon">Σύντομα</span></li>
+  <li><span data-el="15+ PDF τετράδια εργασίας" data-en="15+ PDF workbooks">15+ PDF τετράδια εργασίας</span><span class="nepsis-status" data-el="Σύντομα" data-en="Coming soon">Σύντομα</span></li>
+  <li><span data-el="Εβδομαδιαίο forum" data-en="Weekly forum">Εβδομαδιαίο forum</span><span class="nepsis-status" data-el="Σύντομα" data-en="Coming soon">Σύντομα</span></li>
+  <li><span data-el="Συνεδρίες co-working" data-en="Co-working sessions">Συνεδρίες co-working</span><span class="nepsis-status" data-el="Σύντομα" data-en="Coming soon">Σύντομα</span></li>
+</ul>
+<p class="nepsis-feature-note" data-el="Ορισμένα στοιχεία είναι σε ανάπτυξη." data-en="Some features are in development.">Ορισμένα στοιχεία είναι σε ανάπτυξη.</p>
         <div style="margin-top:24px;display:grid;gap:12px;max-width:420px">
           <a class="btn btn-primary" href="https://whop.com/nepsis-focus" target="_blank" rel="noopener noreferrer" style="text-decoration:none;text-align:center" data-el="Μηνιαίο · €3,99/μήνα · Δες στο Whop →" data-en="Monthly · €3.99/month · View on Whop →">Μηνιαίο · €3,99/μήνα · Δες στο Whop →</a>
           <a class="btn btn-ghost" href="https://whop.com/nepsis-focus" target="_blank" rel="noopener noreferrer" style="text-decoration:none;text-align:center" data-el="Ετήσιο · €29,99/έτος (περίπου 37% λιγότερα) · Δες στο Whop →" data-en="Annual · €29.99/year (about 37% less) · View on Whop →">Ετήσιο · €29,99/έτος (περίπου 37% λιγότερα) · Δες στο Whop →</a>
         </div>
         <p class="premium-launch-offer" style="margin-top:16px;font-size:.92rem;color:var(--muted)" data-el="Προσφορά εκκίνησης: με τον κωδικό LAUNCH100 ο πρώτος χρόνος κοστίζει €24,99 για τους πρώτους 100 ετήσιους συνδρομητές." data-en="Launch offer: with code LAUNCH100 the first year is €24.99 for the first 100 annual subscribers.">Προσφορά εκκίνησης: με τον κωδικό LAUNCH100 ο πρώτος χρόνος κοστίζει €24,99 για τους πρώτους 100 ετήσιους συνδρομητές.</p>
-        <p style="margin-top:12px;font-size:.85rem;color:var(--muted)" data-el="Ακύρωση οποιαδήποτε στιγμή. Η βασική εξάσκηση μένει δωρεάν." data-en="Cancel anytime. Core practice stays free.">Ακύρωση οποιαδήποτε στιγμή. Η βασική εξάσκηση μένει δωρεάν.</p>
+        <p style="margin-top:12px;font-size:.85rem;color:var(--muted)" data-el="Μπορείς να ακυρώσεις όποτε θέλεις." data-en="You can cancel whenever you want.">Μπορείς να ακυρώσεις όποτε θέλεις.</p>
       </article>
     </div>
   </section>
+
+<section class="content-section" aria-labelledby="communityWaitlistTitle">
+  <article class="info-card">
+    <span class="eyebrow" data-el="ΣΥΝΤΟΜΑ" data-en="COMING SOON">ΣΥΝΤΟΜΑ</span>
+    <h2 id="communityWaitlistTitle" data-el="Σύντομα: κοινότητα ανά μάθημα" data-en="Coming soon: a community for each course">Σύντομα: κοινότητα ανά μάθημα</h2>
+    <p data-el="Σχεδιάζουμε έναν ξεχωριστό χώρο συζήτησης για κάθε μάθημα, με ανταλλαγή ιδεών και υποστήριξη μεταξύ συμμετεχόντων. Η κοινότητα δεν είναι ακόμη διαθέσιμη." data-en="We are planning a dedicated discussion space for each course, for sharing ideas and supporting one another. The community is not available yet.">Σχεδιάζουμε έναν ξεχωριστό χώρο συζήτησης για κάθε μάθημα, με ανταλλαγή ιδεών και υποστήριξη μεταξύ συμμετεχόντων. Η κοινότητα δεν είναι ακόμη διαθέσιμη.</p>
+    <p><a class="btn btn-primary" href="mailto:nepsis.corp@gmail.com?subject=Ενδιαφέρομαι%20για%20την%20κοινότητα%20Nepsis" data-el="Ενδιαφέρομαι για τη λίστα αναμονής →" data-en="Join the waitlist →">Ενδιαφέρομαι για τη λίστα αναμονής →</a></p>
+    <p><a href="community-rules.html" data-el="Δες το προσχέδιο κανόνων κοινότητας" data-en="Read the draft community rules">Δες το προσχέδιο κανόνων κοινότητας</a></p>
+  </article>
+</section>
 
   <section class="content-section" style="margin-top:40px">
     <div class="section-heading">
@@ -109,10 +126,7 @@ if ("serviceWorker" in navigator) {
         <summary data-el="Μπορώ να ακυρώσω οποιαδήποτε στιγμή;" data-en="Can I cancel anytime?">Μπορώ να ακυρώσω οποιαδήποτε στιγμή;</summary>
         <p data-el="Ναι. Η μηνιαία και η ετήσια συνδρομή ακυρώνονται όποτε θέλεις από το Whop." data-en="Yes. Both monthly and annual plans can be cancelled anytime from Whop.">Ναι. Η μηνιαία και η ετήσια συνδρομή ακυρώνονται όποτε θέλεις από το Whop.</p>
       </details>
-      <details>
-        <summary data-el="Τι περιλαμβάνεται;" data-en="What is included?">Τι περιλαμβάνεται;</summary>
-        <p data-el="Τα 15+ PDF τετράδια εργασίας, ο οδηγός μαθημάτων, το silent co-working, το offline audio pack και 50 πλάνα AI Coach τον μήνα." data-en="The 15+ PDF workbooks, the course guide, silent co-working, the offline audio pack and 50 AI Coach plans a month.">Τα 15+ PDF τετράδια εργασίας, ο οδηγός μαθημάτων, το silent co-working, το offline audio pack και 50 πλάνα AI Coach τον μήνα.</p>
-      </details>
+      <details><summary data-el="Πότε θα είναι διαθέσιμα;" data-en="When will they be available?">Πότε θα είναι διαθέσιμα;</summary><p data-el="Οι λειτουργίες με ένδειξη «Σύντομα» βρίσκονται σε ανάπτυξη και δεν είναι ακόμη διαθέσιμες." data-en="Features marked “Coming soon” are in development and are not available yet.">Οι λειτουργίες με ένδειξη «Σύντομα» βρίσκονται σε ανάπτυξη και δεν είναι ακόμη διαθέσιμες.</p></details>
       <details>
         <summary data-el="Η βασική εξάσκηση αλλάζει;" data-en="Does the core practice change?">Η βασική εξάσκηση αλλάζει;</summary>
         <p data-el="Όχι. Το χρονόμετρο, τα στάδια και το ημερολόγιο μένουν δωρεάν για όλους." data-en="No. The timer, stages and diary stay free for everyone.">Όχι. Το χρονόμετρο, τα στάδια και το ημερολόγιο μένουν δωρεάν για όλους.</p>
@@ -127,13 +141,14 @@ if ("serviceWorker" in navigator) {
     <span data-el="Η βασική εξάσκηση μένει δωρεάν." data-en="The core practice stays free.">Η βασική εξάσκηση μένει δωρεάν.</span>
     <span><a href="privacy.html" data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</a> · <a href="terms.html" data-el="Όροι χρήσης" data-en="Terms of service">Όροι χρήσης</a> · © 2026 Nepsis</span>
   </div>
+<span><a href="mailto:nepsis.corp@gmail.com" data-el="Κάτι δεν λειτουργεί;" data-en="Something wrong?">Κάτι δεν λειτουργεί;</a></span>
+<span><a href="research.html" data-el="Η έρευνα" data-en="Research">Η έρευνα</a> · <a href="community-rules.html" data-el="Κανόνες κοινότητας" data-en="Community rules">Κανόνες κοινότητας</a></span>
 </footer>
 <script src="assets/js/pages/about-1.js"></script>
 <script src="assets/js/site-interactions.js"></script>
 <script src="assets/js/site-navigation.js"></script>
 <script src="assets/js/site-preferences.js"></script>
 <script src="assets/js/site-config.js"></script>
-<script src="assets/js/analytics.js"></script>
 <script src="assets/js/ambient-sounds.js"></script>
 </body>
 </html>
