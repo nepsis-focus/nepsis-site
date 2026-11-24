@@ -60,7 +60,7 @@ begin
          updated_at = pg_catalog.clock_timestamp()
    where id = p_session_id
      and token_hash = p_token_hash
-     and completed_at is null;
+     and (completed_at is null or is_custom = true);
   return found;
 end;
 $function$;
