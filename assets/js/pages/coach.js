@@ -7,7 +7,7 @@
   const SUPABASE_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
   const CRISIS_EL = "Είμαι AI, όχι υπηρεσία έκτακτης ανάγκης. Σταματώ τη ροή μελέτης επειδή αυτό που έγραψες μπορεί να σημαίνει ότι χρειάζεσαι υποστήριξη τώρα. Στην Ελλάδα μπορείς να καλέσεις το 1018 (ΚΛΙΜΑΚΑ, γραμμή παρέμβασης για την αυτοκτονία, όλο το 24ωρο), το 10306 (δωρεάν και ανώνυμη ψυχοκοινωνική υποστήριξη, όλο το 24ωρο) ή το 112 αν κινδυνεύεις άμεσα. Επικοινώνησε επίσης με κάποιον άνθρωπο που εμπιστεύεσαι και ζήτησέ του να μείνει μαζί σου.";
   const CRISIS_EN = "I’m an AI, not an emergency service. I’m stopping the study flow because what you wrote may mean you need support now. In Greece, call 1018 (Klimaka suicide intervention line, 24/7), 10306 (free and anonymous psychosocial support, 24/7), or 112 if you are in immediate danger. Please contact someone you trust and ask them to stay with you.";
-  let lang = "el", step = 0, choice = "", answers = { task: "", timeMinutes: 40, obstacle: "" }, plan = null;
+  let lang = "el", step = 0, choice = "", answers = { task: "", timeMinutes: 40, obstacle: "" }, plan = null, authClient = null, signedIn = false;
   const q = {
     el: ["Τι δουλεύεις σήμερα; (μάθημα ή εργασία)", "Πόσο χρόνο έχεις διαθέσιμο; Γράψε λεπτά από 5 έως 180.", "Τι σε δυσκολεύει αυτή τη στιγμή; Διάλεξε μία επιλογή και, αν θέλεις, πρόσθεσε λίγες λέξεις."],
     en: ["What are you working on today? (subject or task)", "How much time do you have? Enter 5 to 180 minutes.", "What is getting in the way? Choose an option and add a few words if you want."]
@@ -62,16 +62,50 @@
     $("coachOffTopicText").textContent=tr("Μπορώ να βοηθήσω μόνο με οργάνωση μελέτης και συγκέντρωσης. Ξεκίνα ξανά γράφοντας το μάθημα ή την εργασία που θέλεις να κάνεις.","I can help only with study planning and focus. Start again by telling me the subject or task you want to work on.");
   }
   function showCrisis(){stopForCrisis();}
+  async function loadSupabase(){
+    if(window.supabase&&window.supabase.createClient)return window.supabase;
+    return new Promise(resolve=>{const script=document.createElement("script");script.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js";script.async=true;script.onload=()=>resolve(window.supabase||null);script.onerror=()=>resolve(null);document.head.appendChild(script);});
+  }
+  async function currentAccessToken(){
+    if(!authClient||!authClient.auth)return null;
+    try{const result=await authClient.auth.getSession();return result&&result.data&&result.data.session?result.data.session.access_token:null;}catch(e){return null;}
+  }
+  function renderAccountStatus(){
+    const status=$("coachAccountStatus");if(!status)return;
+    status.textContent=signedIn?tr("Συνδεδεμένος λογαριασμός Google","Google account connected"):tr("Λειτουργία επισκέπτη","Guest mode");
+  }
+  function renderUsage(usage){
+    if(!usage||typeof usage.remaining!=="number")return;
+    $("coachUsage").textContent=tr("Πλάνα AI που απομένουν: ","AI plans remaining: ")+usage.remaining+" / "+usage.limit;
+  }
+  async function refreshUsage(){
+    const token=await currentAccessToken();if(!token)return;
+    try{
+      const response=await fetch(SUPABASE_URL+"/functions/v1/ai-study-coach",{method:"POST",headers:{"content-type":"application/json","apikey":SUPABASE_KEY,"authorization":"Bearer "+token},body:JSON.stringify({action:"usage"})});
+      if(response.ok){const data=await response.json();renderUsage(data.usage);}
+    }catch(e){}
+  }
+  async function initAuth(){
+    const lib=await loadSupabase();if(!lib||!lib.createClient){renderAccountStatus();return;}
+    try{
+      authClient=lib.createClient(SUPABASE_URL,SUPABASE_KEY,window.NepsisGoogleAuth?window.NepsisGoogleAuth.clientOptions():undefined);
+      if(window.NepsisGoogleAuth)window.NepsisGoogleAuth.watchPopupCompletion(authClient);
+      const session=await authClient.auth.getSession();signedIn=!!(session&&session.data&&session.data.session&&session.data.session.user);
+      renderAccountStatus();if(signedIn)refreshUsage();
+      authClient.auth.onAuthStateChange((_event,next)=>{const was=signedIn;signedIn=!!(next&&next.user);renderAccountStatus();if(signedIn&&!was)refreshUsage();});
+    }catch(e){signedIn=false;renderAccountStatus();}
+  }
   async function callCoach(action, adjustment){
+    const bearer=(await currentAccessToken())||SUPABASE_KEY;
     const response=await fetch(SUPABASE_URL+"/functions/v1/ai-study-coach",{
       method:"POST",
-      headers:{"content-type":"application/json","apikey":SUPABASE_KEY,"authorization":"Bearer "+SUPABASE_KEY},
+      headers:{"content-type":"application/json","apikey":SUPABASE_KEY,"authorization":"Bearer "+bearer},
       body:JSON.stringify({action,language:lang,task:answers.task,timeMinutes:answers.timeMinutes,obstacle:answers.obstacle,adjustment:adjustment||"",consent:true})
     });
     const data=await response.json().catch(()=>({}));
     if(response.status===429)throw new Error(data.error==="ip_rate_limit_reached"?"rate_limit":"monthly_limit");
     if(!response.ok)throw new Error("ai_unavailable");
-    return data;
+    renderUsage(data.usage);return data;
   }
   async function requestPlan(){
     $("coachForm").hidden=true;$("coachChoices").hidden=true;
@@ -82,7 +116,7 @@
       if(data.offTopic){stopOffTopic();return;}
       renderPlan(data);
     }catch(error){
-      $("coachStatus").textContent=error.message==="rate_limit"?tr("Έχουν γίνει πολλές αιτήσεις από αυτή τη σύνδεση. Περίμενε λίγα λεπτά και δοκίμασε ξανά.","Too many requests from this connection. Wait a few minutes and try again."):error.message==="monthly_limit"?tr("Το μηνιαίο όριο AI έχει συμπληρωθεί.","The monthly AI limit has been reached."):tr("Ο AI Coach δεν είναι προσωρινά διαθέσιμος. Δοκίμασε ξανά αργότερα.","The AI Coach is temporarily unavailable. Please try again later.");
+      $("coachStatus").textContent=error.message==="rate_limit"?tr("Έχουν γίνει πολλές αιτήσεις από αυτή τη σύνδεση. Περίμενε λίγα λεπτά και δοκίμασε ξανά.","Too many requests from this connection. Wait a few minutes and try again."):error.message==="monthly_limit"?( $("coachUpsell").hidden=false, tr("Το μηνιαίο όριο AI έχει συμπληρωθεί.","The monthly AI limit has been reached.") ):tr("Ο AI Coach δεν είναι προσωρινά διαθέσιμος. Δοκίμασε ξανά αργότερα.","The AI Coach is temporarily unavailable. Please try again later.");
       $("coachForm").hidden=false;
     }
   }
@@ -162,6 +196,7 @@
     $("coachRestart").addEventListener("click",()=>window.location.href="coach.html");
     try{const saved=localStorage.getItem("nepsis-lang");if(saved==="en")lang="en";}catch(e){}
     setLanguage(lang);
+    initAuth();
     initReflection();
     if(!new URLSearchParams(window.location.search).has("reflect"))addPrompt();
   });
