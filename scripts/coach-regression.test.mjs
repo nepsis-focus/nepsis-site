@@ -26,6 +26,8 @@ test("the AI Coach asks the three required questions in order, one at a time", (
   assert.ok(task >= 0 && task < time && time < obstacle);
   assert.ok(html.includes('id="coachChoices"'));
   assert.ok(html.includes('id="coachInput"'));
+  assert.ok(!coach.includes('$("coachInput").type='));
+  assert.ok(libraryJs.includes("article.card[data-save-id]"));
 });
 
 test("the page identifies AI and requires consent before sending answers", () => {
