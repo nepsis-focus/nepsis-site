@@ -180,6 +180,7 @@
     document.querySelectorAll("[data-el][data-en]").forEach(el=>{el.textContent=lang==="en"?el.dataset.en:el.dataset.el;});
     document.querySelectorAll("[data-set-lang]").forEach(b=>{b.setAttribute("aria-pressed",String(b.dataset.setLang===lang));b.classList.toggle("active",b.dataset.setLang===lang);});
     $("coachInput").placeholder=lang==="en"?"Write your answer…":"Γράψε την απάντησή σου…";
+    renderAccountStatus();
     if(changed&&step<3&&!$("coachChatCard").hidden){$("chatMessages").innerHTML="";addPrompt();}
   }
   function initReflection(){
