@@ -15,6 +15,24 @@ body .wc-card { padding-top: 58px !important; }
   transition: filter .15s ease;
 }
 .wc-lights button:hover::before, .wc-lights button:focus-visible::before { filter: brightness(.9); }
+/* Symbols appear when the pointer is over the group, as on macOS. */
+.wc-lights button::after {
+  content: ""; position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  opacity: 0; transition: opacity .12s ease; pointer-events: none;
+  background-position: center; background-size: contain; background-repeat: no-repeat;
+}
+.wc-lights { position: absolute; }
+.wc-lights button { position: relative; }
+.wc-lights:hover button::after, .wc-lights:focus-within button::after { opacity: 1; }
+.wc-red::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2.5 2.5l5 5m0-5l-5 5' stroke='%234d0000' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.wc-yellow::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6' stroke='%23995700' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.wc-green::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.8 4.2V1.8h2.4M8.2 5.8v2.4H5.8M1.8 1.8l2.6 2.6M8.2 8.2L5.6 5.6' fill='none' stroke='%23006500' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
 .wc-lights button:focus-visible { outline: 2px solid rgba(0, 0, 0, .35); outline-offset: 1px; }
 .wc-red { --wc-dot: #ff5f57; }
 .wc-yellow { --wc-dot: #febc2e; }
