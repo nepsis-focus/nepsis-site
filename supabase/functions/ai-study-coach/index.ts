@@ -231,7 +231,7 @@ Deno.serve(async (req: Request) => {
     const focusRaw = Number(generated.focusMinutes);
     const focusMinutes = Number.isInteger(focusRaw) && focusRaw >= 5 && focusRaw <= available ? focusRaw : Math.min(available, 25);
     const proposedMessage = firstSentence(generated.message, language === "en" ? "Start with one clear task and keep the first block manageable." : "Ξεκίνα με μία σαφή εργασία και κράτησε το πρώτο μπλοκ διαχειρίσιμο.");
-    const unsafeRecommendation = /(skip(ping)? (the )?breaks?|without (a )?break|sleep less|stay up all night|reduce sleep|παράλειψε τα διαλείμματα|χωρίς διάλειμμα|λιγότερο ύπνο|μην κοιμηθείς|φάρμακα|φαρμακευτική αγωγή|διάγνωση|θεραπεία)/i.test(proposedMessage);
+    const unsafeRecommendation = /(skip(ping)? (the )?breaks?|without (a )?break|no need for breaks|work through (the )?break|ignore (the )?breaks?|sleep less|stay up all night|pull an all-nighter|reduce sleep|don\x27t sleep|παράλειψε τα διαλείμματα|παράλειψε το διάλειμμα|χωρίς διάλειμμα|μην κάνεις διάλειμμα|λιγότερο ύπνο|μην κοιμηθείς|ξενύχτησε|φάρμακα|φαρμακευτική αγωγή|διάγνωση|θεραπεία)/i.test(proposedMessage);
     const safeMessage = unsafeRecommendation
       ? (language === "en" ? "Keep a short break in the plan; it supports a more sustainable session." : "Κράτησε ένα σύντομο διάλειμμα στο πλάνο· βοηθά να διατηρήσεις έναν πιο βιώσιμο ρυθμό.")
       : proposedMessage;
