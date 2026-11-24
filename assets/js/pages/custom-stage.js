@@ -114,7 +114,7 @@
     next.searchParams.set("customBreak",String(rest)); next.searchParams.set("customRemaining",String(remaining));
     next.hash = "stage-" + nextFocus;
     const reset = new URL("reset.html", window.location.href);
-    reset.searchParams.set("customBreak",String(rest)); reset.searchParams.set("customNext",next.href);
+    reset.searchParams.set("customBreak",String(rest)); reset.searchParams.set("customNext",next.href); reset.searchParams.set("customBreakUntil",String(savedUntil || (Date.now() + rest * 60 * 1000)));
     const until = savedUntil || (Date.now() + rest * 60 * 1000);
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set("customBreakUntil",String(until));
