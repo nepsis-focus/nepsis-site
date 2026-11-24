@@ -92,6 +92,9 @@
     $("coachPlanPill").textContent=plan.focusMinutes+" "+tr("λεπτά εστίασης","min focus");
     const message=$("coachPlanMessage");message.innerHTML="";
     [data.message,data.researchReason,data.adjustOffer].filter(Boolean).forEach(text=>{const p=document.createElement("p");p.textContent=text;message.appendChild(p);});
+    if(data.researchSource==="https://doi.org/10.3389/fpsyg.2025.1589411"){
+      const source=document.createElement("a");source.href=data.researchSource;source.target="_blank";source.rel="noopener noreferrer";source.className="coach-research-source";source.textContent=tr("Πηγή έρευνας (Frontiers in Psychology, 2025)","Research source (Frontiers in Psychology, 2025)");message.appendChild(source);
+    }
     const blocks=core.buildBlocks(plan.focusMinutes,plan.blockMinutes,plan.breakMinutes);
     $("coachPlanBlocks").textContent=blocks.map(item=>tr(item.focusMinutes+"′ εστίαση",""+item.focusMinutes+" min focus")+(item.breakAfterMinutes?" → "+tr(item.breakAfterMinutes+"′ διάλειμμα",item.breakAfterMinutes+" min break"):"")).join(" · ");
     const start=new URL("practice.html",window.location.href);
