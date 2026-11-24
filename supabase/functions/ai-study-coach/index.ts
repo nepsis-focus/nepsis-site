@@ -145,7 +145,8 @@ Deno.serve(async (req: Request) => {
   const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !serviceKey) return reply(503, { error: "service_unavailable" }, origin, allowed);
   const svc = { apikey: serviceKey, authorization: "Bearer " + serviceKey, "content-type": "application/json" };
-  const requestIp = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+  // Supabase-hosted Edge Functions are behind Cloudflare; use its client-IP header, not caller-controlled forwarding headers.
+  const requestIp = (req.headers.get("cf-connecting-ip") || "").trim() || "unknown";
   if (!usageOnly) {
     const ipHash = await digest(serviceKey, "ip:" + requestIp);
     const windowMs = 10 * 60 * 1000;
