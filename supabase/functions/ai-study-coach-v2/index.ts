@@ -1,7 +1,7 @@
 const FOCUS = [5, 10, 25, 45, 60];
 const MAX_BODY = 8000;
 const MAX_INPUT_CHARS = 1000;
-const CRISIS_PATTERN = /(crisis|mental health crisis|panic attack|having a panic attack|κρίση|κρίση πανικού|βρίσκομαι σε κρίση|δεν είμαι ασφαλήςsuicid|kill myself|end my life|end it all|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|\bunsafe\b|\bnot safe\b|need help now|αυτοκτον|αυτοτραυματισ|κρίση|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|να τελειώσω τη ζωή μου|δεν θέλω να ζω|δεν θέλω να υπάρχω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
+const CRISIS_PATTERN = /(crisis|mental health crisis|panic attack|having a panic attack|κρίση|κρίση πανικού|βρίσκομαι σε κρίση|δεν είμαι ασφαλής|suicid|kill myself|end my life|end it all|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|\bunsafe\b|\bnot safe\b|need help now|αυτοκτον|αυτοτραυματισ|κρίση|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|να τελειώσω τη ζωή μου|δεν θέλω να ζω|δεν θέλω να υπάρχω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
 const LIBRARY_IDS = ["article-1","article-2","article-3","article-4","article-5","article-6","article-7","article-8","article-9","article-10","article-11","article-12","article-13"];
 const DEFAULT_ORIGINS = [
   "https://nepsis-focus.github.io",
