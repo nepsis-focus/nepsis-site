@@ -3,7 +3,7 @@ import { writeFile } from "node:fs/promises";
 
 const base = (process.env.SITE_URL || "https://nepsis-focus.github.io/nepsis-site/").replace(/\/$/, "");
 const routes = [
-  "/", "/practice.html", "/my-nepsis.html", "/reset.html", "/library.html",
+  "/", "/practice.html", "/coach.html", "/my-nepsis.html", "/reset.html", "/library.html",
   "/tips/no-mobile-internet.html", "/tips/check-the-source.html", "/tips/ai-in-studying.html",
   "/diary.html", "/about.html", "/how.html", "/faq.html", "/exams.html", "/privacy.html",
   "/terms.html", "/premium.html"
@@ -156,6 +156,14 @@ try {
         // Internal destinations are checked separately by the repository link audit.
         // Avoid issuing repeated preview HTTP requests here; Netlify can reset concurrent requests.
         
+        if (route === "/coach.html") {
+          if (!(await page.locator("#coachChatCard").isVisible())) failures.push(`${viewport.name}: AI Coach conversation card is not visible`);
+          if (!(await page.locator("#coachInput").isVisible())) failures.push(`${viewport.name}: AI Coach input is not visible`);
+          if (!(await page.locator("#coachConsent").count())) failures.push(`${viewport.name}: AI Coach consent control is missing`);
+          const firstPrompt = (await page.locator("#chatMessages").innerText()).trim();
+          if (!firstPrompt) failures.push(`${viewport.name}: AI Coach did not render its first question`);
+        }
+
         if (route === "/practice.html") {
           const stageCount = await page.locator("#stageGrid .stage").count();
           const stageTimes = (await page.locator("#stageGrid .stage [data-time]").allTextContents())
