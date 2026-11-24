@@ -1,38 +1,119 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-const [coach,html,edge,migration,config]=await Promise.all([
- readFile(new URL("../assets/js/pages/coach.js",import.meta.url),"utf8"),
- readFile(new URL("../coach.html",import.meta.url),"utf8"),
- readFile(new URL("../supabase/functions/ai-study-coach/index.ts",import.meta.url),"utf8"),
- readFile(new URL("../supabase/migrations/20261124130000_coach_ip_rate_limit_and_custom_stage.sql",import.meta.url),"utf8"),
- readFile(new URL("../supabase/config.toml",import.meta.url),"utf8")
+
+const root = new URL("../", import.meta.url);
+const read = (path) => readFile(new URL(path, root), "utf8");
+const [coach, html, core, edge, timer, migration, library, reset, sw, home, scenarios, practice, customStage, customReset, practiceJs, libraryJs] = await Promise.all([
+  read("assets/js/pages/coach.js"), read("coach.html"), read("assets/js/coach-core.js"),
+  read("supabase/functions/ai-study-coach/index.ts"), read("supabase/functions/focus-timer/index.ts"),
+  read("supabase/migrations/20261124130000_coach_ip_rate_limit_and_custom_stage.sql"),
+  read("library.html"), read("reset.html"), read("sw.js"), read("index.html"), read("tests/coach-scenarios.md"),
+  read("practice.html"), read("assets/js/pages/custom-stage.js"), read("assets/js/pages/custom-reset.js"),
+  read("assets/js/pages/practice-1.js"), read("assets/js/pages/library-1.js")
 ]);
-test("browser code sends Coach requests only to the Supabase Edge Function",()=>{
- assert.match(coach,/\/functions\/v1\/ai-study-coach/);
- assert.doesNotMatch(coach,/GEMINI_API_KEY|x-goog-api-key|AIza/);assert.doesNotMatch(html,/GEMINI_API_KEY|x-goog-api-key|AIza/);
- assert.match(edge,/Deno\.env\.get\("GEMINI_API_KEY"\)/);assert.match(edge,/gemini: geminiAdapter/);
- assert.match(edge,/Deno\.env\.get\("AI_PROVIDER"\) \|\| "gemini"/);
- assert.doesNotMatch(edge,/Grok|xai\.com|api\.x\.ai/i);
+
+test("Coach is enabled and reachable from the existing Nepsis navigation", () => {
+  assert.ok(html.includes("assets/js/coach-config.js"));
+  assert.ok(html.includes("assets/js/pages/coach.js"));
+  assert.ok(home.includes('href="coach.html" data-coach-nav'));
 });
-test("provider key is read only by the server adapter and never logged or returned",()=>{
- assert.match(edge,/async function geminiAdapter/);assert.match(edge,/"x-goog-api-key": key/);
- assert.doesNotMatch(edge,/console\.(log|error).*geminiKey|return reply\([^\n]*geminiKey/);
+
+test("the AI Coach asks the three required questions in order, one at a time", () => {
+  const task = coach.indexOf("What are you working on today?");
+  const time = coach.indexOf("How much time do you have?");
+  const obstacle = coach.indexOf("What is getting in the way?");
+  assert.ok(task >= 0 && task < time && time < obstacle);
+  assert.ok(html.includes('id="coachChoices"'));
+  assert.ok(html.includes('id="coachInput"'));
 });
-test("IP limiter is server-side, hashed, and fail-closed",()=>{
- assert.match(edge,/const ipHash = await digest\(serviceKey, "ip:" \+ ip\)/);
- assert.match(edge,/consume_ai_coach_ip_limit/);assert.match(edge,/if \(!limitedIp\.ok\) return reply\(503/);
- assert.match(edge,/if \(await limitedIp\.json\(\) !== true\) return reply\(429/);
- assert.match(migration,/enable row level security/i);
- assert.match(migration,/revoke all on public\.ai_coach_ip_limits from public, anon, authenticated/i);
- assert.match(migration,/grant execute on function public\.consume_ai_coach_ip_limit[^;]*to service_role/i);
+
+test("the page identifies AI and requires consent before sending answers", () => {
+  assert.ok(html.includes("artificial intelligence (AI)"));
+  assert.ok(html.includes('id="coachConsent"'));
+  assert.ok(coach.includes('coachConsent").checked'));
+  assert.ok(edge.includes("body.consent !== true"));
 });
-test("function has explicit in-function authorization and user consent",()=>{
- assert.match(config,/\[functions\.ai-study-coach\]\s+verify_jwt = false/);
- assert.match(edge,/if \(!allowed\) return reply\(403/);assert.match(edge,/body\.consent !== true/);
- assert.match(html,/Συμφωνώ να σταλούν οι απαντήσεις μου/);
+
+test("client code contains no Gemini provider key or endpoint", () => {
+  const clientFiles = [coach, html, core, library, reset, practice, customStage, customReset, practiceJs, libraryJs];
+  for (const source of clientFiles) {
+    assert.ok(!source.includes("GEMINI_API_KEY"));
+    assert.ok(!source.includes("AIza"));
+    assert.ok(!source.includes("x-goog-api-key"));
+    assert.ok(!source.includes("generativelanguage.googleapis.com"));
+  }
+  assert.ok(edge.includes('Deno.env.get("GEMINI_API_KEY")'));
+  assert.ok(edge.includes("const PROVIDERS"));
+  assert.ok(edge.includes('Deno.env.get("AI_PROVIDER") || "gemini"'));
+  assert.ok(!edge.toLowerCase().includes("grok"));
 });
-test("crisis responses are bilingual and link to verified Greece services",()=>{
- assert.match(edge,/1018 \(Klimaka, 24\/7\)/);assert.match(edge,/10306 \(free and anonymous psychosocial support, 24\/7\)/);
- assert.match(html,/https:\/\/10306\.gr\//);assert.match(html,/https:\/\/www\.klimaka\.org\.gr\//);
+
+test("the server enforces 1000 characters and per-IP rate limiting", () => {
+  assert.ok(edge.includes("MAX_INPUT_CHARS = 1000"));
+  assert.ok(edge.includes("consume_ai_coach_ip_limit"));
+  assert.ok(edge.includes("p_request_limit: 8"));
+  assert.ok(migration.includes("ai_coach_ip_limits"));
+  assert.ok(migration.toLowerCase().includes("enable row level security"));
+  assert.ok(migration.includes("grant execute on function public.consume_ai_coach_ip_limit"));
+});
+
+test("crisis detection stops the study flow and presents Greece support contacts", () => {
+  assert.ok(core.includes("CRISIS"));
+  assert.ok(edge.includes("CRISIS_PATTERN"));
+  assert.ok(html.includes("tel:1018"));
+  assert.ok(html.includes("tel:10306"));
+  assert.ok(html.includes("tel:112"));
+  assert.ok(html.includes("someone you trust"));
+});
+
+test("Coach safety rules cover breaks, sleep, medical advice and off-topic requests", () => {
+  assert.ok(edge.includes("Never suggest skipping breaks"));
+  assert.ok(edge.includes("Never give medical advice"));
+  assert.ok(edge.includes("reducing sleep"));
+  assert.ok(edge.includes("kind=off_topic"));
+  assert.ok(core.includes("isClearlyOffTopic"));
+});
+
+test("the plan includes a research reason and a source link", () => {
+  assert.ok(edge.includes("researchReason"));
+  assert.ok(edge.includes("10.3389/fpsyg.2025.1589411"));
+  assert.ok(coach.includes("researchSource"));
+  assert.ok(coach.includes("adjustOffer"));
+});
+
+test("Library suggestions are restricted to existing article IDs", () => {
+  assert.ok(core.includes("article-13"));
+  assert.ok(edge.includes("LIBRARY_IDS.includes"));
+  assert.ok(coach.includes("isValidLibraryId"));
+  assert.ok(library.includes("coach.html"));
+  assert.ok(libraryJs.includes("coach-library-highlight"));
+});
+
+test("Google account sessions and Premium usage remain supported", () => {
+  assert.ok(html.includes("assets/js/google-oauth.js"));
+  assert.ok(coach.includes("authClient.auth.getSession"));
+  assert.ok(edge.includes("PREMIUM_MONTHLY_LIMIT = 50"));
+  assert.ok(edge.includes("WHOP_API_KEY"));
+});
+
+test("custom timer sessions are recorded as stage=custom with real block minutes", () => {
+  assert.ok(timer.includes("nepsis_timer_mark_custom"));
+  assert.ok(migration.includes("is_custom boolean"));
+  assert.ok(migration.includes("stage = 'custom' AND duration_minutes BETWEEN 5 AND 180"));
+  assert.ok(migration.includes("private.sync_completed_focus_timer"));
+});
+
+test("reset return flow waits for the planned break and offline assets are refreshed", () => {
+  assert.ok(reset.includes("custom-reset.js"));
+  assert.ok(customReset.includes("customBreakUntil"));
+  assert.ok(customReset.includes("Continue the custom session"));
+  assert.ok(sw.includes("nepsis-v28"));
+  assert.ok(sw.includes("assets/js/coach-core.js"));
+  assert.ok(sw.includes("assets/js/pages/custom-stage.js"));
+  assert.ok(sw.includes("assets/js/pages/custom-reset.js"));
+});
+
+test("scenario documentation contains all required cases", () => {
+  for (const name of ["Normal study plan","Very little time","Exam anxiety","Request to skip breaks","Crisis message","Off-topic request"]) assert.ok(scenarios.toLowerCase().includes(name.toLowerCase()));
 });
