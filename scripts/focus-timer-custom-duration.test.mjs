@@ -32,7 +32,8 @@ test("custom-stage marker preserves custom labels for standard and nonstandard d
 
 test("Edge Function accepts integers in range and still verifies on the server", () => {
   assert.match(edge, /Number\.isInteger\(stage\) \|\| stage < 5 \|\| stage > 180/);
-  assert.match(edge, /admin\.rpc\(rpcName, rpcArgs\)/);\n  assert.match(edge, /nepsis_timer_mark_custom/);
+  assert.match(edge, /admin\.rpc\(rpcName, rpcArgs\)/);
+  assert.match(edge, /nepsis_timer_mark_custom/);
   assert.match(edge, /hashToken\(token\)/);
   assert.match(edge, /invalid_session_token/);
 });
