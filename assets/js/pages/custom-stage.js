@@ -12,6 +12,7 @@
     const preview = $("customPlanPreview"), start = $("customStart");
     if (!minutes || !preview || !start) return;
     let block = 25, rest = 5;
+    document.querySelectorAll(".lang button").forEach(button => button.addEventListener("click", render));
     function render() {
       const total = Math.max(5, Math.min(180, Number(minutes.value) || 40));
       const blocks = core.buildBlocks(total, block, rest);
