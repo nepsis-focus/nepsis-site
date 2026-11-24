@@ -63,7 +63,7 @@
     const remaining = Number(params.get("customRemaining"));
     const block = Number(params.get("customBlock"));
     const rest = Number(params.get("customBreak"));
-    if (![current, total, remaining].every(Number.isInteger) || current < 5 || total < 5 || total > 180 || remaining < 0 || remaining > total) return;
+    if (![current, total, remaining, block, rest].every(Number.isInteger) || current < 5 || total < 5 || total > 180 || remaining < 0 || remaining > total || !((block === 25 && rest === 5) || (block === 50 && rest === 10))) return;
     let handled = false;
     window.addEventListener("nepsis:session-completed", function (event) {
       if (handled || !event.detail || event.detail.stage !== "custom") return;
