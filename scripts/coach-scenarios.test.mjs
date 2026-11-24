@@ -43,7 +43,7 @@ test("6. off-topic requests are redirected without answering the unrelated reque
 });
 test("7. input length, server-only Gemini secret and per-IP limits are enforced", () => {
   assert.equal(core.isWithinInputLimit("a".repeat(1000)), true); assert.equal(core.isWithinInputLimit("a".repeat(1001)), false);
-  assert.match(coach, /maxlength/); assert.match(edge, /MAX_DOC = 1000/);
+  assert.match(coach, /maxlength/); assert.match(edge, /MAX_INPUT_CHARS = 1000/);
   assert.match(edge, /Deno\.env\.get\("GEMINI_API_KEY"\)/); assert.match(edge, /consume_ai_coach_ip_limit/);
   assert.match(edge, /p_request_limit: 8/); assert.match(edge, /windowMs = 10 \* 60 \* 1000/);
 });
