@@ -1,0 +1,61 @@
+/* macOS-style window: title bar with red, yellow and green controls, and a dock
+   at the bottom for minimized panels and the site's sections. */
+
+/* ---- Window ---- */
+body .wc-card { padding-top: 62px !important; }
+.wc-lights {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+  height: 46px; display: flex; align-items: center; padding: 0 18px; gap: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, .06); box-sizing: border-box;
+  border-radius: 28px 28px 0 0;
+}
+.wc-lights button {
+  position: relative; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer; background: transparent; flex: 0 0 auto;
+}
+.wc-lights button > span {
+  width: 12px; height: 12px; border-radius: 50%; background: var(--wc-dot);
+  box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .16); transition: filter .15s ease, transform .15s ease;
+}
+.wc-lights button:hover > span, .wc-lights button:focus-visible > span { filter: brightness(.94); }
+.wc-lights button:active > span { transform: scale(.9); }
+.wc-lights button:focus-visible { outline: 2px solid rgba(0, 0, 0, .3); outline-offset: 1px; }
+.wc-red { --wc-dot: #ff5f57; }
+.wc-yellow { --wc-dot: #febc2e; }
+.wc-green { --wc-dot: #28c840; }
+/* Symbols show when the pointer is over the group, as on macOS. */
+.wc-lights button::after {
+  content: ""; position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  opacity: 0; transition: opacity .12s ease; pointer-events: none;
+  background-position: center; background-size: contain; background-repeat: no-repeat;
+}
+.wc-lights:hover button::after, .wc-lights:focus-within button::after { opacity: 1; }
+.wc-red::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2.5 2.5l5 5m0-5l-5 5' stroke='%234d0000' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.wc-yellow::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2 5h6' stroke='%23995700' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.wc-green::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.8 4.2V1.8h2.4M8.2 5.8v2.4H5.8M1.8 1.8l2.6 2.6M8.2 8.2L5.6 5.6' fill='none' stroke='%23006500' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.wc-title {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font-size: .82rem; font-weight: 700; color: #6b625b; letter-spacing: .01em; white-space: nowrap;
+  pointer-events: none;
+}
+@media (pointer: coarse) { .wc-lights button { width: 32px; height: 32px; } }
+@media (max-width: 600px) { .wc-lights .wc-green { display: none; } }
+
+/* Enlarged state (green) */
+body .wc-card.wc-zoomed { width: min(680px, 94vw) !important; max-width: none !important; }
+
+/* Minimizing: the card shrinks toward the dock, then the overlay closes */
+body .wc-card.wc-to-dock {
+  transform: translate(0, 46vh) scale(.12) !important; opacity: 0 !important;
+  transition: transform .34s cubic-bezier(.5, 0, .75, 0), opacity .3s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .wc-card.wc-to-dock { transition: none !important; }
+}

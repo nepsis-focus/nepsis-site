@@ -28,7 +28,10 @@ const homepageSupabase = window.supabase && window.supabase.createClient && wind
     drawer.setAttribute("aria-hidden", String(!open));
     if (open) (close || drawer.querySelector("a"))?.focus();
   }
-  menu?.addEventListener("click", () => setMenu(!drawer.classList.contains("open")));
+  menu?.addEventListener("click", () => {
+    setAccount(false);
+    setMenu(!drawer.classList.contains("open"));
+  });
   close?.addEventListener("click", () => setMenu(false));
   scrim?.addEventListener("click", () => setMenu(false));
   drawer?.addEventListener("click", (event) => { if (event.target.closest("a")) setMenu(false); });
@@ -43,6 +46,7 @@ const homepageSupabase = window.supabase && window.supabase.createClient && wind
   accountEntry?.addEventListener("click", (event) => { event.preventDefault(); setMenu(false); setAccount(true); });
   accountClose?.addEventListener("click", () => setAccount(false));
   accountScrim?.addEventListener("click", () => setAccount(false));
+  accountModal?.addEventListener("click", (event) => { if (event.target === accountModal) setAccount(false); });
   accountGoogle?.addEventListener("click", () => {
     if (!homepageSupabase || !window.NepsisGoogleAuth) return;
     window.NepsisGoogleAuth.signIn({

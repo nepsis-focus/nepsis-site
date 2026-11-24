@@ -66,3 +66,22 @@ body.home-page{--home-bg:#fbfaf7;--home-surface:#fff;--home-ink:#25211e;--home-m
     z-index: 0;
   }
 }
+
+/* Account sheet: fade and scale in and out, like a macOS window. */
+body.home-page .acc-modal { transition: opacity .2s ease, visibility .2s ease; }
+body.home-page .acc-card { transition: transform .24s cubic-bezier(.2, .8, .2, 1), opacity .2s ease; }
+body.home-page .acc-modal:not(.open) .acc-card { opacity: 0; transform: scale(.94) translateY(8px); }
+body.home-page .acc-modal.open .acc-card { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  body.home-page .acc-modal, body.home-page .acc-card { transition: none !important; }
+}
+
+/* Timer ring: the number scales with the ring so "45:00" stays inside the inner circle on phones. */
+body.home-page .focus-orbit { container-type: inline-size; }
+body.home-page .focus-orbit__center strong { font-size: min(7rem, 19cqi); white-space: nowrap; }
+
+/* Account sheet on phones: the card fits inside the padding, and the header (menu button) stays tappable above the sheet. */
+body.home-page .acc-card { box-sizing: border-box; max-width: 100%; }
+body.home-page:has(.acc-modal.open) .site-header { z-index: 42; }
+/* The homepage has no separate scrim element, so the sheet dims the page itself. */
+body.home-page .acc-modal.open { background: rgba(31, 22, 17, .35); }

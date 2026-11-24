@@ -92,15 +92,63 @@ body.missing-page:has(#drawer.open) #menuBtn {
   pointer-events: auto;
 }
 
-/* Closed overlays leave the render and hit trees. .open keeps the painted look. */
+/* Closed scrims leave the render and hit trees. .open keeps the painted look. */
 .scrim:not(.open),
 .acc-scrim:not(.open),
-.sub-modal:not(.open),
-.acc-modal:not(.open),
-.account:not(.open),
 .nepsis-menu-scrim:not(.open) {
   display: none !important;
   pointer-events: none !important;
+}
+/* Modal panels fade and scale in and out (macOS window style). A closed panel
+   stays in layout but is hidden with visibility, so the close animation can finish
+   and the panel still leaves the hit and accessibility trees. */
+body .sub-modal,
+body .acc-modal,
+body .account {
+  transition: opacity .2s ease, visibility .2s ease;
+}
+body .sub-modal:not(.open),
+body .acc-modal:not(.open),
+body .account:not(.open) {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none !important;
+}
+body .sub-modal.open,
+body .acc-modal.open,
+body .account.open {
+  visibility: visible;
+  opacity: 1;
+}
+body .sub-card,
+body .acc-card,
+body .account-card {
+  transition: transform .24s cubic-bezier(.2, .8, .2, 1), opacity .2s ease;
+}
+body .sub-modal:not(.open) :is(.sub-card),
+body .acc-modal:not(.open) :is(.acc-card),
+body .account:not(.open) :is(.account-card) {
+  opacity: 0;
+  transform: scale(.94) translateY(8px);
+}
+body .sub-modal.open :is(.sub-card),
+body .acc-modal.open :is(.acc-card),
+body .account.open :is(.account-card) {
+  opacity: 1;
+  transform: none;
+}
+/* Native dialogs (text prompts) scale in when they open. */
+.nepsis-dialog[open] {
+  animation: nepsis-dialog-in .22s cubic-bezier(.2, .8, .2, 1) both;
+}
+@keyframes nepsis-dialog-in {
+  from { opacity: 0; transform: scale(.94) translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body .sub-modal, body .acc-modal, body .account,
+  body .sub-card, body .acc-card, body .account-card { transition: none !important; }
+  .nepsis-dialog[open] { animation: none; }
 }
 .sub-modal:not(.open) *,
 .acc-modal:not(.open) *,
