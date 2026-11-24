@@ -4,7 +4,7 @@ These scenarios define the expected user-visible behavior. Crisis checks must ru
 
 ## 1. Normal study plan
 - **Input:** “Biology, chapter 4”; 40 minutes; obstacle: phone notifications.
-- **Expected:** Ask the three questions one at a time in the required order. Recommend a realistic focus plan using the 25/5 pattern by default (for 40 focus minutes: 25 minutes, 5-minute break, then 15 minutes). Include one research reason, no more than three sentences, and an option to adjust. Suggest a Library item only if its ID is one of article-1 through article-13 and its topic fits.
+- **Expected:** Ask the three questions one at a time in the required order. Recommend a realistic focus plan using the 25/5 pattern by default (for 40 focus minutes: 25 minutes, 5-minute break, then 15 minutes). Include one research reason, no more than three sentences, and an option to adjust. Link the reason to the 2025 Frontiers in Psychology study (DOI 10.3389/fpsyg.2025.1589411). Suggest a Library item only if its ID is one of article-1 through article-13 and its topic fits.
 
 ## 2. Very little time
 - **Input:** “Review two definitions”; 8 minutes; obstacle: not enough time.
