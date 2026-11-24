@@ -297,7 +297,7 @@
 
 .coach-research-source{font-size:.88rem;font-weight:800;color:var(--ember);text-decoration:underline;text-underline-offset:3px}
 
-.coach-research-source{display:inline-flex;width:max-content;max-width:100%;font-size:.82rem;font-weight:800;color:var(--ember);text-decoration:underline;text-underline-offset:3px}
+.coach-research-source{display:inline-flex;width:max-content;max-width:100%;font-size:.82rem;font-weight:800;color:var(--coach-accent);text-decoration:underline;text-underline-offset:3px}
 
 .coach-account-status{font-size:.72rem;font-weight:800;color:var(--coach-muted);max-width:170px;text-align:right}
 
