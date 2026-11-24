@@ -39,6 +39,7 @@ test("the Practice UI exposes the custom stage with the requested defaults", () 
   assert.match(practiceHtml,/data-custom-pattern="50"/);
   assert.match(practiceHtml,/id="customPlanPreview"/);
   assert.match(practiceHtml,/id="customStart"/);
+  assert.match(customJs,/querySelectorAll\("\.lang button"\)/);
 });
 
 test("custom timer blocks are sent to the verified timer as stage=custom", () => {
