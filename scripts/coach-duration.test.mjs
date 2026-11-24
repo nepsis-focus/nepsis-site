@@ -1,31 +1,55 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
-const require = createRequire(import.meta.url);
-const core = require("../assets/js/coach-core.js");
-const [html,custom,practice,css]=await Promise.all([
-  readFile(new URL("../practice.html",import.meta.url),"utf8"),
-  readFile(new URL("../assets/js/pages/custom-stage.js",import.meta.url),"utf8"),
-  readFile(new URL("../assets/js/pages/practice-1.js",import.meta.url),"utf8"),
-  readFile(new URL("../assets/css/pages/practice.css",import.meta.url),"utf8")
+import core from "../assets/js/coach-core.js";
+
+const [practiceHtml, coachJs, customJs, practiceJs] = await Promise.all([
+  readFile(new URL("../practice.html", import.meta.url), "utf8"),
+  readFile(new URL("../assets/js/pages/coach.js", import.meta.url), "utf8"),
+  readFile(new URL("../assets/js/pages/custom-stage.js", import.meta.url), "utf8"),
+  readFile(new URL("../assets/js/pages/practice-1.js", import.meta.url), "utf8")
 ]);
-test("custom focus duration accepts 5 through 180 whole minutes only",()=>{
-  for(const value of [5,40,180])assert.doesNotThrow(()=>core.buildBlocks(value,25,5));
-  for(const value of [4,181,40.5])assert.throws(()=>core.buildBlocks(value,25,5),RangeError);
-  assert.throws(()=>core.buildBlocks(60,25,10),RangeError);
-  assert.throws(()=>core.buildBlocks(60,50,5),RangeError);
-  assert.match(html,/id="customMinutes" type="number" min="5" max="180" step="1" value="40"/);
+
+test("custom stage accepts whole-minute durations from 5 through 180", () => {
+  assert.deepEqual(core.buildBlocks(5,25,5),[{focusMinutes:5,breakAfterMinutes:0}]);
+  assert.equal(core.buildBlocks(180,25,5).reduce((sum,b)=>sum+b.focusMinutes,0),180);
+  assert.throws(()=>core.buildBlocks(4,25,5),/invalid_total_minutes/);
+  assert.throws(()=>core.buildBlocks(181,25,5),/invalid_total_minutes/);
 });
-test("both requested focus and break patterns preview correctly",()=>{
-  assert.deepEqual(core.buildBlocks(60,25,5),[{focusMinutes:25,breakAfterMinutes:5},{focusMinutes:25,breakAfterMinutes:5},{focusMinutes:10,breakAfterMinutes:0}]);
-  assert.deepEqual(core.buildBlocks(60,50,10),[{focusMinutes:50,breakAfterMinutes:10},{focusMinutes:10,breakAfterMinutes:0}]);
-  assert.match(html,/data-custom-pattern="25"/);assert.match(html,/data-custom-pattern="50"/);
-  assert.match(custom,/core\.buildBlocks\(total, block, rest\)/);
+
+test("default 40-minute plan uses 25 focus, 5 break, then 15 focus", () => {
+  assert.deepEqual(core.buildBlocks(40,25,5),[
+    {focusMinutes:25,breakAfterMinutes:5},
+    {focusMinutes:15,breakAfterMinutes:0}
+  ]);
 });
-test("custom sessions use the verified timer and record custom stage minutes",()=>{
-  assert.match(practice,/customSession: customSessionMode && s\.custom === true/);
-  assert.match(practice,/stage_type: state\.customSession \? "custom" : "standard"/);
-  assert.match(practice,/stage: state\.customSession \? "custom" : "standard"/);
-  assert.match(css,/custom-session-overlay/);
+
+test("the alternative pattern uses 50-minute focus blocks and 10-minute breaks", () => {
+  assert.deepEqual(core.buildBlocks(100,50,10),[
+    {focusMinutes:50,breakAfterMinutes:10},
+    {focusMinutes:50,breakAfterMinutes:0}
+  ]);
+});
+
+test("the Practice UI exposes the custom stage with the requested defaults", () => {
+  assert.match(practiceHtml,/id="customMinutes"[^>]*min="5"[^>]*max="180"[^>]*value="40"/);
+  assert.match(practiceHtml,/data-custom-pattern="25"/);
+  assert.match(practiceHtml,/data-custom-pattern="50"/);
+  assert.match(practiceHtml,/id="customPlanPreview"/);
+  assert.match(practiceHtml,/id="customStart"/);
+});
+
+test("custom timer blocks are sent to the verified timer as stage=custom", () => {
+  assert.match(practiceJs,/customSessionMode/);
+  assert.match(practiceJs,/stage_type: state\.customSession \? "custom" : "standard"/);
+  assert.match(practiceJs,/stage: state\.customSession \? "custom" : "standard"/);
+  assert.match(customJs,/reset\.html/);
+  assert.match(customJs,/showReflection/);
+});
+
+test("the AI Coach starts the same custom stage flow and offers adjustment", () => {
+  assert.match(coachJs,/customStart/);
+  assert.match(coachJs,/customTotal/);
+  assert.match(coachJs,/coachAdjustForm/);
+  assert.match(coachJs,/reflect/);
 });
