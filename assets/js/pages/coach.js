@@ -7,7 +7,7 @@
   const SUPABASE_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
   const CRISIS_EL = "Είμαι AI, όχι υπηρεσία έκτακτης ανάγκης. Σταματώ τη ροή μελέτης επειδή αυτό που έγραψες μπορεί να σημαίνει ότι χρειάζεσαι υποστήριξη τώρα. Στην Ελλάδα μπορείς να καλέσεις το 1018 (ΚΛΙΜΑΚΑ, γραμμή παρέμβασης για την αυτοκτονία, όλο το 24ωρο), το 10306 (δωρεάν και ανώνυμη ψυχοκοινωνική υποστήριξη, όλο το 24ωρο) ή το 112 αν κινδυνεύεις άμεσα. Επικοινώνησε επίσης με κάποιον άνθρωπο που εμπιστεύεσαι και ζήτησέ του να μείνει μαζί σου.";
   const CRISIS_EN = "I’m an AI, not an emergency service. I’m stopping the study flow because what you wrote may mean you need support now. In Greece, call 1018 (Klimaka suicide intervention line, 24/7), 10306 (free and anonymous psychosocial support, 24/7), or 112 if you are in immediate danger. Please contact someone you trust and ask them to stay with you.";
-  let lang = "el", step = 0, choice = "", answers = { task: "", timeMinutes: 40, obstacle: "" }, plan = null, authClient = null, signedIn = false;
+  let lang = "el", step = 0, choice = "", answers = { task: "", timeMinutes: 40, obstacle: "" }, plan = null, authClient = null, signedIn = false, authReady = Promise.resolve();
   const q = {
     el: ["Τι δουλεύεις σήμερα; (μάθημα ή εργασία)", "Πόσο χρόνο έχεις διαθέσιμο; Γράψε λεπτά από 5 έως 180.", "Τι σε δυσκολεύει αυτή τη στιγμή; Διάλεξε μία επιλογή και, αν θέλεις, πρόσθεσε λίγες λέξεις."],
     en: ["What are you working on today? (subject or task)", "How much time do you have? Enter 5 to 180 minutes.", "What is getting in the way? Choose an option and add a few words if you want."]
@@ -96,6 +96,7 @@
     }catch(e){signedIn=false;renderAccountStatus();}
   }
   async function callCoach(action, adjustment){
+    await authReady;
     const bearer=(await currentAccessToken())||SUPABASE_KEY;
     const response=await fetch(SUPABASE_URL+"/functions/v1/ai-study-coach",{
       method:"POST",
@@ -197,7 +198,7 @@
     $("coachRestart").addEventListener("click",()=>window.location.href="coach.html");
     try{const saved=localStorage.getItem("nepsis-lang");if(saved==="en")lang="en";}catch(e){}
     setLanguage(lang);
-    initAuth();
+    authReady=initAuth();
     initReflection();
     if(!new URLSearchParams(window.location.search).has("reflect"))addPrompt();
   });
