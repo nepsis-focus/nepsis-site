@@ -81,7 +81,7 @@
   async function refreshUsage(){
     const token=await currentAccessToken();if(!token)return;
     try{
-      const response=await fetch(SUPABASE_URL+"/functions/v1/ai-study-coach",{method:"POST",headers:{"content-type":"application/json","apikey":SUPABASE_KEY,"authorization":"Bearer "+token},body:JSON.stringify({action:"usage"})});
+      const response=await fetch(SUPABASE_URL+"/functions/v1/ai-study-coach-v2",{method:"POST",headers:{"content-type":"application/json","apikey":SUPABASE_KEY,"authorization":"Bearer "+token},body:JSON.stringify({action:"usage"})});
       if(response.ok){const data=await response.json();renderUsage(data.usage);}
     }catch(e){}
   }
@@ -98,7 +98,7 @@
   async function callCoach(action, adjustment){
     await authReady;
     const bearer=(await currentAccessToken())||SUPABASE_KEY;
-    const response=await fetch(SUPABASE_URL+"/functions/v1/ai-study-coach",{
+    const response=await fetch(SUPABASE_URL+"/functions/v1/ai-study-coach-v2",{
       method:"POST",
       headers:{"content-type":"application/json","apikey":SUPABASE_KEY,"authorization":"Bearer "+bearer},
       body:JSON.stringify({action,language:lang,task:answers.task,timeMinutes:answers.timeMinutes,obstacle:answers.obstacle,adjustment:adjustment||"",consent:true})
