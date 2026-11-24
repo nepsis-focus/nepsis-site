@@ -1,7 +1,7 @@
 const FOCUS = [5, 10, 25, 45, 60];
 const MAX_BODY = 8000;
 const MAX_DOC = 1000;
-const CRISIS_PATTERN = /(suicid|kill myself|end my life|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|αυτοκτον|αυτοτραυματισ|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|δεν θέλω να ζω|θέλω να πεθάνω|δεν αντέχω άλλο τη ζωή)/i;
+const CRISIS_PATTERN = /(suicid|kill myself|end my life|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|\bunsafe\b|\bnot safe\b|need help now|αυτοκτον|αυτοτραυματισ|κρίση|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|δεν θέλω να ζω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
 const LIBRARY_IDS = ["article-1","article-2","article-3","article-4","article-5","article-6","article-7","article-8","article-9","article-10","article-11","article-12","article-13"];
 const DEFAULT_ORIGINS = [
   "https://nepsis-focus.github.io",
@@ -143,7 +143,7 @@ Deno.serve(async (req: Request) => {
   if (!url || !serviceKey) return reply(503, { error: "service_unavailable" }, origin, allowed);
   const svc = { apikey: serviceKey, authorization: "Bearer " + serviceKey, "content-type": "application/json" };
   if (!usageOnly) {
-    const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+    const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown";
     const ipHash = await digest(serviceKey, "ip:" + ip);
     const windowMs = 10 * 60 * 1000;
     const windowStart = new Date(Math.floor(Date.now() / windowMs) * windowMs).toISOString();
@@ -242,7 +242,7 @@ Deno.serve(async (req: Request) => {
       message: firstSentence(generated.message, language === "en" ? "Start with one clear task and keep the first block manageable." : "Ξεκίνα με μία σαφή εργασία και κράτησε το πρώτο μπλοκ διαχειρίσιμο."),
       focusMinutes, blockMinutes, breakMinutes, libraryId,
       libraryReason: libraryId ? clean(generated.libraryReason || "", 240) : null,
-      researchReason, adjustOffer, provider, usage: usage(used)
+      researchReason, researchSource: "https://doi.org/10.3389/fpsyg.2025.1589411", adjustOffer, provider, usage: usage(used)
     }, origin, allowed);
   } catch (err) { console.error("coach_provider_error", String(err).slice(0, 200)); return reply(502, { error: "ai_unavailable" }, origin, allowed); }
 });
