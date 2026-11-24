@@ -1,6 +1,6 @@
 const FOCUS = [5, 10, 25, 45, 60];
 const MAX_BODY = 8000;
-const MAX_DOC = 1000;
+const MAX_INPUT_CHARS = 1000;
 const CRISIS_PATTERN = /(suicid|kill myself|end my life|end it all|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|\bunsafe\b|\bnot safe\b|need help now|αυτοκτον|αυτοτραυματισ|κρίση|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|να τελειώσω τη ζωή μου|δεν θέλω να ζω|δεν θέλω να υπάρχω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
 const LIBRARY_IDS = ["article-1","article-2","article-3","article-4","article-5","article-6","article-7","article-8","article-9","article-10","article-11","article-12","article-13"];
 const DEFAULT_ORIGINS = [
@@ -127,11 +127,11 @@ Deno.serve(async (req: Request) => {
   if (!body || typeof body !== "object" || Array.isArray(body)) return reply(400, { error: "invalid_input" }, origin, allowed);
   const usageOnly = body.action === "usage";
   const language = body.language === "en" ? "en" : "el";
-  const task = clean(body.task, MAX_DOC), obstacle = clean(body.obstacle, MAX_DOC), adjustment = clean(body.adjustment, MAX_DOC);
+  const task = clean(body.task, MAX_INPUT_CHARS), obstacle = clean(body.obstacle, MAX_INPUT_CHARS), adjustment = clean(body.adjustment, MAX_INPUT_CHARS);
   const available = Number(body.timeMinutes);
   const combinedInput = [task, obstacle, adjustment].filter(Boolean).join(" ");
   if (!usageOnly && (!task || !obstacle || !Number.isInteger(available) || available < 5 || available > 180 || !["plan", "adjust"].includes(String(body.action)))) return reply(400, { error: "invalid_input" }, origin, allowed);
-  if (!usageOnly && Array.from(combinedInput).length > MAX_DOC) return reply(413, { error: "input_too_long", maxCharacters: MAX_DOC }, origin, allowed);
+  if (!usageOnly && Array.from(combinedInput).length > MAX_INPUT_CHARS) return reply(413, { error: "input_too_long", maxCharacters: MAX_INPUT_CHARS }, origin, allowed);
   if (!usageOnly && CRISIS_PATTERN.test(combinedInput)) {
     const message = language === "en"
       ? "I’m an AI, not an emergency service. I’m stopping the study flow because you may need support now. In Greece, call 1018 (Klimaka, 24/7), 10306 (free and anonymous psychosocial support, 24/7), or 112 if you are in immediate danger. Please contact someone you trust and ask them to stay with you."
