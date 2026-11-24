@@ -54,6 +54,7 @@ test("conversation order, bilingual prompts and reflection are present", () => {
 });
 test("custom stage, break reset hook and exact Library IDs are wired", () => {
   assert.match(practice,/stage_type: state\.customSession \? "custom" : "standard"/);
+  assert.match(practice,/state\\.customSession \\? "custom:"/);
   assert.match(custom,/customTotal/); assert.match(custom,/reset\.searchParams\.set\("customNext"/);
   assert.match(reset,/custom-reset\.js/); assert.match(migration,/case when new\.is_custom then 'custom'/);
   const actualIds=[...library.matchAll(/data-save-id=["']([^"']+)["']/g)].map(m=>m[1]).sort();
