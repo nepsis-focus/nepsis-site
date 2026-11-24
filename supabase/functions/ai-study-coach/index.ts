@@ -111,7 +111,7 @@ Deno.serve(async (req: Request) => {
   if (!usageOnly && !geminiKey) return reply(503, { error: "ai_unavailable" }, origin, allowed);
   const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !serviceKey) return reply(503, { error: "service_unavailable" }, origin, allowed);
-  const requestIp = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+  const requestIp = (req.headers.get("cf-connecting-ip") || "").trim() || "unknown";
   let userId: string | null = null, verifiedEmail = "";
   const bearer = (req.headers.get("authorization") || "").match(/^Bearer\s+(.+)$/i)?.[1];
   if (bearer) {
