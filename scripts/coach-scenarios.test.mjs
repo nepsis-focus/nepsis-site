@@ -31,7 +31,7 @@ test("4. requests to skip breaks still retain the selected break protocol", () =
   assert.match(edge, /Never suggest skipping breaks, removing breaks, or reducing sleep/);
 });
 test("5. crisis messages stop locally and server-side before Gemini is called", () => {
-  assert.equal(core.detectCrisis("I want to kill myself"), true); assert.equal(core.detectCrisis("Δεν θέλω να ζω"), true);
+  assert.equal(core.detectCrisis("I want to kill myself"), true); assert.equal(core.detectCrisis("Δεν θέλω να ζω"), true); assert.equal(core.detectCrisis("I am in crisis"), true);
   assert.match(coach, /function stopForCrisis\(\)/); assert.ok(coach.includes('$("coachCrisis").hidden=false'));
   assert.match(edge, /CRISIS_PATTERN\.test\(combinedInput\)/);
   assert.ok(edge.indexOf("CRISIS_PATTERN.test(combinedInput)") < edge.indexOf("await adapter(prompt)"));
