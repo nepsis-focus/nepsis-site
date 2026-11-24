@@ -89,11 +89,8 @@
   function initGlobe() {
     const canvas = $("globeCanvas");
     const stage = $("globeStage");
-    if (!canvas || !stage || !window.THREE) {
-      const msg = $("globeMsg");
-      if (msg) msg.textContent = currentLang === "el" ? "Η υδρόγειος δεν είναι διαθέσιμη σε αυτόν τον browser." : "The globe is unavailable in this browser.";
-      return;
-    }
+    // The globe was removed from the page. Without its canvas there is nothing to start, and no message is shown.
+    if (!canvas || !stage || !window.THREE) return;
 
     let renderer;
     try {
@@ -404,6 +401,7 @@
   renderGlobeMsg();
   // Lazy start globe after load so FCP/LCP are not blocked
   function startGlobeLazy() {
+    if (!$("globeCanvas")) return;
     if (window.requestIdleCallback) {
       requestIdleCallback(function () { initGlobe(); }, { timeout: 2000 });
     } else {
