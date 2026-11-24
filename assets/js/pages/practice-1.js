@@ -695,7 +695,7 @@
   }
 
   function timerStorageKey(state) {
-    return TIMER_STORAGE_PREFIX + state.min;
+    return TIMER_STORAGE_PREFIX + (state.customSession ? "custom:" : "") + state.min;
   }
 
   function saveTimerCredentials(state) {
