@@ -142,9 +142,9 @@ Deno.serve(async (req: Request) => {
   const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !serviceKey) return reply(503, { error: "service_unavailable" }, origin, allowed);
   const svc = { apikey: serviceKey, authorization: "Bearer " + serviceKey, "content-type": "application/json" };
+  const requestIp = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
   if (!usageOnly) {
-    const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown";
-    const ipHash = await digest(serviceKey, "ip:" + ip);
+    const ipHash = await digest(serviceKey, "ip:" + requestIp);
     const windowMs = 10 * 60 * 1000;
     const windowStart = new Date(Math.floor(Date.now() / windowMs) * windowMs).toISOString();
     try {
@@ -171,7 +171,7 @@ Deno.serve(async (req: Request) => {
   const usage = (used: number | null) => ({ plan: premium ? "premium" : "free", limit: monthlyLimit, used, remaining: used === null ? null : Math.max(0, monthlyLimit - used), period: period.slice(0, 7), signedIn: !!userId });
   let used: number | null = null;
   try {
-    const identity = userId ? "user:" + userId : "guest:" + (req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown");
+    const identity = userId ? "user:" + userId : "guest:" + requestIp;
     const key = await digest(serviceKey, identity);
     if (usageOnly) {
       const read = await fetch(url + "/rest/v1/ai_coach_daily_limits?select=request_count,quota_day&subject_hash=eq." + key, { headers: svc, signal: AbortSignal.timeout(5000) });
