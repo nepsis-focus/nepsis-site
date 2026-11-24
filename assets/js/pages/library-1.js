@@ -28,5 +28,10 @@
  function setLang(next){lang=next;document.documentElement.lang=next;document.querySelectorAll('[data-el][data-en]').forEach(el=>{el.innerHTML=el.dataset[next];});search.placeholder=search.dataset['placeholder'+(next==='el'?'El':'En')];document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===next));cards.forEach(card=>{const button=card.querySelector('.save-article');if(button)updateSaveButton(card,button);});filter();}
  document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
  try{if(localStorage.getItem('nepsis-lang')==='en')setLang('en');}catch(e){}
+ const suggestedId=new URLSearchParams(location.search).get('item');
+ if(suggestedId&&/^article-(?:[1-9]|1[0-3])$/.test(suggestedId)){
+  const suggested=cards.find(card=>card.dataset.saveId===suggestedId);
+  if(suggested){suggested.classList.add('coach-library-highlight');setTimeout(()=>suggested.scrollIntoView({behavior:'smooth',block:'center'}),120);}
+ }
  filter();
 })();
