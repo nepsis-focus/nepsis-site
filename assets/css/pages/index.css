@@ -24,7 +24,11 @@ body.home-page{--home-bg:#fbfaf7;--home-surface:#fff;--home-ink:#25211e;--home-m
     z-index: 40;
     min-height: var(--home-header-height);
   }
+  body.home-page .site-header__inner {
+    min-height: var(--home-header-height);
+  }
   body.home-page .mobile-cta {
+    display: block;
     z-index: 30;
     min-height: 48px;
     bottom: calc(14px + env(safe-area-inset-bottom));
