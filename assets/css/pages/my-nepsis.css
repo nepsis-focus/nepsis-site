@@ -293,7 +293,7 @@ body.my-nepsis-dashboard .week-dashboard-chart .week-bar i { width:min(32px,78%)
 
 /* Premium, accessible account modal and passwordless states */
 body.auth-modal-open { overflow:hidden; }
-body.my-nepsis-dashboard .account { z-index:100; padding:18px; backdrop-filter:blur(16px); background:rgba(35,24,18,.46); transition:opacity .28s ease; }
+body.my-nepsis-dashboard .account { z-index:100; padding:18px; backdrop-filter:blur(16px); background:rgba(35,24,18,.46); transition:opacity .28s ease, visibility .28s ease; }
 body.my-nepsis-dashboard .account-card.auth-card { position:relative; width:min(480px,100%); max-height:min(92vh,780px); overflow:auto; padding:clamp(26px,5vw,40px); border:1px solid rgba(255,255,255,.82); border-radius:30px; background:radial-gradient(60% 55% at 100% 0%,rgba(247,209,90,.2),transparent 78%),linear-gradient(145deg,#fffdf8,#f6eadb); box-shadow:0 42px 110px -38px rgba(40,20,10,.7),0 1px 0 rgba(255,255,255,.9) inset; isolation:isolate; }
 body.my-nepsis-dashboard .auth-modal-art { position:absolute; width:210px; height:190px; top:-57px; right:-62px; z-index:-1; opacity:.9; pointer-events:none; }
 body.my-nepsis-dashboard .auth-orbit { position:absolute; inset:0; border:1px solid rgba(185,85,42,.2); border-radius:50%; }

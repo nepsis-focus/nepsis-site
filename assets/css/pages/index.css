@@ -66,3 +66,12 @@ body.home-page{--home-bg:#fbfaf7;--home-surface:#fff;--home-ink:#25211e;--home-m
     z-index: 0;
   }
 }
+
+/* Account sheet: fade and scale in and out, like a macOS window. */
+body.home-page .acc-modal { transition: opacity .2s ease, visibility .2s ease; }
+body.home-page .acc-card { transition: transform .24s cubic-bezier(.2, .8, .2, 1), opacity .2s ease; }
+body.home-page .acc-modal:not(.open) .acc-card { opacity: 0; transform: scale(.94) translateY(8px); }
+body.home-page .acc-modal.open .acc-card { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  body.home-page .acc-modal, body.home-page .acc-card { transition: none !important; }
+}
