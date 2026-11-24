@@ -26,6 +26,8 @@
   function updateCount(){const input=$("coachInput");$("coachCharCount").textContent=Array.from(input.value).length+" / 1000";}
   function showPrompt() {
     $("coachChoices").hidden=step!==2;
+    $("coachConsentRow").hidden=step!==2;
+    if(step===2)$("coachConsent").checked=false;
     $("coachForm").hidden=false;
     $("coachInput").value="";
     $("coachInput").type="text";
@@ -64,7 +66,7 @@
     const response=await fetch(SUPABASE_URL+"/functions/v1/ai-study-coach",{
       method:"POST",
       headers:{"content-type":"application/json","apikey":SUPABASE_KEY,"authorization":"Bearer "+SUPABASE_KEY},
-      body:JSON.stringify({action,language:lang,task:answers.task,timeMinutes:answers.timeMinutes,obstacle:answers.obstacle,adjustment:adjustment||""})
+      body:JSON.stringify({action,language:lang,task:answers.task,timeMinutes:answers.timeMinutes,obstacle:answers.obstacle,adjustment:adjustment||"",consent:true})
     });
     const data=await response.json().catch(()=>({}));
     if(response.status===429)throw new Error(data.error==="ip_rate_limit_reached"?"rate_limit":"monthly_limit");
@@ -128,6 +130,7 @@
     }
     const selected=choices[lang].find(item=>item.v===choice);
     if(!selected&&!raw){$("coachStatus").textContent=tr("Διάλεξε μια επιλογή ή γράψε τι σε δυσκολεύει.","Choose an option or describe what is getting in the way.");return;}
+    if(!$("coachConsent").checked){$("coachStatus").textContent=tr("Χρειάζεται η συγκατάθεσή σου πριν σταλούν οι απαντήσεις.","Your consent is required before your answers are sent.");return;}
     answers.obstacle=(selected?selected.t:"")+(selected&&raw?" — ":"")+raw;
     addMessage(answers.obstacle,"user");requestPlan();
   }
