@@ -1,3 +1,9 @@
+const SB_URL = "https://emhukqvetlhjgadgskbl.supabase.co";
+const SB_KEY = "sb_publishable_sdWqagLvXYQsmveUrmmw9g_neLoRMCl";
+const homepageSupabase = window.supabase && window.supabase.createClient && window.NepsisGoogleAuth
+  ? window.supabase.createClient(SB_URL, SB_KEY, window.NepsisGoogleAuth.clientOptions())
+  : null;
+
 (() => {
   "use strict";
   const root = document.documentElement;
