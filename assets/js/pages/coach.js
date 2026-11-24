@@ -109,7 +109,7 @@
   async function adjustPlan(event){
     event.preventDefault();const text=$("coachAdjustInput").value.trim();if(!text)return;
     if(core.detectCrisis(text)){showCrisis();return;}
-    if(Array.from(text).length>1000){$("coachAdjustStatus").textContent=tr("Μέχρι 1.000 χαρακτήρες.","Up to 1,000 characters.");return;}
+    if(!core.isWithinInputLimit(text)){$("coachAdjustStatus").textContent=tr("Μέχρι 1.000 χαρακτήρες.","Up to 1,000 characters.");return;}
     $("coachAdjustStatus").textContent=tr("Γίνεται προσαρμογή…","Adjusting…");
     try{
       const data=await callCoach("adjust",text);
@@ -120,7 +120,7 @@
   function sendAnswer(event){
     event.preventDefault();const raw=$("coachInput").value.trim();if(!raw&&!(step===2&&choice))return;
     if(core.detectCrisis(raw)){addMessage(raw,"user");showCrisis();return;}
-    if(Array.from(raw).length>1000){$("coachStatus").textContent=tr("Μέχρι 1.000 χαρακτήρες.","Up to 1,000 characters.");return;}
+    if(!core.isWithinInputLimit(raw)){$("coachStatus").textContent=tr("Μέχρι 1.000 χαρακτήρες.","Up to 1,000 characters.");return;}
     if(step===0&&core.isClearlyOffTopic(raw)){addMessage(raw,"user");stopOffTopic();return;}
     if(step===0){answers.task=raw;addMessage(raw,"user");step=1;addPrompt();return;}
     if(step===1){
