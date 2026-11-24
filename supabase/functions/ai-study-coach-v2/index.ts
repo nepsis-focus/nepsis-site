@@ -235,7 +235,7 @@ Deno.serve(async (req: Request) => {
     const focusRaw = Number(generated.focusMinutes);
     const focusMinutes = Number.isInteger(focusRaw) && focusRaw >= 5 && focusRaw <= available ? focusRaw : Math.min(available, 25);
     const proposedMessage = firstSentence(generated.message, language === "en" ? "Start with one clear task and keep the first block manageable." : "Ξεκίνα με μία σαφή εργασία και κράτησε το πρώτο μπλοκ διαχειρίσιμο.");
-    const unsafeRecommendation = /(skip(ping)? (the )?breaks?|without (a )?break|no need for breaks|no breaks? (are )?(needed|necessary)|breaks? (are )?optional|work through (the )?break|ignore (the )?breaks?|you can skip|sleep less|sleep deprivation|stay up all night|stay awake|work all night|pull an all-nighter|cut sleep|reduce sleep|do not sleep|don\x27t sleep|παράλειψε τα διαλείμματα|παράλειψε το διάλειμμα|μπορείς να παραλείψεις|χωρίς διάλειμμα|δεν χρειάζεται διάλειμμα|τα διαλείμματα είναι προαιρετικά|μην κάνεις διάλειμμα|λιγότερο ύπνο|μείωσε τον ύπνο|μην κοιμηθείς|ξενύχτησε|φάρμακα|φαρμακευτική αγωγή|ιατρικ|διάγνωση|θεραπεία)/i.test(proposedMessage);
+    const unsafeRecommendation = /(skip(ping)? (the )?breaks?|without (a )?break|no need for breaks|no breaks? (are )?(needed|necessary)|breaks? (are )?optional|work through (the )?break|ignore (the )?breaks?|you can skip|sleep less|sleep deprivation|stay up all night|stay awake|work all night|pull an all-nighter|cut sleep|reduce sleep|do not sleep|don\x27t sleep|παράλειψε τα διαλείμματα|παράλειψε το διάλειμμα|μπορείς να παραλείψεις|χωρίς διάλειμμα|δεν χρειάζεται διάλειμμα|τα διαλείμματα είναι προαιρετικά|μην κάνεις διάλειμμα|λιγότερο ύπνο|μείωσε τον ύπνο|μην κοιμηθείς|ξενύχτησε|φάρμακα|φαρμακευτική αγωγή|ιατρ|ψυχολόγ|διάγνωση|θεραπεία|therapy|therapist|psychologist|doctor|clinician|medication|medicine|diagnos|treatment|prescrib|pill)/i.test(proposedMessage);
     const safeMessage = unsafeRecommendation
       ? (language === "en" ? "Keep a short break in the plan; it supports a more sustainable session." : "Κράτησε ένα σύντομο διάλειμμα στο πλάνο· βοηθά να διατηρήσεις έναν πιο βιώσιμο ρυθμό.")
       : proposedMessage;
@@ -250,7 +250,7 @@ Deno.serve(async (req: Request) => {
       offTopic: false,
       message: safeMessage,
       focusMinutes, blockMinutes, breakMinutes, libraryId,
-      libraryReason: libraryId ? clean(generated.libraryReason || "", 240) : null,
+      libraryReason: libraryId ? (language === "en" ? "Related to the task you described." : "Σχετικό με την εργασία που περιέγραψες.") : null,
       researchReason, researchSource: "https://doi.org/10.3389/fpsyg.2025.1589411", adjustOffer, provider, usage: usage(used)
     }, origin, allowed);
   } catch (err) { console.error("coach_provider_error", String(err).slice(0, 200)); return reply(502, { error: "ai_unavailable" }, origin, allowed); }
