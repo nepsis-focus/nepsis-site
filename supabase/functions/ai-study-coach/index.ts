@@ -1,7 +1,7 @@
 const FOCUS = [5, 10, 25, 45, 60];
 const MAX_BODY = 8000;
 const MAX_DOC = 1000;
-const CRISIS_PATTERN = /(suicid|kill myself|end my life|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|\bunsafe\b|\bnot safe\b|need help now|αυτοκτον|αυτοτραυματισ|κρίση|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|δεν θέλω να ζω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
+const CRISIS_PATTERN = /(suicid|kill myself|end my life|end it all|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|\bunsafe\b|\bnot safe\b|need help now|αυτοκτον|αυτοτραυματισ|κρίση|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|να τελειώσω τη ζωή μου|δεν θέλω να ζω|δεν θέλω να υπάρχω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
 const LIBRARY_IDS = ["article-1","article-2","article-3","article-4","article-5","article-6","article-7","article-8","article-9","article-10","article-11","article-12","article-13"];
 const DEFAULT_ORIGINS = [
   "https://nepsis-focus.github.io",
@@ -230,6 +230,11 @@ Deno.serve(async (req: Request) => {
     }
     const focusRaw = Number(generated.focusMinutes);
     const focusMinutes = Number.isInteger(focusRaw) && focusRaw >= 5 && focusRaw <= available ? focusRaw : Math.min(available, 25);
+    const proposedMessage = firstSentence(generated.message, language === "en" ? "Start with one clear task and keep the first block manageable." : "Ξεκίνα με μία σαφή εργασία και κράτησε το πρώτο μπλοκ διαχειρίσιμο.");
+    const unsafeRecommendation = /(skip(ping)? (the )?breaks?|without (a )?break|sleep less|stay up all night|reduce sleep|παράλειψε τα διαλείμματα|χωρίς διάλειμμα|λιγότερο ύπνο|μην κοιμηθείς|φάρμακα|φαρμακευτική αγωγή|διάγνωση|θεραπεία)/i.test(proposedMessage);
+    const safeMessage = unsafeRecommendation
+      ? (language === "en" ? "Keep a short break in the plan; it supports a more sustainable session." : "Κράτησε ένα σύντομο διάλειμμα στο πλάνο· βοηθά να διατηρήσεις έναν πιο βιώσιμο ρυθμό.")
+      : proposedMessage;
     const blockMinutes = Number(generated.blockMinutes) === 50 ? 50 : 25;
     const breakMinutes = blockMinutes === 50 ? 10 : 5;
     const libraryId = LIBRARY_IDS.includes(String(generated.libraryId)) ? String(generated.libraryId) : null;
@@ -239,7 +244,7 @@ Deno.serve(async (req: Request) => {
     const adjustOffer = language === "en" ? "You can ask me to adjust the plan before you start." : "Μπορείς να μου ζητήσεις να προσαρμόσω το πλάνο πριν ξεκινήσεις.";
     return reply(200, {
       offTopic: false,
-      message: firstSentence(generated.message, language === "en" ? "Start with one clear task and keep the first block manageable." : "Ξεκίνα με μία σαφή εργασία και κράτησε το πρώτο μπλοκ διαχειρίσιμο."),
+      message: safeMessage,
       focusMinutes, blockMinutes, breakMinutes, libraryId,
       libraryReason: libraryId ? clean(generated.libraryReason || "", 240) : null,
       researchReason, researchSource: "https://doi.org/10.3389/fpsyg.2025.1589411", adjustOffer, provider, usage: usage(used)
