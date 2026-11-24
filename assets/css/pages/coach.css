@@ -260,3 +260,37 @@
 .coach-hero h1 { letter-spacing: -.035em; font-weight: 640; }
 .coach-btn { border-radius: 980px; }
 .coach-error { color: #9f2d2d; }
+
+/* Guided AI Coach conversation */
+.coach-ai-disclaimer{margin-top:12px!important;font-size:.88rem!important;color:var(--muted)!important}
+.coach-conversation-wrap{max-width:1120px}
+.coach-conversation-grid{display:grid;gap:22px;max-width:820px;margin:0 auto}
+.coach-chat-card{min-height:390px}
+.coach-chat-messages{display:flex;flex-direction:column;gap:12px;max-height:360px;overflow:auto;padding:8px 2px 18px}
+.coach-chat-message{max-width:min(88%,620px);padding:14px 17px;border:1px solid var(--border);border-radius:18px;background:var(--card)}
+.coach-chat-message.is-user{align-self:flex-end;background:#fff2df;border-color:#f1d4b1}
+.coach-chat-message.is-coach{align-self:flex-start}
+.coach-chat-speaker{display:block;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--ember);margin-bottom:5px}
+.coach-chat-message p{margin:0;line-height:1.55}
+.coach-chat-form{display:grid;gap:10px;margin-top:12px}
+.coach-chat-form textarea,.coach-adjust-form textarea,.coach-reflection-card textarea{width:100%;font:inherit;line-height:1.5;padding:13px 15px;border:1.5px solid var(--border);border-radius:14px;background:#fff;color:var(--fg);resize:vertical}
+.coach-chat-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.coach-choice-list{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.coach-choice-pill{border:1px solid var(--border);border-radius:999px;padding:9px 14px;background:#fff;color:var(--fg);font:inherit;font-weight:800;cursor:pointer}
+.coach-choice-pill[aria-pressed=true],.coach-choice-pill.active{background:var(--sun);border-color:var(--orange)}
+.coach-plan-card{display:grid;gap:18px}
+.coach-plan-message{display:grid;gap:8px;color:var(--fg);line-height:1.55}
+.coach-plan-message p{margin:0}
+.coach-plan-preview{padding:16px 18px;border:1px solid var(--border);border-radius:18px;background:rgba(255,248,238,.7)}
+.coach-plan-preview p{margin:8px 0 0;font-weight:900;line-height:1.6}
+.coach-adjust-form{display:grid;gap:10px;border-top:1px solid var(--border);padding-top:16px}
+.coach-adjust-form label{font-weight:800}
+.coach-library-suggestion{padding:12px 0;border-top:1px solid var(--border)}
+.coach-library-suggestion a{font-weight:800;color:var(--ember)}
+.coach-crisis-card{border-color:#b8341e;background:#fff8f4}
+.coach-crisis-card ul{display:grid;gap:8px;padding-left:20px}
+.coach-crisis-card a{font-weight:900;color:var(--ember)}
+.coach-reflection-card{display:grid;gap:14px}
+.coach-reflection-card form{display:grid;gap:12px}
+.coach-btn-secondary{background:#fff!important;color:var(--fg)!important;border:1.5px solid var(--border)!important}
+@media(max-width:620px){.coach-chat-message{max-width:96%}.coach-chat-card{padding:20px}.coach-chat-actions{align-items:flex-end}.coach-chat-actions .coach-btn{padding:12px 18px}}
