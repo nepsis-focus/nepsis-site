@@ -294,3 +294,5 @@
 .coach-reflection-card form{display:grid;gap:12px}
 .coach-btn-secondary{background:#fff!important;color:var(--fg)!important;border:1.5px solid var(--border)!important}
 @media(max-width:620px){.coach-chat-message{max-width:96%}.coach-chat-card{padding:20px}.coach-chat-actions{align-items:flex-end}.coach-chat-actions .coach-btn{padding:12px 18px}}
+
+.coach-research-source{font-size:.88rem;font-weight:800;color:var(--ember);text-decoration:underline;text-underline-offset:3px}
