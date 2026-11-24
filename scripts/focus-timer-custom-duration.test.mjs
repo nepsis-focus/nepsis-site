@@ -24,6 +24,12 @@ test("server RPC keeps token-bound idempotent sessions and age checks", () => {
   assert.match(migration, /completed_at IS NOT NULL/);
 });
 
+test("custom-stage marker preserves custom labels for standard and nonstandard durations", () => {
+  assert.match(customMigration, /is_custom boolean/);
+  assert.match(customMigration, /nepsis_timer_mark_custom/);
+  assert.match(customMigration, /stage = 'custom' AND duration_minutes BETWEEN 5 AND 180/);
+});
+
 test("Edge Function accepts integers in range and still verifies on the server", () => {
   assert.match(edge, /Number\.isInteger\(stage\) \|\| stage < 5 \|\| stage > 180/);
   assert.match(edge, /admin\.rpc\(rpcName, rpcArgs\)/);
