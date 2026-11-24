@@ -31,7 +31,7 @@ const scenarios = [
   ["input length and library ID guard", async () => {
     const fn = await readFile(new URL("../supabase/functions/ai-study-coach/index.ts", import.meta.url), "utf8");
     const client = await readFile(new URL("../assets/js/pages/coach.js", import.meta.url), "utf8");
-    assert.match(fn, /MAX_INPUT_CHARS = 1000/);
+    assert.match(fn, /MAX_DOC = 1000/);
     assert.match(fn, /consume_ai_coach_ip_limit/);
     assert.match(fn, /Deno\.env\.get\("GEMINI_API_KEY"\)/);
     assert.doesNotMatch(client, /GEMINI_API_KEY|AIza[0-9A-Za-z_-]{20,}/);
