@@ -4,9 +4,9 @@ import { readFile } from "node:fs/promises";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
-const [coach, html, core, edge, timer, migration, library, reset, sw, home, scenarios, practice, customStage, customReset, practiceJs, libraryJs] = await Promise.all([
+const [coach, html, core, edge, legacyEdge, timer, migration, library, reset, sw, home, scenarios, practice, customStage, customReset, practiceJs, libraryJs] = await Promise.all([
   read("assets/js/pages/coach.js"), read("coach.html"), read("assets/js/coach-core.js"),
-  read("supabase/functions/ai-study-coach-v2/index.ts"), read("supabase/functions/focus-timer/index.ts"),
+  read("supabase/functions/ai-study-coach-v2/index.ts"), read("supabase/functions/ai-study-coach/index.ts"), read("supabase/functions/focus-timer/index.ts"),
   read("supabase/migrations/20261124130000_coach_ip_rate_limit_and_custom_stage.sql"),
   read("library.html"), read("reset.html"), read("sw.js"), read("index.html"), read("tests/coach-scenarios.md"),
   read("practice.html"), read("assets/js/pages/custom-stage.js"), read("assets/js/pages/custom-reset.js"),
@@ -53,6 +53,8 @@ test("the server enforces 1000 characters and per-IP rate limiting", () => {
   assert.ok(edge.includes("MAX_INPUT_CHARS = 1000"));
   assert.ok(edge.includes("consume_ai_coach_ip_limit"));
   assert.ok(edge.includes("p_request_limit: 8"));
+  assert.ok(legacyEdge.includes("MAX_DOC = 1000"));
+  assert.ok(legacyEdge.includes("consume_ai_coach_ip_limit"));
   assert.ok(edge.includes('const requestIp = (req.headers.get("cf-connecting-ip") || "").trim() || "unknown"'));
   assert.ok(!edge.includes("x-forwarded-for"));
   assert.ok(migration.includes("ai_coach_ip_limits"));
