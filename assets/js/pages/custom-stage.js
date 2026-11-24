@@ -48,6 +48,16 @@
   }
   function initRunningSession() {
     if (!customMode) return;
+    if (params.get("customCompleted") === "1") { showReflection(Number(params.get("customTotal")) || 40); return; }
+    const breakUntil = Number(params.get("customBreakUntil"));
+    if (Number.isFinite(breakUntil) && breakUntil > 0) {
+      const remainingFocus = Number(params.get("customRemaining"));
+      const totalFocus = Number(params.get("customTotal"));
+      const blockFocus = Number(params.get("customBlock"));
+      const breakMinutes = Number(params.get("customBreak"));
+      if ([remainingFocus,totalFocus,blockFocus,breakMinutes].every(Number.isInteger)) showBreak(remainingFocus,totalFocus,blockFocus,breakMinutes,breakUntil);
+      return;
+    }
     const current = Number(params.get("coachStart"));
     const total = Number(params.get("customTotal"));
     const remaining = Number(params.get("customRemaining"));
@@ -96,7 +106,7 @@
     panel.hidden = false;
   }
   function formatTime(seconds) { return String(Math.floor(seconds / 60)).padStart(2,"0") + ":" + String(seconds % 60).padStart(2,"0"); }
-  function showBreak(remaining, total, block, rest) {
+  function showBreak(remaining, total, block, rest, savedUntil) {
     const nextFocus = Math.min(block, remaining);
     const next = new URL("practice.html", window.location.href);
     next.searchParams.set("custom","1"); next.searchParams.set("coachStart",String(nextFocus));
@@ -105,18 +115,27 @@
     next.hash = "stage-" + nextFocus;
     const reset = new URL("reset.html", window.location.href);
     reset.searchParams.set("customBreak",String(rest)); reset.searchParams.set("customNext",next.href);
+    const until = savedUntil || (Date.now() + rest * 60 * 1000);
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set("customBreakUntil",String(until));
+    try { history.replaceState({}, "", currentUrl.href); } catch (e) {}
+    const secondsLeft = Math.max(0, Math.ceil((until - Date.now()) / 1000));
     overlay(el("Ώρα για μικρή παύση","Time for a short break"),
       el("Ολοκλήρωσες ένα μπλοκ. Κάνε το διάλειμμά σου και μετά συνέχισε με το επόμενο μέρος.","You finished a focus block. Take your break, then continue with the next part."),
-      next.href, el("Άνοιξε την επαναφορά","Open reset"), rest * 60);
+      next.href, el("Άνοιξε την επαναφορά","Open reset"), secondsLeft);
     const link = $("customSessionOverlay").querySelector("a.btn-ghost");
     if (link) link.href = reset.href;
   }
   function showReflection(total) {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set("customCompleted","1");
+    try { history.replaceState({}, "", currentUrl.href); } catch (e) {}
     const url = new URL("coach.html", window.location.href);
     url.searchParams.set("reflect","1"); url.searchParams.set("minutes",String(total));
     overlay(el("Η συνεδρία ολοκληρώθηκε","Session complete"),
       el("Πάρε μια στιγμή να σκεφτείς πώς πήγε.","Take a moment to reflect on how it went."),
       url.href, el("Απάντησε στον AI Coach","Reflect with AI Coach"), null);
   }
-  document.addEventListener("DOMContentLoaded", function () { initBuilder(); initRunningSession(); });
+  initBuilder();
+  initRunningSession();
 })(window, document);
