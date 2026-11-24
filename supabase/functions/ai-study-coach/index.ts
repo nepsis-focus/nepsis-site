@@ -22,7 +22,7 @@ function clean(value: unknown, max: number): string {
   return typeof value === "string" ? value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, " ").trim().slice(0, max) : "";
 }
 function cleanInput(value: unknown): string {
-  return typeof value === "string" ? value.replace(/\\s+/g, " ").trim() : "";
+  return typeof value === "string" ? value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, " ").trim() : "";
 }
 function reply(status: number, data: Record<string, unknown>, origin: string | null, ok: boolean) {
   const h = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "vary": "Origin" });
