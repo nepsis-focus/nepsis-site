@@ -79,3 +79,7 @@ body.home-page .acc-modal.open .acc-card { opacity: 1; transform: none; }
 /* Timer ring: the number scales with the ring so "45:00" stays inside the inner circle on phones. */
 body.home-page .focus-orbit { container-type: inline-size; }
 body.home-page .focus-orbit__center strong { font-size: min(7rem, 19cqi); white-space: nowrap; }
+
+/* Account sheet on phones: the card fits inside the padding, and the header (menu button) stays tappable above the sheet. */
+body.home-page .acc-card { box-sizing: border-box; max-width: 100%; }
+body.home-page:has(.acc-modal.open) .site-header { z-index: 42; }
