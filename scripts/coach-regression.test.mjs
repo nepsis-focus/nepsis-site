@@ -33,6 +33,6 @@ test("function has explicit in-function authorization and user consent",()=>{
  assert.match(html,/Συμφωνώ να σταλούν οι απαντήσεις μου/);
 });
 test("crisis responses are bilingual and link to verified Greece services",()=>{
- assert.match(edge,/1018 \(Klimaca, 24\/7\)/);assert.match(edge,/10306 \(free and anonymous psychosocial support, 24\/7\)/);
+ assert.match(edge,/1018 \(Klimaka, 24\/7\)/);assert.match(edge,/10306 \(free and anonymous psychosocial support, 24\/7\)/);
  assert.match(html,/https:\/\/10306\.gr\//);assert.match(html,/https:\/\/www\.klimaka\.org\.gr\//);
 });
