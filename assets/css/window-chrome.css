@@ -1,28 +1,34 @@
-/* macOS-style window controls for the account panel: red closes, yellow tucks the
-   panel into a dock at the bottom, green enlarges it. */
-body .wc-card { padding-top: 58px !important; }
+/* macOS-style window: title bar with red, yellow and green controls, and a dock
+   at the bottom for minimized panels and the site's sections. */
+
+/* ---- Window ---- */
+body .wc-card { padding-top: 62px !important; }
 .wc-lights {
-  position: absolute; top: 18px; left: 20px; z-index: 2;
-  display: flex; gap: 8px; align-items: center;
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+  height: 46px; display: flex; align-items: center; padding: 0 18px; gap: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, .06); box-sizing: border-box;
+  border-radius: 28px 28px 0 0;
 }
 .wc-lights button {
-  width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%;
-  display: grid; place-items: center; cursor: pointer; background: transparent;
+  position: relative; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer; background: transparent; flex: 0 0 auto;
 }
-.wc-lights button::before {
-  content: ""; width: 12px; height: 12px; border-radius: 50%;
-  background: var(--wc-dot); box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .18);
-  transition: filter .15s ease;
+.wc-lights button > span {
+  width: 12px; height: 12px; border-radius: 50%; background: var(--wc-dot);
+  box-shadow: inset 0 0 0 .5px rgba(0, 0, 0, .16); transition: filter .15s ease, transform .15s ease;
 }
-.wc-lights button:hover::before, .wc-lights button:focus-visible::before { filter: brightness(.9); }
-/* Symbols appear when the pointer is over the group, as on macOS. */
+.wc-lights button:hover > span, .wc-lights button:focus-visible > span { filter: brightness(.94); }
+.wc-lights button:active > span { transform: scale(.9); }
+.wc-lights button:focus-visible { outline: 2px solid rgba(0, 0, 0, .3); outline-offset: 1px; }
+.wc-red { --wc-dot: #ff5f57; }
+.wc-yellow { --wc-dot: #febc2e; }
+.wc-green { --wc-dot: #28c840; }
+/* Symbols show when the pointer is over the group, as on macOS. */
 .wc-lights button::after {
   content: ""; position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px;
   opacity: 0; transition: opacity .12s ease; pointer-events: none;
   background-position: center; background-size: contain; background-repeat: no-repeat;
 }
-.wc-lights { position: absolute; }
-.wc-lights button { position: relative; }
 .wc-lights:hover button::after, .wc-lights:focus-within button::after { opacity: 1; }
 .wc-red::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M2.5 2.5l5 5m0-5l-5 5' stroke='%234d0000' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -33,10 +39,11 @@ body .wc-card { padding-top: 58px !important; }
 .wc-green::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.8 4.2V1.8h2.4M8.2 5.8v2.4H5.8M1.8 1.8l2.6 2.6M8.2 8.2L5.6 5.6' fill='none' stroke='%23006500' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
-.wc-lights button:focus-visible { outline: 2px solid rgba(0, 0, 0, .35); outline-offset: 1px; }
-.wc-red { --wc-dot: #ff5f57; }
-.wc-yellow { --wc-dot: #febc2e; }
-.wc-green { --wc-dot: #28c840; }
+.wc-title {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font-size: .82rem; font-weight: 700; color: #6b625b; letter-spacing: .01em; white-space: nowrap;
+  pointer-events: none;
+}
 @media (pointer: coarse) { .wc-lights button { width: 32px; height: 32px; } }
 @media (max-width: 600px) { .wc-lights .wc-green { display: none; } }
 
@@ -49,22 +56,54 @@ body .wc-card.wc-to-dock {
   transition: transform .34s cubic-bezier(.5, 0, .75, 0), opacity .3s ease !important;
 }
 
-/* Dock for minimized windows */
+/* ---- Dock ---- */
 .wc-dock {
-  position: fixed; left: 50%; bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateX(-50%);
-  z-index: 60; display: flex; gap: 8px; padding: 8px 10px;
-  background: rgba(255, 255, 255, .72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(0, 0, 0, .08); border-radius: 18px;
-  box-shadow: 0 14px 40px -18px rgba(40, 28, 20, .45);
+  position: fixed; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+  z-index: 60; display: flex; align-items: flex-end; gap: 6px; padding: 8px 12px 6px;
+  background: rgba(255, 255, 255, .62); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(0, 0, 0, .07); border-radius: 22px;
+  box-shadow: 0 18px 40px -20px rgba(40, 28, 20, .45);
 }
-.wc-dock[hidden] { display: none; }
-.wc-dock button {
-  min-height: 40px; padding: 6px 14px; border: 1px solid rgba(0, 0, 0, .08); border-radius: 12px;
-  background: #fff; color: #27221f; font: inherit; font-size: .88rem; font-weight: 700; cursor: pointer;
-  box-shadow: 0 2px 8px -4px rgba(0, 0, 0, .25);
+/* On phones the dock appears only while a panel is minimized. */
+@media (max-width: 899px) { .wc-dock:not(.has-running) { display: none; } }
+.wc-app {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 0 4px; color: #27221f; text-decoration: none; background: none; border: 0; cursor: pointer; font: inherit;
+  transform: scale(var(--scale, 1)); transform-origin: 50% 100%;
+  transition: transform .16s cubic-bezier(.2, .8, .2, 1);
 }
-.wc-dock button:focus-visible { outline: 2px solid #f0702a; outline-offset: 2px; }
+.wc-tile {
+  width: 50px; height: 50px; border-radius: 14px; color: #fff; display: grid; place-items: center;
+  background: linear-gradient(160deg, var(--tone-a), var(--tone-b));
+  box-shadow: 0 6px 14px -8px rgba(40, 20, 10, .55), inset 0 1px 0 rgba(255, 255, 255, .45);
+  transition: transform .2s cubic-bezier(.2, .8, .2, 1), box-shadow .2s ease;
+}
+.wc-tile svg { width: 28px; height: 28px; }
+.wc-app:hover .wc-tile, .wc-app:focus-visible .wc-tile { transform: translateY(-2px); }
+.wc-app:active .wc-tile { transform: translateY(0) scale(.96); }
+.wc-app:focus-visible { outline: none; }
+.wc-app:focus-visible .wc-tile { outline: 2px solid #f0702a; outline-offset: 3px; }
+.wc-label {
+  position: absolute; bottom: calc(100% + 2px); left: 50%; transform: translate(-50%, 6px);
+  padding: 3px 8px; border-radius: 8px; white-space: nowrap; pointer-events: none;
+  background: rgba(30, 24, 20, .82); color: #fff; font-size: .72rem; font-weight: 650;
+  opacity: 0; transition: opacity .14s ease, transform .14s ease;
+}
+.wc-app:hover .wc-label, .wc-app:focus-visible .wc-label { opacity: 1; transform: translate(-50%, 0); }
+.wc-run {
+  width: 5px; height: 5px; border-radius: 50%; background: #27221f; opacity: 0; transform: scale(.4);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.wc-app[aria-current="page"] .wc-run, .wc-app.is-running .wc-run { opacity: .75; transform: scale(1); }
+.wc-app.is-running .wc-tile { box-shadow: 0 6px 14px -8px rgba(40, 20, 10, .55), 0 0 0 2px rgba(240, 112, 42, .35), inset 0 1px 0 rgba(255, 255, 255, .45); }
+@media (max-width: 899px) {
+  .wc-tile { width: 46px; height: 46px; border-radius: 13px; }
+  .wc-tile svg { width: 25px; height: 25px; }
+  .wc-app { transform: none; }
+  .wc-label { display: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  body .wc-card.wc-to-dock { transition: none !important; }
+  body .wc-card.wc-to-dock, .wc-app, .wc-tile, .wc-label, .wc-run { transition: none !important; }
+  .wc-app { transform: none; }
 }
