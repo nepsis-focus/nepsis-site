@@ -114,8 +114,25 @@ const homepageSupabase = window.supabase && window.supabase.createClient && wind
 
   const mobileCta = document.getElementById("mobileCta");
   const hero = document.querySelector(".hero");
+  const footer = document.querySelector("footer");
   if (mobileCta && hero && "IntersectionObserver" in window) {
-    new IntersectionObserver(([entry]) => mobileCta.classList.toggle("is-visible", !entry.isIntersecting), { threshold: 0.05 }).observe(hero);
+    let heroVisible = true;
+    let footerVisible = false;
+    const syncMobileCta = () => {
+      mobileCta.classList.toggle("is-visible", !heroVisible && !footerVisible);
+    };
+    const heroObserver = new IntersectionObserver(([entry]) => {
+      heroVisible = entry.isIntersecting;
+      syncMobileCta();
+    }, { threshold: 0.05 });
+    heroObserver.observe(hero);
+    if (footer) {
+      const footerObserver = new IntersectionObserver(([entry]) => {
+        footerVisible = entry.isIntersecting;
+        syncMobileCta();
+      }, { threshold: 0.01 });
+      footerObserver.observe(footer);
+    }
   }
   try { applyLanguage(localStorage.getItem(LANG_KEY) === "en" ? "en" : "el"); } catch (error) { applyLanguage("el"); }
 })();
