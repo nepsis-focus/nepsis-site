@@ -116,7 +116,7 @@
     }catch(e){$("coachAdjustStatus").textContent=tr("Δεν ήταν δυνατή η προσαρμογή. Δοκίμασε ξανά.","The plan could not be adjusted. Please try again.");}
   }
   function sendAnswer(event){
-    event.preventDefault();const raw=$("coachInput").value.trim();if(!raw)return;
+    event.preventDefault();const raw=$("coachInput").value.trim();if(!raw&&!(step===2&&choice))return;
     if(core.detectCrisis(raw)){addMessage(raw,"user");showCrisis();return;}
     if(Array.from(raw).length>1000){$("coachStatus").textContent=tr("Μέχρι 1.000 χαρακτήρες.","Up to 1,000 characters.");return;}
     if(step===0&&core.isClearlyOffTopic(raw)){addMessage(raw,"user");stopOffTopic();return;}
@@ -132,12 +132,13 @@
     addMessage(answers.obstacle,"user");requestPlan();
   }
   function setLanguage(next){
+    const changed=lang!==(next==="en"?"en":"el");
     lang=next==="en"?"en":"el";document.documentElement.lang=lang;
     try{localStorage.setItem("nepsis-lang",lang);}catch(e){}
     document.querySelectorAll("[data-el][data-en]").forEach(el=>{el.textContent=lang==="en"?el.dataset.en:el.dataset.el;});
     document.querySelectorAll("[data-set-lang]").forEach(b=>{b.setAttribute("aria-pressed",String(b.dataset.setLang===lang));b.classList.toggle("active",b.dataset.setLang===lang);});
     $("coachInput").placeholder=lang==="en"?"Write your answer…":"Γράψε την απάντησή σου…";
-    if(step<3&&!$("coachChatCard").hidden){$("chatMessages").innerHTML="";addPrompt();}
+    if(changed&&step<3&&!$("coachChatCard").hidden){$("chatMessages").innerHTML="";addPrompt();}
   }
   function initReflection(){
     const params=new URLSearchParams(window.location.search);if(params.get("reflect")!=="1")return;
