@@ -6,7 +6,7 @@ const require = createRequire(import.meta.url);
 const core = require("../assets/js/coach-core.js");
 const read = (path) => readFile(new URL("../" + path, import.meta.url), "utf8");
 const [coach, html, edge, custom, practice, library, reset, migration, libraryJs] = await Promise.all([
-  read("assets/js/pages/coach.js"), read("coach.html"), read("supabase/functions/ai-study-coach/index.ts"),
+  read("assets/js/pages/coach.js"), read("coach.html"), read("supabase/functions/ai-study-coach-v2/index.ts"),
   read("assets/js/pages/custom-stage.js"), read("assets/js/pages/practice-1.js"),
   read("library.html"), read("reset.html"),
   read("supabase/migrations/20261124130000_coach_ip_rate_limit_and_custom_stage.sql"),
