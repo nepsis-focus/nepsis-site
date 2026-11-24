@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import core from "../assets/js/coach-core.js";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const core = require("../assets/js/coach-core.js");
 const read = (path) => readFile(new URL("../" + path, import.meta.url), "utf8");
 const [coach, html, edge, custom, practice, library, reset, migration, libraryJs] = await Promise.all([
   read("assets/js/pages/coach.js"), read("coach.html"), read("supabase/functions/ai-study-coach/index.ts"),
