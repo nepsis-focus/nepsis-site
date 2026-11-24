@@ -112,7 +112,7 @@
   async function adjustPlan(event){
     event.preventDefault();const text=$("coachAdjustInput").value.trim();if(!text)return;
     if(core.detectCrisis(text)){showCrisis();return;}
-    if(!core.isWithinInputLimit(text)){$("coachAdjustStatus").textContent=tr("Μέχρι 1.000 χαρακτήρες.","Up to 1,000 characters.");return;}
+    if(!core.isWithinInputLimit([answers.task,answers.obstacle,text].join(" "))){$("coachAdjustStatus").textContent=tr("Κράτησε όλες τις απαντήσεις μαζί κάτω από 1.000 χαρακτήρες.","Keep all answers together under 1,000 characters.");return;}
     $("coachAdjustStatus").textContent=tr("Γίνεται προσαρμογή…","Adjusting…");
     try{
       const data=await callCoach("adjust",text);
@@ -134,7 +134,9 @@
     const selected=choices[lang].find(item=>item.v===choice);
     if(!selected&&!raw){$("coachStatus").textContent=tr("Διάλεξε μια επιλογή ή γράψε τι σε δυσκολεύει.","Choose an option or describe what is getting in the way.");return;}
     if(!$("coachConsent").checked){$("coachStatus").textContent=tr("Χρειάζεται η συγκατάθεσή σου πριν σταλούν οι απαντήσεις.","Your consent is required before your answers are sent.");return;}
-    answers.obstacle=(selected?selected.t:"")+(selected&&raw?" — ":"")+raw;
+    const nextObstacle=(selected?selected.t:"")+(selected&&raw?" — ":"")+raw;
+    if(!core.isWithinInputLimit([answers.task,nextObstacle].join(" "))){$("coachStatus").textContent=tr("Κράτησε όλες τις απαντήσεις μαζί κάτω από 1.000 χαρακτήρες.","Keep all answers together under 1,000 characters.");return;}
+    answers.obstacle=nextObstacle;
     addMessage(answers.obstacle,"user");requestPlan();
   }
   function setLanguage(next){
