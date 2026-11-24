@@ -48,7 +48,7 @@ test("custom timer blocks are sent to the verified timer as stage=custom", () =>
 });
 
 test("the AI Coach starts the same custom stage flow and offers adjustment", () => {
-  assert.match(coachJs,/customStart/);
+  assert.match(coachJs,/coachPlanStart/);
   assert.match(coachJs,/customTotal/);
   assert.match(coachJs,/coachAdjustForm/);
   assert.match(coachJs,/reflect/);
