@@ -1,6 +1,6 @@
 const FOCUS = [5, 10, 25, 45, 60];
-const MAX_BODY = 120000;
-const MAX_DOC = 28000;
+const MAX_BODY = 8000;
+const MAX_DOC = 1000;
 const DEFAULT_ORIGINS = [
   "https://nepsis-focus.github.io",
   "https://nepsis-site.nepsis-corp.workers.dev",
@@ -103,6 +103,7 @@ Deno.serve(async (req: Request) => {
   const topic = clean(body.topic, 140), type = body.taskType === "study" || body.taskType === "task" ? body.taskType : "";
   const energy = Number(body.energy), available = Number(body.available), documentText = clean(body.documentText, MAX_DOC);
   if (!usageOnly && (!topic || !type || !Number.isInteger(energy) || energy < 1 || energy > 5 || !Number.isInteger(available) || available < 5 || available > 180 || (body.documentText !== undefined && typeof body.documentText !== "string"))) return reply(400, { error: "invalid_input" }, origin, allowed);
+  if (!usageOnly && Array.from([topic, documentText].filter(Boolean).join(" ")).length > MAX_DOC) return reply(413, { error: "input_too_long", maxCharacters: MAX_DOC }, origin, allowed);
   // Consent gate: nothing is sent to Gemini unless the user explicitly consented.
   // Checked before the rate limit so refused requests do not use a daily slot.
   if (!usageOnly && body.consent !== true) return reply(403, { error: "consent_required" }, origin, allowed);
@@ -110,6 +111,7 @@ Deno.serve(async (req: Request) => {
   if (!usageOnly && !geminiKey) return reply(503, { error: "ai_unavailable" }, origin, allowed);
   const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !serviceKey) return reply(503, { error: "service_unavailable" }, origin, allowed);
+  const requestIp = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
   let userId: string | null = null, verifiedEmail = "";
   const bearer = (req.headers.get("authorization") || "").match(/^Bearer\s+(.+)$/i)?.[1];
   if (bearer) {
@@ -128,9 +130,17 @@ Deno.serve(async (req: Request) => {
   const usage = (used: number | null) => ({ plan: premium ? "premium" : "free", limit: monthlyLimit, used, remaining: used === null ? null : Math.max(0, monthlyLimit - used), period: period.slice(0, 7), signedIn: !!userId });
   let used: number | null = null;
   try {
-    const identity = userId ? "user:" + userId : "guest:" + (req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown");
+    const identity = userId ? "user:" + userId : "guest:" + requestIp;
     const key = await digest(serviceKey, identity);
     const svc = { apikey: serviceKey, authorization: "Bearer " + serviceKey, "content-type": "application/json" };
+    if (!usageOnly) {
+      const ipHash = await digest(serviceKey, "ip:" + requestIp);
+      const windowMs = 10 * 60 * 1000;
+      const windowStart = new Date(Math.floor(Date.now() / windowMs) * windowMs).toISOString();
+      const limitedIp = await fetch(url + "/rest/v1/rpc/consume_ai_coach_ip_limit", { method: "POST", headers: svc, body: JSON.stringify({ p_ip_hash: ipHash, p_window_start: windowStart, p_request_limit: 8 }), signal: AbortSignal.timeout(5000) });
+      if (!limitedIp.ok) return reply(503, { error: "rate_limit_service_unavailable" }, origin, allowed);
+      if (await limitedIp.json() !== true) return reply(429, { error: "ip_rate_limit_reached", retryAfterSeconds: 600 }, origin, allowed);
+    }
     if (usageOnly) {
       const read = await fetch(url + "/rest/v1/ai_coach_daily_limits?select=request_count,quota_day&subject_hash=eq." + key, { headers: svc, signal: AbortSignal.timeout(5000) });
       if (!read.ok) return reply(503, { error: "service_unavailable" }, origin, allowed);
