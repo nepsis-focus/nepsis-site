@@ -5,7 +5,7 @@
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(window.location.search);
   const customMode = params.get("custom") === "1";
-  const el = (elText, enText) => window.nepsisLang === "en" ? enText : elText;
+  const el = (elText, enText) => document.documentElement.lang === "en" ? enText : elText;
   function initBuilder() {
     const minutes = $("customMinutes"), patternButtons = Array.from(document.querySelectorAll("[data-custom-pattern]"));
     const preview = $("customPlanPreview"), start = $("customStart");
