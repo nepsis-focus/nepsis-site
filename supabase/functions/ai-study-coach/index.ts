@@ -21,6 +21,9 @@ const WORKERS_PREVIEW_ORIGIN = new RegExp("^https://[a-z0-9-]+-nepsis-site[.]nep
 function clean(value: unknown, max: number): string {
   return typeof value === "string" ? value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, " ").trim().slice(0, max) : "";
 }
+function cleanInput(value: unknown): string {
+  return typeof value === "string" ? value.replace(/\\s+/g, " ").trim() : "";
+}
 function reply(status: number, data: Record<string, unknown>, origin: string | null, ok: boolean) {
   const h = new Headers({ "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "vary": "Origin" });
   if (origin && ok) {
@@ -127,7 +130,7 @@ Deno.serve(async (req: Request) => {
   if (!body || typeof body !== "object" || Array.isArray(body)) return reply(400, { error: "invalid_input" }, origin, allowed);
   const usageOnly = body.action === "usage";
   const language = body.language === "en" ? "en" : "el";
-  const task = clean(body.task, MAX_INPUT_CHARS), obstacle = clean(body.obstacle, MAX_INPUT_CHARS), adjustment = clean(body.adjustment, MAX_INPUT_CHARS);
+  const task = cleanInput(body.task), obstacle = cleanInput(body.obstacle), adjustment = cleanInput(body.adjustment);
   const available = Number(body.timeMinutes);
   const combinedInput = [task, obstacle, adjustment].filter(Boolean).join(" ");
   if (!usageOnly && (!task || !obstacle || !Number.isInteger(available) || available < 5 || available > 180 || !["plan", "adjust"].includes(String(body.action)))) return reply(400, { error: "invalid_input" }, origin, allowed);
