@@ -30,7 +30,6 @@
     if(step===2)$("coachConsent").checked=false;
     $("coachForm").hidden=false;
     $("coachInput").value="";
-    $("coachInput").type="text";
     $("coachInput").placeholder=step===1?tr("π.χ. 40","e.g. 40"):tr("Γράψε την απάντησή σου…","Write your answer…");
     $("coachInputLabel").textContent=tr("Η απάντησή σου","Your answer");
     $("coachInput").setAttribute("aria-label",q[lang][step]);
