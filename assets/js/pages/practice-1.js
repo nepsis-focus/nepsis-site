@@ -441,9 +441,7 @@
           typeof saved.session_id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(saved.session_id)) customMinutes.add(minutes);
     }
   } catch (e) {}
-  const baseStages = customSessionMode && isValidFocusMinutes(requestedCustomMinutes)
-    ? DEFAULT_STAGES.filter(function (stage) { return stage.min !== requestedCustomMinutes; })
-    : DEFAULT_STAGES;
+  const baseStages = customSessionMode && isValidFocusMinutes(requestedCustomMinutes) ? [] : DEFAULT_STAGES;
   const STAGES = baseStages.concat(Array.from(customMinutes).sort(function (a, b) { return a - b; }).map(function (min) {
     return { min: min, el: "Δικός σου χρόνος", en: "Your timer", d: "Η διάρκεια που επέλεξες.", de: "The duration you chose.", custom: true };
   }));
