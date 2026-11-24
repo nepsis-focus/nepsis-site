@@ -423,13 +423,15 @@
     { min: 60, el: "Ροή",      en: "Flow",     d: "Μία ολόκληρη ώρα χωρίς περισπασμούς.", de: "A full hour without distractions." }
   ];
   function isValidFocusMinutes(value) { return Number.isInteger(value) && value >= 5 && value <= 180; }
+  const timerParams = new URLSearchParams(window.location.search);
+  const customSessionMode = timerParams.get("custom") === "1";
+  const requestedCustomMinutes = Number(timerParams.get("coachStart"));
   const customMinutes = new Set();
   try {
-    const requested = Number(new URLSearchParams(window.location.search).get("coachStart"));
-    if (isValidFocusMinutes(requested) && STANDARD_STAGE_MINUTES.indexOf(requested) < 0) customMinutes.add(requested);
+    if (isValidFocusMinutes(requestedCustomMinutes) && (customSessionMode || STANDARD_STAGE_MINUTES.indexOf(requestedCustomMinutes) < 0)) customMinutes.add(requestedCustomMinutes);
   } catch (e) {}
   try {
-    for (let i = 0; i < localStorage.length; i++) {
+    if (!customSessionMode) for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i), match = /^nepsis-timer-session-([0-9]+)$/.exec(key || "");
       if (!match) continue;
       const minutes = Number(match[1]);
@@ -439,7 +441,10 @@
           typeof saved.session_id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(saved.session_id)) customMinutes.add(minutes);
     }
   } catch (e) {}
-  const STAGES = DEFAULT_STAGES.concat(Array.from(customMinutes).sort(function (a, b) { return a - b; }).map(function (min) {
+  const baseStages = customSessionMode && isValidFocusMinutes(requestedCustomMinutes)
+    ? DEFAULT_STAGES.filter(function (stage) { return stage.min !== requestedCustomMinutes; })
+    : DEFAULT_STAGES;
+  const STAGES = baseStages.concat(Array.from(customMinutes).sort(function (a, b) { return a - b; }).map(function (min) {
     return { min: min, el: "Δικός σου χρόνος", en: "Your timer", d: "Η διάρκεια που επέλεξες.", de: "The duration you chose.", custom: true };
   }));
   const C = 2 * Math.PI * 66;
@@ -491,6 +496,7 @@
 
     const state = {
       min: s.min,
+      customSession: customSessionMode && s.custom === true,
       left: s.min * 60,
       total: s.min * 60,
       id: null,
@@ -781,6 +787,7 @@
       body: JSON.stringify({
         action: action,
         stage_minutes: state.min,
+        stage_type: state.customSession ? "custom" : "standard",
         session_id: credentials.session_id,
         token: credentials.token
       })
@@ -928,7 +935,7 @@
     clearTimerCredentials(state);
     draw(state);
     markStage(state.min);
-    window.dispatchEvent(new CustomEvent("nepsis:session-completed", { detail: { minutes: state.min } }));
+    window.dispatchEvent(new CustomEvent("nepsis:session-completed", { detail: { minutes: state.min, stage: state.customSession ? "custom" : "standard" } }));
     playStageChime();
     showStageDoneToast(state.min);
     notifyDone(state);
