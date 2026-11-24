@@ -42,6 +42,7 @@ test("the Practice UI exposes the custom stage with the requested defaults", () 
 test("custom timer blocks are sent to the verified timer as stage=custom", () => {
   assert.match(practiceJs,/customSessionMode/);
   assert.match(practiceJs,/stage_type: state\.customSession \? "custom" : "standard"/);
+  assert.match(practiceJs,/state\\.customSession \\? "custom:"/);
   assert.match(practiceJs,/stage: state\.customSession \? "custom" : "standard"/);
   assert.match(customJs,/reset\.html/);
   assert.match(customJs,/showReflection/);
