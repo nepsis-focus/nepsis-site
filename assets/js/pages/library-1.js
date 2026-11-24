@@ -4,7 +4,7 @@
  const WHOP_URL='https://whop.com/nepsis-focus';
  const WHOP_EL='Θέλεις το πλήρες εγχειρίδιο και τα εκτυπώσιμα τετράδια εργασίας; Δες τα μαθήματα στο Whop →';
  const WHOP_EN='Want the full handbook and printable workbooks? See the course on Whop →';
- const cards=[...document.querySelectorAll('.card')],search=document.getElementById('search'),empty=document.getElementById('empty');
+ const cards=[...document.querySelectorAll('article.card[data-save-id]')],search=document.getElementById('search'),empty=document.getElementById('empty');
  function updateSaveButton(card,button){const isSaved=saved.has(card.dataset.saveId);button.textContent=isSaved?(lang==='el'?'Αποθηκεύτηκε ★':'Saved ★'):(lang==='el'?'Αποθήκευση ☆':'Save ☆');button.setAttribute('aria-pressed',String(isSaved));button.setAttribute('aria-label',isSaved?(lang==='el'?'Αφαίρεση από τα αποθηκευμένα':'Remove from saved'):(lang==='el'?'Αποθήκευση άρθρου':'Save article'));}
  function attachWhopUpsell(card){
   if(card.querySelector('.whop-upsell'))return;
@@ -28,5 +28,10 @@
  function setLang(next){lang=next;document.documentElement.lang=next;document.querySelectorAll('[data-el][data-en]').forEach(el=>{el.innerHTML=el.dataset[next];});search.placeholder=search.dataset['placeholder'+(next==='el'?'El':'En')];document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===next));cards.forEach(card=>{const button=card.querySelector('.save-article');if(button)updateSaveButton(card,button);});filter();}
  document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
  try{if(localStorage.getItem('nepsis-lang')==='en')setLang('en');}catch(e){}
+ const suggestedId=new URLSearchParams(location.search).get('item');
+ if(suggestedId&&/^article-(?:[1-9]|1[0-3])$/.test(suggestedId)){
+  const suggested=cards.find(card=>card.dataset.saveId===suggestedId);
+  if(suggested){suggested.classList.add('coach-library-highlight');setTimeout(()=>suggested.scrollIntoView({behavior:'smooth',block:'center'}),120);}
+ }
  filter();
 })();

@@ -50,11 +50,11 @@ jobs:
       - name: Run Google sign-in return tests
         run: node --test scripts/google-oauth-return.test.mjs
 
-      - name: Run Coach duration regression tests
-        run: node --test scripts/coach-duration.test.mjs
+      - name: Run custom-stage duration tests
+        run: node --test scripts/coach-duration.test.mjs scripts/focus-timer-custom-duration.test.mjs
 
-      - name: Run Coach guest and API contract regression tests
-        run: node --test scripts/coach-regression.test.mjs scripts/focus-timer-custom-duration.test.mjs
+      - name: Run AI Coach scenarios and security regression tests
+        run: node --test scripts/coach-scenarios.test.mjs scripts/coach-regression.test.mjs
 
       - name: Check that PostHog is the only analytics platform
         run: node --test scripts/analytics-posthog-only.test.mjs
@@ -94,7 +94,7 @@ jobs:
         run: node scripts/google-oauth-browser.test.mjs
 
       - name: Test this pull request in a browser
-        if: always()
+        if: success()
         env:
           SITE_URL: http://127.0.0.1:4173
         run: node scripts/site-watchdog.mjs

@@ -265,7 +265,7 @@ if ("serviceWorker" in navigator) {
     <div class="wrap">
       <div class="head">
         <span class="eyebrow" data-el="Στάδια" data-en="Stages">Στάδια</span>
-        <h2 data-el="Πέντε στάδια, με τον δικό σου ρυθμό." data-en="Five stages, at your own pace.">Πέντε στάδια, με τον δικό σου ρυθμό.</h2>
+        <h2 data-el="Πέντε στάδια και ένα δικό σου." data-en="Five stages, plus one of your own.">Πέντε στάδια, με τον δικό σου ρυθμό.</h2>
         <p data-el="Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη." data-en="Start with 5 minutes and move up when you feel ready.">Ξεκίνα από τα 5 λεπτά και ανέβαινε όταν νιώθεις έτοιμος ή έτοιμη.</p>
       </div>
       <div class="daily-challenge" id="challenge">
@@ -290,7 +290,26 @@ if ("serviceWorker" in navigator) {
         </div>
         <button type="button" class="btn btn-primary" id="inviteStart" data-el="▷ Ξεκίνα τα 5 λεπτά" data-en="▷ Start the 5 minutes">▷ Ξεκίνα τα 5 λεπτά</button>
       </div>
+      
+      
+
       <div class="stages" id="stageGrid"></div>
+      <section class="card custom-stage-builder" id="customStage">
+        <span class="eyebrow" data-el="Προσαρμοσμένο στάδιο" data-en="Custom stage">Προσαρμοσμένο στάδιο</span>
+        <h3 data-el="Το δικό μου" data-en="My own">Το δικό μου</h3>
+        <p data-el="Διάλεξε τη διάρκεια συγκέντρωσης και τον ρυθμό των διαλειμμάτων σου." data-en="Choose your focus duration and break rhythm.">Διάλεξε τη διάρκεια συγκέντρωσης και τον ρυθμό των διαλειμμάτων σου.</p>
+        <label for="customMinutes" data-el="Διάρκεια συγκέντρωσης (5–180 λεπτά)" data-en="Focus duration (5–180 minutes)">Διάρκεια συγκέντρωσης (5–180 λεπτά)</label>
+        <div class="custom-stage-input-row"><input id="customMinutes" type="number" min="5" max="180" step="1" value="40" inputmode="numeric"><span data-el="λεπτά" data-en="minutes">λεπτά</span></div>
+        <div class="custom-stage-patterns" role="group" aria-label="Break pattern">
+          <button type="button" class="pill active" data-custom-pattern="25" aria-pressed="true">25′ / 5′</button>
+          <button type="button" class="pill" data-custom-pattern="50" aria-pressed="false">50′ / 10′</button>
+        </div>
+        <div class="custom-stage-plan">
+          <span class="eyebrow" data-el="Το πλάνο σου" data-en="Your plan">Το πλάνο σου</span>
+          <p id="customPlanPreview" aria-live="polite"></p>
+        </div>
+        <button type="button" id="customStart" class="btn btn-primary" data-el="Ξεκίνα το δικό μου στάδιο" data-en="Start my own stage">Ξεκίνα το δικό μου στάδιο</button>
+      </section>
       <p id="liveFocusCount" class="live-focus-count" aria-live="polite"></p>
       <div class="card progress-card" id="progress" style="margin-bottom:22px"></div>
       <div class="card progress-card" id="calendar" style="margin-bottom:26px"></div>
@@ -422,6 +441,8 @@ if ("serviceWorker" in navigator) {
 <script src="assets/js/offline-sync-queue.js"></script>
 <script src="assets/js/coach-config.js"></script>
 <script src="assets/js/pages/practice-1.js"></script>
+<script src="assets/js/coach-core.js"></script>
+<script src="assets/js/pages/custom-stage.js"></script>
 <script src="assets/js/pages/reflection.js"></script>
 <script src="assets/js/pages/coach-timer-bridge.js"></script>
 

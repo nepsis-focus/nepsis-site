@@ -1,6 +1,6 @@
 ﻿// Nepsis Service Worker — lightweight, update-friendly
 // Version bump this string when you want to force cache refresh
-const CACHE_VERSION = 'nepsis-v27';
+const CACHE_VERSION = 'nepsis-v28';
 const CACHE_NAME = `nepsis-static-${CACHE_VERSION}`;
 
 // Paths are relative to this script so the same list works on GitHub Pages
@@ -29,9 +29,16 @@ const CORE_ASSETS = [
   asset('assets/js/offline-sync-queue.js'),
   asset('assets/js/site-config.js'),
   asset('assets/js/coach-config.js'),
+  asset('assets/js/google-oauth.js'),
+  asset('assets/js/coach-core.js'),
   asset('assets/js/pages/coach.js'),
+  asset('assets/js/pages/custom-stage.js'),
+  asset('assets/js/pages/custom-reset.js'),
   asset('assets/js/pages/coach-timer-bridge.js'),
   asset('assets/css/pages/coach.css'),
+  asset('assets/css/pages/practice.css'),
+  asset('assets/css/pages/library.css'),
+  asset('assets/js/pages/library-1.js'),
   asset('assets/js/pages/diary-1.js'),
   asset('assets/js/pages/practice-1.js'),
   asset('assets/js/pages/my-nepsis-1.js'),

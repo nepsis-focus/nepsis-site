@@ -269,3 +269,5 @@ body:not(.home-page):not(.practice-page) footer { margin-top:64px; }
   #cards .meta{min-width:0;flex-wrap:wrap}
   #cards h2,#cards p,#cards .try,#cards .source,#cards .whop-upsell{min-width:0;overflow-wrap:anywhere}
 }
+
+.coach-library-highlight{outline:2px solid var(--orange);outline-offset:4px;transition:outline-color .2s ease}

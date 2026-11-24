@@ -2,8 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const [migration, edge, practice, bridge] = await Promise.all([
+const [migration, customMigration, edge, practice, bridge] = await Promise.all([
   readFile(new URL("../supabase/migrations/20261119195000_support_custom_focus_timer_durations.sql", import.meta.url), "utf8"),
+  readFile(new URL("../supabase/migrations/20261124130000_coach_ip_rate_limit_and_custom_stage.sql", import.meta.url), "utf8"),
   readFile(new URL("../supabase/functions/focus-timer/index.ts", import.meta.url), "utf8"),
   readFile(new URL("../assets/js/pages/practice-1.js", import.meta.url), "utf8"),
   readFile(new URL("../assets/js/pages/coach-timer-bridge.js", import.meta.url), "utf8")
@@ -23,9 +24,16 @@ test("server RPC keeps token-bound idempotent sessions and age checks", () => {
   assert.match(migration, /completed_at IS NOT NULL/);
 });
 
+test("custom-stage marker preserves custom labels for standard and nonstandard durations", () => {
+  assert.match(customMigration, /is_custom boolean/);
+  assert.match(customMigration, /nepsis_timer_mark_custom/);
+  assert.match(customMigration, /stage = 'custom' AND duration_minutes BETWEEN 5 AND 180/);
+});
+
 test("Edge Function accepts integers in range and still verifies on the server", () => {
   assert.match(edge, /Number\.isInteger\(stage\) \|\| stage < 5 \|\| stage > 180/);
   assert.match(edge, /admin\.rpc\(rpcName, rpcArgs\)/);
+  assert.match(edge, /nepsis_timer_mark_custom/);
   assert.match(edge, /hashToken\(token\)/);
   assert.match(edge, /invalid_session_token/);
 });
