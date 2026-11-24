@@ -11,6 +11,11 @@ const homepageSupabase = window.supabase && window.supabase.createClient && wind
   const menu = document.getElementById("menuBtn");
   const close = document.getElementById("closeBtn");
   const scrim = document.getElementById("scrim");
+  const accountModal = document.getElementById("accModal");
+  const accountScrim = document.getElementById("accScrim");
+  const accountGoogle = document.getElementById("accGoogle");
+  const accountClose = document.getElementById("accClose");
+  const accountEntry = document.getElementById("drawerAccBtn") || document.getElementById("accBtn");
   const LANG_KEY = "nepsis-lang";
   const PROGRESS_KEY = "nepsis-progress:guest";
   const circumference = 2 * Math.PI * 108;
@@ -28,6 +33,28 @@ const homepageSupabase = window.supabase && window.supabase.createClient && wind
   scrim?.addEventListener("click", () => setMenu(false));
   drawer?.addEventListener("click", (event) => { if (event.target.closest("a")) setMenu(false); });
   document.addEventListener("keydown", (event) => { if (event.key === "Escape") setMenu(false); });
+  function setAccount(open) {
+    accountModal?.classList.toggle("open", open);
+    accountModal?.setAttribute("aria-hidden", String(!open));
+    accountScrim?.classList.toggle("open", open);
+    accountScrim?.setAttribute("aria-hidden", String(!open));
+    if (open) accountGoogle?.focus();
+  }
+  accountEntry?.addEventListener("click", (event) => { event.preventDefault(); setMenu(false); setAccount(true); });
+  accountClose?.addEventListener("click", () => setAccount(false));
+  accountScrim?.addEventListener("click", () => setAccount(false));
+  accountGoogle?.addEventListener("click", () => {
+    if (!homepageSupabase || !window.NepsisGoogleAuth) return;
+    window.NepsisGoogleAuth.signIn({
+      client: homepageSupabase,
+      button: accountGoogle,
+      lang: currentLang,
+      redirectTo: window.location.origin + window.location.pathname,
+      onMessage: (message) => { const node = document.getElementById("accMsg"); if (node) node.textContent = message || ""; },
+      onError: () => { const node = document.getElementById("accMsg"); if (node) node.textContent = currentLang === "el" ? "Η σύνδεση δεν ολοκληρώθηκε. Δοκίμασε ξανά." : "Sign-in did not complete. Please try again."; }
+    });
+  });
+  if (homepageSupabase && window.NepsisGoogleAuth) window.NepsisGoogleAuth.watchPopupCompletion(homepageSupabase);
 
   function applyLanguage(lang) {
     currentLang = lang === "en" ? "en" : "el";
