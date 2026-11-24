@@ -14,7 +14,7 @@
   function buildBlocks(totalMinutes, blockMinutes, breakMinutes) {
     const total = Number(totalMinutes), block = Number(blockMinutes), rest = Number(breakMinutes);
     if (!Number.isInteger(total) || total < 5 || total > 180) throw new RangeError("invalid_total_minutes");
-    if (![25, 50].includes(block) || ![5, 10].includes(rest)) throw new RangeError("invalid_break_pattern");
+    if (!((block === 25 && rest === 5) || (block === 50 && rest === 10))) throw new RangeError("invalid_break_pattern");
     const blocks = [];
     let remaining = total;
     while (remaining > 0) {
