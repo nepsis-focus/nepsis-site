@@ -57,6 +57,10 @@ test("the server enforces 1000 characters and per-IP rate limiting", () => {
   assert.ok(legacyEdge.includes("consume_ai_coach_ip_limit"));
   assert.ok(edge.includes('const requestIp = (req.headers.get("cf-connecting-ip") || "").trim() || "unknown"'));
   assert.ok(!edge.includes("x-forwarded-for"));
+  assert.ok(legacyEdge.includes("MAX_DOC = 1000"));
+  assert.ok(legacyEdge.includes("consume_ai_coach_ip_limit"));
+  assert.ok(legacyEdge.includes('const requestIp = (req.headers.get("cf-connecting-ip") || "").trim() || "unknown"'));
+  assert.ok(!legacyEdge.includes("x-forwarded-for"));
   assert.ok(migration.includes("ai_coach_ip_limits"));
   assert.ok(migration.toLowerCase().includes("enable row level security"));
   assert.ok(migration.includes("grant execute on function public.consume_ai_coach_ip_limit"));
