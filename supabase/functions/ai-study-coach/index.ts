@@ -1,6 +1,8 @@
 const FOCUS = [5, 10, 25, 45, 60];
-const MAX_BODY = 120000;
-const MAX_DOC = 28000;
+const MAX_BODY = 8000;
+const MAX_DOC = 1000;
+const CRISIS_PATTERN = /(suicid|kill myself|end my life|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|αυτοκτον|αυτοτραυματισ|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|δεν θέλω να ζω|θέλω να πεθάνω|δεν αντέχω άλλο τη ζωή)/i;
+const LIBRARY_IDS = ["article-1","article-2","article-3","article-4","article-5","article-6","article-7","article-8","article-9","article-10","article-11","article-12","article-13"];
 const DEFAULT_ORIGINS = [
   "https://nepsis-focus.github.io",
   "https://nepsis-site.nepsis-corp.workers.dev",
@@ -100,16 +102,33 @@ Deno.serve(async (req: Request) => {
   } catch { return reply(400, { error: "invalid_json" }, origin, allowed); }
   if (!body || typeof body !== "object" || Array.isArray(body)) return reply(400, { error: "invalid_input" }, origin, allowed);
   const usageOnly = body.action === "usage";
-  const topic = clean(body.topic, 140), type = body.taskType === "study" || body.taskType === "task" ? body.taskType : "";
-  const energy = Number(body.energy), available = Number(body.available), documentText = clean(body.documentText, MAX_DOC);
-  if (!usageOnly && (!topic || !type || !Number.isInteger(energy) || energy < 1 || energy > 5 || !Number.isInteger(available) || available < 5 || available > 180 || (body.documentText !== undefined && typeof body.documentText !== "string"))) return reply(400, { error: "invalid_input" }, origin, allowed);
-  // Consent gate: nothing is sent to Gemini unless the user explicitly consented.
-  // Checked before the rate limit so refused requests do not use a daily slot.
+  const language = body.language === "en" ? "en" : "el";
+  const task = clean(body.task, MAX_DOC), obstacle = clean(body.obstacle, MAX_DOC), adjustment = clean(body.adjustment, MAX_DOC);
+  const available = Number(body.timeMinutes);
+  const combinedInput = [task, obstacle, adjustment].filter(Boolean).join(" ");
+  if (!usageOnly && (!task || !obstacle || !Number.isInteger(available) || available < 5 || available > 180 || !["plan", "adjust"].includes(String(body.action)))) return reply(400, { error: "invalid_input" }, origin, allowed);
+  if (!usageOnly && Array.from(combinedInput).length > MAX_DOC) return reply(413, { error: "input_too_long", maxCharacters: MAX_DOC }, origin, allowed);
+  if (!usageOnly && CRISIS_PATTERN.test(combinedInput)) {
+    const message = language === "en"
+      ? "I’m an AI, not an emergency service. I’m stopping the study flow because you may need support now. In Greece, call 1018 (Klimaka, 24/7), 10306 (free and anonymous psychosocial support, 24/7), or 112 if you are in immediate danger. Please contact someone you trust and ask them to stay with you."
+      : "Είμαι AI, όχι υπηρεσία έκτακτης ανάγκης. Σταματώ τη ροή μελέτης επειδή μπορεί να χρειάζεσαι υποστήριξη τώρα. Στην Ελλάδα μπορείς να καλέσεις το 1018 (ΚΛΙΜΑΚΑ, 24/7), το 10306 (δωρεάν και ανώνυμη ψυχοκοινωνική υποστήριξη, 24/7) ή το 112 αν κινδυνεύεις άμεσα. Επικοινώνησε με κάποιον που εμπιστεύεσαι και ζήτησέ του να μείνει μαζί σου.";
+    return reply(200, { crisis: true, message }, origin, allowed);
+  }
   if (!usageOnly && body.consent !== true) return reply(403, { error: "consent_required" }, origin, allowed);
-  const geminiKey = Deno.env.get("GEMINI_API_KEY");
-  if (!usageOnly && !geminiKey) return reply(503, { error: "ai_unavailable" }, origin, allowed);
   const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !serviceKey) return reply(503, { error: "service_unavailable" }, origin, allowed);
+  const svc = { apikey: serviceKey, authorization: "Bearer " + serviceKey, "content-type": "application/json" };
+  if (!usageOnly) {
+    const ip = req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+    const ipHash = await digest(serviceKey, "ip:" + ip);
+    const windowMs = 10 * 60 * 1000;
+    const windowStart = new Date(Math.floor(Date.now() / windowMs) * windowMs).toISOString();
+    try {
+      const limitedIp = await fetch(url + "/rest/v1/rpc/consume_ai_coach_ip_limit", { method: "POST", headers: svc, body: JSON.stringify({ p_ip_hash: ipHash, p_window_start: windowStart, p_request_limit: 8 }), signal: AbortSignal.timeout(5000) });
+      if (!limitedIp.ok) return reply(503, { error: "rate_limit_service_unavailable" }, origin, allowed);
+      if (await limitedIp.json() !== true) return reply(429, { error: "ip_rate_limit_reached", retryAfterSeconds: 600 }, origin, allowed);
+    } catch { return reply(503, { error: "rate_limit_service_unavailable" }, origin, allowed); }
+  }
   let userId: string | null = null, verifiedEmail = "";
   const bearer = (req.headers.get("authorization") || "").match(/^Bearer\s+(.+)$/i)?.[1];
   if (bearer) {
@@ -130,7 +149,6 @@ Deno.serve(async (req: Request) => {
   try {
     const identity = userId ? "user:" + userId : "guest:" + (req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown");
     const key = await digest(serviceKey, identity);
-    const svc = { apikey: serviceKey, authorization: "Bearer " + serviceKey, "content-type": "application/json" };
     if (usageOnly) {
       const read = await fetch(url + "/rest/v1/ai_coach_daily_limits?select=request_count,quota_day&subject_hash=eq." + key, { headers: svc, signal: AbortSignal.timeout(5000) });
       if (!read.ok) return reply(503, { error: "service_unavailable" }, origin, allowed);
