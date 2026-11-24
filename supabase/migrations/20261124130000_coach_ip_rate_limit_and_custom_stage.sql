@@ -15,7 +15,7 @@ create or replace function public.consume_ai_coach_ip_limit(
 ) returns boolean
 language plpgsql
 security definer
-set search_path = public, pg_temp
+set search_path = ''
 as $$
 declare
   current_count integer;
@@ -104,3 +104,16 @@ begin
   return new;
 end;
 $function$;
+
+-- Custom sessions may use a standard duration (for example 25 minutes) but still retain stage='custom'.
+ALTER TABLE public.focus_sessions
+  DROP CONSTRAINT IF EXISTS focus_sessions_stage_duration_check;
+ALTER TABLE public.focus_sessions
+  ADD CONSTRAINT focus_sessions_stage_duration_check CHECK (
+    (stage = 'start' AND duration_minutes = 5) OR
+    (stage = 'warmup' AND duration_minutes = 10) OR
+    (stage = 'rhythm' AND duration_minutes = 25) OR
+    (stage = 'depth' AND duration_minutes = 45) OR
+    (stage = 'flow' AND duration_minutes = 60) OR
+    (stage = 'custom' AND duration_minutes BETWEEN 5 AND 180)
+  );
