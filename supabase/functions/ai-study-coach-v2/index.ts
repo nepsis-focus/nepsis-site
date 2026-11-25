@@ -227,7 +227,7 @@ Deno.serve(async (req: Request) => {
     adjustment ? "Requested adjustment: " + adjustment : ""
   ].filter(Boolean).join("\n");
   try {
-    const generated = await adapter(prompt);
+    const generated = await adapter(prompt).catch(() => adapter(prompt));
     if (generated.kind === "off_topic") {
       const redirect = language === "en" ? "I can help with study and focus planning. Tell me what you are working on." : "Μπορώ να βοηθήσω με πλάνο μελέτης και συγκέντρωσης. Πες μου τι έχεις να κάνεις.";
       return reply(200, { offTopic: true, message: firstSentence(generated.message, redirect), usage: usage(used) }, origin, allowed);
@@ -253,5 +253,29 @@ Deno.serve(async (req: Request) => {
       libraryReason: libraryId ? (language === "en" ? "Related to the task you described." : "Σχετικό με την εργασία που περιέγραψες.") : null,
       researchReason, researchSource: "https://doi.org/10.3389/fpsyg.2025.1589411", adjustOffer, provider, usage: usage(used)
     }, origin, allowed);
-  } catch (err) { console.error("coach_provider_error", String(err).slice(0, 200)); return reply(502, { error: "ai_unavailable" }, origin, allowed); }
+  } catch (err) {
+    // The model can fail or return unreadable JSON. Give the student a simple,
+    // rule-based plan instead of a dead end; the message says it is a fallback.
+    console.error("coach_provider_error", String(err).slice(0, 200));
+    const fallback = timerFor(available, 3);
+    return reply(200, {
+      offTopic: false,
+      fallback: true,
+      message: language === "en"
+        ? "The AI reply was unavailable, so here is a simple plan you can start with."
+        : "Η απάντηση του AI δεν ήταν διαθέσιμη, οπότε εδώ είναι ένα απλό πλάνο για να ξεκινήσεις.",
+      focusMinutes: fallback.focusMinutes,
+      blockMinutes: 25,
+      breakMinutes: 5,
+      libraryId: null,
+      libraryReason: null,
+      researchReason: language === "en"
+        ? "A 2025 classroom study of 253 undergraduates found more consistent quiz performance with frequent 90-second micro-breaks than with one 10-minute break, suggesting that shorter, frequent pauses may help sustain attention."
+        : "Μελέτη του 2025 σε 253 προπτυχιακούς φοιτητές βρήκε πιο σταθερή επίδοση στα quiz με συχνά διαλείμματα 90 δευτερολέπτων απ’ ό,τι με ένα διάλειμμα 10 λεπτών, ένδειξη ότι οι σύντομες, συχνές παύσεις μπορεί να βοηθούν στη διατήρηση της προσοχής.",
+      researchSource: "https://doi.org/10.3389/fpsyg.2025.1589411",
+      adjustOffer: language === "en" ? "You can ask me to adjust the plan before you start." : "Μπορείς να μου ζητήσεις να προσαρμόσω το πλάνο πριν ξεκινήσεις.",
+      provider,
+      usage: usage(used)
+    }, origin, allowed);
+  }
 });
