@@ -174,6 +174,7 @@ Deno.serve(async (req: Request) => {
   const period = monthStart();
   const usage = (used: number | null) => ({ plan: premium ? "premium" : "free", limit: monthlyLimit, used, remaining: used === null ? null : Math.max(0, monthlyLimit - used), period: period.slice(0, 7), signedIn: !!userId });
   let used: number | null = null;
+  let quotaKey = "";
   try {
     const identity = userId ? "user:" + userId : "guest:" + requestIp;
     const key = await digest(serviceKey, identity);
@@ -184,15 +185,14 @@ Deno.serve(async (req: Request) => {
       used = Array.isArray(rows) && rows[0] && rows[0].quota_day === period ? Number(rows[0].request_count) || 0 : 0;
       return reply(200, { usage: usage(Math.min(used, monthlyLimit)) }, origin, allowed);
     }
-    // The existing quota RPC resets whenever p_day changes, so passing the first
-    // day of the UTC month turns it into a calendar-month counter without a migration.
-    const limited = await fetch(url + "/rest/v1/rpc/consume_ai_coach_daily_limit", { method: "POST", headers: svc, body: JSON.stringify({ p_subject_hash: key, p_daily_limit: monthlyLimit, p_day: period }), signal: AbortSignal.timeout(5000) });
-    if (!limited.ok) return reply(503, { error: "service_unavailable" }, origin, allowed);
-    if (await limited.json() !== true) return reply(429, { error: "monthly_limit_reached", usage: usage(monthlyLimit) }, origin, allowed);
-    try {
-      const read = await fetch(url + "/rest/v1/ai_coach_daily_limits?select=request_count&subject_hash=eq." + key, { headers: svc, signal: AbortSignal.timeout(3000) });
-      if (read.ok) { const rows = await read.json(); if (Array.isArray(rows) && rows[0]) used = Math.min(Number(rows[0].request_count) || 0, monthlyLimit); }
-    } catch { /* usage count is informational only */ }
+    // Pre-check only. The plan is charged after Gemini answers (below), so a failed
+    // model call does not use up one of the monthly plans.
+    quotaKey = key;
+    const pre = await fetch(url + "/rest/v1/ai_coach_daily_limits?select=request_count,quota_day&subject_hash=eq." + key, { headers: svc, signal: AbortSignal.timeout(5000) });
+    if (!pre.ok) return reply(503, { error: "service_unavailable" }, origin, allowed);
+    const preRows = await pre.json();
+    used = Array.isArray(preRows) && preRows[0] && preRows[0].quota_day === period ? Number(preRows[0].request_count) || 0 : 0;
+    if (used >= monthlyLimit) return reply(429, { error: "monthly_limit_reached", usage: usage(monthlyLimit) }, origin, allowed);
   } catch { return reply(503, { error: "service_unavailable" }, origin, allowed); }
   const provider = Deno.env.get("AI_PROVIDER") || "gemini";
   const adapter = PROVIDERS[provider];
@@ -228,6 +228,11 @@ Deno.serve(async (req: Request) => {
   ].filter(Boolean).join("\n");
   try {
     const generated = await adapter(prompt).catch(() => adapter(prompt));
+    // Charge one plan only now that the model has answered.
+    if (quotaKey) {
+      const charged = await fetch(url + "/rest/v1/rpc/consume_ai_coach_daily_limit", { method: "POST", headers: svc, body: JSON.stringify({ p_subject_hash: quotaKey, p_daily_limit: monthlyLimit, p_day: period }), signal: AbortSignal.timeout(5000) }).catch(() => null);
+      if (charged && charged.ok && (await charged.json()) === true) used = Math.min((used ?? 0) + 1, monthlyLimit);
+    }
     if (generated.kind === "off_topic") {
       const redirect = language === "en" ? "I can help with study and focus planning. Tell me what you are working on." : "Μπορώ να βοηθήσω με πλάνο μελέτης και συγκέντρωσης. Πες μου τι έχεις να κάνεις.";
       return reply(200, { offTopic: true, message: firstSentence(generated.message, redirect), usage: usage(used) }, origin, allowed);
