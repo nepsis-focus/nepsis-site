@@ -4,14 +4,14 @@
 (() => {
   const APPS = [
     { key: "stages", href: "practice.html", icon: '<circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.5 2M9.5 3.5h5"/>', tone: ["#FFB36B", "#F0702A"] },
-    { key: "coach", href: "coach.html", icon: '<path d="M12 4.5l1.7 4.3 4.3 1.7-4.3 1.7L12 16.5l-1.7-4.3L6 10.5l4.3-1.7z"/>', tone: ["#B9A6FF", "#7A5CF0"] },
-    { key: "library", href: "library.html", icon: '<path d="M5.5 5.5A1.5 1.5 0 0 1 7 4h11.5v13.5H7a1.5 1.5 0 0 0-1.5 1.5zM5.5 19.5A1.5 1.5 0 0 0 7 21h11.5"/>', tone: ["#8ED0FF", "#2F7BE8"] },
-    { key: "diary", href: "diary.html", icon: '<path d="M5 19.5l4.2-1 9.3-9.3-3.2-3.2-9.3 9.3zM13.5 6.5l3.2 3.2"/>', tone: ["#FFE48F", "#F0A92B"] },
-    { key: "exams", href: "exams.html", icon: '<rect x="4.5" y="5.5" width="15" height="14" rx="2"/><path d="M4.5 10h15M9 3.5v3.5M15 3.5v3.5M8 14h2m3 0h3"/>', tone: ["#FFB0C8", "#E0457A"] },
-    { key: "progress", href: "my-nepsis.html", icon: '<path d="M6 19V12M12 19V6M18 19v-9"/>', tone: ["#93E8A6", "#27B356"] },
-    { key: "pause", href: "reset.html", icon: '<path d="M6 18.5c0-7.5 4.5-12.5 12.5-13 0 8-4.5 13-12.5 13z"/><path d="M6 18.5l6.5-6.5"/>', tone: ["#86E6DC", "#1FA596"] },
-    { key: "subscribe", subscribe: true, hidden: true, icon: '<path d="M12 4.5l2.3 4.7 5.2.8-3.8 3.7.9 5.2L12 16.4l-4.6 2.5.9-5.2-3.8-3.7 5.2-.8z"/>', tone: ["#FFD978", "#E8A11E"] },
-    { key: "account", account: true, icon: '<circle cx="12" cy="9" r="3.6"/><path d="M5.5 20c1.3-3.6 3.9-5.2 6.5-5.2s5.2 1.6 6.5 5.2"/>', tone: ["#E4DED8", "#8E8782"] }
+    { key: "coach", href: "coach.html", icon: '<path d="M12 4.5l1.7 4.3 4.3 1.7-4.3 1.7L12 16.5l-1.7-4.3L6 10.5l4.3-1.7z"/>', tone: ["#FFB36B", "#F0702A"] },
+    { key: "library", href: "library.html", icon: '<path d="M5.5 5.5A1.5 1.5 0 0 1 7 4h11.5v13.5H7a1.5 1.5 0 0 0-1.5 1.5zM5.5 19.5A1.5 1.5 0 0 0 7 21h11.5"/>', tone: ["#FFB36B", "#F0702A"] },
+    { key: "diary", href: "diary.html", icon: '<path d="M5 19.5l4.2-1 9.3-9.3-3.2-3.2-9.3 9.3zM13.5 6.5l3.2 3.2"/>', tone: ["#FFB36B", "#F0702A"] },
+    { key: "exams", href: "exams.html", icon: '<rect x="4.5" y="5.5" width="15" height="14" rx="2"/><path d="M4.5 10h15M9 3.5v3.5M15 3.5v3.5M8 14h2m3 0h3"/>', tone: ["#FFB36B", "#F0702A"] },
+    { key: "progress", href: "my-nepsis.html", icon: '<path d="M6 19V12M12 19V6M18 19v-9"/>', tone: ["#FFB36B", "#F0702A"] },
+    { key: "pause", href: "reset.html", icon: '<path d="M6 18.5c0-7.5 4.5-12.5 12.5-13 0 8-4.5 13-12.5 13z"/><path d="M6 18.5l6.5-6.5"/>', tone: ["#FFB36B", "#F0702A"] },
+    { key: "subscribe", subscribe: true, hidden: true, icon: '<path d="M12 4.5l2.3 4.7 5.2.8-3.8 3.7.9 5.2L12 16.4l-4.6 2.5.9-5.2-3.8-3.7 5.2-.8z"/>', tone: ["#FFB36B", "#F0702A"] },
+    { key: "account", account: true, icon: '<circle cx="12" cy="9" r="3.6"/><path d="M5.5 20c1.3-3.6 3.9-5.2 6.5-5.2s5.2 1.6 6.5 5.2"/>', tone: ["#FFB36B", "#F0702A"] }
   ];
   const TXT = {
     el: { subscribe: "Συνδρομή", dock: "Ενότητες", stages: "Στάδια", coach: "AI Coach", library: "Βιβλιοθήκη", diary: "Ημερολόγιο", exams: "Εξετάσεις", progress: "Πρόοδος", pause: "Παύση", account: "Λογαριασμός" },
