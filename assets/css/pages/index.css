@@ -116,3 +116,26 @@ body.home-page .acc-modal.open { background: rgba(31, 22, 17, .35); }
     padding-bottom: 0;
   }
 }
+
+/* Homepage: where to go next. Five entry cards, the AI Coach first and highlighted. */
+body.home-page .features { padding-block: clamp(76px, 10vw, 140px); border-top: 1px solid var(--home-line); }
+body.home-page .feature-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+body.home-page .feature-card { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 200px; padding: 22px 20px 44px; border: 1px solid var(--home-line); border-radius: 22px; background: var(--home-surface); box-shadow: var(--home-shadow); color: var(--home-ink); text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+body.home-page .feature-card:hover { transform: translateY(-4px); }
+body.home-page .feature-card:focus-visible { outline: 2px solid var(--home-accent); outline-offset: 3px; }
+body.home-page .feature-card__name { font-size: 1.25rem; font-weight: 900; letter-spacing: -.03em; }
+body.home-page .feature-card__text { color: var(--home-muted); font-size: .92rem; line-height: 1.5; }
+body.home-page .feature-card i { position: absolute; right: 18px; bottom: 16px; font-style: normal; color: var(--home-accent); font-size: 1.1rem; }
+body.home-page .feature-card--coach { background: var(--home-accent); border-color: var(--home-accent); color: #fff; box-shadow: 0 16px 30px -18px rgba(126, 45, 10, .75); }
+body.home-page .feature-card--coach .feature-card__text { color: rgba(255, 255, 255, .88); }
+body.home-page .feature-card--coach i { color: #fff; }
+@media (max-width: 900px) {
+  body.home-page .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.home-page .feature-card--coach { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  body.home-page .features { padding-block: 64px; }
+  body.home-page .feature-card { min-height: 0; padding: 16px 14px 38px; border-radius: 18px; }
+  body.home-page .feature-card__name { font-size: 1.05rem; }
+  body.home-page .feature-card__text { font-size: .8rem; }
+}
