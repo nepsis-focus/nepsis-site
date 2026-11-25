@@ -1,0 +1,44 @@
+/* Floating Nepsis Coach chat, above the site dock on every content page. */
+.cc-launcher {
+  position: fixed; right: 14px; bottom: calc(96px + env(safe-area-inset-bottom)); z-index: 58;
+  min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px;
+  background: #b8501a; color: #fff; font: inherit; font-size: .9rem; font-weight: 850; cursor: pointer;
+  box-shadow: 0 14px 28px -16px rgba(126, 45, 10, .8);
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  transition: transform .2s cubic-bezier(.2, .8, .2, 1);
+}
+.cc-launcher:hover { transform: translateY(-2px); }
+.cc-launcher:focus-visible { outline: 2px solid #b8501a; outline-offset: 3px; }
+html.wc-covered .cc-launcher { opacity: 0; pointer-events: none; }
+.cc-panel {
+  position: fixed; right: 14px; bottom: calc(150px + env(safe-area-inset-bottom)); z-index: 59;
+  display: flex; flex-direction: column; gap: 10px; box-sizing: border-box;
+  width: min(380px, calc(100vw - 28px)); max-height: min(70vh, 560px); padding: 14px;
+  border: 1px solid #e7dfd6; border-radius: 22px; background: #fff; color: #25211e;
+  box-shadow: 0 24px 48px -24px rgba(40, 28, 20, .5); font-family: Nunito, ui-rounded, system-ui, sans-serif;
+}
+.cc-panel[hidden] { display: none; }
+html.wc-covered .cc-panel { display: none; }
+.cc-head { display: flex; align-items: center; justify-content: space-between; }
+.cc-title { font-size: 1rem; font-weight: 900; }
+.cc-close { width: 36px; height: 36px; border: 1px solid #e7dfd6; border-radius: 50%; background: #fbfaf7; cursor: pointer; font: inherit; }
+.cc-log { display: flex; flex-direction: column; gap: 8px; min-height: 120px; overflow-y: auto; padding-right: 2px; }
+.cc-bubble { margin: 0; max-width: 88%; padding: 9px 12px; border-radius: 16px; font-size: .92rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cc-coach { align-self: flex-start; background: #f3ece4; }
+.cc-you { align-self: flex-end; background: #25211e; color: #fff; }
+.cc-alert { border: 1px solid #e0457a; background: #fff0f5; }
+.cc-consent { display: flex; gap: 8px; align-items: flex-start; font-size: .82rem; color: #716960; line-height: 1.45; }
+.cc-consent[hidden] { display: none; }
+.cc-consent-box { margin-top: 3px; }
+.cc-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+.cc-input { resize: none; min-height: 44px; padding: 10px 12px; border: 1px solid #e7dfd6; border-radius: 14px; background: #fbfaf7; color: #25211e; font: inherit; font-size: 16px; }
+.cc-send { min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #b8501a; color: #fff; font: inherit; font-weight: 850; cursor: pointer; }
+.cc-status { min-height: 1.2em; margin: 0; color: #716960; font-size: .82rem; }
+.cc-full { align-self: flex-end; color: #b8501a; font-size: .85rem; font-weight: 800; text-decoration: none; }
+@media (max-width: 899px) {
+  .cc-launcher { bottom: calc(84px + env(safe-area-inset-bottom)); }
+  .cc-panel { bottom: calc(132px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { .cc-launcher { transition: none; } }
+/* The homepage already shows the coach as a card, and its phone start button sits in this corner. */
+@media (max-width: 899px) { body.home-page .cc-launcher { display: none; } }
