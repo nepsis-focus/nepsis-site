@@ -15,6 +15,7 @@ body.wc-has-dock { padding-bottom: 96px; }
   padding: 0 4px; color: #27221f; text-decoration: none; background: none; border: 0; cursor: pointer; font: inherit;
   transform: scale(var(--scale, 1)); transform-origin: 50% 100%;
   transition: transform .16s cubic-bezier(.2, .8, .2, 1);
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none;
 }
 .wc-tile {
   width: 50px; height: 50px; border-radius: 14px; color: #fff; display: grid; place-items: center;
@@ -23,8 +24,12 @@ body.wc-has-dock { padding-bottom: 96px; }
   transition: transform .2s cubic-bezier(.2, .8, .2, 1), box-shadow .2s ease;
 }
 .wc-tile svg { width: 28px; height: 28px; }
-.wc-app:hover .wc-tile, .wc-app:focus-visible .wc-tile { transform: translateY(-2px); }
-.wc-app:active .wc-tile { transform: translateY(0) scale(.96); }
+@media (hover: hover) and (pointer: fine) {
+  .wc-app:hover .wc-tile { transform: translateY(-2px); }
+  .wc-app:hover .wc-label { opacity: 1; transform: translate(-50%, 0); }
+}
+.wc-app:focus-visible .wc-tile { transform: translateY(-2px); }
+.wc-app:active .wc-tile { transform: translateY(0) scale(.92); transition-duration: .08s; }
 .wc-app.is-hidden { display: none; }
 .wc-app:focus-visible { outline: none; }
 .wc-app:focus-visible .wc-tile { outline: 2px solid #f0702a; outline-offset: 3px; }
@@ -34,7 +39,7 @@ body.wc-has-dock { padding-bottom: 96px; }
   background: rgba(30, 24, 20, .82); color: #fff; font-size: .72rem; font-weight: 650;
   opacity: 0; transition: opacity .14s ease, transform .14s ease;
 }
-.wc-app:hover .wc-label, .wc-app:focus-visible .wc-label { opacity: 1; transform: translate(-50%, 0); }
+.wc-app:focus-visible .wc-label { opacity: 1; transform: translate(-50%, 0); }
 .wc-run {
   width: 5px; height: 5px; border-radius: 50%; background: #27221f; opacity: 0; transform: scale(.4);
   transition: opacity .2s ease, transform .2s ease;
@@ -48,6 +53,7 @@ body.wc-has-dock { padding-bottom: 96px; }
   .wc-tile { width: 38px; height: 38px; border-radius: 11px; }
   .wc-tile svg { width: 21px; height: 21px; }
   .wc-label { display: none; }
+  .wc-app[aria-current="page"] .wc-label, .wc-app.is-running .wc-label { display: block; opacity: 1; transform: translate(-50%, 0); font-size: .66rem; }
   body.wc-has-dock { padding-bottom: 84px; }
 }
 @media (prefers-reduced-motion: reduce) {
