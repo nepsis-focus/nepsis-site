@@ -177,7 +177,7 @@ html:not([data-theme="dark"]) {
 html:not([data-theme="dark"]) body {
   background: #fff;
   color: #1d1d1f;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif;
+  font-family: Nunito, ui-rounded, system-ui, sans-serif;
   letter-spacing: -.011em;
 }
 html:not([data-theme="dark"]) :is(h1, .page-heading h1, .intro h1, .hero h1) {

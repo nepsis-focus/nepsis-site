@@ -16,7 +16,7 @@
   color: var(--coach-text);
   background-color: var(--coach-canvas);
   background-image: none;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  font-family: Nunito, ui-rounded, system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.55;
   color-scheme: light;
