@@ -7,7 +7,7 @@ const MAX_TURNS = 10;
 const DAILY_MESSAGE_LIMIT = 10;
 const IP_WINDOW_MS = 10 * 60 * 1000;
 const IP_REQUEST_LIMIT = 20;
-const CRISIS_PATTERN = /(crisis|mental health crisis|panic attack|having a panic attack|κρίση|κρίση πανικού|βρίσκομαι σε κρίση|δεν είμαι ασφαλής|suicid|kill myself|end my life|end it all|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|\bunsafe\b|\bnot safe\b|need help now|αυτοκτον|αυτοτραυματισ|κρίση|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|να τελειώσω τη ζωή μου|δεν θέλω να ζω|δεν θέλω να υπάρχω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
+const CRISIS_PATTERN = /(crisis|mental health crisis|panic attack|having a panic attack|κρίση πανικού|βρίσκομαι σε κρίση|δεν είμαι ασφαλής|suicid|kill myself|end my life|end it all|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|αυτοκτον|αυτοτραυματισ|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|να τελειώσω τη ζωή μου|δεν θέλω να ζω|δεν θέλω να υπάρχω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
 const DEFAULT_ORIGINS = [
   "https://nepsis-focus.github.io",
   "https://nepsis-site.nepsis-corp.workers.dev",
