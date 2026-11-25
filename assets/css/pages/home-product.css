@@ -20,7 +20,7 @@ body.home-page {
   --theme-header-bg: rgba(255, 255, 255, .82);
   background: var(--np-home-paper);
   color: var(--np-home-ink);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Nunito, ui-rounded, system-ui, sans-serif;
   font-size: 17px;
   line-height: 1.5;
   letter-spacing: -.011em;

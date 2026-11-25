@@ -25,6 +25,7 @@ body.wc-has-dock { padding-bottom: 96px; }
 .wc-tile svg { width: 28px; height: 28px; }
 .wc-app:hover .wc-tile, .wc-app:focus-visible .wc-tile { transform: translateY(-2px); }
 .wc-app:active .wc-tile { transform: translateY(0) scale(.96); }
+.wc-app.is-hidden { display: none; }
 .wc-app:focus-visible { outline: none; }
 .wc-app:focus-visible .wc-tile { outline: 2px solid #f0702a; outline-offset: 3px; }
 .wc-label {

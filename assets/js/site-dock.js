@@ -10,11 +10,12 @@
     { key: "exams", href: "exams.html", icon: '<rect x="4.5" y="5.5" width="15" height="14" rx="2"/><path d="M4.5 10h15M9 3.5v3.5M15 3.5v3.5M8 14h2m3 0h3"/>', tone: ["#FFB0C8", "#E0457A"] },
     { key: "progress", href: "my-nepsis.html", icon: '<path d="M6 19V12M12 19V6M18 19v-9"/>', tone: ["#93E8A6", "#27B356"] },
     { key: "pause", href: "reset.html", icon: '<path d="M6 18.5c0-7.5 4.5-12.5 12.5-13 0 8-4.5 13-12.5 13z"/><path d="M6 18.5l6.5-6.5"/>', tone: ["#86E6DC", "#1FA596"] },
+    { key: "subscribe", subscribe: true, hidden: true, icon: '<path d="M12 4.5l2.3 4.7 5.2.8-3.8 3.7.9 5.2L12 16.4l-4.6 2.5.9-5.2-3.8-3.7 5.2-.8z"/>', tone: ["#FFD978", "#E8A11E"] },
     { key: "account", account: true, icon: '<circle cx="12" cy="9" r="3.6"/><path d="M5.5 20c1.3-3.6 3.9-5.2 6.5-5.2s5.2 1.6 6.5 5.2"/>', tone: ["#E4DED8", "#8E8782"] }
   ];
   const TXT = {
-    el: { dock: "Ενότητες", stages: "Στάδια", coach: "AI Coach", library: "Βιβλιοθήκη", diary: "Ημερολόγιο", exams: "Εξετάσεις", progress: "Πρόοδος", pause: "Παύση", account: "Λογαριασμός" },
-    en: { dock: "Sections", stages: "Stages", coach: "AI Coach", library: "Library", diary: "Diary", exams: "Exams", progress: "Progress", pause: "Pause", account: "Account" }
+    el: { subscribe: "Συνδρομή", dock: "Ενότητες", stages: "Στάδια", coach: "AI Coach", library: "Βιβλιοθήκη", diary: "Ημερολόγιο", exams: "Εξετάσεις", progress: "Πρόοδος", pause: "Παύση", account: "Λογαριασμός" },
+    en: { subscribe: "Plans", dock: "Sections", stages: "Stages", coach: "AI Coach", library: "Library", diary: "Diary", exams: "Exams", progress: "Progress", pause: "Pause", account: "Account" }
   };
   const lang = () => (document.documentElement.lang === "en" ? "en" : "el");
   const here = location.pathname.split("/").pop() || "index.html";
@@ -29,8 +30,9 @@
   document.body.classList.add("wc-has-dock");
 
   APPS.forEach(app => {
-    const el = document.createElement(app.account ? "button" : "a");
-    if (app.account) el.type = "button";
+    const isButton = !!(app.account || app.subscribe);
+    const el = document.createElement(isButton ? "button" : "a");
+    if (isButton) el.type = "button";
     else {
       el.href = app.href;
       if (app.href === here) el.setAttribute("aria-current", "page");
@@ -40,6 +42,8 @@
     el.style.setProperty("--tone-a", app.tone[0]);
     el.style.setProperty("--tone-b", app.tone[1]);
     el.innerHTML = '<span class="wc-tile"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + app.icon + '</svg></span><span class="wc-label"></span><i class="wc-run" aria-hidden="true"></i>';
+    if (app.hidden) el.classList.add("is-hidden");
+    if (app.subscribe) el.addEventListener("click", () => document.dispatchEvent(new CustomEvent("nepsis:open-subscribe")));
     if (app.account) {
       el.addEventListener("click", () => {
         if (hasAccountPanel()) document.dispatchEvent(new CustomEvent("nepsis:open-account"));
@@ -58,7 +62,11 @@
   function setRunning(key, on) {
     if (on) running.add(key); else running.delete(key);
     const el = tiles.get(key);
-    if (el) el.classList.toggle("is-running", !!on);
+    if (el) {
+      el.classList.toggle("is-running", !!on);
+      if (el.classList.contains("is-hidden") && on) el.classList.remove("is-hidden");
+      if (el.dataset.key === "subscribe" && !on) el.classList.add("is-hidden");
+    }
     dock.classList.toggle("has-running", running.size > 0);
   }
   applyLabels();
