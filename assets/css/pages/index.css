@@ -85,3 +85,34 @@ body.home-page .acc-card { box-sizing: border-box; max-width: 100%; }
 body.home-page:has(.acc-modal.open) .site-header { z-index: 42; }
 /* The homepage has no separate scrim element, so the sheet dims the page itself. */
 body.home-page .acc-modal.open { background: rgba(31, 22, 17, .35); }
+
+/* Phone: stage cards as a compact two-column grid instead of a long stack,
+   and no double gap between the approach and progress sections. */
+@media (max-width: 600px) {
+  body.home-page .stage-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  body.home-page .stage-card {
+    min-height: 0;
+    padding: 16px 14px 42px;
+    border-radius: 18px;
+  }
+  body.home-page .stage-card strong {
+    margin-bottom: 14px;
+    font-size: 3rem;
+  }
+  body.home-page .stage-card span {
+    font-size: .95rem;
+  }
+  body.home-page .stage-card p {
+    font-size: .8rem;
+    line-height: 1.4;
+  }
+  body.home-page .stage-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  body.home-page .approach {
+    padding-bottom: 0;
+  }
+}
