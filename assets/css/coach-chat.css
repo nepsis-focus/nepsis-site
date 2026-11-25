@@ -42,3 +42,6 @@ html.wc-covered .cc-panel { display: none; }
 @media (prefers-reduced-motion: reduce) { .cc-launcher { transition: none; } }
 /* The homepage already shows the coach as a card, and its phone start button sits in this corner. */
 @media (max-width: 899px) { body.home-page .cc-launcher { display: none; } }
+/* While the analytics consent banner is on screen, it takes the bottom of the page, so the chat waits. */
+html:has(.nepsis-consent-panel:not([hidden])) .cc-launcher,
+html:has(.nepsis-consent-panel:not([hidden])) .cc-panel { display: none; }

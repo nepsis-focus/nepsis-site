@@ -6,3 +6,6 @@ verify_jwt = false
 
 [functions.ai-study-coach-v2]
 verify_jwt = false
+
+[functions.ai-coach-chat]
+verify_jwt = false
