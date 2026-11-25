@@ -104,11 +104,11 @@ async function geminiAdapter(prompt: string) {
       method: "POST",
       headers: { "content-type": "application/json", "x-goog-api-key": key },
       signal: abort.signal,
-      body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0.25, maxOutputTokens: 900, responseMimeType: "application/json" } })
+      body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0.25, maxOutputTokens: 2048, responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } } })
     });
     if (!result.ok) throw new Error("gemini_http_" + result.status);
     const raw = await result.json();
-    const output = raw?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text || "").join("") || "";
+    const output = (raw?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text || "").join("") || "").trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
     return JSON.parse(output) as Record<string, unknown>;
   } finally { clearTimeout(timeout); }
 }
