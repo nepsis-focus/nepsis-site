@@ -146,7 +146,9 @@ body.home-page .home-nav { display: none; }
   body.home-page .menu-button { display: none; }
 }
 body.home-page .home-nav a { color: #27221f; text-decoration: none; font-weight: 800; font-size: .95rem; padding: 6px 0; border-bottom: 2px solid transparent; transition: color .15s ease, border-color .15s ease; }
-body.home-page .home-nav a:hover, body.home-page .home-nav a:focus-visible { color: #D7263D; border-bottom-color: #D7263D; outline: none; }
+@media (hover: hover) and (pointer: fine) { body.home-page .home-nav a:hover { color: #D7263D; border-bottom-color: #D7263D; } }
+body.home-page .home-nav a:focus-visible { color: #D7263D; border-bottom-color: #D7263D; }
+body.home-page .home-nav a, body.home-page .home-nav__lang button, body.home-page .site-header .button { -webkit-tap-highlight-color: transparent; }
 /* Phone: the menu button goes; links scroll in a row under the header */
 @media (max-width: 899px) {
   body.home-page .menu-button { display: none; }
