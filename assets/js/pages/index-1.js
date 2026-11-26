@@ -46,6 +46,7 @@ const homepageSupabase = window.supabase && window.supabase.createClient && wind
   accountEntry?.addEventListener("click", (event) => { event.preventDefault(); setMenu(false); setAccount(true); });
   accountClose?.addEventListener("click", () => setAccount(false));
   accountScrim?.addEventListener("click", () => setAccount(false));
+  document.querySelectorAll("[data-header-signin]").forEach((el) => el.addEventListener("click", (event) => { event.preventDefault(); setAccount(true); }));
   accountModal?.addEventListener("click", (event) => { if (event.target === accountModal) setAccount(false); });
   accountGoogle?.addEventListener("click", () => {
     if (!homepageSupabase || !window.NepsisGoogleAuth) return;
