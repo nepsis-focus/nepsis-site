@@ -1,59 +1,54 @@
-/* Nepsis design tokens. Deep navy surfaces keep the interface calm for
-   focus, with steel-blue accents and a warm amber reserved for emphasis
-   and calls to action. Palette: #0B132B, #1C2541, #3A506B, #5BC0DE,
-   #F4D6B0, #D97706. Dark only. */
+/* Nepsis design tokens. Neutral surfaces keep the interface calm while the
+   copper accent carries the warmth of the brand. Light/white only. */
 html {
-  color-scheme: dark !important;
+  color-scheme: light !important;
 }
 :root {
-  color-scheme: dark;
-  --np-canvas: #0B132B;
-  --np-surface: #1C2541;
-  --np-surface-raised: #1C2541;
-  --np-surface-muted: #162038;
-  --np-text: #F4D6B0;
-  --np-muted: #A9B8CC;
-  --np-border: rgba(91, 192, 222, .18);
-  --np-glass: rgba(28, 37, 65, .82);
-  --np-shadow: 0 10px 30px rgba(0, 0, 0, .35);
-  /* Primary fill is steel blue; dark navy text on it keeps strong contrast. */
-  --np-accent: #5BC0DE;
-  --np-on-accent: #0B132B;
-  --np-accent-ink: #5BC0DE;
-  --np-accent-soft: rgba(91, 192, 222, .14);
-  --np-accent-border: rgba(91, 192, 222, .45);
-  --np-focus: #F4D6B0;
-  --np-scrim: rgba(5, 9, 20, .66);
-  --np-modal-shadow: 0 24px 70px -28px rgba(0, 0, 0, .6);
-  /* Warm amber for emphasis and Whop purchase calls to action. */
-  --np-cta: #D97706;
-  --np-cta-text: #0B132B;
+  color-scheme: light;
+  --np-canvas: #FBF7F1;
+  --np-surface: #FFFFFF;
+  --np-surface-raised: #FFFFFF;
+  --np-surface-muted: #F3EEE6;
+  --np-text: #1C2541;
+  --np-muted: #3A506B;
+  --np-border: rgba(58, 80, 107, .16);
+  --np-glass: rgba(255, 255, 255, .82);
+  --np-shadow: 0 10px 30px rgba(0, 0, 0, .05);
+  /* Brand fill. Pair it with near-black text; the bright orange misses AA under white type. */
+  --np-accent: #3A506B;
+  --np-on-accent: #FFFFFF;
+  --np-accent-ink: #3A506B;
+  --np-accent-soft: rgba(58, 80, 107, .10);
+  --np-accent-border: rgba(58, 80, 107, .40);
+  --np-focus: #1C2541;
+  --np-scrim: rgba(0, 0, 0, .42);
+  --np-modal-shadow: 0 24px 70px -28px rgba(0, 0, 0, .28);
 
-/* Compatibility aliases for all existing page styles. */
+  /* Compatibility aliases for all existing page styles. */
   --bg: var(--np-canvas);
   --card: var(--np-surface);
   --fg: var(--np-text);
   --muted: var(--np-muted);
   --border: var(--np-border);
-  --orange: var(--np-cta);
-  --ember: #D97706;
-  --sun: #F4D6B0;
-  --green: #3A506B;
+  --orange: var(--np-accent);
+  --ember: #a34726;
+  --sun: #dcaa54;
+  --green: #5d7864;
   --paper: var(--np-canvas);
   --ink: var(--np-text);
-  --grad: linear-gradient(120deg, #5BC0DE 0%, #3A506B 100%);
+  --grad: linear-gradient(120deg, #dcaa54 0%, #c4672e 55%, #a94d2e 100%);
   --theme-header-bg: var(--np-glass);
   --theme-surface: var(--np-surface-raised);
   --theme-surface-soft: var(--np-surface-muted);
   --theme-hero-veil: var(--np-canvas);
   --theme-scrim: var(--np-scrim);
-  --theme-shadow: rgba(0, 0, 0, .4);
+  --theme-shadow: rgba(0, 0, 0, .18);
 }
 
-/* Dark is the only theme. Keep the selector so stored data-theme="dark"
-   values resolve to the same tokens. */
+/* Dark theme retired — Nepsis is light/white only. Keep the selector so any
+   stale data-theme="dark" still resolves to the light tokens above. */
 html[data-theme="dark"] {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 /* The coach page historically shadowed the root aliases locally. */
@@ -63,8 +58,8 @@ html:not([data-theme="dark"]) .coach-page {
   --card: var(--np-surface);
   --surface: var(--np-surface);
   --muted: var(--np-muted);
-  --orange: var(--np-cta);
-  --ember: #D97706;
+  --orange: var(--np-accent);
+  --ember: #a34726;
   --border: var(--np-border);
 }
 html[data-theme="dark"] .coach-page { --surface: var(--np-surface); }
@@ -122,7 +117,8 @@ html body.home-page :is(.hero-country, .globe-drag-hint) {
   box-shadow: var(--np-shadow);
 }
 
-/* Primary controls use steel blue with dark navy ink. */
+/* Primary controls use a darker copper in light mode and dark ink on the
+   lighter dark-mode accent. */
 .btn-primary,
 .primary,
 .tool-button,
