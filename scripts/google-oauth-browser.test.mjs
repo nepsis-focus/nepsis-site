@@ -38,7 +38,7 @@ async function saveScreenshot(target, path, options = {}) {
 
 /** Narrow headers hide #accBtn; Sign in lives in the menu as #drawerAccBtn. */
 async function openAccountEntry(page) {
-  const headerSignIn = page.locator("#accBtn, #accountBtn");
+  const headerSignIn = page.locator("[data-header-signin], #accBtn, #accountBtn");
   if (await headerSignIn.first().isVisible().catch(() => false)) {
     await headerSignIn.first().click();
     return;
