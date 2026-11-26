@@ -139,3 +139,11 @@ body.home-page .feature-card--coach i { color: #fff; }
   body.home-page .feature-card__name { font-size: 1.05rem; }
   body.home-page .feature-card__text { font-size: .8rem; }
 }
+/* Homepage header: links sit in the top bar on desktop; the menu button stays on phones */
+body.home-page .home-nav { display: none; }
+@media (min-width: 900px) {
+  body.home-page .home-nav { display: flex; align-items: center; gap: 26px; margin: 0 auto 0 36px; }
+  body.home-page .menu-button { display: none; }
+}
+body.home-page .home-nav a { color: #27221f; text-decoration: none; font-weight: 800; font-size: .95rem; padding: 6px 0; border-bottom: 2px solid transparent; transition: color .15s ease, border-color .15s ease; }
+body.home-page .home-nav a:hover, body.home-page .home-nav a:focus-visible { color: #D7263D; border-bottom-color: #D7263D; outline: none; }
