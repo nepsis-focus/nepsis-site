@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Light-only boot — Nepsis is always light/white. */
+(function () {
+  try {
+    localStorage.setItem("nepsis-theme", "light");
+  } catch (e) {}
+  document.documentElement.setAttribute("data-theme", "light");
+  document.documentElement.style.colorScheme = "light";
+})();
+</script>
+<title data-el="Nepsis · Κοινότητα" data-en="Nepsis · Community">Nepsis · Κοινότητα</title>
+<meta name="description" content="Η κοινότητα του Nepsis: φίλοι, ομάδες και συζήτηση.">
+<link rel="icon" href="assets/brand/nepsis-mark.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Nepsis">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Literata:ital,wght@1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/pages/my-nepsis.css">
+<link rel="stylesheet" href="assets/css/pages/community.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+
+<link rel="stylesheet" href="assets/css/window-chrome.css">
+<link rel="stylesheet" href="assets/css/site-dock.css">
+
+  <link rel="stylesheet" href="assets/css/coach-chat.css">
+</head>
+<body class="community-page">
+<header><div class="wrap top"><a class="logo" href="index.html"><span class="dot"></span>Nepsis</a><div class="headright"><a class="account-btn" href="my-nepsis.html" data-el="Σύνδεση" data-en="Sign in">Σύνδεση</a><div class="lang"><button class="active" data-lang="el">ΕΛ</button><button data-lang="en">EN</button></div><button class="menu-btn" id="menuBtn" aria-label="Μενού">☰</button></div></div></header>
+<nav class="drawer" id="drawer" aria-label="Κύριο μενού">
+  <button type="button" class="close" id="closeBtn" aria-label="Κλείσιμο">✕</button>
+  <a href="index.html#top" data-el="Αρχική" data-en="Home">Αρχική</a>
+  <a href="practice.html#challenge" data-el="Η πρόκληση της ημέρας" data-en="Today’s challenge">Η πρόκληση της ημέρας</a>
+  <a href="practice.html#stageGrid" data-el="Στάδια συγκέντρωσης" data-en="Focus stages">Στάδια συγκέντρωσης</a>
+  <a href="practice.html#quiz" data-el="Κουίζ" data-en="Quiz">Κουίζ</a>
+  <a href="practice.html#progress" data-el="Η πρόοδός μου" data-en="My progress">Η πρόοδός μου</a>
+  <a href="reset.html" data-el="Μικρή παύση" data-en="Take a pause">Μικρή παύση</a>
+  <a href="my-nepsis.html" data-el="Το Nepsis μου" data-en="My Nepsis">Το Nepsis μου</a>
+  <a href="diary.html" data-el="Προσωπικό ημερολόγιο" data-en="Private diary">Προσωπικό ημερολόγιο</a>
+  <a href="library.html" data-el="Βιβλιοθήκη γνώσης" data-en="Knowledge library">Βιβλιοθήκη γνώσης</a>
+  <a href="about.html" data-el="Τι είναι το Nepsis" data-en="About Nepsis">Τι είναι το Nepsis</a>
+  <a href="how.html" data-el="Πώς δουλεύει" data-en="How it works">Πώς δουλεύει</a>
+  <a href="faq.html" data-el="Συχνές ερωτήσεις" data-en="Frequently asked questions">Συχνές ερωτήσεις</a>
+  <a href="privacy.html" data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</a>
+</nav><div class="scrim" id="scrim"></div>
+<main class="wrap">
+<section class="content-section community-wrap" aria-labelledby="communityTitle">
+  <article class="info-card">
+    <span class="eyebrow" data-el="ΚΟΙΝΟΤΗΤΑ" data-en="COMMUNITY">ΚΟΙΝΟΤΗΤΑ</span>
+    <h1 id="communityTitle" data-el="Η κοινότητα Nepsis" data-en="The Nepsis community">Η κοινότητα Nepsis</h1>
+    <p class="community-muted" data-el="Φίλοι, ομάδες και συζήτηση. Κάθε ομάδα είναι ξεχωριστή και μπαίνεις μόνο με πρόσκληση." data-en="Friends, teams and conversation. Each team is separate, and people join only by invitation.">Φίλοι, ομάδες και συζήτηση. Κάθε ομάδα είναι ξεχωριστή και μπαίνεις μόνο με πρόσκληση.</p>
+  </article>
+
+  <div id="communityGate" class="panel" hidden>
+    <p data-el="Συνδέσου για να δεις την κοινότητα. Η σύνδεση γίνεται στο «Το Nepsis μου»." data-en="Sign in to see the community. Sign-in is on My Nepsis.">Συνδέσου για να δεις την κοινότητα. Η σύνδεση γίνεται στο «Το Nepsis μου».</p>
+    <p><a class="btn btn-primary" href="my-nepsis.html" data-el="Σύνδεση" data-en="Sign in">Σύνδεση</a></p>
+  </div>
+
+  <div id="communityApp" hidden>
+    <p id="communityMessage" class="message" role="status" aria-live="polite"></p>
+
+    <section class="panel" aria-labelledby="profileTitle">
+      <h2 id="profileTitle" data-el="Το tag σου" data-en="Your tag">Το tag σου</h2>
+      <div id="claimBlock" hidden>
+      <form id="claimForm" class="community-row">
+        <input id="claimName" type="text" maxlength="40" placeholder="Όνομα (π.χ. Μαρία)" data-placeholder-el="Όνομα (π.χ. Μαρία)" data-placeholder-en="Name (e.g. Maria)" aria-label="Όνομα">
+        <button class="btn btn-primary" type="submit" data-el="Πάρε το tag σου" data-en="Get your tag">Πάρε το tag σου</button>
+      </form>
+      </div>
+      <div id="profileBlock" hidden>
+        <p class="community-muted" data-el="Οι φίλοι σου μπορούν να σε βρουν με αυτό το tag." data-en="Friends can find you with this tag.">Οι φίλοι σου μπορούν να σε βρουν με αυτό το tag.</p>
+        <div class="community-row">
+          <span id="myHandle" class="community-handle"></span>
+          <button id="copyHandle" class="btn secondary" type="button" data-el="Αντιγραφή tag" data-en="Copy tag">Αντιγραφή tag</button>
+          <button id="copyInviteLink" class="btn secondary" type="button" data-el="Σύνδεσμος φιλίας" data-en="Friend link">Σύνδεσμος φιλίας</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="friendsTitle">
+      <h2 id="friendsTitle" data-el="Φίλοι" data-en="Friends">Φίλοι</h2>
+      <form id="addFriendForm" class="community-row">
+        <input id="friendHandle" type="text" maxlength="25" placeholder="tag φίλου, π.χ. maria#4821" data-placeholder-el="tag φίλου, π.χ. maria#4821" data-placeholder-en="friend's tag, e.g. maria#4821" aria-label="Tag φίλου">
+        <button class="btn btn-primary" type="submit" data-el="Στείλε αίτημα" data-en="Send request">Στείλε αίτημα</button>
+      </form>
+      <div id="incomingBlock" hidden>
+        <h3 class="community-muted" data-el="Αιτήματα" data-en="Requests">Αιτήματα</h3>
+        <ul id="incomingList" class="community-list"></ul>
+      </div>
+      <ul id="friendList" class="community-list" style="margin-top:12px"></ul>
+    </section>
+
+    <section class="panel" aria-labelledby="teamsTitle">
+      <div class="community-team-head">
+        <h2 id="teamsTitle" data-el="Ομάδες" data-en="Teams">Ομάδες</h2>
+        <button id="newTeamBtn" class="btn btn-primary" type="button" data-el="Create New Team" data-en="Create New Team">Create New Team</button>
+      </div>
+      <form id="teamForm" hidden>
+        <p class="community-muted" data-el="Πρόσθεσε φίλους στην ομάδα. Σύρε τους στην περιοχή ή πάτα «Στην ομάδα»." data-en="Add friends to the team. Drag them into the box, or tap “To the team”.">Πρόσθεσε φίλους στην ομάδα. Σύρε τους στην περιοχή ή πάτα «Στην ομάδα».</p>
+        <div class="community-row">
+          <input id="teamName" type="text" maxlength="40" placeholder="Όνομα ομάδας" data-placeholder-el="Όνομα ομάδας" data-placeholder-en="Team name" aria-label="Όνομα ομάδας">
+        </div>
+        <div id="teamDrop" class="community-dropzone" aria-label="Σύρε φίλους εδώ" data-el="Σύρε φίλους εδώ" data-en="Drop friends here"></div>
+        <div id="teamSelected" class="community-row" style="margin-top:10px"></div>
+        <p><button class="btn btn-primary" type="submit" data-el="Δημιούργησε την ομάδα" data-en="Create the team">Δημιούργησε την ομάδα</button></p>
+      </form>
+      <ul id="teamList" class="community-list" style="margin-top:12px"></ul>
+    </section>
+
+    <section id="teamView" class="panel" aria-labelledby="teamTitle" hidden>
+      <div class="community-team-head">
+        <h2 id="teamTitle"></h2>
+        <button id="inviteBtn" class="btn secondary" type="button" data-el="Πρόσκληση με σύνδεσμο" data-en="Invite with a link">Πρόσκληση με σύνδεσμο</button>
+      </div>
+      <div id="inviteOut" class="community-invite-out" hidden>
+        <input id="inviteLink" type="text" readonly aria-label="Σύνδεσμος πρόσκλησης">
+        <p><button id="copyInvite" class="btn secondary" type="button" data-el="Αντιγραφή πρόσκλησης" data-en="Copy invitation">Αντιγραφή πρόσκλησης</button></p>
+      </div>
+      <p class="community-muted" data-el="Μέλη" data-en="Members">Μέλη</p>
+      <div id="memberList" class="community-row"></div>
+      <div class="community-chat">
+        <div id="messages" class="community-messages" aria-live="polite"></div>
+        <form id="chatForm" class="community-row">
+          <input id="chatBody" type="text" maxlength="2000" placeholder="Γράψε ένα μήνυμα" data-placeholder-el="Γράψε ένα μήνυμα" data-placeholder-en="Write a message" aria-label="Μήνυμα">
+          <button class="btn btn-primary" type="submit" data-el="Στείλε" data-en="Send">Στείλε</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">Nepsis · <a href="privacy.html" style="color:inherit" data-el="Πολιτική απορρήτου" data-en="Privacy policy">Πολιτική απορρήτου</a> · <span data-el="Μικρά βήματα. Μία μέρα τη φορά." data-en="Small steps. One day at a time.">Μικρά βήματα. Μία μέρα τη φορά.</span></div><span><a href="mailto:nepsis.corp@gmail.com" data-el="Κάτι δεν λειτουργεί;" data-en="Something wrong?">Κάτι δεν λειτουργεί;</a></span>
+<span><a href="research.html" data-el="Η έρευνα" data-en="Research">Η έρευνα</a> · <a href="community-rules.html" data-el="Κανόνες κοινότητας" data-en="Community rules">Κανόνες κοινότητας</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/js/google-oauth.js"></script>
+<script src="assets/js/site-config.js"></script>
+<script src="assets/js/site-navigation.js"></script>
+<script src="assets/js/site-preferences.js"></script>
+<script src="assets/js/window-chrome.js" defer></script>
+<script src="assets/js/site-dock.js" defer></script>
+<script src="assets/js/pages/community-1.js"></script>
+</body>
+</html>
