@@ -147,3 +147,19 @@ body.home-page .home-nav { display: none; }
 }
 body.home-page .home-nav a { color: #27221f; text-decoration: none; font-weight: 800; font-size: .95rem; padding: 6px 0; border-bottom: 2px solid transparent; transition: color .15s ease, border-color .15s ease; }
 body.home-page .home-nav a:hover, body.home-page .home-nav a:focus-visible { color: #D7263D; border-bottom-color: #D7263D; outline: none; }
+/* Phone: the menu button goes; links scroll in a row under the header */
+@media (max-width: 899px) {
+  body.home-page .menu-button { display: none; }
+  body.home-page .site-header__inner { flex-wrap: wrap; row-gap: 0; min-height: 0; padding-top: 12px; }
+  body.home-page .site-header__actions { align-items: flex-start; }
+  body.home-page .home-nav { display: flex; order: 3; flex-basis: 100%; gap: 8px; margin: 0; padding: 0 0 12px; overflow-x: auto; scrollbar-width: none; }
+  body.home-page .home-nav::-webkit-scrollbar { display: none; }
+  body.home-page .home-nav a { flex: 0 0 auto; padding: 8px 14px; border: 1px solid var(--home-line); border-radius: 999px; background: var(--home-surface); font-size: .88rem; }
+  body.home-page .home-nav__lang { flex: 0 0 auto; display: flex; gap: 4px; margin-left: auto; }
+}
+body.home-page .home-nav__lang button { min-width: 38px; min-height: 34px; border: 1px solid var(--home-line); border-radius: 99px; background: var(--home-bg); color: var(--home-ink); font: inherit; font-size: .78rem; font-weight: 850; cursor: pointer; }
+body.home-page .home-nav__lang button.active { background: var(--home-ink); color: #fff; }
+@media (max-width: 600px) {
+  body.home-page .site-header .button--compact { display: inline-flex; min-height: 38px; padding: 5px 5px 5px 14px; gap: 10px; font-size: .82rem; }
+  body.home-page .site-header .button--compact .button__arrow { width: 26px; height: 26px; }
+}
