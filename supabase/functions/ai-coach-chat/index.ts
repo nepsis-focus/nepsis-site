@@ -5,8 +5,6 @@ const MAX_BODY = 12000;
 const MAX_MESSAGE_CHARS = 1000;
 const MAX_TURNS = 10;
 const DAILY_MESSAGE_LIMIT = 10;
-const IP_WINDOW_MS = 10 * 60 * 1000;
-const IP_REQUEST_LIMIT = 20;
 const CRISIS_PATTERN = /(crisis|mental health crisis|panic attack|having a panic attack|κρίση πανικού|βρίσκομαι σε κρίση|δεν είμαι ασφαλής|suicid|kill myself|end my life|end it all|hurt myself|self[- ]harm|want to die|don't want to live|do not want to live|can't go on|\bin crisis\b|αυτοκτον|αυτοτραυματισ|κινδυνεύω|δεν είμαι ασφαλής|δεν νιώθω ασφαλής|να κάνω κακό στον εαυτό μου|να βλάψω τον εαυτό μου|να βάλω τέλος στη ζωή μου|να τελειώσω τη ζωή μου|δεν θέλω να ζω|δεν θέλω να υπάρχω|θέλω να πεθάνω|δεν αντέχω άλλο)/i;
 const DEFAULT_ORIGINS = [
   "https://nepsis-focus.github.io",
@@ -119,15 +117,6 @@ Deno.serve(async (req: Request) => {
   if (!url || !serviceKey) return reply(503, { error: "service_unavailable" }, origin, allowed);
   const svc = { apikey: serviceKey, authorization: "Bearer " + serviceKey, "content-type": "application/json" };
   const requestIp = (req.headers.get("cf-connecting-ip") || "").trim() || "unknown";
-
-  // Short burst limit per IP, the same RPC the plan flow uses.
-  try {
-    const ipHash = await digest(serviceKey, "chat-ip:" + requestIp);
-    const windowStart = new Date(Math.floor(Date.now() / IP_WINDOW_MS) * IP_WINDOW_MS).toISOString();
-    const limitedIp = await fetch(url + "/rest/v1/rpc/consume_ai_coach_ip_limit", { method: "POST", headers: svc, body: JSON.stringify({ p_ip_hash: ipHash, p_window_start: windowStart, p_request_limit: IP_REQUEST_LIMIT }), signal: AbortSignal.timeout(5000) });
-    if (!limitedIp.ok) return reply(503, { error: "rate_limit_service_unavailable" }, origin, allowed);
-    if (await limitedIp.json() !== true) return reply(429, { error: "ip_rate_limit_reached", retryAfterSeconds: 600 }, origin, allowed);
-  } catch { return reply(503, { error: "rate_limit_service_unavailable" }, origin, allowed); }
 
   // Daily count per signed-in user, or per IP for guests. The quota RPC resets when p_day changes,
   // so the UTC date gives a daily counter.
